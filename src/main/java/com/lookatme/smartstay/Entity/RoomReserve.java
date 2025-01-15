@@ -2,7 +2,8 @@ package com.lookatme.smartstay.Entity;
 
 import com.lookatme.smartstay.Constant.CheckState;
 import com.lookatme.smartstay.Constant.PayState;
-import com.lookatme.smartstay.Entity.Member.Member;
+import com.lookatme.smartstay.Constant.RoomState;
+import com.lookatme.smartstay.Constant.ServiceState;
 import jakarta.persistence.*;
 import lombok.*;
 

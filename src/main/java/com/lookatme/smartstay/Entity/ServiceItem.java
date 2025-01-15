@@ -1,6 +1,6 @@
 package com.lookatme.smartstay.Entity;
 
-import com.lookatme.smartstay.Constant.OrderState;
+import com.lookatme.smartstay.Entity.Room.Room;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;

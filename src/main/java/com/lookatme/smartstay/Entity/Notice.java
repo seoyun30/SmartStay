@@ -1,8 +1,5 @@
 package com.lookatme.smartstay.Entity;
 
-import com.lookatme.smartstay.Entity.Member.Chief;
-import com.lookatme.smartstay.Entity.Member.Manager;
-import com.lookatme.smartstay.Entity.Member.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,7 +25,7 @@ public class Notice extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_num")
-    private Manager manager; //호텔(매장)
+    private Manager	manager; //호텔(매장)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_num")

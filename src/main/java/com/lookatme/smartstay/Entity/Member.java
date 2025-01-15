@@ -1,8 +1,7 @@
-package com.lookatme.smartstay.Entity.Member;
+package com.lookatme.smartstay.Entity;
 
 import com.lookatme.smartstay.Constant.Accept;
 import com.lookatme.smartstay.Constant.Role;
-import com.lookatme.smartstay.Entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -14,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class Member extends BaseEntity {
+public class Member extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

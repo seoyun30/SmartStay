@@ -35,5 +35,5 @@ public class Room extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_num")
-    private Manager manager; //호텔(매장)
+    private Manager	manager; //호텔(매장)
 }

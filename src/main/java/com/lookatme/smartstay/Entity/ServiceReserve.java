@@ -1,8 +1,8 @@
 package com.lookatme.smartstay.Entity;
 
 import com.lookatme.smartstay.Constant.OrderState;
-import com.lookatme.smartstay.Entity.Member.Member;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;

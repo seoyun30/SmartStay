@@ -1,8 +1,11 @@
 package com.lookatme.smartstay.Entity;
 
-import com.lookatme.smartstay.Entity.Member.Member;
+import com.lookatme.smartstay.Constant.PayState;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
