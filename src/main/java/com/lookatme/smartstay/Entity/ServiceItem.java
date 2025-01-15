@@ -31,11 +31,11 @@ public class ServiceItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_num")
-    private RoomService	roomservice; //룸 서비스 조인
+    private Menu menu; //룸 서비스 조인
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "care_num")
-    private CareService	careservice; //룸 케어서비스 조인
+    private Care care; //룸 케어서비스 조인
 
     @ManyToOne
     @JoinColumn(name = "order_num")

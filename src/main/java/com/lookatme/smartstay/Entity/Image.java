@@ -35,7 +35,7 @@ public class Image extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_num")
-    private RoomService	roomService; //룸 서비스 이미지
+    private Menu menu; //룸 서비스 이미지
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rev_num")
