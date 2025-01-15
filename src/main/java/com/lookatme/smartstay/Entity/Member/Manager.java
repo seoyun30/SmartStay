@@ -1,7 +1,7 @@
-package com.lookatme.smartstay.Entity;
+package com.lookatme.smartstay.Entity.Member;
 
+import com.lookatme.smartstay.Entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.*;
 
 @Entity
@@ -11,11 +11,11 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class Chief extends BaseEntity{
+public class Manager extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chief_num; //키
+    private Long manager_num; //키
 
     @Column(unique = true, nullable = false)
     private String business_num; //이메일
@@ -27,4 +27,9 @@ public class Chief extends BaseEntity{
     private String tel; //연락처
     private String score; //별점
     private String imageUrl; //이미지 경로
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chief_num")
+    private Chief chief; //호텔(총판)
+
 }

@@ -1,5 +1,7 @@
 package com.lookatme.smartstay.Entity;
 
+import com.lookatme.smartstay.Entity.Member.Chief;
+import com.lookatme.smartstay.Entity.Member.Manager;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,5 +29,5 @@ public class CareService extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_num")
-    private Manager	manager; //호텔(매장)
+    private Manager manager; //호텔(매장)
 }
