@@ -1,5 +1,8 @@
 package com.lookatme.smartstay.Entity;
 
+import com.lookatme.smartstay.Entity.Member.Chief;
+import com.lookatme.smartstay.Entity.Member.Manager;
+import com.lookatme.smartstay.Entity.Member.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +29,7 @@ public class Qna extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_num")
-    private Manager	manager; //호텔(매장)
+    private Manager manager; //호텔(매장)
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reserve_num")
