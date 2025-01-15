@@ -1,4 +1,4 @@
-package com.lookatme.smartstay.Controller;
+package com.lookatme.smartstay.Controller.Room;
 
 import org.springframework.stereotype.Controller;
 

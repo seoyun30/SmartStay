@@ -1,6 +1,9 @@
-package com.lookatme.smartstay.Entity;
+package com.lookatme.smartstay.Entity.Room;
 
 import com.lookatme.smartstay.Constant.RoomState;
+import com.lookatme.smartstay.Entity.BaseEntity;
+import com.lookatme.smartstay.Entity.Chief;
+import com.lookatme.smartstay.Entity.Manager;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class Room extends BaseEntity{
+public class Room extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +36,5 @@ public class Room extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_num")
-    private Manager	manager; //호텔(매장)
+    private Manager manager; //호텔(매장)
 }

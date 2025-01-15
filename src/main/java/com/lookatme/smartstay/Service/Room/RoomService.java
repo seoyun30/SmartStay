@@ -1,4 +1,4 @@
-package com.lookatme.smartstay.Service;
+package com.lookatme.smartstay.Service.Room;
 
 import org.springframework.stereotype.Service;
 
