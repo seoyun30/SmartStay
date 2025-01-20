@@ -26,5 +26,4 @@ public class Chief extends BaseEntity{
     private String address; //호텔 주소
     private String tel; //연락처
     private String score; //별점
-    private String imageUrl; //이미지 경로
 }

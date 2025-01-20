@@ -1,4 +1,4 @@
-package com.lookatme.smartstay.DTO.Room;
+package com.lookatme.smartstay.DTO;
 
 import com.lookatme.smartstay.Constant.RoomState;
 import com.lookatme.smartstay.Entity.Chief;

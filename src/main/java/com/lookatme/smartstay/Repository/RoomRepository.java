@@ -1,4 +1,4 @@
-package com.lookatme.smartstay.Repository.Room;
+package com.lookatme.smartstay.Repository;
 
 import com.lookatme.smartstay.Entity.Room.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
