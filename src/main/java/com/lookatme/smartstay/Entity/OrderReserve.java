@@ -2,7 +2,6 @@ package com.lookatme.smartstay.Entity;
 
 import com.lookatme.smartstay.Constant.OrderState;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Builder
-public class ServiceReserve extends BaseEntity {
+public class OrderReserve extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +28,9 @@ public class ServiceReserve extends BaseEntity {
     @Column(nullable = false)
     private OrderState order_state; //진행 상태
 
-    @OneToMany(mappedBy = "serviceReserve", cascade = CascadeType.ALL,
+    @OneToMany(mappedBy = "orderReserve", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ServiceItem> serviceItemList = new ArrayList<>();
+    private List<OrderItem> orderItemList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_num")

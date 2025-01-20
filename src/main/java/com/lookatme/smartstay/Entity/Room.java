@@ -1,8 +1,6 @@
 package com.lookatme.smartstay.Entity;
 
 import com.lookatme.smartstay.Constant.RoomState;
-import com.lookatme.smartstay.Entity.Member.Chief;
-import com.lookatme.smartstay.Entity.Member.Manager;
 import jakarta.persistence.*;
 import lombok.*;
 

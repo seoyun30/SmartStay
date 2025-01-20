@@ -21,10 +21,6 @@ public class Menu extends BaseEntity {
     private Long menu_price; //메뉴 가격
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chief_num")
-    private Chief chief; //호텔(총판)
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_num")
     private Manager	manager; //호텔(매장)
 }

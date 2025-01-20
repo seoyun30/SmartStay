@@ -1,6 +1,5 @@
 package com.lookatme.smartstay.Entity;
 
-import com.lookatme.smartstay.Entity.Room.Room;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -12,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class ServiceItem extends BaseEntity {
+public class OrderItem extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +38,7 @@ public class ServiceItem extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "order_num")
-    private ServiceReserve serviceReserve;
+    private OrderReserve orderReserve;
 
     @ManyToOne
     @JoinColumn(name = "cart_num")
