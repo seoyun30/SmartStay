@@ -18,12 +18,12 @@ public class CartDTO {
 
     private MemberDTO memberDTO; //회원 조인
 
-    private LocalDateTime regDate;
+    private LocalDateTime reg_date;
 
-    private LocalDateTime modiDate;
+    private LocalDateTime modi_date;
 
-    private String createBy;
+    private String create_by;
 
-    private String modifiedBy;
+    private String modified_by;
 
 }

@@ -30,13 +30,13 @@ public class RoomDTO {
 
     private Manager manager; //호텔(매장)
 
-    private LocalDateTime regDate;
+    private LocalDateTime reg_date;
 
-    private LocalDateTime modiDate;
+    private LocalDateTime modi_date;
 
-    private String createBy;
+    private String create_by;
 
-    private String modifiedBy;
+    private String modified_by;
 
 
 }

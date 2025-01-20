@@ -35,12 +35,12 @@ public class OrderItemDTO extends BaseEntity {
 
     private CartDTO cartDTO; //장바구니
 
-    private LocalDateTime regDate;
+    private LocalDateTime reg_date;
 
-    private LocalDateTime modiDate;
+    private LocalDateTime modi_date;
 
-    private String createBy;
+    private String create_by;
 
-    private String modifiedBy;
+    private String modified_by;
 
 }
