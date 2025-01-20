@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @Builder
-public class OrderItemDTO extends BaseEntity {
+public class OrderItemDTO {
 
     private Long service_num; //서비스 주문 번호
 
@@ -31,7 +31,7 @@ public class OrderItemDTO extends BaseEntity {
 
     private CareDTO careDTO; //룸 케어서비스 조인
 
-    private OrderReserve orderReserve;
+    private OrderReserveDTO orderReserveDTO;
 
     private CartDTO cartDTO; //장바구니
 

@@ -21,7 +21,7 @@ public class QnaReply extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_num")
-    private Qna	qna_num;
+    private Qna	qna;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_num")
