@@ -17,16 +17,16 @@ public class Image extends BaseEntity {
     private Long image_id; //이미지 번호
 
     @Column(nullable = false)
-    private String imageName; //UUID + 이미지 원본 이름
+    private String image_name; //UUID + 이미지 원본 이름
 
     @Column(nullable = false)
-    private String originName; //이미지 원본 이름
+    private String origin_name; //이미지 원본 이름
 
     @Column(nullable = false)
-    private String imageUrl; //이미지 경로
+    private String image_url; //이미지 경로
 
     @Column(nullable = false)
-    private String repimgYn; //대표 이미지 여부
+    private String repimg_yn; //대표 이미지 여부
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chief_num")
