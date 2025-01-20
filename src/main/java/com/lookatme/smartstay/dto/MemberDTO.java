@@ -9,6 +9,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+
+import java.time.LocalDateTime;
 
 
 @Setter
@@ -39,9 +44,16 @@ public class MemberDTO {
 
     private Role role; //회원 권한
 
-
     private Chief chief; //호텔(총판)
 
-
     private Manager manager; //호텔(매장)
+
+    private LocalDateTime reg_date;
+
+    private LocalDateTime modi_date;
+
+    private String create_by;
+
+    private String modified_by;
+
 }
