@@ -1,11 +1,13 @@
 package com.lookatme.smartstay.dto;
 
 import com.lookatme.smartstay.entity.BaseEntity;
-import com.lookatme.smartstay.entity.Manager;
+import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.entity.Qna;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
@@ -13,15 +15,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @Builder
-public class MenuDTO {
+public class QnaReplyDTO {
 
-    private Long menu_num; //메뉴 번호
-    private String menu_name; //메뉴 명
-    private String service_info; //서비스 정보
-    private String menu_detail; //메뉴 상세
-    private Long menu_price; //메뉴 가격
+    private Long reply_num;
 
-    private ManagerDTO managerDTO; //호텔(매장)
+    private String comment;
+    private String writer;
+
+    private QnaDTO qnaDTO;
+
+    private MemberDTO memberDTO;
 
     private LocalDateTime reg_date;
 

@@ -22,30 +22,18 @@ public class NoticeDTO {
     private String title; //제목
     private String content; //내용
 
-
-    @CreatedDate
-    @Column(updatable = false)
     private LocalDateTime reg_Date; //작성 시간
 
-    @LastModifiedDate
     private LocalDateTime modi_date; //수정 시간
 
-    @CreatedBy
-    @Column(updatable = false)
     private String create_by; //작성자
     private String modified_by; //수정한 사람
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chief_num")
-    private Chief chief; //호텔(총판)
+    private ChiefDTO chiefDTO; //호텔(총판)
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_num")
-    private Manager manager; //호텔(매장)
+    private ManagerDTO managerDTO; //호텔(매장)
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_num")
-    private Member member; //회원 조인
+    private MemberDTO memberDTO; //회원 조인
 
 
 }

@@ -17,7 +17,7 @@ public class Manager extends BaseEntity{
     private Long manager_num; //키
 
     @Column(unique = true, nullable = false)
-    private String business_num; //이메일
+    private String business_num; //사업자번호
 
     @Column(nullable = false)
     private String hotel_name; //호텔 명

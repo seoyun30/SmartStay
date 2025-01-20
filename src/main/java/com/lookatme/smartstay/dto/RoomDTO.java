@@ -26,9 +26,9 @@ public class RoomDTO {
 
     private RoomState room_state; //룸 상태
 
-    private Chief chief; //호텔(총판)
+    private ChiefDTO chiefDTO; //호텔(총판)
 
-    private Manager manager; //호텔(매장)
+    private ManagerDTO managerDTO; //호텔(매장)
 
     private LocalDateTime reg_date;
 

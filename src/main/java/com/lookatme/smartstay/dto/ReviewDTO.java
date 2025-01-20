@@ -1,15 +1,13 @@
 package com.lookatme.smartstay.dto;
 
-import com.lookatme.smartstay.constant.OrderState;
 import com.lookatme.smartstay.entity.BaseEntity;
 import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.entity.OrderItem;
+import com.lookatme.smartstay.entity.RoomReserve;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Getter
 @Setter
@@ -17,17 +15,14 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Builder
-public class OrderReserveDTO {
+public class ReviewDTO {
 
-    private Long order_num; //주문 기록 번호
+    private Long rev_num; //리뷰 번호
+    private String content; //리뷰 내용
+    private String writer; //작성자
+    private String score; //별점
 
-    private String order_id; //주문 번호
-
-    private Long total_price; //총 가격
-
-    private OrderState order_state; //진행 상태
-
-    private List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
+    private RoomReserveDTO roomReserveDTO; //룸 예약 조인
 
     private MemberDTO memberDTO; //회원 조인
 
@@ -38,5 +33,4 @@ public class OrderReserveDTO {
     private String create_by;
 
     private String modified_by;
-
 }
