@@ -24,7 +24,9 @@ public class Member extends BaseEntity{
     private String email; //회원 이메일
 
     private String password; //회원 비밀번호
+
     private String name; //회원 이름
+
     private String tel; //연락처
 
     @Enumerated(EnumType.STRING)
