@@ -1,5 +1,7 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.dto.RoomDTO;
 import com.lookatme.smartstay.entity.Room;
 import com.lookatme.smartstay.repository.RoomRepository;
@@ -8,6 +10,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,12 +27,15 @@ public class RoomService {
 
     private final RoomRepository roomRepository;
     private final ModelMapper modelMapper;
+    private final ImageService imageService;
 
-    public Long roomRegister(RoomDTO roomDTO, List<MultipartFile> multipartFileList){
+    public Long roomRegister(RoomDTO roomDTO, List<MultipartFile> multipartFileList) throws Exception {
 
         Room room = modelMapper.map(roomDTO, Room.class);
 
         room = roomRepository.save(room);
+
+        imageService.saveImage(multipartFileList,"room",room.getRoom_num());
 
         return room.getRoom_num();
     }
@@ -41,6 +48,17 @@ public class RoomService {
 
         return roomDTO;
     }
+
+    public RoomDTO roomRead(Long room_num, String email){
+
+        Room room = roomRepository.findById(room_num).orElseThrow(EntityNotFoundException::new);
+
+        RoomDTO roomDTO = modelMapper.map(room, RoomDTO.class);
+
+        return roomDTO;
+    }
+
+
 
     public RoomDTO roomModify(RoomDTO roomDTO, Long room_num, List<MultipartFile> multipartFileList){
 
