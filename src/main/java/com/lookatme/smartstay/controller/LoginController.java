@@ -1,5 +1,7 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.dto.ChiefDTO;
+import com.lookatme.smartstay.dto.ManagerDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.service.MemberService;
 import jakarta.validation.Valid;
@@ -36,11 +38,12 @@ public class LoginController {
     @GetMapping("/adSignup") //회원가입페이지(saveSuperAdminMember-슈퍼어드민이 승인해주는 첫번째 치프)
     public String adSignupGet(Model model){
         model.addAttribute("memberDTO", new MemberDTO());
+        model.addAttribute("chiefDTO", new ChiefDTO());
         return "member/adSignup";
     }
 
     @PostMapping("/adSignup") //회원가입포스트(saveSuperAdminMember-슈퍼어드민이 승인해주는 첫번째 치프)
-    public String adsignupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult,
+    public String adsignupPost(@Valid MemberDTO memberDTO, ChiefDTO chiefDTO, BindingResult bindingResult,
                              RedirectAttributes redirectAttributes, Model model){
 
         log.info(memberDTO);
@@ -50,6 +53,19 @@ public class LoginController {
             return "member/adSignup";
         }
 
+        log.info("통과");
+
+        try{
+            memberService.saveSuperAdminMember(memberDTO);
+
+        }catch (IllegalStateException e){
+
+            model.addAttribute("msg", e.getMessage());
+
+            return "member/signup";
+        }
+
+
         redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
         return "member/adSignup";
     }
@@ -57,11 +73,12 @@ public class LoginController {
     @GetMapping("/cSignup") //회원가입페이지(saveChiefMember-치프가 승인해주는 치프)
     public String chSignupGet(Model model){
         model.addAttribute("memberDTO", new MemberDTO());
+        model.addAttribute("chiefDTO", new ChiefDTO());
         return "member/cSignup";
     }
 
     @PostMapping("/cSignup") //회원가입포스트(saveChiefMember-치프가 승인해주는 치프)
-    public String chsignupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult,
+    public String chsignupPost(@Valid MemberDTO memberDTO, ChiefDTO chiefDTO, BindingResult bindingResult,
                                RedirectAttributes redirectAttributes, Model model){
 
         log.info(memberDTO);
@@ -78,6 +95,7 @@ public class LoginController {
     @GetMapping("/mSignup") //회원가입페이지(saveManagerMember-치프가 승인해주는 매니저)
     public String maSignupGet(Model model){
         model.addAttribute("memberDTO", new MemberDTO());
+        model.addAttribute("managerDTO", new ManagerDTO());
         return "member/mSignup";
     }
 
@@ -116,7 +134,7 @@ public class LoginController {
 
         log.info("통과");
 
-      /* try{
+      try{
             memberService.saveMember(memberDTO);
 
        }catch (IllegalStateException e){
@@ -124,7 +142,7 @@ public class LoginController {
            model.addAttribute("msg", e.getMessage());
 
            return "member/signup";
-       }*/
+       }
 
        redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
         return "member/signup";
