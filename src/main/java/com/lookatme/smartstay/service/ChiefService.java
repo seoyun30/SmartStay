@@ -2,13 +2,19 @@ package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.Util.PagenationUtil;
 import com.lookatme.smartstay.dto.ChiefDTO;
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.entity.Chief;
 import com.lookatme.smartstay.repository.ChiefRepository;
 import groovy.util.logging.Log4j2;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.internal.bytebuddy.dynamic.loading.ByteArrayClassLoader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +30,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class ChiefService {
 
+    private static final Logger log = LogManager.getLogger(ChiefService.class);
     private final ChiefRepository chiefRepository;
     private final ModelMapper modelMapper;
     private final ImageService imageService;
@@ -65,6 +72,19 @@ public class ChiefService {
 
     //chief 삭제
     public void delete(Long chief_num){chiefRepository.deleteById(chief_num); }
+
+
+
+
+    public List<ChiefDTO> mainHotel() {
+        List<Chief> chiefList = chiefRepository.findAll();
+        List<ChiefDTO> chiefDTOList = chiefList.stream()
+                .map(chief -> modelMapper.map(chief, ChiefDTO.class))
+                .collect(Collectors.toList());
+
+        return chiefDTOList;
+    }
+
 
 
 
