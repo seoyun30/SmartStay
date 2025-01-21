@@ -35,7 +35,10 @@ public class ChiefService {
         Chief chief1 = chiefRepository.save(chief);
 
         //이미지
-        imageService.saveImage(multipartFiles, "chief", chief1.getChief_num());
+        if(multipartFiles != null && multipartFiles.size() > 0) {
+            imageService.saveImage(multipartFiles, "chief", chief1.getChief_num());
+        }
+
     }
 
     //chief 목록

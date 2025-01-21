@@ -1,6 +1,5 @@
 package com.lookatme.smartstay.controller;
 
-import ch.qos.logback.core.model.Model;
 import com.lookatme.smartstay.Util.PagenationUtil;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.dto.PageRequestDTO;
@@ -11,6 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,27 +33,28 @@ public class ChiefController {
     //등록
     @GetMapping("/chiefRegister")
     public String chiefRegisterGet(Model model) {
-        return "chiefRegister";
+        model.addAttribute("chiefDTO", new ChiefDTO());
+        return "chief/chiefRegister";
     }
-    @PostMapping("/chiefRegisger")
+    @PostMapping("/chiefRegister")
     public String chiefRegisterPost(Model model, ChiefDTO chiefDTO,
                                     List<MultipartFile> multipartFiles) throws Exception {
         chiefService.insert(chiefDTO, multipartFiles);
-        return "chiefRegister";
+        return "chief/chiefRegister";
     }
 
     //목록
-    @GetMapping("/chifeList") //슈퍼어드민만 사용
+    @GetMapping("/chiefList") //슈퍼어드민만 사용
     public String chiefList(Principal principal, PageRequestDTO pageRequestDTO) {
         chiefService.chiefList();
-        return "chiefList";
+        return "chief/chiefList";
     }
 
     //상세보기
-    @GetMapping("/chifeRead")
+    @GetMapping("/chiefRead")
     public String chiefRead() {
         //chiefService.read();
-        return "chiefList";
+        return "chief/chiefList";
     }
 
     //수정
@@ -72,42 +73,48 @@ public class ChiefController {
     @PostMapping("/chiefDelete")
     public String chiefDelete(ChiefDTO chiefDTO) {
         chiefService.delete(chiefDTO.getChief_num());
-        return "chiefList";
+        return "chief/chiefList";
     }
 
 
     //매장 등록
     @GetMapping("/managerRegister")
-    public String managerRegisterGet() {
-        return "managerRegister";
+    public String managerRegisterGet(Model model) {
+        model.addAttribute("managerDTO", new ManagerDTO());
+        return "manager/managerRegister";
     }
 
     @PostMapping("/managerRegister")
     public String managerRegisterPost(ManagerDTO managerDTO, MemberDTO memberDTO,
                                       List<MultipartFile> multipartFiles) throws Exception {
         managerService.managerInsert(managerDTO, multipartFiles);
-        return "managerRegister";
+        return "chief/managerRegister";
     }
 
     //매장 목록
-    @GetMapping("/mangerList")
+    @GetMapping("/managerList")
     public String mangerList(Principal principal, PageRequestDTO pageRequestDTO) {
         managerService.managerList();
-        return "mangerList";
+        return "chief/managerList";
     }
 
     //매장 상세보기
-    @GetMapping({"/managerRead", "/manager/managerRead"})
+    @GetMapping("/managerRead")
     public String managerRead(Principal principal, PageRequestDTO pageRequestDTO) {
        // managerService.managerRead();
-        return "managerRead";
+        return "chief/managerRead";
     }
+    //@GetMapping("/manager/managerRead")
+    //public String managerRead(Principal principal, PageRequestDTO pageRequestDTO) {
+    //    return "manager/managerRead";
+    //}
 
     //매장 수정
     @GetMapping({"/managerModify", "manager/managerModify"})
     public String managerModifyGet(Principal principal, PageRequestDTO pageRequestDTO) {
         return "managerModify";
     }
+
     @PostMapping({"/managerModify", "manager/magerModify"})
     public String managerModifyPost(ManagerDTO managerDTO, MemberDTO memberDTO, List<Long> delnumList,
                                     List<MultipartFile> multipartFiles, ImageDTO imageDTO, PageRequestDTO pageRequestDTO) {
