@@ -1,5 +1,5 @@
 package com.lookatme.smartstay.constant;
 
-public enum Accept {
+public enum Power {
     Y, N
 }

@@ -1,12 +1,11 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.constant.Accept;
+import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.MemberRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.User;
@@ -39,10 +38,10 @@ public class MemberService implements UserDetailsService {
         if("SUPERADMIN".equals(member.getRole().name())){
             log.info("슈퍼어드민");
             role = Role.SUPERADMIN.name();
-        }else if("CHIEF".equals(member.getRole().name()) && member.getAccept() == Accept.Y){
+        }else if("CHIEF".equals(member.getRole().name()) && member.getPower() == Power.Y){
             log.info("치프");
             role = Role.CHIEF.name();
-        }else if("MANAGER".equals(member.getRole().name()) && member.getAccept() == Accept.Y){
+        }else if("MANAGER".equals(member.getRole().name()) && member.getPower() == Power.Y){
             log.info("매니져");
             role = Role.MANAGER.name();
         }else {
