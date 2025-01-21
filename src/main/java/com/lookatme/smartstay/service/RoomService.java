@@ -10,11 +10,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -27,13 +29,11 @@ public class RoomService {
     private final ModelMapper modelMapper;
     private final ImageService imageService;
 
-    public Long roomRegister(RoomDTO roomDTO, List<MultipartFile> multipartFileList) throws Exception {
+    public Long roomRegister(RoomDTO roomDTO) throws Exception {
 
         Room room = modelMapper.map(roomDTO, Room.class);
 
         room = roomRepository.save(room);
-
-        imageService.saveImage(multipartFileList,"room",room.getRoom_num());
 
         return room.getRoom_num();
     }
@@ -60,16 +60,21 @@ public class RoomService {
 
         Pageable pageable = pageRequestDTO.getPageable("room_num");
 
+        Page<Room> result = roomRepository.findAll(pageable);
+
+        List<RoomDTO> roomDTOList = result.stream()
+                .map(room -> modelMapper.map(room, RoomDTO.class))
+                .collect(Collectors.toList());
+
         PageResponseDTO<RoomDTO> roomDTOPageResponseDTO =
                 PageResponseDTO.<RoomDTO>withAll().pageRequestDTO(pageRequestDTO)
-                        .build();
+                        .dtoList(roomDTOList).total((int)result.getTotalElements()).build();
 
         return roomDTOPageResponseDTO;
-
     }
 
 
-    public RoomDTO roomModify(RoomDTO roomDTO, Long room_num, List<MultipartFile> multipartFileList){
+    public RoomDTO roomModify(RoomDTO roomDTO){
 
         Room room = roomRepository.findById(roomDTO.getRoom_num()).orElseThrow(EntityNotFoundException::new);
 
@@ -82,4 +87,5 @@ public class RoomService {
 
         return null;
     }
+
 }

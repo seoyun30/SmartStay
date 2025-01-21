@@ -20,7 +20,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="room_name" class="form-label">룸 명</label>
-                            <input type="text" class="form-control" th:field="*{room_name}"  required id="room_name" >
+                            <input type="text" class="form-control" th:field="*{room_name}" required id="room_name" >
                             <p th:if="${#fields.hasErrors('room_name')}" th:errors="*{room_name}" class="fieldError"></p>
                         </div>
                     </div>
@@ -64,7 +64,7 @@
                     </div>
 
                     <div class="col-12">
-                        <button class="btn btn-dark">저장</button>
+                        <button type="submit" class="btn btn-dark">등록</button>
                         <button type="button"  class="btn btn-dark listbtn">목록</button>
                         <script>
                             $(".listbtn").on("click", function () {
@@ -73,7 +73,6 @@
                         </script>
                     </div>
                 </div>
-
             </div>
         </div>
     </form>
