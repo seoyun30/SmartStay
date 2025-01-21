@@ -31,15 +31,14 @@ public class RoomController {
 
     private final RoomService roomService;
 
-
-    @GetMapping("roomRegister")
+    @GetMapping("/roomRegister")
     public String roomRegisterGet(Model model){
 
         model.addAttribute("roomDTO", new RoomDTO());
         return "room/roomRegister";
     }
 
-    @PostMapping("roomRegister")
+    @PostMapping("/roomRegister")
     public String roomRegisterPost(@Valid RoomDTO roomDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
 
         if (bindingResult.hasErrors()) {
@@ -51,10 +50,10 @@ public class RoomController {
         Long room_num = roomService.roomRegister(roomDTO);
         redirectAttributes.addFlashAttribute("msg", "룸이 등록되었습니다. 룸 번호 : " + room_num);
 
-        return "redirect:/room/roomList";
+        return "redirect:/room/roomRead?room_num=" + room_num;
     }
 
-    @GetMapping("roomList")
+    @GetMapping("/roomList")
     public String roomList(PageRequestDTO pageRequestDTO, Model model){
 
 //        PageResponseDTO<RoomDTO> pageResponseDTO = roomService.roomList(pageRequestDTO);
@@ -68,7 +67,7 @@ public class RoomController {
         return "room/roomList";
     }
 
-    @GetMapping("roomRead")
+    @GetMapping("/roomRead")
     public String roomRead(Long room_num, Model model, RedirectAttributes redirectAttributes){
 
         try {
@@ -84,7 +83,7 @@ public class RoomController {
         }
     }
 
-    @GetMapping("room/roomModify")
+    @GetMapping("/roomModify")
     public String roomModifyGet(Long room_num, PageRequestDTO pageRequestDTO, Model model){
 
         RoomDTO roomDTO = roomService.roomRead(room_num);
@@ -96,7 +95,7 @@ public class RoomController {
         }
     }
 
-    @PostMapping("room/roomModify")
+    @PostMapping("/roomModify")
     public String roomModify(@Valid RoomDTO roomDTO, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()){

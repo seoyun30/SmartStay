@@ -14,7 +14,7 @@
 <th:block layout:fragment="content">
     <div class="row mt-3">
         <div class="col text-end">
-            <a th:href="@{/room/roomRegister}" class="btn btn-dark">룸 등록</a>
+            <button type="button" onclick="location.href='/room/roomRegister'" class="btn btn-dark">룸 등록</button>
         </div>
     </div>
 
@@ -33,11 +33,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                <th:block th:each="room : ${list}">
 
+                <th:block th:each="room : ${list}">
                     <tr class="align-middle">
                         <td th:text="${room.room_num}"></td>
-                        <td th:text="${room.room_name}"></td>
+                        <td>
+                            <a th:href="@{/room/roomRead(room_num=${room.room_num})}">
+                                [[${room.room_name}]]
+                            </a>
+                        </td>
                         <td th:text="${room.room_info}"></td>
                         <td th:text="${room.room_type}"></td>
                         <td th:text="${room.room_bed}"></td>
