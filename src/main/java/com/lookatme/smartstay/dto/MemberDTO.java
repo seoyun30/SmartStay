@@ -30,11 +30,11 @@ public class MemberDTO {
     private Long member_num; //회원 번호
 
     @NotBlank(message = "이메일을 입력하세요.")
+    @Email(message = "이메일 형식에 맞춰서 작성해주세요.")
     private String email; //회원 이메일
 
-    @Email(message = "이메일 형식에 맞춰서 작성해주세요.")
     @NotBlank(message = "비밀번호를 입력하세요.")
-    @Size(min = 2, max= 20, message = "비밀번호는 2 ~ 20 글자로 입력해주세요.")
+    @Size(min = 8, max= 20, message = "비밀번호는 8 ~ 20 글자로 입력해주세요.")
     private String password; //회원 비밀번호
 
     @NotBlank(message = "이름을 입력하세요.")
