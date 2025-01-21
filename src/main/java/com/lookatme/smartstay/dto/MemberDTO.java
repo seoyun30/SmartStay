@@ -43,9 +43,9 @@ public class MemberDTO {
 
     private Role role; //회원 권한
 
-    private Chief chief; //호텔(총판)
+    private ChiefDTO chiefDTO; //호텔(총판)
 
-    private Manager manager; //호텔(매장)
+    private ManagerDTO managerDTO; //호텔(매장)
 
     private String corm; // 권한선택값
 

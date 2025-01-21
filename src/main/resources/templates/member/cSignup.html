@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/userlayout}">
+      layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
     <title>회원가입</title>
@@ -21,41 +21,86 @@
                 <div class="container my-auto">
                     <div class=" row justify-content-center">
 
-                        <form class="row g-3" action="/member/signup" method="post" th:object="${memberDTO}">
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" th:field="*{email}" class="form-control" id="email" placeholder="이메일 형식에 맞춰서 작성해주세요." required>
+                        <form class="row g-3" action="/member/adSignup" method="post" >
+
+                            <th:block th:object="${memberDTO}">
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" th:field="*{email}" class="form-control" id="email" placeholder="이메일 형식에 맞춰서 작성해주세요." required>
+                                    </div>
+                                    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError"></p>
                                 </div>
-                                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError"></p>
-                            </div>
 
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="비밀번호는 8 ~ 20 글자로 입력해주세요." required>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="비밀번호는 8 ~ 20 글자로 입력해주세요." required>
+                                    </div>
+                                    <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError"></p>
                                 </div>
-                                <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError"></p>
-                            </div>
 
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <label for="name" class="form-label">name</label>
-                                    <input type="text" th:field="*{name}" class="form-control" id="name">
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="name" class="form-label">name</label>
+                                        <input type="text" th:field="*{name}" class="form-control" id="name">
+                                    </div>
+                                    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
+                                    <span class="name"></span>
                                 </div>
-                                <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
-                                <span class="name"></span>
-                            </div>
 
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <label for="tel" class="form-label">tel</label>
-                                    <input type="text" th:field="*{tel}" class="form-control" id="tel">
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="tel" class="form-label">tel</label>
+                                        <input type="text" th:field="*{tel}" class="form-control" id="tel">
+                                    </div>
+                                    <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                                 </div>
-                                <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
-                            </div>
+                            </th:block>
+
+                            <th:block th:object="${chiefDTO}">
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="business_num" class="form-label">사업자번호</label>
+                                        <input type="text" th:field="*{business_num}" class="form-control" id="business_num">
+                                    </div>
+                                    <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="hotel_name" class="form-label">호텔명</label>
+                                        <input type="text" th:field="*{hotel_name}" class="form-control" id="hotel_name">
+                                    </div>
+                                    <p th:if="${#fields.hasErrors('hotel_name')}" th:errors="*{hotel_name}" class="fieldError"></p>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="owner" class="form-label">대표자이름</label>
+                                        <input type="text" th:field="*{owner}" class="form-control" id="owner">
+                                    </div>
+                                    <p th:if="${#fields.hasErrors('owner')}" th:errors="*{owner}" class="fieldError"></p>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="address" class="form-label">호텔주소</label>
+                                        <input type="text" th:field="*{address}" class="form-control" id="address">
+                                    </div>
+                                    <p th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="fieldError"></p>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="tel" class="form-label">호텔연락처</label>
+                                        <input type="text" th:field="*{tel}" class="form-control" id="tel">
+                                    </div>
+                                    <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
+                                </div>
 
 
+                            </th:block>
 
 
                             <div class="col text-center">
