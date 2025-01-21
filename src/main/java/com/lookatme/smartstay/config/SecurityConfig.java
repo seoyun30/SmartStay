@@ -48,7 +48,7 @@ public class SecurityConfig {
         http.formLogin(login->login
                 .loginPage("/login") //로그인은 /login맵핑으로
                 .defaultSuccessUrl("/") //로그인 성공시 / 페이지로 이동
-                .usernameParameter("userid") //userid를 username으로 사용
+                .usernameParameter("email") //userid를 username으로 사용
                 .permitAll() //모든 사용자가 로그인폼 사용
                 .successHandler(new CustomAuthenticationSuccessHandler())); //로그인 성공시처리할 클래스
 
