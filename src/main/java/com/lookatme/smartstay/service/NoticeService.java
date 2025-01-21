@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +24,9 @@ public class NoticeService {
     public List<NoticeDTO> noticeList(){
         List<Notice> notices = noticeRepository.findAll();
 
-        return null;
+        List<NoticeDTO> noticeDTOS = Arrays.asList(modelMapper.map(notices, NoticeDTO[].class));
+
+        return noticeDTOS;
     }
     //공지 사항 등록
     public void noticeRegister(NoticeDTO noticeDTO){
@@ -59,4 +61,5 @@ public class NoticeService {
     }
 
     //공지 사항 이미지
+
 }
