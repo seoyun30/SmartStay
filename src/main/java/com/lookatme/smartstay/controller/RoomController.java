@@ -57,9 +57,13 @@ public class RoomController {
     @GetMapping("roomList")
     public String roomList(PageRequestDTO pageRequestDTO, Model model){
 
-        PageResponseDTO<RoomDTO> pageResponseDTO = roomService.roomList(pageRequestDTO);
+//        PageResponseDTO<RoomDTO> pageResponseDTO = roomService.roomList(pageRequestDTO);
+//        log.info(pageResponseDTO);
+//
+//        model.addAttribute("pageResponseDTO", pageResponseDTO);
 
-        model.addAttribute("pageResponseDTO", pageResponseDTO);
+        List<RoomDTO> list = roomService.list();
+        model.addAttribute("list", list);
 
         return "room/roomList";
     }

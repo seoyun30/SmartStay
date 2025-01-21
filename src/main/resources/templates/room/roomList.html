@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/userlayout}">
+      layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -30,12 +30,10 @@
                     <th>룸 인원수</th>
                     <th>룸 가격</th>
                     <th>룸 상태</th>
-                    <th>수정</th>
-                    <th>삭제</th>
                 </tr>
                 </thead>
                 <tbody>
-                <th:block th:each="room : ${pageResponseDTO.dtoList}">
+                <th:block th:each="room : ${list}">
 
                     <tr class="align-middle">
                         <td th:text="${room.room_num}"></td>
@@ -45,8 +43,6 @@
                         <td th:text="${room.room_bed}"></td>
                         <td th:text="${room.room_price}"></td>
                         <td th:text="${room.room_state}"></td>
-                        <td><button class="btn btn-info modifyMoveBtn" th:value="${room.room_num}">수정</button></td>
-                        <td><button class="btn btn-primary deleteMoveBtn" th:value="${room.room_num}">삭제</button></td>
                     </tr>
                 </th:block>
                 </tbody>
@@ -54,24 +50,6 @@
         </div>
     </div>
 
-    <script th:inline="javascript">
-        $(document).ready(function () {
-            // Navigate to room modify page on button click
-            $(".modifyMoveBtn").on("click", function () {
-                const roomNum = $(this).val();
-                location.href = `/room/roomModify?room_num=${roomNum}`;
-            });
-
-            // Add functionality for delete button if needed
-            $(".deleteMoveBtn").on("click", function () {
-                const roomNum = $(this).val();
-                if (confirm("정말 삭제하시겠습니까?")) {
-                    // Add your AJAX delete request or navigation here
-                    alert(`Room ${roomNum} deleted (Add functionality here)`);
-                }
-            });
-        });
-    </script>
 </th:block>
 
 </body>

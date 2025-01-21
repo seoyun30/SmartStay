@@ -56,11 +56,22 @@ public class RoomService {
         return roomDTO;
     }
 
+    public List<RoomDTO> list () {
+       List<Room> roomList = roomRepository.findAll();
+        List<RoomDTO> roomDTOList =
+                roomList.stream()
+                        .map(room -> modelMapper.map(room, RoomDTO.class))
+                        .collect(Collectors.toList());
+
+        return roomDTOList;
+    }
+
     public PageResponseDTO<RoomDTO> roomList(PageRequestDTO pageRequestDTO) {
 
         Pageable pageable = pageRequestDTO.getPageable("room_num");
 
         Page<Room> result = roomRepository.findAll(pageable);
+        log.info(result);
 
         List<RoomDTO> roomDTOList = result.stream()
                 .map(room -> modelMapper.map(room, RoomDTO.class))
