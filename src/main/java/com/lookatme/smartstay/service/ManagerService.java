@@ -34,7 +34,9 @@ public class ManagerService {
         Manager manager1 = managerRepository.save(manager);
 
         //이미지
-        imageService.saveImage(multipartFiles, "manager", manager1.getManager_num());
+        if(multipartFiles != null && multipartFiles.size() > 0) {
+            imageService.saveImage(multipartFiles, "manager", manager1.getManager_num());
+        }
 
     }
 
