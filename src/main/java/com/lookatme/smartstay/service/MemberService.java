@@ -65,6 +65,7 @@ public class MemberService implements UserDetailsService {
                 MemberDTO.dtoEntity(memberDTO);
         member.setRole(Role.USER);
 
+        log.info(member);
         member =
                 memberRepository.save(member);
 

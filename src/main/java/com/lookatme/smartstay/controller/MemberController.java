@@ -61,7 +61,7 @@ public class MemberController {
     }
 
     @PostMapping("/accept") //권한 승인
-    public String accept(MemberDTO memberDTO, Principal principal){
+    public String accept(MemberDTO memberDTO){
         return "member/chiefAcceptList";
         //return "member/managerAcceptList";
     }
