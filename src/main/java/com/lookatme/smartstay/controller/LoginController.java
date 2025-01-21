@@ -1,11 +1,13 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.constant.Accept;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,7 @@ import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
+@Log4j2
 @RequestMapping("/member")
 public class LoginController {
 
@@ -49,15 +52,19 @@ public class LoginController {
    @PostMapping("/signup") //회원가입 포스트
     public String signupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model){
 
-        if(bindingResult.hasErrors()){
+        log.info(memberDTO);
 
+        if(bindingResult.hasErrors()){
+            log.info(bindingResult.getAllErrors());
            return "member/signup";
        }
 
        try{
             memberService.saveMember(memberDTO);
+
        }catch (IllegalStateException e){
            model.addAttribute("msg", e.getMessage());
+
            return "member/signup";
        }
 
