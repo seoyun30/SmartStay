@@ -36,8 +36,9 @@ public class ChiefController {
         return "chiefRegister";
     }
     @PostMapping("/chiefRegisger")
-    public String chiefRegisterPost(Model model, ChiefDTO chiefDTO) {
-        chiefService.insert(chiefDTO);
+    public String chiefRegisterPost(Model model, ChiefDTO chiefDTO,
+                                    List<MultipartFile> multipartFiles) throws Exception {
+        chiefService.insert(chiefDTO, multipartFiles);
         return "chiefRegister";
     }
 
@@ -51,6 +52,7 @@ public class ChiefController {
     //상세보기
     @GetMapping("/chifeRead")
     public String chiefRead() {
+        //chiefService.read();
         return "chiefList";
     }
 
@@ -82,8 +84,8 @@ public class ChiefController {
 
     @PostMapping("/managerRegister")
     public String managerRegisterPost(ManagerDTO managerDTO, MemberDTO memberDTO,
-                                      List<MultipartFile> multipartFiles) {
-        managerService.managerInsert(managerDTO);
+                                      List<MultipartFile> multipartFiles) throws Exception {
+        managerService.managerInsert(managerDTO, multipartFiles);
         return "managerRegister";
     }
 
@@ -95,17 +97,18 @@ public class ChiefController {
     }
 
     //매장 상세보기
-    @GetMapping("/managerRead")
+    @GetMapping({"/managerRead", "/manager/managerRead"})
     public String managerRead(Principal principal, PageRequestDTO pageRequestDTO) {
+       // managerService.managerRead();
         return "managerRead";
     }
 
     //매장 수정
-    @GetMapping("/managerModify")
+    @GetMapping({"/managerModify", "manager/managerModify"})
     public String managerModifyGet(Principal principal, PageRequestDTO pageRequestDTO) {
         return "managerModify";
     }
-    @PostMapping("/managerModify")
+    @PostMapping({"/managerModify", "manager/magerModify"})
     public String managerModifyPost(ManagerDTO managerDTO, MemberDTO memberDTO, List<Long> delnumList,
                                     List<MultipartFile> multipartFiles, ImageDTO imageDTO, PageRequestDTO pageRequestDTO) {
         managerService.managerUpdate(managerDTO);
