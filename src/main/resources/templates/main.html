@@ -11,6 +11,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-유저 메인화면
+
+<th:block layout:fragment="content">
+    <th:block th:each="chief : ${list}">
+        <tr class="align-middle">
+            <td th:text="${chief.chief_num}"></td>
+        </tr>
+    </th:block>
+</th:block>
 </body>
 </html>
