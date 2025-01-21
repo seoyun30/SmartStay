@@ -8,8 +8,10 @@ import groovy.util.logging.Log4j2;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.bytebuddy.dynamic.loading.ByteArrayClassLoader;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,19 +26,32 @@ public class ChiefService {
 
     private final ChiefRepository chiefRepository;
     private final ModelMapper modelMapper;
+    private final ImageService imageService;
 
     //chief 등록
-    public void insert(ChiefDTO chiefDTO){
+    public void insert(ChiefDTO chiefDTO,
+                       List<MultipartFile> multipartFiles) throws Exception {
         Chief chief = modelMapper.map(chiefDTO, Chief.class);
+        Chief chief1 = chiefRepository.save(chief);
 
-        chiefRepository.save(chief);
+        //이미지
+        imageService.saveImage(multipartFiles, "chief", chief1.getChief_num());
     }
 
     //chief 목록
     public List<ChiefDTO> chiefList(){
         List<Chief> chiefs = chiefRepository.findAll();
-        List<ChiefDTO> chiefDTOS = chiefs.stream().map(chief -> modelMapper.map(chief, ChiefDTO.class)).collect(Collectors.toList());
+        List<ChiefDTO> chiefDTOS = chiefs.stream()
+                .map(chief -> modelMapper.map(chief, ChiefDTO.class)).collect(Collectors.toList());
         return chiefDTOS;
+    }
+
+    //chief 상세보기
+    public ChiefDTO read(Long id) {
+        Optional<Chief> chief = chiefRepository.findById(id);
+        ChiefDTO chiefDTO = modelMapper.map(chief, ChiefDTO.class);
+
+        return chiefDTO;
     }
 
     //chief 수정
