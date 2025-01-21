@@ -3,6 +3,7 @@ package com.lookatme.smartstay.controller;
 import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.dto.NoticeDTO;
+import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
