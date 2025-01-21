@@ -4,6 +4,7 @@ import com.lookatme.smartstay.constant.Accept;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.entity.Chief;
 import com.lookatme.smartstay.entity.Manager;
+import com.lookatme.smartstay.entity.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +13,8 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -48,6 +51,8 @@ public class MemberDTO {
 
     private Manager manager; //호텔(매장)
 
+    private String corm; // 권한선택값
+
     private LocalDateTime reg_date;
 
     private LocalDateTime modi_date;
@@ -56,4 +61,19 @@ public class MemberDTO {
 
     private String modified_by;
 
+    public static Member dtoEntity(MemberDTO memberDTO) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        Member member = new Member();
+        member.setName(memberDTO.name);
+        member.setEmail(memberDTO.email);
+        member.setTel(memberDTO.tel);
+        member.setPassword(passwordEncoder.encode(memberDTO.password));
+        member.setRole(Role.SUPERADMIN);
+        member.setRole(Role.CHIEF);
+        member.setRole(Role.MANAGER);
+        member.setRole(Role.USER);
+
+        return member;
+    }
 }

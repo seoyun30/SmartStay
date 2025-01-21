@@ -9,17 +9,12 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.internal.bytebuddy.description.ByteCodeElement;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
-import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @RequiredArgsConstructor
@@ -28,32 +23,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
-    private final ModelMapper modelMapper;
-    private final PasswordEncoder passwordEncoder;
-
-    public MemberDTO saveMember(MemberDTO memberDTO){
-
-        Member member =
-                memberRepository.findByEmail(memberDTO.getEmail());
-
-        if(member != null){
-            throw new IllegalStateException("이미 가입된 회원입니다.");
-        }
-
-        member =
-                modelMapper.map(memberDTO, Member.class);
-
-        member.setRole(Role.SUPERADMIN);
-        member.setRole(Role.CHIEF);
-        member.setRole(Role.MANAGER);
-
-        member.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
-
-        member =
-                memberRepository.save(member);
-
-        return modelMapper.map(member, MemberDTO.class);
-    }
 
 
     @Override
@@ -86,5 +55,72 @@ public class MemberService implements UserDetailsService {
                 .password(member.getPassword())
                 .roles(role)
                 .build();
+    }
+
+    public Member saveMember(MemberDTO memberDTO){
+
+        validateDuplicateMember(memberDTO.getEmail());
+
+        Member member =
+                MemberDTO.dtoEntity(memberDTO);
+        member.setRole(Role.USER);
+
+        member =
+                memberRepository.save(member);
+
+        return member;
+    }
+
+    public Member saveSuperAdminMember(MemberDTO memberDTO){
+
+        validateDuplicateMember(memberDTO.getEmail());
+
+        Member member =
+                MemberDTO.dtoEntity(memberDTO);
+        member.setRole(Role.CHIEF);
+
+        member =
+                memberRepository.save(member);
+
+        return member;
+    }
+
+    public Member saveChiefMember(MemberDTO memberDTO){
+
+        validateDuplicateMember(memberDTO.getEmail());
+
+        Member member =
+                MemberDTO.dtoEntity(memberDTO);
+        member.setRole(Role.CHIEF);
+
+        member =
+                memberRepository.save(member);
+
+        return member;
+    }
+
+    public Member saveManagerMember(MemberDTO memberDTO){
+
+        validateDuplicateMember(memberDTO.getEmail());
+
+        Member member =
+                MemberDTO.dtoEntity(memberDTO);
+        member.setRole(Role.MANAGER);
+
+        member =
+                memberRepository.save(member);
+
+        return member;
+    }
+
+    private void validateDuplicateMember(String memberDTO){
+
+        Member member =
+                memberRepository.findByEmail(memberDTO);
+
+        if(member != null){
+            throw new IllegalStateException("이미 가입된 회원입니다.");
+        }
+
     }
 }
