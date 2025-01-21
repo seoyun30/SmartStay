@@ -1,6 +1,6 @@
 package com.lookatme.smartstay.entity;
 
-import com.lookatme.smartstay.constant.Accept;
+import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -30,7 +30,7 @@ public class Member extends BaseEntity{
     private String tel; //연락처
 
     @Enumerated(EnumType.STRING)
-    private Accept accept; //승인
+    private Power power; //승인
 
     @Enumerated(EnumType.STRING)
     private Role role; //회원 권한

@@ -1,14 +1,10 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.constant.Accept;
 import com.lookatme.smartstay.dto.MemberDTO;
-import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.service.MemberService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,11 +33,69 @@ public class LoginController {
         return "member/adTerms";
     }
 
-    @GetMapping("/adSignup") //회원가입페이지(총판, 매니져)
+    @GetMapping("/adSignup") //회원가입페이지(saveSuperAdminMember-슈퍼어드민이 승인해주는 첫번째 치프)
     public String adSignupGet(Model model){
         model.addAttribute("memberDTO", new MemberDTO());
         return "member/adSignup";
     }
+
+    @PostMapping("/adSignup") //회원가입포스트(saveSuperAdminMember-슈퍼어드민이 승인해주는 첫번째 치프)
+    public String adsignupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes, Model model){
+
+        log.info(memberDTO);
+
+        if(bindingResult.hasErrors()){
+            log.info(bindingResult.getAllErrors());
+            return "member/adSignup";
+        }
+
+        redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
+        return "member/adSignup";
+    }
+
+    @GetMapping("/cSignup") //회원가입페이지(saveChiefMember-치프가 승인해주는 치프)
+    public String chSignupGet(Model model){
+        model.addAttribute("memberDTO", new MemberDTO());
+        return "member/cSignup";
+    }
+
+    @PostMapping("/cSignup") //회원가입포스트(saveChiefMember-치프가 승인해주는 치프)
+    public String chsignupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult,
+                               RedirectAttributes redirectAttributes, Model model){
+
+        log.info(memberDTO);
+
+        if(bindingResult.hasErrors()){
+            log.info(bindingResult.getAllErrors());
+            return "member/cSignup";
+        }
+
+        redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
+        return "member/cSignup";
+    }
+
+    @GetMapping("/mSignup") //회원가입페이지(saveManagerMember-치프가 승인해주는 매니저)
+    public String maSignupGet(Model model){
+        model.addAttribute("memberDTO", new MemberDTO());
+        return "member/mSignup";
+    }
+
+    @PostMapping("/mSignup") //회원가입포스트(saveManagerMember-치프가 승인해주는 매니저)
+    public String masignupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult,
+                               RedirectAttributes redirectAttributes, Model model){
+
+        log.info(memberDTO);
+
+        if(bindingResult.hasErrors()){
+            log.info(bindingResult.getAllErrors());
+            return "member/mSignup";
+        }
+
+        redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
+        return "member/mSignup";
+    }
+
 
     @GetMapping("/signup") //회원가입페이지(유저)
     public String signupGet(Model model){
@@ -50,7 +104,8 @@ public class LoginController {
     }
 
    @PostMapping("/signup") //회원가입 포스트
-    public String signupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model){
+    public String signupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes, Model model){
 
         log.info(memberDTO);
 
@@ -59,14 +114,17 @@ public class LoginController {
            return "member/signup";
        }
 
-       try{
+        log.info("통과");
+
+      /* try{
             memberService.saveMember(memberDTO);
 
        }catch (IllegalStateException e){
+
            model.addAttribute("msg", e.getMessage());
 
            return "member/signup";
-       }
+       }*/
 
        redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
         return "member/signup";

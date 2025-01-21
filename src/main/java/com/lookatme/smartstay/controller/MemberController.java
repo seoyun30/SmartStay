@@ -52,17 +52,17 @@ public class MemberController {
 
     @GetMapping("/chiefAcceptList") // 권한승인(총판)
     public String chiefAcceptList(){
-        return "member/chiefAcceptList";
+        return "chiefPowerList";
     }
 
     @GetMapping("/managerAcceptList") // 권한승인(매니져)
     public String managerAcceptList(){
-        return "member/managerAcceptList";
+        return "managerPowerList";
     }
 
     @PostMapping("/accept") //권한 승인
     public String accept(MemberDTO memberDTO){
-        return "member/chiefAcceptList";
+        return "chiefPowerList";
         //return "member/managerAcceptList";
     }
 

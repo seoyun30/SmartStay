@@ -1,18 +1,14 @@
 package com.lookatme.smartstay.dto;
 
-import com.lookatme.smartstay.constant.Accept;
+import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.entity.Chief;
 import com.lookatme.smartstay.entity.Manager;
 import com.lookatme.smartstay.entity.Member;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -43,7 +39,7 @@ public class MemberDTO {
     @NotBlank(message = "연락처를 입력하세요.")
     private String tel; //연락처
 
-    private Accept accept; //승인
+    private Power power; //승인
 
     private Role role; //회원 권한
 
