@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.constant.Accept;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Member;
@@ -69,10 +70,10 @@ public class MemberService implements UserDetailsService {
         if("SUPERADMIN".equals(member.getRole().name())){
             log.info("슈퍼어드민");
             role = Role.SUPERADMIN.name();
-        }else if("CHIEF".equals(member.getRole().name())){
+        }else if("CHIEF".equals(member.getRole().name()) && member.getAccept() == Accept.Y){
             log.info("치프");
             role = Role.CHIEF.name();
-        }else if("MANAGER".equals(member.getRole().name())){
+        }else if("MANAGER".equals(member.getRole().name()) && member.getAccept() == Accept.Y){
             log.info("매니져");
             role = Role.MANAGER.name();
         }else {
