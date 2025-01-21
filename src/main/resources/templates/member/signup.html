@@ -55,11 +55,13 @@
                                 <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
                             </div>
 
+                            <input type="text" th:name="${memberDTO.accept}" class="form-control" id="accept">
+
 
 
                             <div class="col text-center">
                                 <button type="submit" class="btn btn-primary">회원가입</button>
-                                <button type="submit" class="btn btn-primary">로그인</button>
+
                             </div>
                         </form>
                     </div>
