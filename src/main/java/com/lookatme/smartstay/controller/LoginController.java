@@ -4,7 +4,9 @@ import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.service.MemberService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,17 +35,19 @@ public class LoginController {
     }
 
     @GetMapping("/adSignup") //회원가입페이지(총판, 매니져)
-    public String adSignupGet(){
+    public String adSignupGet(Model model){
+        model.addAttribute("memberDTO", new MemberDTO());
         return "member/adSignup";
     }
 
     @GetMapping("/signup") //회원가입페이지(유저)
-    public String signupGet(){
+    public String signupGet(Model model){
+        model.addAttribute("memberDTO", new MemberDTO());
         return "member/signup";
     }
 
    @PostMapping("/signup") //회원가입 포스트
-    public String signupPost(MemberDTO memberDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model){
+    public String signupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model){
 
         if(bindingResult.hasErrors()){
 
