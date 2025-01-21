@@ -13,10 +13,48 @@
 <body>
 
 <th:block layout:fragment="content">
+    <th:block>
+        <div id="carouselExampleIndicators" class="carousel slide">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    첫번째 이미지
+                </div>
+                <div class="carousel-item">
+                    두번째 이미지
+                </div>
+                <div class="carousel-item">
+                    세번째 이미지
+                </div>
+                <div class="carousel-item">
+                    네번째 이미지
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </th:block>
     <th:block th:each="chief : ${list}">
-        <tr class="align-middle">
-            <td th:text="${chief.chief_num}"></td>
-        </tr>
+        <div class="col mb-3">
+<!--            <a th:href="@{/chief/chifeRead(chief_num=${chief.chief_num})}">-->
+            <a th:href="@{/roomreserve/roomReserveRegister}">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${chief.hotel_name}">호텔 명</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
     </th:block>
 </th:block>
 </body>
