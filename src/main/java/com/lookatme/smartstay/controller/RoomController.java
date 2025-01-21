@@ -31,14 +31,15 @@ public class RoomController {
 
 
     @GetMapping("roomRegister")
-    public String roomRegisterGet(RoomDTO roomDTO){
+    public String roomRegisterGet(Model model){
 
+        model.addAttribute("roomDTO", new RoomDTO());
         return "room/roomRegister";
     }
 
     @PostMapping("roomRegister")
-    public String roomRegisterPost(@Valid RoomDTO roomDTO, MemberDTO memberDTO,
-                                   BindingResult bindingResult, List<MultipartFile> multipartFileList) throws Exception {
+    public String roomRegisterPost(@Valid RoomDTO roomDTO,
+                                   BindingResult bindingResult) throws Exception {
 
         if (bindingResult.hasErrors()) {
             log.info(bindingResult.getAllErrors());
@@ -46,10 +47,19 @@ public class RoomController {
             return "room/roomRegister";
         }
 
-        roomService.roomRegister(roomDTO, multipartFileList);
 
         return "redirect:/room/roomList";
     }
 
+    @GetMapping("roomList")
+    public String roomList(PageRequestDTO pageRequestDTO, Model model){
+
+        PageResponseDTO<RoomDTO> pageResponseDTO =
+                roomService.roomList(pageRequestDTO);
+
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
+
+        return "room/roomList";
+    }
 
 }
