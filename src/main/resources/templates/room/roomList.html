@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -7,6 +10,80 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-룸 목록
+
+<th:block layout:fragment="content">
+
+
+    <div class="row mt-3">
+        <div class="col text-end">
+            <button class="btn btn-dark newproduct">룸 등록</button>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
+            <th:block th:if="${not #lists.isEmpty(pageResponseDTO.dtoList)}">
+
+                <table class="table  table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <td>#</td>
+                        <td>룸 명</td>
+                        <td>룸 정보</td>
+                        <td>룸 타입</td>
+                        <td>룸 인원수</td>
+                        <td>룸 가격</td>
+                        <td>룸 상태</td>
+                        <td>등록일자</td>
+                        <td>수정일자</td>
+                        <td>수정</td>
+                        <td>삭제</td>
+                    </tr>
+                    </thead>
+                    <th:block  th:each="list: ${pageResponseDTO.dtoList}">
+                        <tbody>
+                        <tr class="align-middle">
+                            <td  th:text="${list.room_num}"></td>
+                            <td>
+                                <a th:href="@{/room/roomRead(id=${list.room_num})}">
+                                    [[${list.room_name}]]
+                                </a>
+                            </td>
+                            <td>
+                                <a th:href="@{/room/roomRead(id=${list.room_num})}">
+                                    [[${list.room_info}]]
+                                </a>
+                            </td>
+                            <td>
+                                <a th:href="@{/room/roomRead(id=${list.room_num})}">
+                                    [[${list.room_type}]]
+                                </a>
+                            </td>
+                            <td>
+                                <a th:href="@{/room/roomRead(id=${list.room_num})}">
+                                    [[${list.room_bed}]]
+                                </a>
+                            </td>
+                            <td>
+                            <a th:href="@{/room/roomRead(id=${list.room_num})}">
+                                [[${list.room_price}]]
+                            </a>
+                            </td>
+                            <td>
+                            <a th:href="@{/room/roomRead(id=${list.room_num})}">
+                                [[${list.room_state}]]
+                            </a>
+                            </td>
+                            <td th:text="${list.createBy}"></td>
+                            <td th:text="${#temporals.format(list.regTime, 'yyyy-MM-dd')}"></td>
+                            <td th:text="${#temporals.format(list.updateTime, 'yyyy-MM-dd')}"></td>
+                        </tr>
+                        </tbody>
+                    </th:block>
+                </table>
+            </th:block>
+        </div>
+    </div>
+</th:block>
 </body>
 </html>
