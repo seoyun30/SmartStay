@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -19,11 +20,12 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @Log4j2
+@RequestMapping("/notice")
 public class NoticeController {
 
     private final NoticeService noticeService;
 
-    @GetMapping("/List")
+    @GetMapping("/noticeList")
     public String noticeListFrom(PageRequestDTO pageRequestDTO, Model model){
         log.info("모든 데이터를 읽어온다...");
         List<NoticeDTO> noticeDTOList = noticeService.noticeList();
@@ -32,22 +34,22 @@ public class NoticeController {
         return "notice/noticeList";
     }
 
-    @GetMapping("/Register")
+    @GetMapping("/noticeRegister")
     public String noticeRegisterFrom(){
         log.info("입력폼 페이지 이동...");
 
         return "notice/noticeRegister";
     }
 
-    @PostMapping("/Register")
+    @PostMapping("/noticeRegister")
     public String noticeRegisterPost(NoticeDTO noticeDTO, MemberDTO memberDTO, List<MultipartFile> multipartFileList){
         log.info("입력폼 내용을 저장...");
         noticeService.noticeRegister(noticeDTO);
 
-        return "redirect:/noticeList";
+        return "redirect:/notice/noticeList";
     }
 
-    @GetMapping("/Read")
+    @GetMapping("/noticeRead")
     public String noticeRead(Long id, PageRequestDTO pageRequestDTO, Model model){
         log.info("개별읽기...");
         NoticeDTO noticeDTO = noticeService.noticeRead(id);
@@ -58,7 +60,7 @@ public class NoticeController {
         return "notice/noticeRead";
     }
 
-    @GetMapping("/Modify")
+    @GetMapping("/noticeModify")
     public String noticeModifyGet(Long notice_num, Principal principal, PageRequestDTO pageRequestDTO, Model model){
         log.info("수정할 데이터 읽기...");
         NoticeDTO noticeDTO = noticeService.noticeRead(notice_num);
@@ -69,20 +71,20 @@ public class NoticeController {
         return "notice/noticeModify";
     }
 
-    @PostMapping("/Modify")
+    @PostMapping("/noticeModify")
     public String noticeModifyPost(NoticeDTO noticeDTO, MemberDTO memberDTO, List<MultipartFile> multipartFileList,
                                    PageRequestDTO pageRequestDTO, ImageDTO imageDTO){
         log.info("수정된 데이터 저장...");
         noticeService.noticeModify(noticeDTO);
 
-        return "redirect:/noticeModify";
+        return "redirect:/notice/noticeList";
     }
 
-    @PostMapping("/Delete")
+    @PostMapping("/noticeDelete")
     public String noticeDelete(Long notice_num){
         log.info("삭제 처리...");
         noticeService.noticeDelete(notice_num);
 
-        return "redirect:/noticeList";
+        return "redirect:/notice/noticeList";
     }
 }
