@@ -10,12 +10,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <th:block layout:fragment="script"></th:block>
     <th:block layout:fragment="css"></th:block>
+    <link th:href="@{/css/userstyle.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 </head>
 <body>
 
 <div th:replace="~{fragments/header::header}"></div>
 
-<div layout:fragment="content"></div>
+<div id="main" layout:fragment="content"></div>
 
 <div th:replace="~{fragments/footer::footer}"></div>
 
