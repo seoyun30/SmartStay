@@ -61,6 +61,8 @@ public class CareService {
         care.setCare_detail(careDTO.getCare_detail());
         care.setCare_price(careDTO.getCare_price());
 
-        return null;
+        care = careRepository.save(care);
+
+        return modelMapper.map(care, CareDTO.class);
     }
 }

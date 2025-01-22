@@ -12,11 +12,12 @@
 <body>
 <th:block layout:fragment="content">
 
-    <form action="#" method="post" th:object="${menuDTO}">
+    <form action="/menu/menuModify" method="post" th:object="${menuDTO}">
 
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="row">
+                    <input type="hidden" th:field="*{menu_num}">
 
                     <div class="col-12">
                         <div class="mb-3">
@@ -55,13 +56,8 @@
                     </div>
 
                     <div class="col-12">
-                        <button class="btn btn-dark">수정하기</button>
-                        <button type="button"  class="btn btn-dark listbtn">목록</button>
-                        <script>
-                            $(".listbtn").on("click", function () {
-                                location.href = "/menu/menuList";
-                            })
-                        </script>
+                        <button type="submit" class="btn btn-dark">수정하기</button>
+                        <button type="button" class="btn btn-dark" onclick="location.href='/menu/menuList'">목록</button>
                     </div>
                 </div>
             </div>

@@ -90,7 +90,7 @@ public class MenuController {
     }
 
     @PostMapping("/menuModify")
-    public String menuModifyPost(@Valid MenuDTO menuDTO, BindingResult bindingResult) {
+    public String menuModifyPost(@Valid MenuDTO menuDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
@@ -98,9 +98,25 @@ public class MenuController {
             return "menu/menuModify";
         }
 
-        menuService.menuModify(menuDTO);
+        try {
+            menuService.menuModify(menuDTO);
+            redirectAttributes.addFlashAttribute("msg", "메뉴가 수정되었습니다. 메뉴 번호 : " + menuDTO.getMenu_num());
 
-        return null;
+            return "redirect:/menu/menuRead?menu_num=" + menuDTO.getMenu_num();
+
+        }catch (EntityNotFoundException e) {
+            log.error("Menu not found: {}", menuDTO.getMenu_num(), e);
+            redirectAttributes.addFlashAttribute("msg", "수정하려는 룸이 존재하지 않습니다.");
+
+            return "redirect:/menu/menuList";
+
+        }catch (Exception e) {
+            log.error("Error during menu modification: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("msg", "메뉴 수정 중 오류가 발생했습니다.");
+
+            return "redirect:/menu/menuList";
+        }
+
     }
 }
 

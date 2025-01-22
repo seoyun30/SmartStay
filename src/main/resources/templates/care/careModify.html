@@ -12,15 +12,16 @@
 <body>
 <th:block layout:fragment="content">
 
-    <form action="#" method="post" th:object="${careDTO}">
+    <form action="/care/careModify" method="post" th:object="${careDTO}">
 
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="row">
+                    <input type="hidden" th:field="*{care_num}">
 
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="manager_num" class="form-label">케어서비스 정보</label>
+                            <label for="manager_num" class="form-label">매장 정보</label>
                             <p class="form-control" th:value="${memberDTO?.managerDTO?.manager_num}" id="manager_num"></p>
                         </div>
                     </div>
@@ -55,13 +56,8 @@
                     </div>
 
                     <div class="col-12">
-                        <button class="btn btn-dark">수정하기</button>
-                        <button type="button"  class="btn btn-dark listbtn">목록</button>
-                        <script>
-                            $(".listbtn").on("click", function () {
-                                location.href = "/care/careList";
-                            })
-                        </script>
+                        <button type="submit" class="btn btn-dark">수정하기</button>
+                        <button type="button" class="btn btn-dark" onclick="location.href='/care/careList'">목록</button>
                     </div>
                 </div>
             </div>

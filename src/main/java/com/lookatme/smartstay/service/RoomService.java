@@ -90,13 +90,15 @@ public class RoomService {
         Room room = roomRepository.findById(roomDTO.getRoom_num()).orElseThrow(EntityNotFoundException::new);
 
         room.setRoom_name(roomDTO.getRoom_name());
-        room.setRoom_info(room.getRoom_info());
-        room.setRoom_type(room.getRoom_type());
-        room.setRoom_bed(room.getRoom_bed());
-        room.setRoom_price(room.getRoom_price());
-        room.setRoom_state(room.getRoom_state());
+        room.setRoom_info(roomDTO.getRoom_info());
+        room.setRoom_type(roomDTO.getRoom_type());
+        room.setRoom_bed(roomDTO.getRoom_bed());
+        room.setRoom_price(roomDTO.getRoom_price());
+        room.setRoom_state(roomDTO.getRoom_state());
 
-        return null;
+        room = roomRepository.save(room);
+
+        return modelMapper.map(room, RoomDTO.class);
     }
 
 }
