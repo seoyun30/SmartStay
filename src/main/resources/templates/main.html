@@ -49,14 +49,25 @@
         <div class="col mb-3">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${chief.hotel_name}">호텔 명</h5>
-                    <p class="card-text">호텔 정보</p>
-                    <a th:href="@{/roomreserve/roomReserveRegister}" class="btn btn-primary">예약하기</a>
+                    <h5 class="card-title">
+                        <a th:href="@{/chief/managerRead(chief_num=${chief.chief_num})}" th:text="${chief.hotel_name}">호텔 명</a>
+                    </h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>호텔 주소 : </strong> <span th:text="${chief.address}">호텔 주소</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>연락처 : </strong> <span th:text="${chief.tel}">연락처</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>별점 : </strong> <span th:text="${chief.score}">별점</span>
+                        </li>
+                    </ul>
+                    <a th:href="@{/roomreserve/roomReserveRegister}" class="btn btn-primary mt-3">예약하기</a>
                 </div>
             </div>
         </div>
     </th:block>
-
 </th:block>
 </body>
 </html>
