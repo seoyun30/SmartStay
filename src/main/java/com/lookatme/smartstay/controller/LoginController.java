@@ -159,12 +159,29 @@ public class LoginController {
    }
 
    @GetMapping("/login") //로그인페이지(유저)
-    public String loginGet(){
+    public String loginGet(MemberDTO memberDTO, Principal principal){
+
+       log.info("로그인");
+       log.info("로그인");
+       log.info("로그인");
+       log.info("로그인");
+       log.info("로그인");
+       log.info("로그인");
+       log.info("로그인");
+       log.info("로그인");
+
+        if(principal != null){
+            log.info("정보오류");
+            log.info("정보오류");
+            log.info("정보오류");
+            log.info("정보오류");
+        }
+
         return "member/login";
    }
 
    @PostMapping("/login") //로그인
-    public String loginPost(MemberDTO memberDTO){
+    public String loginPost(MemberDTO memberDTO, Principal principal){
         return "member/adLogin";
         //return "member/login";
    }
