@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -8,31 +8,119 @@
 </head>
 <body>
 <div class="container">
-    <div class="row mt-5">
-        <div class="col mt-4"></div>
-        <div class="col-8">
-            <table class="table table-bordered table-light text-center">
-                <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>제목</th>
-                    <th>작성자</th>
-                    <th>날짜</th>
-                    <th>조회수</th>
-                </tr>
-                </thead>
-                <tbody> <!--더미데이터 채우기 1개만-->
-                <tr><!--th:each 반복처리-->
-                    <td>1</td>
-                    <td>연습용</td>
-                    <td>홍길동</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                </tbody>
-            </table>
+    <div id="search" class="border mb-5">
+        <form action="#">
+            <!--검색창-->
+            <div class="row">
+                <div class="col-2 border py-2">조직선택</div>
+                <div class="col-4 border py-2">
+                    <select class="form-select" name="">
+                        <option value="1">총판조직</option>
+                        <option value="2">지점조직</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-2 border py-2">작성자</div>
+                    <div class="col-4 border py-2">
+                        <input type="text" class="form-control" name="username">
+                    </div>
+                </div>
+                <!--조회버튼-->
+                <div class="d-flex justify-content-center my-3">
+                    <button type="button" class="btn" style="background-color: #000000; color: #ffff00; border: none; padding: 7px 15px; border-radius: 10px; font-weight: bold;">
+                        조회
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="list" class="border: none;">
+        <!--회원목록-->
+        <!--추가버튼-->
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn" style="background-color: #000000; color: #ffff00; border: none; font-weight: bold; border-radius: 15px; padding: 7px 15px;">
+                추가
+            </button>
         </div>
-        <div class="col"></div>
+        <h3>공지 사항</h3>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th style="width:7%">No</th>
+                <th style="width:13%">조직</th>
+                <th style="width:26%">제목</th>
+                <th style="width:20%">작성자</th>
+                <th style="width:10%">작성일</th>
+                <th style="width:10%">수정일</th>
+                <th style="width:9%">조회수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><!--최대값으로 더미값을 입력-->
+            <tr th:each="data:${noticeDTOList}"><!--더미값으로 채우기(가장 긴값)-->
+                <td th:text="${data.notice_num}"></td>
+                <td>
+                <td>조직</td>
+                <td>
+                    <a th:href="@{/noticeRead(id=${data.notice_num})}" th:text="${data.title}">
+                        이것은 연습용 게시글입니다
+                    </a>
+                </td>
+                <td th:text="${data.create_by}"></td>
+                <td th:text="${#temporals.format(data.reg_Date, 'yyyy-MM-dd')}"></td>
+                <td th:text="${data.modi_date}"></td>
+                <td>
+                <td></td>
+            </tr>
+            </tr>
+            </tbody>
+        </table>
+        <!--페이지번호-->
+        <div class="d-flex justify-content-center">
+            <ul class="pagination custom-pagination">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <style>
+            /* 페이지네이션 테두리 제거 */
+            .custom-pagination .page-link {
+                border: none; /* 테두리 제거 */
+                color: yellow; /* 텍스트 색상 변경 */
+                background-color: black; /* 배경 색상 */
+            }
+
+            /* 마우스 호버 효과 */
+            .custom-pagination .page-link:hover {
+                background-color: #0056b3; /* 호버 시 배경 색상 */
+                color: #ffffff; /* 호버 시 텍스트 색상 */
+            }
+
+            /* 현재 페이지(active) 스타일 */
+            .custom-pagination .page-item.active .page-link {
+                background-color: #28a745; /* 활성 페이지 배경 색상 */
+                color: #ffffff; /* 활성 페이지 텍스트 색상 */
+            }
+
+            /* 비활성화 버튼 스타일 */
+            .custom-pagination .page-item.disabled .page-link {
+                background-color: #e9ecef; /* 비활성화 배경 색상 */
+                color: #6c757d; /* 비활성화 텍스트 색상 */
+            }
+        </style>
+
     </div>
 </div>
 </body>
