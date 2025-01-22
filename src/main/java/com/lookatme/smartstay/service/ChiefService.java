@@ -71,13 +71,11 @@ public class ChiefService {
         //ChiefDTO chiefDTO = modelMapper.map(chief, ChiefDTO.class);
         //return chiefDTO;
 
-
     //chief 수정
     public void update(ChiefDTO chiefDTO,
                        List<MultipartFile> multipartFiles) throws Exception{
         Chief chief = chiefRepository.findById(chiefDTO.getChief_num())
                 .orElseThrow(EntityNotFoundException::new);
-//this id null  error
         //set
         chief.setChief_num(chiefDTO.getChief_num());
         chief.setHotel_name(chiefDTO.getHotel_name());
@@ -95,14 +93,12 @@ public class ChiefService {
             chiefRepository.save(chiefs);
         } */
     }
-
     //chief 삭제
     public void delete(Long id){
         log.info("서비스로 들어온 삭제할 번호 :"+id);
 
         chiefRepository.deleteById(id);
     }
-
 
 
 
