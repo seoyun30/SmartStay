@@ -72,18 +72,12 @@
                                             지사
                                         </label>
                                     </div>
-
                                 </form>
-
-
                             </div>
 
+                                <th:block th:object="${chiefDTO}">
 
-
-                            <th:block th:object="${chiefDTO}">
-
-
-                                <div id="myDiv1" style="display:none">
+                                    <div id="myDiv1" style="display:none">
                                         <div class="row mt-4 mb-3">
                                             <div class="col">
                                                 <label for="business_num" class="form-label">사업자번호</label>
@@ -124,14 +118,10 @@
                                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                                         </div>
                                     </div>
-                            </th:block>
-
-
-
+                                </th:block>
 
                             <div class="col text-center mt-5">
                                 <button type="submit" class="btn btn-primary">회원가입</button>
-
                             </div>
                         </form>
                     </div>
@@ -141,10 +131,11 @@
         </div>
 
     </div>
+
 </th:block>
 
 
-<script layout:fragment="script">
+<script inline="javascript" layout:fragment="script">
 
 
     function showDiv() {
@@ -159,9 +150,8 @@
             }
         }
     }
-</script>
-
 
 </script>
+
 </body>
 </html>
