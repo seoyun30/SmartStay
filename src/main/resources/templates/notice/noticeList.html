@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -7,119 +9,119 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-<div class="container">
-    <div id="search" class="border mb-5">
-        <form action="#">
-            <!--검색창-->
-            <div class="row">
-                <div class="col-2 border py-2">조직선택</div>
-                <div class="col-4 border py-2">
-                    <select class="form-select" name="">
-                        <option value="1">총판조직</option>
-                        <option value="2">지점조직</option>
-                    </select>
-                </div>
+<div layout:fragment="content" id="container" class="container">
+    <div class="row">
+        <div id="search" class="border mb-5">
+            <form th:action="@{/notice/noticeList}" method="get">
+                <!--검색창-->
                 <div class="row">
-                    <div class="col-2 border py-2">작성자</div>
+                    <div class="col-2 border py-2">조직선택</div>
                     <div class="col-4 border py-2">
-                        <input type="text" class="form-control" name="username">
+                        <select class="form-select" name="">
+                            <option value="1">총판조직</option>
+                            <option value="2">지점조직</option>
+                        </select>
+                        <label> 작성일을 검색하세요
+                            <input type="datetime-local" name="schedule" min="2022-04-01T09:00" max="2022-04-30T22:00" />
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="col-2 border py-2">작성자</div>
+                        <div class="col-4 border py-2">
+                            <input type="text" class="form-control" name="name">
+                        </div>
+                    </div>
+                    <!--조회버튼-->
+                    <div class="d-flex justify-content-center my-3">
+                        <button type="button" class="btn" style="background-color: #000000; color: #ffff00; border: none; padding: 7px 15px; border-radius: 10px; font-weight: bold;">
+                            조회
+                        </button>
                     </div>
                 </div>
-                <!--조회버튼-->
-                <div class="d-flex justify-content-center my-3">
-                    <button type="button" class="btn" style="background-color: #000000; color: #ffff00; border: none; padding: 7px 15px; border-radius: 10px; font-weight: bold;">
-                        조회
-                    </button>
+            </form>
+            <div id="list" class="border: none;">
+                <!--회원목록-->
+                <!--추가버튼-->
+                <div class="d-flex justify-content-end">
+                    <a th:href="@{/notice/noticeRegister}" class="btn btn-primary" style="background-color: #000000; color: #ffff00; border: none; font-weight: bold; border-radius: 15px; padding: 7px 15px;">등록</a>
                 </div>
+                <h3>공지 사항</h3>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th style="width:7%; text-align: center">No</th>
+                        <th style="width:10%; text-align: center">조직</th>
+                        <th style="width:26%; text-align: center">제목</th>
+                        <th style="width:20%; text-align: center">작성자</th>
+                        <th style="width:10%; text-align: center">작성일</th>
+                        <th style="width:9%; text-align: center">조회수</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr><!--최대값으로 더미값을 입력-->
+                    <tr th:each="data:${noticeDTOList}"><!--더미값으로 채우기(가장 긴값)-->
+                        <td th:text="${data.notice_num}" style="text-align: center"></td>
+                        <td th:href="@{/}" style="text-align: center"></td>
+                        <td>
+                            <a th:href="@{/notice/noticeRead(id=${data.notice_num})}" th:text="${data.title}" style="text-align: center">
+                                이것은 제목입니다.
+                            </a>
+                        </td>
+                        <td th:text="${data.create_by}" style="text-align: center"></td>
+                        <td th:text="${#temporals.format(data.reg_date, 'yyyy-MM-dd')}" style="text-align: center"></td>
+                        <td class="last-column"></td> <!-- 조회수 셀의 오른쪽 테두리 제거 -->
+                    </tr>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--페이지번호-->
+                <div class="d-flex justify-content-center">
+                    <ul class="pagination custom-pagination">
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <style>
+                    /* 페이지네이션 테두리 제거 */
+                    .custom-pagination .page-link {
+                        border: none; /* 테두리 제거 */
+                        color: yellow; /* 텍스트 색상 변경 */
+                        background-color: black; /* 배경 색상 */
+                    }
+
+                    /* 마우스 호버 효과 */
+                    .custom-pagination .page-link:hover {
+                        background-color: #0056b3; /* 호버 시 배경 색상 */
+                        color: #ffffff; /* 호버 시 텍스트 색상 */
+                    }
+
+                    /* 현재 페이지(active) 스타일 */
+                    .custom-pagination .page-item.active .page-link {
+                        background-color: #28a745; /* 활성 페이지 배경 색상 */
+                        color: #ffffff; /* 활성 페이지 텍스트 색상 */
+                    }
+
+                    /* 비활성화 버튼 스타일 */
+                    .custom-pagination .page-item.disabled .page-link {
+                        background-color: #e9ecef; /* 비활성화 배경 색상 */
+                        color: #6c757d; /* 비활성화 텍스트 색상 */
+                    }
+                </style>
+
             </div>
-        </form>
-    </div>
-    <div id="list" class="border: none;">
-        <!--회원목록-->
-        <!--추가버튼-->
-        <div class="d-flex justify-content-end">
-            <button type="button" class="btn" style="background-color: #000000; color: #ffff00; border: none; font-weight: bold; border-radius: 15px; padding: 7px 15px;">
-                추가
-            </button>
         </div>
-        <h3>공지 사항</h3>
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th style="width:7%">No</th>
-                <th style="width:13%">조직</th>
-                <th style="width:26%">제목</th>
-                <th style="width:20%">작성자</th>
-                <th style="width:10%">작성일</th>
-                <th style="width:10%">수정일</th>
-                <th style="width:9%">조회수</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr><!--최대값으로 더미값을 입력-->
-            <tr th:each="data:${noticeDTOList}"><!--더미값으로 채우기(가장 긴값)-->
-                <td th:text="${data.notice_num}"></td>
-                <td>
-                <td>조직</td>
-                <td>
-                    <a th:href="@{/noticeRead(id=${data.notice_num})}" th:text="${data.title}">
-                        이것은 연습용 게시글입니다
-                    </a>
-                </td>
-                <td th:text="${data.create_by}"></td>
-                <td th:text="${#temporals.format(data.reg_Date, 'yyyy-MM-dd')}"></td>
-                <td th:text="${data.modi_date}"></td>
-                <td>
-                <td></td>
-            </tr>
-            </tr>
-            </tbody>
-        </table>
-        <!--페이지번호-->
-        <div class="d-flex justify-content-center">
-            <ul class="pagination custom-pagination">
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <style>
-            /* 페이지네이션 테두리 제거 */
-            .custom-pagination .page-link {
-                border: none; /* 테두리 제거 */
-                color: yellow; /* 텍스트 색상 변경 */
-                background-color: black; /* 배경 색상 */
-            }
-
-            /* 마우스 호버 효과 */
-            .custom-pagination .page-link:hover {
-                background-color: #0056b3; /* 호버 시 배경 색상 */
-                color: #ffffff; /* 호버 시 텍스트 색상 */
-            }
-
-            /* 현재 페이지(active) 스타일 */
-            .custom-pagination .page-item.active .page-link {
-                background-color: #28a745; /* 활성 페이지 배경 색상 */
-                color: #ffffff; /* 활성 페이지 텍스트 색상 */
-            }
-
-            /* 비활성화 버튼 스타일 */
-            .custom-pagination .page-item.disabled .page-link {
-                background-color: #e9ecef; /* 비활성화 배경 색상 */
-                color: #6c757d; /* 비활성화 텍스트 색상 */
-            }
-        </style>
 
     </div>
 </div>

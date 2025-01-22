@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -7,11 +9,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-<div id="container" class="container">
+<div layout:fragment="content" id="container" class="container">
         <div id="row" class="row">
             <div class="col-3"></div>
             <div class="col-6">
-                <form th:action="@{/noticeRegister}" method="post">
+                <form th:action="@{/notice/noticeRegister}" method="post">
                     <!--디자인-->
                     <div class="card">
                         <div class="card-header">
@@ -33,10 +35,10 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <button type="submit" class="btn btn-primary th:onclick=">등록</button>
-                            <button type="reset" class="btn btn-secondary">초기화</button>
+                            <button type="submit" class="btn btn-primary" style="background-color:black; color: yellow; border: none; font-weight: bold; border-radius: 7px; padding: 7px 15px;">확인</button>
+                            <button type="reset" class="btn btn-secondary" style="background-color:gainsboro; color: black; border: none; font-weight: bold; border-radius: 7px; padding: 7px 15px;">초기화</button>
                             <button type="button" class="btn btn-danger"
-                                    th:onclick="|location.href='@{/noticeList}'|">취소</button>
+                                    th:onclick="|location.href='@{/notice/noticeList}'|" style="background-color:red; color: black; border: none; font-weight: bold; border-radius: 7px; padding: 7px 15px;">취소</button>
                             <!--@{주소}, 문자열+주소 |문자열@{주소}|-->
                         </div>
                     </div>
