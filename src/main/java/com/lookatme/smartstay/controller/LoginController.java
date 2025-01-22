@@ -107,36 +107,6 @@ public class LoginController {
         return "member/cSignup";
     }
 
-    /*@GetMapping("/mSignup") //회원가입페이지(saveManagerMember-치프가 승인해주는 매니저)
-    public String maSignupGet(Model model){
-        model.addAttribute("memberDTO", new MemberDTO());
-        model.addAttribute("managerDTO", new ManagerDTO());
-        return "member/mSignup";
-    }
-
-    @PostMapping("/mSignup") //회원가입포스트(saveManagerMember-치프가 승인해주는 매니저)
-    public String masignupPost(@Valid MemberDTO memberDTO, ManagerDTO managerDTO, BindingResult bindingResult,
-                               RedirectAttributes redirectAttributes, Model model){
-
-        log.info("매니저 회원가입으로 들어오는 : " + memberDTO);
-
-        if(bindingResult.hasErrors()){
-            log.info(bindingResult.getAllErrors());
-            return "member/mSignup";
-        }
-
-        log.info("통과");
-
-        *//*try{
-            memberService.saveManagerMember(memberDTO);
-
-        }catch (IllegalStateException e){
-
-            model.addAttribute("msg", e.getMessage());
-
-            return "member/cSignup";
-        }*//*
-
         redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
         return "member/mSignup";
     }

@@ -5,6 +5,7 @@ import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.dto.RoomDTO;
 import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.RoomService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -30,11 +31,14 @@ import java.util.List;
 public class RoomController {
 
     private final RoomService roomService;
+    private final MemberService memberService;
 
     @GetMapping("/roomRegister")
-    public String roomRegisterGet(Model model){
+    public String roomRegisterGet(Model model, Principal principal){
 
         model.addAttribute("roomDTO", new RoomDTO());
+        model.addAttribute("memberDTO", new MemberDTO());
+
         return "room/roomRegister";
     }
 
@@ -96,7 +100,7 @@ public class RoomController {
     }
 
     @PostMapping("/roomModify")
-    public String roomModify(@Valid RoomDTO roomDTO, BindingResult bindingResult) {
+    public String roomModifyPost(@Valid RoomDTO roomDTO, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());

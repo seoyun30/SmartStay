@@ -19,6 +19,12 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="mb-3">
+                            <label for="manager_num" class="form-label">매장 정보</label>
+                            <p class="form-control" th:value="${memberDTO?.managerDTO?.manager_num}" id="manager_num"></p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
                             <label for="room_num" class="form-label">룸 번호</label>
                             <input type="text" class="form-control" th:field="*{room_num}" required id="room_num" readonly>
                             <p th:if="${#fields.hasErrors('room_num')}" th:errors="*{room_num}" class="fieldError"></p>
