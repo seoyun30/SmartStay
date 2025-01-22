@@ -1,10 +1,7 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.dto.ChiefDTO;
 import com.lookatme.smartstay.dto.ManagerDTO;
-import com.lookatme.smartstay.entity.Chief;
 import com.lookatme.smartstay.entity.Manager;
-import com.lookatme.smartstay.repository.ChiefRepository;
 import com.lookatme.smartstay.repository.ManagerRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -69,5 +66,26 @@ public class ManagerService {
     public void managerDelete(Long manager_num){managerRepository.deleteById(manager_num); }
 
 
+
+
+    public List<ManagerDTO> mainHotel() {
+
+        List<Manager> managerList = managerRepository.findAll();
+        List<ManagerDTO> managerDTOList = managerList.stream()
+                .map(manager -> modelMapper.map(manager, ManagerDTO.class))
+                .collect(Collectors.toList());
+
+        return managerDTOList;
+    }
+
+    public List<ManagerDTO> hotelList() {
+
+        List<Manager> managers = managerRepository.findAll();
+        List<ManagerDTO> managerDTOList = managers.stream()
+                .map(manager -> modelMapper.map(manager, ManagerDTO.class))
+                .collect(Collectors.toList());
+
+        return managerDTOList;
+    }
 
 }

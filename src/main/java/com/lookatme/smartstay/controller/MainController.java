@@ -1,9 +1,7 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.ChiefDTO;
-import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.dto.PageResponseDTO;
-import com.lookatme.smartstay.service.ChiefService;
+import com.lookatme.smartstay.dto.ManagerDTO;
+import com.lookatme.smartstay.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -17,14 +15,23 @@ import java.util.List;
 @Log4j2
 public class MainController {
 
-    private final ChiefService chiefService;
+    private final ManagerService managerService;
 
     @GetMapping("/")
     public String main(Model model) {
 
-        List<ChiefDTO> list = chiefService.mainHotel();
+        List<ManagerDTO> list = managerService.mainHotel();
         model.addAttribute("list", list);
 
         return "main";
+    }
+
+    @GetMapping("/search")
+    public String search(Model model) {
+
+        List<ManagerDTO> results = managerService.hotelList();
+        model.addAttribute("results", results);
+
+        return "search";
     }
 }

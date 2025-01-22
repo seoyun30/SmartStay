@@ -16,23 +16,24 @@
     <th:block>
         <div id="carouselExampleIndicators" class="carousel slide">
             <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <th:block th:each="manager, index : ${list}">
+                    <button type="button" data-bs-target="#carouselExampleIndicators"
+                            th:data-bs-slide-to="${index}"
+                            th:classappend="${index == 0} ? 'active'"
+                            th:aria-current="${index == 0} ? 'true'"
+                            th:aria-label="'Slide ' + (${index + 1})"></button>
+                </th:block>
             </div>
             <div class="carousel-inner">
-                <div class="carousel-item active">
-                    첫번째 이미지
-                </div>
-                <div class="carousel-item">
-                    두번째 이미지
-                </div>
-                <div class="carousel-item">
-                    세번째 이미지
-                </div>
-                <div class="carousel-item">
-                    네번째 이미지
-                </div>
+                <th:block th:each="manager, index : ${list}">
+                    <div class="carousel-item" th:classappend="${index == 0} ? 'active'">
+                        <div class="d-block w-100 bg-secondary text-center" style="height: 300px;">
+                            <h5 th:text="${manager.hotel_name}">호텔 이름</h5>
+                            <p th:text="'별점: ' + ${manager.score}">별점</p>
+                            <p th:text="${manager.address}">호텔 주소</p>
+                        </div>
+                    </div>
+                </th:block>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -46,11 +47,11 @@
     </th:block>
 
     <div class="container">
-        <div th:each="manager : ${managerDTOList}" class="mb-4">
+        <div th:each="manager : ${list}" class="mb-4">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">
-                        <a th:href="@{/managerRead(manager_num=${manager.manager_num})}" th:text="${manager.name}"호텔 이름</a>
+                        <a th:href="@{/managerRead(manager_num=${manager.manager_num})}" th:text="${manager.hotel_name}">호텔 이름</a>
                     </h5>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
@@ -63,13 +64,13 @@
                             <strong>별점 : </strong> <span th:text="${manager.score}">별점</span>
                         </li>
                     </ul>
-                    <a th:href="@{/roomreserve/roomReserveRegister}" class="btn btn-primary mt-3">예약하기</a>
+                    <button type="button" class="btn btn-primary" onclick="location.href='/roomreserve/roomReserveRegister'">예약하기</button>
                 </div>
             </div>
         </div>
     </div>
 
-
 </th:block>
+
 </body>
 </html>
