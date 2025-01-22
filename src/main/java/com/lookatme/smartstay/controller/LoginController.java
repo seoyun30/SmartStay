@@ -107,10 +107,6 @@ public class LoginController {
         return "member/cSignup";
     }
 
-        redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
-        return "member/mSignup";
-    }
-*/
 
     @GetMapping("/signup") //회원가입페이지(유저)
     public String signupGet(Model model){
