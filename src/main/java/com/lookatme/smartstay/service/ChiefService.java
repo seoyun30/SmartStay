@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -72,16 +73,35 @@ public class ChiefService {
 
 
     //chief 수정
-    public void update(ChiefDTO chiefDTO){
-        Optional<Chief> chief = chiefRepository.findById(chiefDTO.getChief_num());
+    public void update(ChiefDTO chiefDTO,
+                       List<MultipartFile> multipartFiles) throws Exception{
+        Chief chief = chiefRepository.findById(chiefDTO.getChief_num())
+                .orElseThrow(EntityNotFoundException::new);
+//this id null  error
+        //set
+        chief.setChief_num(chiefDTO.getChief_num());
+        chief.setHotel_name(chiefDTO.getHotel_name());
+        chief.setBusiness_num(chiefDTO.getBusiness_num());
+        chief.setOwner(chiefDTO.getOwner());
+        chief.setAddress(chiefDTO.getAddress());
+        chief.setTel(chiefDTO.getTel());
+        chief.setScore(chiefDTO.getScore());
+
+        chiefRepository.save(chief);
+
+       /* Optional<Chief> chief = chiefRepository.findById(chiefDTOList.getChief_num());
         if(chief.isPresent()){
-            Chief chiefs = modelMapper.map(chiefDTO, Chief.class);
+            Chief chiefs = modelMapper.map(chiefDTOList, Chief.class);
             chiefRepository.save(chiefs);
-        }
+        } */
     }
 
     //chief 삭제
-    public void delete(Long chief_num){chiefRepository.deleteById(chief_num); }
+    public void delete(Long id){
+        log.info("서비스로 들어온 삭제할 번호 :"+id);
+
+        chiefRepository.deleteById(id);
+    }
 
 
 
@@ -99,18 +119,6 @@ public class ChiefService {
 
 
 
-
-    /*
- 서비스의 주요기능
- 1. 검증 및 예외처리 : 데이터베이스 처리전 올바른값인지 판단,
-                    데이터베이스 처리실패에 대한 처리
- 2. 트랜잭션 관리 : 데이터베이스 작업 모아서 한번에 처리(데이터베이스 과부하를 방지)
- 3. 비지니스 로직 수행 : 수행할 작업을 작성
- 4. 보안 관련 기능 : 로그인 처리
- 5. 이메일 발송, 알림 전송
- 6. 외부 서비스와 통합(Util의 내용을 서비스에서 작성)
- 7. 일정한 주기로 수행되는 작업(반복작업, 스케줄링)
- */
 
 
 }

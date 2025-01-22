@@ -42,12 +42,20 @@
                 [[${chief.hotel_name}]]
               </a>
             </td>
-            <td th:text="${chief.hotel_name}"></td>
             <td th:text="${chief.business_num}"></td>
             <td th:text="${chief.owner}"></td>
             <td th:text="${chief.address}"></td>
             <td th:text="${chief.tel}"></td>
             <td th:text="${chief.score}"></td>
+
+            <!--post 방식의 삭제버튼-->
+            <td class="col text-end">
+              <form action="/chief/chiefDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                <input type="hidden" name="id" th:value="${chief.chief_num}"> <!-- 삭제할 chief의 ID를 hidden 필드로 전달 -->
+                <button type="submit" class="btn btn-dark" style="background-color: red;">삭제</button>
+              </form>
+            </td>
+
           </tr>
         </th:block>
         </tbody>
@@ -57,9 +65,10 @@
 </th:block>
 <script th:inline="javascript" layout:fragment="script">
   let messages = [[${msg}]];
-  if (messages != null) {
+  if (messages != null && messages.trim() !== "") {
     alert(messages);
   }
+
 </script>
 
 </body>

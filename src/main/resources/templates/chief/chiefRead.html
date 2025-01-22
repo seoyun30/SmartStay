@@ -26,35 +26,49 @@
                                     <div class="col text-center">
                                         <div class="card">
                                             <div class="card-body">
-                                                <td th:text="${chiefDTO.chief_num}"></td>
-
+                                                <input id="chief_num" type="hidden" th:value="${chiefDTO.chief_num}"></input>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">호텔명</span>
                                                     <input type="text" class="form-control" th:value="${chiefDTO.hotel_name}">
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">사업자번호</span>
-                                                    <input type="number" class="form-control">
+                                                    <input type="number" class="form-control" th:value="${chiefDTO.business_num}">
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">대표자</span>
-                                                    <input type="text" class="form-control">
+                                                    <input type="text" class="form-control" th:value="${chiefDTO.owner}">
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">주소</span>
-                                                    <input type="text" class="form-control">
+                                                    <input type="text" class="form-control" th:value="${chiefDTO.address}">
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">전화번호</span>
-                                                    <input type="number" class="form-control">
+                                                    <input type="number" class="form-control" th:value="${chiefDTO.tel}">
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">별점</span>
-                                                    <input type="text" class="form-control">
+                                                    <input type="text" class="form-control" th:value="${chiefDTO.score}">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
+                                    <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
+                                    <script>
+                                        let chief_num = document.getElementById("chief_num").value;
+
+                                        $(".Listbtn").on("click", function () {
+                                            location.href = "/chief/chiefList";
+                                        })
+
+                                        $(".Modbtn").on("click", function () {
+                                            location.href = "/chief/chiefModify?chief_num="+chief_num;
+                                        })
+                                    </script>
+                                </div>
 
                             </div>
                         </div>

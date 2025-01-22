@@ -6,14 +6,18 @@ import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.entity.Chief;
 import com.lookatme.smartstay.service.ChiefService;
 import com.lookatme.smartstay.service.ManagerService;
+import jakarta.persistence.Id;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -48,7 +52,9 @@ public class ChiefController {
     //목록
     @GetMapping("/chiefList") //슈퍼어드민만 사용
     public String chiefList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
-       List<ChiefDTO> chiefDTOList =  chiefService.chiefList();
+        log.info("목록진입");
+
+        List<ChiefDTO> chiefDTOList =  chiefService.chiefList();
        model.addAttribute("chiefDTOList", chiefDTOList);
         return "chief/chiefList";
     }
@@ -63,21 +69,35 @@ public class ChiefController {
 
     //수정
     @GetMapping("/chiefModify")
-    public String chiefModifyGet(Model model) {
-        return "chiefModify";
+    public String chiefModifyGet(Long chief_num, Model model) {
+        ChiefDTO chiefDTO=chiefService.read(chief_num);
+        model.addAttribute("chiefDTO", chiefDTO);// end접속해제
+        return "chief/chiefModify";
     }
     @PostMapping("/chiefModify")
-    public String chiefModifyPost(ChiefDTO chiefDTO, List<Long> delnumList,
-                                  List<MultipartFile> multipartFiles, ImageDTO imageDTO) {
-        chiefService.update(chiefDTO);
+    public String chiefModifyPost(@Valid ChiefDTO chiefDTO, BindingResult bindingResult, @RequestParam("delnumList") List<Long> delnumList,
+                                  @RequestParam("multipartFiles") List<MultipartFile> multipartFiles, ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
+        //@RequestParam("delnumList") List<Long> delnumList, @RequestParam("multipartFiles") List<MultipartFile> multipartFiles
+        //사진등록, 사진삭제번호 할때 사용하는 방법
 
-        return "chiefList";
+        if (bindingResult.hasErrors()) {
+            log.info("유효성 검사 실패:" + bindingResult.getAllErrors());
+            return "chief/chiefModify";
+        }
+        log.info("유효성 통과");
+
+        chiefService.update(chiefDTO, multipartFiles );
+        redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
+
+        log.info("수정 완료");
+        return "redirect:/chief/chiefList";
     }
     //삭제
     @PostMapping("/chiefDelete")
-    public String chiefDelete(ChiefDTO chiefDTO) {
-        chiefService.delete(chiefDTO.getChief_num());
-        return "chief/chiefList";
+    public String chiefDelete(long id) {
+        log.info("삭제할 번호 :"+id);
+        chiefService.delete(id);
+        return "redirect:/chief/chiefList";
     }
 
 
