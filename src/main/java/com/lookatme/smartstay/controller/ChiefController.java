@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -38,23 +39,26 @@ public class ChiefController {
     }
     @PostMapping("/chiefRegister")
     public String chiefRegisterPost(Model model, ChiefDTO chiefDTO,
-                                    List<MultipartFile> multipartFiles) throws Exception {
+                                    List<MultipartFile> multipartFiles, RedirectAttributes redirectAttributes) throws Exception {
         chiefService.insert(chiefDTO, multipartFiles);
-        return "chief/chiefRegister";
+        redirectAttributes.addFlashAttribute("msg", "등록이 완료되었습니다.");
+        return "redirect:/chief/chiefList";
     }
 
     //목록
     @GetMapping("/chiefList") //슈퍼어드민만 사용
-    public String chiefList(Principal principal, PageRequestDTO pageRequestDTO) {
-        chiefService.chiefList();
+    public String chiefList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
+       List<ChiefDTO> chiefDTOList =  chiefService.chiefList();
+       model.addAttribute("chiefDTOList", chiefDTOList);
         return "chief/chiefList";
     }
 
     //상세보기
     @GetMapping("/chiefRead")
-    public String chiefRead() {
-        //chiefService.read();
-        return "chief/chiefList";
+    public String chiefRead(Long chief_num, Model model) {
+        ChiefDTO chiefDTO=chiefService.read(chief_num);
+        model.addAttribute("chiefDTO", chiefDTO);
+        return "chief/chiefRead";
     }
 
     //수정
