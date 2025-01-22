@@ -43,7 +43,7 @@
                                    <div class="row mb-3">
                                        <div class="col">
                                            <label for="name" class="form-label">name</label>
-                                           <input type="text" th:field="*{name}" class="form-control" id="name">
+                                           <input type="text" th:field="*{name}" class="form-control name" id="name">
                                        </div>
                                        <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
                                        <span class="name"></span>
@@ -58,52 +58,78 @@
                                    </div>
                                </th:block>
 
+                            <div class="container mt-5">
+                                <form>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="myRadio" id="myRadio1" onclick="showDiv()">
+                                        <label class="form-check-label" for="myRadio1">
+                                           본사
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="myRadio" id="myRadio2" onclick="showDiv()">
+                                        <label class="form-check-label" for="myRadio2">
+                                            지사
+                                        </label>
+                                    </div>
+
+                                </form>
+
+
+                            </div>
+
+
+
                             <th:block th:object="${chiefDTO}">
-                                <div class="row mb-3">
-                                    <div class="col">
-                                        <label for="business_num" class="form-label">사업자번호</label>
-                                        <input type="text" th:field="*{business_num}" class="form-control" id="business_num">
+
+
+                                <div id="myDiv1" style="display:none">
+                                        <div class="row mt-4 mb-3">
+                                            <div class="col">
+                                                <label for="business_num" class="form-label">사업자번호</label>
+                                                <input type="text" th:field="*{business_num}" class="form-control" id="business_num">
+                                            </div>
+                                            <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col">
+                                                <label for="hotel_name" class="form-label">호텔명</label>
+                                                <input type="text" th:field="*{hotel_name}" class="form-control" id="hotel_name">
+                                            </div>
+                                            <p th:if="${#fields.hasErrors('hotel_name')}" th:errors="*{hotel_name}" class="fieldError"></p>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col">
+                                                <label for="owner" class="form-label">대표자이름</label>
+                                                <input type="text" th:field="*{owner}" class="form-control" id="owner">
+                                            </div>
+                                            <p th:if="${#fields.hasErrors('owner')}" th:errors="*{owner}" class="fieldError"></p>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col">
+                                                <label for="address" class="form-label">호텔주소</label>
+                                                <input type="text" th:field="*{address}" class="form-control" id="address">
+                                            </div>
+                                            <p th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="fieldError"></p>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col">
+                                                <label for="tel" class="form-label">호텔연락처</label>
+                                                <input type="text" th:field="*{tel}" class="form-control" id="tel">
+                                            </div>
+                                            <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
+                                        </div>
                                     </div>
-                                    <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col">
-                                        <label for="hotel_name" class="form-label">호텔명</label>
-                                        <input type="text" th:field="*{hotel_name}" class="form-control" id="hotel_name">
-                                    </div>
-                                    <p th:if="${#fields.hasErrors('hotel_name')}" th:errors="*{hotel_name}" class="fieldError"></p>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col">
-                                        <label for="owner" class="form-label">대표자이름</label>
-                                        <input type="text" th:field="*{owner}" class="form-control" id="owner">
-                                    </div>
-                                    <p th:if="${#fields.hasErrors('owner')}" th:errors="*{owner}" class="fieldError"></p>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col">
-                                        <label for="address" class="form-label">호텔주소</label>
-                                        <input type="text" th:field="*{address}" class="form-control" id="address">
-                                    </div>
-                                    <p th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="fieldError"></p>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col">
-                                        <label for="tel" class="form-label">호텔연락처</label>
-                                        <input type="text" th:field="*{tel}" class="form-control" id="tel">
-                                    </div>
-                                    <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
-                                </div>
-
-
                             </th:block>
 
 
-                            <div class="col text-center">
+
+
+                            <div class="col text-center mt-5">
                                 <button type="submit" class="btn btn-primary">회원가입</button>
 
                             </div>
@@ -118,10 +144,24 @@
 </th:block>
 
 
-<th:block layout:fragment="script">
+<script layout:fragment="script">
 
 
+    function showDiv() {
+        var radios = document.querySelectorAll('input[type=radio]');
+        for (var i = 0; i < radios.length; i++) {
+            var radio = radios[i];
+            var div = document.getElementById('myDiv' + (i + 1));
+            if (radio.checked == true){
+                div.style.display = "block";
+            } else {
+                div.style.display = "none";
+            }
+        }
+    }
+</script>
 
-</th:block>
+
+</script>
 </body>
 </html>

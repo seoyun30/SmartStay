@@ -39,11 +39,12 @@ public class LoginController {
     public String adSignupGet(Model model){
         model.addAttribute("memberDTO", new MemberDTO());
         model.addAttribute("chiefDTO", new ChiefDTO());
+        log.info("회원가입");
         return "member/adSignup";
     }
 
     @PostMapping("/adSignup") //회원가입포스트(saveSuperAdminMember-슈퍼어드민이 승인해주는 첫번째 치프)
-    public String adsignupPost(@Valid MemberDTO memberDTO, ChiefDTO chiefDTO, BindingResult bindingResult,
+    public String adSignupPost(@Valid MemberDTO memberDTO, ChiefDTO chiefDTO, BindingResult bindingResult,
                              RedirectAttributes redirectAttributes, Model model){
 
         log.info("최초가입으로 들어오는 : " + memberDTO);
@@ -62,7 +63,7 @@ public class LoginController {
 
             model.addAttribute("msg", e.getMessage());
 
-            return "member/signup";
+            return "member/adSignup";
         }
 
 
@@ -70,22 +71,24 @@ public class LoginController {
         return "member/adSignup";
     }
 
-    @GetMapping("/cSignup") //회원가입페이지(saveChiefMember-치프가 승인해주는 치프)
-    public String chSignupGet(Model model){
+    @GetMapping("/cmSignup") //회원가입페이지(savChiefMember-치프가 승인해주는 치프,매니져)
+    public String cmSignupGet(Model model){
         model.addAttribute("memberDTO", new MemberDTO());
         model.addAttribute("chiefDTO", new ChiefDTO());
+        model.addAttribute("managerDTO", new ManagerDTO());
         return "member/cSignup";
     }
 
-    @PostMapping("/cSignup") //회원가입포스트(saveChiefMember-치프가 승인해주는 치프)
-    public String chsignupPost(@Valid MemberDTO memberDTO, ChiefDTO chiefDTO, BindingResult bindingResult,
+    @PostMapping("/cmSignup") //회원가입포스트(saveChiefMember-치프가 승인해주는 치프,매니져)
+    public String cmSignupPost(@Valid MemberDTO memberDTO, ChiefDTO chiefDTO, ManagerDTO managerDTO,
+                               BindingResult bindingResult,
                                RedirectAttributes redirectAttributes, Model model){
 
         log.info("치프 회원가입으로 들어오는 : " + memberDTO);
 
         if(bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
-            return "member/cSignup";
+            return "member/cmSignup";
         }
 
         log.info("통과");
@@ -104,44 +107,15 @@ public class LoginController {
         return "member/cSignup";
     }
 
-    @GetMapping("/mSignup") //회원가입페이지(saveManagerMember-치프가 승인해주는 매니저)
-    public String maSignupGet(Model model){
-        model.addAttribute("memberDTO", new MemberDTO());
-        model.addAttribute("managerDTO", new ManagerDTO());
-        return "member/mSignup";
-    }
-
-    @PostMapping("/mSignup") //회원가입포스트(saveManagerMember-치프가 승인해주는 매니저)
-    public String masignupPost(@Valid MemberDTO memberDTO, ManagerDTO managerDTO, BindingResult bindingResult,
-                               RedirectAttributes redirectAttributes, Model model){
-
-        log.info("매니저 회원가입으로 들어오는 : " + memberDTO);
-
-        if(bindingResult.hasErrors()){
-            log.info(bindingResult.getAllErrors());
-            return "member/mSignup";
-        }
-
-        log.info("통과");
-
-        /*try{
-            memberService.saveManagerMember(memberDTO);
-
-        }catch (IllegalStateException e){
-
-            model.addAttribute("msg", e.getMessage());
-
-            return "member/cSignup";
-        }*/
-
         redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
         return "member/mSignup";
     }
-
+*/
 
     @GetMapping("/signup") //회원가입페이지(유저)
     public String signupGet(Model model){
         model.addAttribute("memberDTO", new MemberDTO());
+        log.info("회원가입");
         return "member/signup";
     }
 
