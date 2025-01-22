@@ -13,6 +13,59 @@
 
 <th:block layout:fragment="content">
 
+    <div class="card w-75 mt-5 mx-auto">
+        <div class="card-title">
+            <h2 class="mt-3 text-center fw-bold">예약</h2>
+        </div>
+        <div class="card-body">
+            <h3 class="card-title fw-bold">호텔 매장 이름</h3>
+            <p class="card-text fs-4 fw-bold">룸 이름 / 룸 타입</p>
+
+            <div class="row mb-3">
+                <div class="col-4">
+                    <span class="fs-6 text-secondary">체크인</span> <br>
+                    <input type="datetime-local" name="in_date">
+                </div>
+                <div class="col-4">
+                    <span class="fs-6 text-secondary">체크아웃</span> <br>
+                    <input type="datetime-local" name="out_date">
+                </div>
+            </div>
+
+            <span class="fs-6">기준 n명 / 최대 n명</span>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">예약 인원</span>
+                <input type="number" class="form-control" name="count" placeholder="예약 인원 수를 입력하세요.">
+            </div>
+
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelect01">룸 서비스 여부</label>
+                <select class="form-select" name="service_state" id="inputGroupSelect01">
+                    <option value="Y">룸 서비스 신청</option>
+                    <option value="N">룸 서비스 사용 안 함</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">요청사항</label>
+                <textarea class="form-control" name="reserve_request" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
+
+            <div class="text-end mb-3">
+                <span>숙박/1박 </span>
+                <span class="fs-5 fw-bold">10000</span>
+                <span>원</span>
+                <h3 class="fw-bold">총 금액 <span class="text-danger">10000</span>원</h3>
+            </div>
+
+            <div class="text-center">
+                <button class="btn btn-outline-dark btn-lg" type="button"><i class="bi bi-cart"></i></button>
+                <button class="btn btn-primary btn-lg" type="button">예약하기</button>
+            </div>
+
+        </div>
+    </div>
+
 </th:block>
 
 </body>
