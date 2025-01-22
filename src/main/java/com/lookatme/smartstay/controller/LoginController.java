@@ -163,14 +163,7 @@ public class LoginController {
 
         if(principal != null){
             log.info("=========================");
-            log.info("||" + principal.getName() + "||");
-            log.info("||" + principal.getName() + "||");
-            log.info("||" + principal.getName() + "||");
-            log.info("||" + principal.getName() + "||");
-            log.info("||" + principal.getName() + "||");
-            log.info("||" + principal.getName() + "||");
-            log.info("정보오류");
-            log.info("정보오류");
+
         }
 
         return "member/login";
@@ -179,12 +172,7 @@ public class LoginController {
    @PostMapping("/login") //로그인
     public String loginPost(MemberDTO memberDTO, Principal principal){
 
-        log.info("로그인");
-        log.info("로그인");
-        log.info("로그인");
-        log.info("로그인");
-        log.info("로그인");
-        log.info("로그인");
+
         log.info("로그인");
 
         return "member/adLogin";
