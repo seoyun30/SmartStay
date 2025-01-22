@@ -39,7 +39,7 @@ public class SecurityConfig {
             //회원관련(모든 사용자)-로그인, 회원가입, 임시비밀번호발급
             auth.requestMatchers("/login", "/register", "/password").permitAll();
             //인증된 사용자만 접근 가능
-            auth.requestMatchers("/modify","/logout").authenticated(); //수정,로그아웃
+            auth.requestMatchers("/modify","/logout").permitAll(); //수정,로그아웃
             //매핑명을 작업이름/매핑명
             //auth.requestMatchers("/modify/**").authenticated(); modify로 시작하는 모든 맵핑에 제한
         });

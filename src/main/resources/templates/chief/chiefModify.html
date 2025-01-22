@@ -12,10 +12,11 @@
 <body>
 <th:block layout:fragment="content">
 
-    <form action="/chief/chiefRegister" method="post" th:object="${chiefDTO}">
+    <form action="/chief/chiefModify" method="post" th:object="${chiefDTO}" enctype="multipart/form-data">
 
         <div class="row">
             <div class="col-8 offset-2">
+                <input type="hidden" name="chief_num" th:value="${chiefDTO.chief_num}">
                 <div class="row">
                     <div class="col-12">
                         <div class="mb-3">
@@ -24,6 +25,8 @@
                             <p th:if="${#fields.hasErrors('hotel_name')}" th:errors="*{hotel_name}" class="fieldError"></p>
                         </div>
                     </div>
+                    삭제번호 <input name="delnumList" value="1">
+                    file <input type="file" name="multipartFiles">
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="business_num" class="form-label">사업자번호</label>
@@ -80,6 +83,7 @@
                             </select>
                         </div>
                     </div>
+
 
                     <div class="col-12">
                         <button type="submit" class="btn btn-dark" style="float:right">수정</button>
