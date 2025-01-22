@@ -76,7 +76,7 @@ public class LoginController {
         model.addAttribute("memberDTO", new MemberDTO());
         model.addAttribute("chiefDTO", new ChiefDTO());
         model.addAttribute("managerDTO", new ManagerDTO());
-        return "member/cSignup";
+        return "member/cmSignup";
     }
 
     @PostMapping("/cmSignup") //회원가입포스트(saveChiefMember-치프가 승인해주는 치프,매니져)
@@ -104,7 +104,7 @@ public class LoginController {
         }*/
 
         redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
-        return "member/cSignup";
+        return "member/cmSignup";
     }
 
 
