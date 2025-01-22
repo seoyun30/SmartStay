@@ -46,7 +46,7 @@ public class LoginController {
     public String adsignupPost(@Valid MemberDTO memberDTO, ChiefDTO chiefDTO, BindingResult bindingResult,
                              RedirectAttributes redirectAttributes, Model model){
 
-        log.info(memberDTO);
+        log.info("최초가입으로 들어오는 : " + memberDTO);
 
         if(bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
@@ -81,12 +81,24 @@ public class LoginController {
     public String chsignupPost(@Valid MemberDTO memberDTO, ChiefDTO chiefDTO, BindingResult bindingResult,
                                RedirectAttributes redirectAttributes, Model model){
 
-        log.info(memberDTO);
+        log.info("치프 회원가입으로 들어오는 : " + memberDTO);
 
         if(bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
             return "member/cSignup";
         }
+
+        log.info("통과");
+
+        /*try{
+            memberService.saveChiefMember(memberDTO);
+
+        }catch (IllegalStateException e){
+
+            model.addAttribute("msg", e.getMessage());
+
+            return "member/cSignup";
+        }*/
 
         redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
         return "member/cSignup";
@@ -100,15 +112,27 @@ public class LoginController {
     }
 
     @PostMapping("/mSignup") //회원가입포스트(saveManagerMember-치프가 승인해주는 매니저)
-    public String masignupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult,
+    public String masignupPost(@Valid MemberDTO memberDTO, ManagerDTO managerDTO, BindingResult bindingResult,
                                RedirectAttributes redirectAttributes, Model model){
 
-        log.info(memberDTO);
+        log.info("매니저 회원가입으로 들어오는 : " + memberDTO);
 
         if(bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
             return "member/mSignup";
         }
+
+        log.info("통과");
+
+        /*try{
+            memberService.saveManagerMember(memberDTO);
+
+        }catch (IllegalStateException e){
+
+            model.addAttribute("msg", e.getMessage());
+
+            return "member/cSignup";
+        }*/
 
         redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
         return "member/mSignup";
