@@ -54,7 +54,13 @@ public class LoginController {
             return "member/adSignup";
         }
 
-        log.info("통과");
+        if(memberDTO.getCorm().equals("C")){
+            log.info("치프로 저장");
+/*
+        } else {
+            log.info("매니져로 저장");*/
+        }
+
 
         try{
             memberService.saveSuperAdminMember(memberDTO);
@@ -84,24 +90,28 @@ public class LoginController {
                                BindingResult bindingResult,
                                RedirectAttributes redirectAttributes, Model model){
 
-        log.info("치프 회원가입으로 들어오는 : " + memberDTO);
+
+
+        log.info("회원가입으로 들어오는 : " + memberDTO);
 
         if(bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
+
+
             return "member/cmSignup";
         }
 
-        log.info("통과");
+        if(memberDTO.getCorm().equals("C")){
+            log.info("치프로 저장");
 
-        /*try{
             memberService.saveChiefMember(memberDTO);
 
-        }catch (IllegalStateException e){
+        } else {
+            log.info("매니져로 저장");
 
-            model.addAttribute("msg", e.getMessage());
+            memberService.saveManagerMember(memberDTO);
+        }
 
-            return "member/cSignup";
-        }*/
 
         redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
         return "member/cmSignup";
