@@ -38,7 +38,7 @@ public class RoomService {
         return room.getRoom_num();
     }
 
-    public RoomDTO roomRead(Long room_num){
+    public RoomDTO roomRead(Long room_num) {
 
         Room room = roomRepository.findById(room_num).orElseThrow(EntityNotFoundException::new);
 
@@ -47,7 +47,7 @@ public class RoomService {
         return roomDTO;
     }
 
-    public RoomDTO roomRead(Long room_num, String email){
+    public RoomDTO roomRead(Long room_num, String email) {
 
         Room room = roomRepository.findById(room_num).orElseThrow(EntityNotFoundException::new);
 

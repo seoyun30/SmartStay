@@ -10,6 +10,71 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-메뉴 상세보기
+<th:block layout:fragment="content">
+
+    <form th:object="${menuDTO}" action="" method="">
+
+        <div class="row">
+            <div class="col-8 offset-2">
+                <div class="row">
+
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="manager_num" class="form-label">매장 정보</label>
+                            <p class="form-control" th:value="${memberDTO?.managerDTO?.manager_num}" id="manager_num"></p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="menu_num" class="form-label">메뉴 번호</label>
+                            <input type="text" class="form-control" th:field="*{menu_num}" required id="menu_num" readonly>
+                            <p th:if="${#fields.hasErrors('menu_num')}" th:errors="*{menu_num}" class="fieldError"></p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="menu_name" class="form-label">메뉴 명</label>
+                            <input type="text" class="form-control" th:field="*{menu_name}" required id="menu_name" readonly>
+                            <p th:if="${#fields.hasErrors('menu_name')}" th:errors="*{menu_name}" class="fieldError"></p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="service_info" class="form-label">서비스 정보</label>
+                            <input type="text" min="0" class="form-control" th:field="*{service_info}" id="service_info" readonly>
+                            <p th:if="${#fields.hasErrors('service_info')}" th:errors="*{service_info}" class="fieldError"></p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="menu_detail"  class="form-label">메뉴 상세</label>
+                            <input type="text" min="0" class="form-control" th:field="*{menu_detail}" id="menu_detail" readonly>
+                            <p th:if="${#fields.hasErrors('menu_detail')}" th:errors="*{menu_detail}" class="fieldError"></p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="menu_price" class="form-label">메뉴 가격</label>
+                            <input type="number" min="0" class="form-control" th:field="*{menu_price}" id="menu_price" readonly>
+                            <p th:if="${#fields.hasErrors('menu_price')}" th:errors="*{menu_price}" class="fieldError"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="button" th:onclick="|location.href='@{/menu/menuModify(menu_num=${menuDTO.menu_num})}'|" class="btn btn-dark">수정</button>
+                        <button type="button" onclick="location.href='/menu/menuList'"class="btn btn-dark">목록</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+</th:block>
+
+<th:block layout:fragment="script">
+
+</th:block>
+
 </body>
 </html>
