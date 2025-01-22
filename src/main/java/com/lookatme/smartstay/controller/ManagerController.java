@@ -2,13 +2,9 @@ package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.Util.PagenationUtil;
 import com.lookatme.smartstay.dto.*;
-import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.entity.Chief;
 import com.lookatme.smartstay.service.ChiefService;
 import com.lookatme.smartstay.service.ManagerService;
-import jakarta.persistence.Id;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -27,8 +23,8 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("/chief")
-public class ChiefController {
+@RequestMapping("/manager")
+public class ManagerController {
 
     private final ChiefService chiefService;
     private final ManagerService managerService;
@@ -98,5 +94,58 @@ public class ChiefController {
         log.info("삭제할 번호 :"+id);
         chiefService.delete(id);
         return "redirect:/chief/chiefList";
+    }
+
+
+    //매장 등록
+    @GetMapping("/managerRegister")
+    public String managerRegisterGet(Model model) {
+        model.addAttribute("managerDTO", new ManagerDTO());
+        return "manager/managerRegister";
+    }
+
+    @PostMapping("/managerRegister")
+    public String managerRegisterPost(ManagerDTO managerDTO, MemberDTO memberDTO,
+                                      List<MultipartFile> multipartFiles) throws Exception {
+        managerService.managerInsert(managerDTO, multipartFiles);
+        return "chief/managerRegister";
+    }
+
+    //매장 목록
+    @GetMapping("/managerList")
+    public String mangerList(Principal principal, PageRequestDTO pageRequestDTO) {
+        managerService.managerList();
+        return "chief/managerList";
+    }
+
+    //매장 상세보기
+    @GetMapping("/managerRead")
+    public String managerRead(Principal principal, PageRequestDTO pageRequestDTO) {
+       // managerService.managerRead();
+        return "chief/managerRead";
+    }
+    //@GetMapping("/manager/managerRead")
+    //public String managerRead(Principal principal, PageRequestDTO pageRequestDTO) {
+    //    return "manager/managerRead";
+    //}
+
+    //매장 수정
+    @GetMapping({"/managerModify", "manager/managerModify"})
+    public String managerModifyGet(Principal principal, PageRequestDTO pageRequestDTO) {
+        return "managerModify";
+    }
+
+    @PostMapping({"/managerModify", "manager/magerModify"})
+    public String managerModifyPost(ManagerDTO managerDTO, MemberDTO memberDTO, List<Long> delnumList,
+                                    List<MultipartFile> multipartFiles, ImageDTO imageDTO, PageRequestDTO pageRequestDTO) {
+        managerService.managerUpdate(managerDTO);
+        return "managerModify";
+    }
+
+    //매장 삭제
+    @PostMapping("/mangaerDelete")
+    public String mangaerDelete(ManagerDTO managerDTO) {
+        managerService.managerDelete(managerDTO.getManager_num());
+        return "mangaerList";
     }
 }
