@@ -93,7 +93,7 @@ public class CareController {
     }
 
     @PostMapping("/careModify")
-    public String careModifyPost(@Valid CareDTO careDTO, BindingResult bindingResult) {
+    public String careModifyPost(@Valid CareDTO careDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
@@ -103,7 +103,9 @@ public class CareController {
 
         careService.careModify(careDTO);
 
-        return null;
+        redirectAttributes.addFlashAttribute("msg", "케어서비스가 등록되었습니다. 케어서비스 번호 : " + careDTO.getCare_num());
+
+        return "redirect:/care/careRead?care_num=" + careDTO.getCare_num();
     }
 
 }

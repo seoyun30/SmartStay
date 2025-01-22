@@ -61,6 +61,8 @@ public class MenuService {
         menu.setMenu_detail(menuDTO.getMenu_detail());
         menu.setMenu_price(menuDTO.getMenu_price());
 
-        return null;
+        menu = menuRepository.save(menu);
+
+        return modelMapper.map(menu, MenuDTO.class);
     }
 }

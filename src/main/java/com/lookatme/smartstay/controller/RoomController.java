@@ -100,7 +100,9 @@ public class RoomController {
     }
 
     @PostMapping("/roomModify")
-    public String roomModifyPost(@Valid RoomDTO roomDTO, BindingResult bindingResult) {
+    public String roomModifyPost(@Valid RoomDTO roomDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+
+        log.info(roomDTO);
 
         if (bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
@@ -108,8 +110,18 @@ public class RoomController {
             return "room/roomModify";
         }
 
-        roomService.roomModify(roomDTO);
-
-        return null;
+        try {
+            roomService.roomModify(roomDTO);
+            redirectAttributes.addFlashAttribute("msg", "룸 정보가 수정되었습니다. 룸 번호 : " + roomDTO.getRoom_num());
+            return "redirect:/room/roomRead?room_num=" + roomDTO.getRoom_num();
+        } catch (EntityNotFoundException e) {
+            log.error("Room not found: {}", roomDTO.getRoom_num(), e);
+            redirectAttributes.addFlashAttribute("msg", "수정하려는 룸이 존재하지 않습니다.");
+            return "redirect:/room/roomList";
+        } catch (Exception e) {
+            log.error("Error during room modification", e);
+            redirectAttributes.addFlashAttribute("msg", "룸 수정 중 오류가 발생했습니다.");
+            return "redirect:/room/roomList";
+        }
     }
 }
