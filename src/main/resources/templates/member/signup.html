@@ -52,7 +52,7 @@
                                     <label for="tel" class="form-label">tel</label>
                                     <input type="text" th:field="*{tel}" class="form-control" id="tel">
                                 </div>
-                                <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
+                                <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                             </div>
 
 
@@ -70,6 +70,8 @@
         </div>
 
     </div>
+
+
 </th:block>
 
 

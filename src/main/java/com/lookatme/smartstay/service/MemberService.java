@@ -3,6 +3,7 @@ package com.lookatme.smartstay.service;
 import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.entity.Chief;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.MemberRepository;
 import jakarta.transaction.Transactional;
@@ -77,6 +78,7 @@ public class MemberService implements UserDetailsService {
 
         Member member =
                 MemberDTO.dtoEntity(memberDTO);
+
         member.setRole(Role.CHIEF);
 
         member =
@@ -91,6 +93,7 @@ public class MemberService implements UserDetailsService {
 
         Member member =
                 MemberDTO.dtoEntity(memberDTO);
+
         member.setRole(Role.CHIEF);
 
         member =
@@ -112,6 +115,8 @@ public class MemberService implements UserDetailsService {
 
         return member;
     }
+
+
 
     private void validateDuplicateMember(String memberDTO){
 
