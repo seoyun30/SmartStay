@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 @Builder
 public class NoticeDTO {
 
+
     private Long notice_num; //공지 번호
     private String title; //제목
     private String content; //내용
