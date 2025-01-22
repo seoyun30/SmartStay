@@ -54,7 +54,7 @@ public class LoginController {
             return "member/adSignup";
         }
 
-        if(memberDTO.getCorm().equals("C")){
+        if(memberDTO.getCorn().equals("C")){
             log.info("치프로 저장");
 /*
         } else {
