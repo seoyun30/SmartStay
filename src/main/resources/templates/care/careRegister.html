@@ -12,7 +12,7 @@
 <body>
 <th:block layout:fragment="content">
 
-    <form action="/menu/menuRegister" method="post" th:object="${menuDTO}">
+    <form action="/care/careRegister" method="post" th:object="${careDTO}">
 
         <div class="row">
             <div class="col-8 offset-2">
@@ -27,39 +27,39 @@
 
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="menu_name" class="form-label">메뉴 명</label>
-                            <input type="text" class="form-control" th:field="*{menu_name}" required id="menu_name" >
-                            <p th:if="${#fields.hasErrors('menu_name')}" th:errors="*{menu_name}" class="fieldError"></p>
+                            <label for="care_name" class="form-label">케어서비스 명</label>
+                            <input type="text" class="form-control" th:field="*{care_name}" required id="care_name" >
+                            <p th:if="${#fields.hasErrors('care_name')}" th:errors="*{care_name}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="service_info" class="form-label">서비스 정보</label>
-                            <input type="text" min="0" class="form-control" th:field="*{service_info}" id="service_info">
-                            <p th:if="${#fields.hasErrors('service_info')}" th:errors="*{service_info}" class="fieldError"></p>
+                            <label for="care_info" class="form-label">케어서비스 정보</label>
+                            <input type="text" min="0" class="form-control" th:field="*{care_info}" id="care_info">
+                            <p th:if="${#fields.hasErrors('care_info')}" th:errors="*{care_info}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="menu_detail"  class="form-label">메뉴 상세</label>
-                            <input type="text" min="0" class="form-control" th:field="*{menu_detail}" id="menu_detail">
-                            <p th:if="${#fields.hasErrors('menu_detail')}" th:errors="*{menu_detail}" class="fieldError"></p>
+                            <label for="care_detail"  class="form-label">케어서비스 상세</label>
+                            <input type="text" min="0" class="form-control" th:field="*{care_detail}" id="care_detail">
+                            <p th:if="${#fields.hasErrors('care_detail')}" th:errors="*{care_detail}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="menu_price" class="form-label">메뉴 가격</label>
-                            <input type="number" min="0" class="form-control" th:field="*{menu_price}" id="menu_price">
-                            <p th:if="${#fields.hasErrors('menu_price')}" th:errors="*{menu_price}" class="fieldError"></p>
+                            <label for="care_price" class="form-label">케어서비스 가격</label>
+                            <input type="number" min="0" class="form-control" th:field="*{care_price}" id="care_price">
+                            <p th:if="${#fields.hasErrors('care_price')}" th:errors="*{care_price}" class="fieldError"></p>
                         </div>
                     </div>
 
                     <div class="col-12">
                         <button type="submit" class="btn btn-dark">등록</button>
-                        <button type="button" class="btn btn-dark listbtn">목록</button>
+                        <button type="button"  class="btn btn-dark listbtn">목록</button>
                         <script>
                             $(".listbtn").on("click", function () {
-                                location.href = "/menu/menuList";
+                                location.href = "/care/careList";
                             })
                         </script>
                     </div>

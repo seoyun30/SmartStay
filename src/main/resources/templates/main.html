@@ -44,18 +44,19 @@
             </button>
         </div>
     </th:block>
+
     <th:block th:each="chief : ${list}">
         <div class="col mb-3">
-<!--            <a th:href="@{/chief/chifeRead(chief_num=${chief.chief_num})}">-->
-            <a th:href="@{/roomreserve/roomReserveRegister}">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${chief.hotel_name}">호텔 명</h5>
-                    </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${chief.hotel_name}">호텔 명</h5>
+                    <p class="card-text">호텔 정보</p>
+                    <a th:href="@{/roomreserve/roomReserveRegister}" class="btn btn-primary">예약하기</a>
                 </div>
-            </a>
+            </div>
         </div>
     </th:block>
+
 </th:block>
 </body>
 </html>
