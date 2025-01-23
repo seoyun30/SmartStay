@@ -16,7 +16,7 @@
             <form th:action="@{/notice/noticeModify}" method="post" class="position: 0;">
                 <h2 class="text-center">공지사항 등록</h2>
                 <div class="card" style="width: 100%; height: 90%;">
-
+                    <a th:href="@{/notice/noticeRead(notice_num)}" class="hidden"></a>
                     <!--제목-->
                     <div class="card-header bg-white">
                         <div class="input-group mt-2 my-3">
