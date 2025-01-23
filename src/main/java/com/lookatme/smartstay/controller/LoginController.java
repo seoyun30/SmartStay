@@ -178,8 +178,16 @@ public class LoginController {
 
         log.info("로그인");
 
-        return "/";
-        //return "member/login";
+        return "redirect:/adMain";
+
+    }
+
+    @PostMapping("/adLogout") //로그아웃
+    public String adLogout(HttpSession session){
+
+        session.invalidate();
+
+        return "redirect:/adLogin";
     }
 
    @GetMapping("/login") //로그인페이지(유저)
@@ -203,7 +211,7 @@ public class LoginController {
    }
 
    @PostMapping("/logout") //로그아웃
-    public String logout(Principal principal, HttpSession session){
+    public String logout(HttpSession session){
 
         session.invalidate();
 

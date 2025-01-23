@@ -6,9 +6,11 @@ import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.MemberRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -25,12 +27,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-@Transactional
-public class MemberService implements UserDetailsService {
+public class AdminLoginService implements UserDetailsService {
 
-    private final MemberRepository memberRepository;
-    private final ModelMapper modelMapper;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private MemberRepository memberRepository;
 
 
     @Override
@@ -61,8 +61,7 @@ public class MemberService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(Role.MANAGER.name()));
         }else {
             log.info("일반유저");
-            role = Role.USER.name();
-            authorities.add(new SimpleGrantedAuthority(Role.USER.name()));
+            throw new UsernameNotFoundException("접근 권한이 없습니다. 사용자 페이지로 로그인 하세요.");
         }
 
         return User.builder()
@@ -72,66 +71,6 @@ public class MemberService implements UserDetailsService {
                 .authorities(authorities)
                 .build();
     }
-
-    public Member saveMember(MemberDTO memberDTO){
-
-        validateDuplicateMember(memberDTO.getEmail());
-
-        Member member =
-                MemberDTO.dtoEntity(memberDTO);
-        member.setRole(Role.USER);
-
-        log.info(member);
-        member =
-                memberRepository.save(member);
-
-        return member;
-    }
-
-    public Member saveSuperAdminMember(MemberDTO memberDTO){
-
-        validateDuplicateMember(memberDTO.getEmail());
-
-        Member member =
-                MemberDTO.dtoEntity(memberDTO);
-
-        member.setRole(Role.CHIEF);
-
-        member =
-                memberRepository.save(member);
-
-        return member;
-    }
-
-    public Member saveChiefMember(MemberDTO memberDTO){
-
-        validateDuplicateMember(memberDTO.getEmail());
-
-        Member member =
-                MemberDTO.dtoEntity(memberDTO);
-
-        member.setRole(Role.CHIEF);
-
-        member =
-                memberRepository.save(member);
-
-        return member;
-    }
-
-    public Member saveManagerMember(MemberDTO memberDTO){
-
-        validateDuplicateMember(memberDTO.getEmail());
-
-        Member member =
-                MemberDTO.dtoEntity(memberDTO);
-        member.setRole(Role.MANAGER);
-
-        member =
-                memberRepository.save(member);
-
-        return member;
-    }
-
 
 
     private void validateDuplicateMember(String memberDTO){
@@ -146,21 +85,17 @@ public class MemberService implements UserDetailsService {
     }
 
 
-    public MemberDTO read(String memberDTO){
-
-      return null;
-    }
-
-
 
     public Member update(MemberDTO memberDTO){
 
         validateDuplicateMember(memberDTO.getEmail());
 
-            Member member =
-                    MemberDTO.dtoEntity(memberDTO);
+        Member member =
+                MemberDTO.dtoEntity(memberDTO);
 
-            return memberRepository.save(member);
-        }
+        return memberRepository.save(member);
     }
+
+
+}
 

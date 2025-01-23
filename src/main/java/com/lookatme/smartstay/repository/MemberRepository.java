@@ -9,5 +9,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     public Member findByEmail (String email);
     void deleteByEmail (String email);
 
-
 }
