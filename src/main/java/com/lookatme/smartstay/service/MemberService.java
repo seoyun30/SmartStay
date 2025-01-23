@@ -11,12 +11,17 @@ import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -41,24 +46,32 @@ public class MemberService implements UserDetailsService {
 
         }
         String role = "";
+
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
         if("SUPERADMIN".equals(member.getRole().name())){
             log.info("슈퍼어드민");
             role = Role.SUPERADMIN.name();
+            authorities.add(new SimpleGrantedAuthority(Role.SUPERADMIN.name()));
         }else if("CHIEF".equals(member.getRole().name()) && member.getPower() == Power.Y){
             log.info("치프");
             role = Role.CHIEF.name();
+            authorities.add(new SimpleGrantedAuthority(Role.CHIEF.name()));
         }else if("MANAGER".equals(member.getRole().name()) && member.getPower() == Power.Y){
             log.info("매니져");
             role = Role.MANAGER.name();
+            authorities.add(new SimpleGrantedAuthority(Role.MANAGER.name()));
         }else {
             log.info("일반유저");
             role = Role.USER.name();
+            authorities.add(new SimpleGrantedAuthority(Role.USER.name()));
         }
 
         return User.builder()
                 .username(member.getEmail())
                 .password(member.getPassword())
                 .roles(role)
+                .authorities(authorities)
                 .build();
     }
 

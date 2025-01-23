@@ -36,4 +36,10 @@ public class MainController {
 
         return "search";
     }
+
+    @GetMapping("/adMain")
+    public String adMain(Model model) {
+
+        return "adMain";
+    }
 }
