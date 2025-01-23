@@ -51,7 +51,7 @@ public class MemberService implements UserDetailsService {
             log.info("슈퍼어드민");
             role = Role.SUPERADMIN.name();
             authorities.add(new SimpleGrantedAuthority(Role.SUPERADMIN.name()));
-        }else if("CHIEF".equals(member.getRole().name()) && member.getPower() == Power.Y){
+        }else if("CHIEF".equals(member.getRole().name()) ){
             log.info("치프");
             role = Role.CHIEF.name();
             authorities.add(new SimpleGrantedAuthority(Role.CHIEF.name()));
@@ -71,6 +71,16 @@ public class MemberService implements UserDetailsService {
                 .roles(role)
                 .authorities(authorities)
                 .build();
+    }
+
+    public MemberDTO findbyEmail(String email) {
+        Member member = this.memberRepository.findByEmail(email);
+        if(member != null) {
+            return modelMapper.map(member, MemberDTO.class);
+        }else {
+            return null;
+        }
+
     }
 
     public Member saveMember(MemberDTO memberDTO){

@@ -160,11 +160,11 @@ public class LoginController {
         return "member/signup";
    }
 
-   @GetMapping("/adLogin") //로그인페이지(총판,매니져)
+   @GetMapping("/adLogin") //로그인페이지(총판,매니져) 관리자들
     public String adLoginGet(MemberDTO memberDTO, Principal principal){
 
        if(principal != null){
-           log.info("=========================");
+           log.info("========로그인중 ==============");
 
        }
 
@@ -172,7 +172,7 @@ public class LoginController {
         //return "member/adSignup";
    }
 
-    @PostMapping("/adLogin") //로그인
+  /*  @PostMapping("/adLogin") //로그인
     public String adLoginPost(MemberDTO memberDTO, Principal principal){
 
 
@@ -180,15 +180,15 @@ public class LoginController {
 
         return "redirect:/adMain";
 
-    }
+    }*/
 
-    @PostMapping("/adLogout") //로그아웃
+    /*@PostMapping("/adLogout") //로그아웃
     public String adLogout(HttpSession session){
 
         session.invalidate();
 
         return "redirect:/adLogin";
-    }
+    }*/
 
    @GetMapping("/login") //로그인페이지(유저)
     public String loginGet(MemberDTO memberDTO, Principal principal){
@@ -201,22 +201,22 @@ public class LoginController {
         return "member/login";
    }
 
-   @PostMapping("/login") //로그인
+/*   @PostMapping("/login") //로그인
     public String loginPost(MemberDTO memberDTO, Principal principal){
 
 
         log.info("로그인");
 
         return "redirect:/";
-   }
+   }*/
 
-   @PostMapping("/logout") //로그아웃
+  /* @PostMapping("/logout") //로그아웃
     public String logout(HttpSession session){
 
         session.invalidate();
 
         return "redirect:/login";
-   }
+   }*/
 
    @GetMapping("/adFindID") // 아이디찾기(관리자)
     public String adFindIDGet(){

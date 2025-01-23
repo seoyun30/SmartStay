@@ -26,10 +26,21 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
         // 요청 URI에 따라 다른 페이지로 리다이렉트
-        String requestURI = request.getRequestURI();
-        if (requestURI.equals("/member/login")) {
+            String requestURI = request.getRequestURI();
+            String referer = request.getHeader("referer");
+            //이전페이지를 가져오는 request객체의 header정보중 키값 referer
+        System.out.println(requestURI);
+        System.out.println(referer);
+        System.out.println(referer);
+        System.out.println(referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) ));
+        System.out.println(referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) ));
+        System.out.println(referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) ));
+
+        String url = referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) );
+
+        if (url.equals("/member/login")) {
             response.sendRedirect("/");
-        } else if (requestURI.equals("/member/adLogin")) {
+        } else if (url.equals("/member/adLogin")) {
             response.sendRedirect("/adMain");
         } else {
             response.sendRedirect("/"); // 기본 경로

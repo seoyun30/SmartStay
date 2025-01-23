@@ -1,10 +1,6 @@
 package com.lookatme.smartstay.config;
 
-import com.lookatme.smartstay.service.AdminLoginService;
-import com.lookatme.smartstay.service.MemberLoginService;
-import com.lookatme.smartstay.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -33,38 +29,12 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public AdminLoginService adminLoginService(){
-        return new AdminLoginService();
-    }
-
-    @Bean
-    public MemberLoginService memberLoginService(){
-        return new MemberLoginService();
-    }
-
-    @Bean
-    public DaoAuthenticationProvider adminProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(adminLoginService());
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
-
-    @Bean
-    public DaoAuthenticationProvider memberProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(memberLoginService());
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
 
     //맵핑에 접근제한
     //static에 있는 폴더를 모두 사용으로 지정
     //html은 작업에 따라 사용할 권한 부여
     @Bean
-    @Order(1)
-    public SecurityFilterChain filterChain1(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests((auth) ->
         { //각 자원, html 권한
@@ -94,8 +64,9 @@ public class SecurityConfig {
                 .successHandler(new CustomAuthenticationSuccessHandler())); //로그인 성공시처리할 클래스
 */
         http.formLogin(login -> login
-                .loginPage("/member/adLogin") //로그인은 /login맵핑으로
-                .loginProcessingUrl("/member/adLogin")
+                .loginPage("/member/login") //로그인은 /login맵핑으로 //인증을 요할때 권한을 요할때 로그인이 되어있지 않다면
+                // 해당 url로 이동   일반유저 로그인
+                .loginProcessingUrl("/member/login")
                 .usernameParameter("email") //userid를 username으로 사용
                 .permitAll() //모든 사용자가 로그인폼 사용
                 .successHandler(new CustomAuthenticationSuccessHandler())); //로그인 성공시처리할 클래스
@@ -105,17 +76,18 @@ public class SecurityConfig {
 
         //로그아웃 정보
         http.logout(logout -> logout
-                       /* .logoutUrl("/member/logout")
-                        .logoutSuccessUrl("/member/adLogin")
+                        .logoutUrl("/member/logout")
+                        /*.logoutSuccessUrl("/member/adLogin")*/
+                                .logoutSuccessHandler(new LogoutSeccessHandler())
 
-                http.authenticationProvider(adminProvider());*/
-                .logoutRequestMatcher(
+                        /*  http.authenticationProvider(adminProvider());*/
+                /*.logoutRequestMatcher(
                         new OrRequestMatcher(
                                 new AntPathRequestMatcher("/member/adLogout")
                         )
-                )
-                .invalidateHttpSession(true)
-                .logoutSuccessHandler(new CustomLogoutSuccessHandler()) //로그아웃 성공시 로그인 페이지로 이동
+                )*/
+//                .invalidateHttpSession(true)
+//                .logoutSuccessHandler(new CustomLogoutSuccessHandler()) //로그아웃 성공시 로그인 페이지로 이동
         )
                 .exceptionHandling(
                         a -> a.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
@@ -138,53 +110,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    @Order(2)
-    public SecurityFilterChain filterChain2(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests((auth) ->
-        { //각 자원, html 권한
-            //permitAll(); 모든 사용자 사용가능
-            auth.requestMatchers("/assets/**", "/css/**", "/js/**").permitAll();
-            //세부페이지 또는 Controller가 완성되면 삭제
-            auth.requestMatchers("/**").permitAll(); //모든 매핑 허용
-            auth.requestMatchers("/h2-console/**").permitAll(); //모든 매핑 허용
-            //메인페이지 및 서브페이지
-            auth.requestMatchers("/", "/search").permitAll();
-            //회원관련(모든 사용자)-로그인, 회원가입, 임시비밀번호발급
-            /* auth.requestMatchers("/login", "/logout", "/register", "/password").permitAll();*/
-            auth.requestMatchers("/member/login", "/register", "/password").permitAll();
-            //인증된 사용자만 접근 가능
-            auth.requestMatchers("/modify", "/member/logout").permitAll(); //수정,로그아웃
-            //매핑명을 작업이름/매핑명
-            //auth.requestMatchers("/modify/**").authenticated(); modify로 시작하는 모든 맵핑에 제한
-            auth.anyRequest().authenticated();
-        });
-
-        http.formLogin(login -> login
-                .loginPage("/member/login") //로그인은 /login맵핑으로
-                .loginProcessingUrl("/member/login")
-                .usernameParameter("email") //userid를 username으로 사용
-                .permitAll() //모든 사용자가 로그인폼 사용
-                .successHandler(new CustomAuthenticationSuccessHandler())); //로그인 성공시처리할 클래스
-
-        http.csrf(AbstractHttpConfigurer::disable);
-
-        http.logout(logout -> logout
-                        .logoutRequestMatcher(
-                                new OrRequestMatcher(
-                                        new AntPathRequestMatcher("/member/logout")
-                                )
-                        )
-                        .invalidateHttpSession(true)
-                        .logoutSuccessHandler(new CustomLogoutSuccessHandler()) //로그아웃 성공시 로그인 페이지로 이동
-                )
-                .exceptionHandling(
-                        a -> a.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                                .accessDeniedHandler(new AccessDeniedHandlerImpl())
-
-                );
-        return http.build();
-    }
 
 }
