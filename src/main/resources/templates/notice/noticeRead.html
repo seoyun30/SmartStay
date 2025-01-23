@@ -36,7 +36,8 @@
                     </p>
                 </div>
                 <button type="submit" class="btn btn-primary" style="background-color:black; color: yellow; border: none; font-weight: bold; border-radius: 7px; padding: 7px 15px;">수정</button>
-                <a th:href="@{/notice/noticeModify(id=${data.notice_num})}" style="background-color:gainsboro; color: black; border: none; font-weight: bold; border-radius: 7px; padding: 7px 15px;">삭제</a>
+                <a class="btn btn-secondary" style="background-color: gainsboro; color: black; border: none; font-weight: bold;
+                    border-radius: 7px; padding: 7px 15px; text-decoration: none; display: inline-block">삭제</a>
                 <button type="button" class="btn btn-danger"
                         th:onclick="|location.href='@{/notice/noticeList}'|" style="background-color:red; color: black; border: none; font-weight: bold; border-radius: 7px; padding: 7px 15px;">취소</button>
                 <!--@{주소}, 문자열+주소 |문자열@{주소}|-->
