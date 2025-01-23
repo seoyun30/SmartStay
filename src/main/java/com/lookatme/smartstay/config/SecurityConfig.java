@@ -46,7 +46,7 @@ public class SecurityConfig {
 
         //로그인 정보
         http.formLogin(login->login
-                .loginPage("/login") //로그인은 /login맵핑으로
+                .loginPage("/member/login") //로그인은 /login맵핑으로
                 .defaultSuccessUrl("/") //로그인 성공시 / 페이지로 이동
                 .usernameParameter("email") //userid를 username으로 사용
                 .permitAll() //모든 사용자가 로그인폼 사용

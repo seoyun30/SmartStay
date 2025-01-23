@@ -3,6 +3,7 @@ package com.lookatme.smartstay.controller;
 import com.lookatme.smartstay.dto.ChiefDTO;
 import com.lookatme.smartstay.dto.ManagerDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.service.ChiefService;
 import com.lookatme.smartstay.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ import java.security.Principal;
 public class LoginController {
 
     private final MemberService memberService;
+    private final ChiefService chiefService;
 
     @GetMapping("/adTerms") // 약관페이지(총판,매니져)
     public String adTerms(){
@@ -45,7 +48,7 @@ public class LoginController {
     }
 
     @PostMapping("/adSignup") //회원가입포스트(saveSuperAdminMember-슈퍼어드민이 승인해주는 첫번째 치프)
-    public String adSignupPost(@Valid MemberDTO memberDTO, ChiefDTO chiefDTO, BindingResult bindingResult,
+    public String adSignupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult,
                              RedirectAttributes redirectAttributes, Model model){
 
         log.info("최초가입으로 들어오는 : " + memberDTO);
@@ -54,14 +57,6 @@ public class LoginController {
             log.info(bindingResult.getAllErrors());
             return "member/adSignup";
         }
-
-        if(memberDTO.getCorn().equals("C")){
-            log.info("치프로 저장");
-/*
-        } else {
-            log.info("매니져로 저장");*/
-        }
-
 
         try{
             memberService.saveSuperAdminMember(memberDTO);
@@ -81,23 +76,35 @@ public class LoginController {
     @GetMapping("/cmSignup") //회원가입페이지(savChiefMember-치프가 승인해주는 치프,매니져)
     public String cmSignupGet(Model model){
         model.addAttribute("memberDTO", new MemberDTO());
-        model.addAttribute("chiefDTO", new ChiefDTO());
+
+        List<ChiefDTO> chiefDTOList  =
+                chiefService.chiefList();
+        ChiefDTO chiefDTO = new ChiefDTO();
+
+        model.addAttribute("cheifDToList", chiefDTOList);
+
         model.addAttribute("managerDTO", new ManagerDTO());
+
         return "member/cmSignup";
     }
 
     @PostMapping("/cmSignup") //회원가입포스트(saveChiefMember-치프가 승인해주는 치프,매니져)
-    public String cmSignupPost(@Valid MemberDTO memberDTO, ChiefDTO chiefDTO, ManagerDTO managerDTO,
-                               BindingResult bindingResult,
+    public String cmSignupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult,
+                               ChiefDTO chiefDTO, ManagerDTO managerDTO,
                                RedirectAttributes redirectAttributes, Model model){
 
 
-
         log.info("회원가입으로 들어오는 : " + memberDTO);
+        log.info("회원가입으로 들어오는 : " + chiefDTO);
+        log.info("회원가입으로 들어오는 : " + managerDTO);
 
         if(bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
 
+            List<ChiefDTO> chiefDTOList  =
+                    chiefService.chiefList();
+
+            model.addAttribute("chiefDTOList", chiefDTOList);
 
             return "member/cmSignup";
         }
@@ -171,7 +178,7 @@ public class LoginController {
 
         log.info("로그인");
 
-        return "member/adLogin";
+        return "/";
         //return "member/login";
     }
 
@@ -192,7 +199,7 @@ public class LoginController {
 
         log.info("로그인");
 
-        return "member/login";
+        return "redirect:/";
    }
 
    @PostMapping("/logout") //로그아웃
