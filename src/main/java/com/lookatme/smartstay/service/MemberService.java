@@ -7,12 +7,15 @@ import com.lookatme.smartstay.entity.Chief;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.MemberRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -23,6 +26,8 @@ import org.springframework.stereotype.Service;
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
+    private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -128,4 +133,23 @@ public class MemberService implements UserDetailsService {
         }
 
     }
-}
+
+
+    public MemberDTO read(String memberDTO){
+
+      return null;
+    }
+
+
+
+    public Member update(MemberDTO memberDTO){
+
+        validateDuplicateMember(memberDTO.getEmail());
+
+            Member member =
+                    MemberDTO.dtoEntity(memberDTO);
+
+            return memberRepository.save(member);
+        }
+    }
+

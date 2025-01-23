@@ -2,9 +2,12 @@ package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.service.MemberService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +33,8 @@ public class MemberController {
     }
 
     @GetMapping("/adMypageModify") // 마이페이지 정보수정(관리자)
-    public String adMypageModifyGet(Principal principal){
+    public String adMypageModifyGet(Principal principal, HttpSession session, Model model){
+
         return "member/adMypageModify";
     }
 
