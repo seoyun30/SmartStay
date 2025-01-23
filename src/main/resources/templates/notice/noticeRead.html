@@ -17,21 +17,46 @@
         </div>
         <div class="card">
             <div class="card-header" style="height: auto; width: auto; background-color: white; color: black;">
-                <div class="col-3">
-                    <div class="mb-3" style="border: 1px solid black; padding: 5px; margin-bottom: 10px; width: 100%; display: flex; align-items: center;">
-                        <p style="margin: 0;">제목: <span th:text="${notice.title}"></span></p>
+                <div class="col-3" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- 제목 -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                        <p style="margin: 0; font-weight: bold; min-width: 80px; text-align: left;">제목:</p>
+                        <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; width: 100%; text-align: left;">
+                            <span th:text="${notice.title}"></span>
+                        </div>
                     </div>
-                    <div class="mb-3" style="border: 1px solid black; padding: 5px; margin-bottom: 10px; width: 100%; display: flex; align-items: center;">
-                        <p style="margin: 0;">작성자: <span th:text="${notice.create_by}"></span></p>
+                    <!-- 작성자 -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                        <p style="margin: 0; font-weight: bold; min-width: 80px; text-align: left;">작성자:</p>
+                        <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; width: 100%; text-align: left;">
+                            <span th:text="${notice.create_by}"></span>
+                        </div>
                     </div>
-                    <div class="mb-3" style="border: 1px solid black; padding: 5px; width: 100%; display: flex; align-items: center;">
-                        <p style="margin: 0;">작성일: <span th:text="${#temporals.format(notice.reg_date, 'yyyy-MM-dd')}"></span></p>
+                    <!-- 작성일 -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                        <p style="margin: 0; font-weight: bold; min-width: 80px; text-align: left;">작성일:</p>
+                        <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; width: 100%; text-align: left;">
+                            <span th:text="${#temporals.format(notice.reg_date, 'yyyy-MM-dd')}"></span>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="card-body">
-                <p><span th:text="${notice.content}"></span></p>
+                <div style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; width: 100%; text-align: left; min-height: 150px; box-sizing: border-box; white-space: pre-wrap;">
+                    <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+                        <h4 id="scrollspyHeading1"></h4>
+                        <span th:text="${notice.content}"></span>
+                        <h4 id="scrollspyHeading2"></h4>
+                        <p></p>
+                        <h4 id="scrollspyHeading3"></h4>
+                        <p></p>
+                        <h4 id="scrollspyHeading4"></h4>
+                        <p></p>
+                        <h4 id="scrollspyHeading5"></h4>
+                        <p></p>
+                    </div>
+                </div>
             </div>
             <div class="footer" style="background-color: white">
                 <div>
