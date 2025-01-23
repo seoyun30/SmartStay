@@ -3,6 +3,7 @@ package com.lookatme.smartstay.service;
 import com.lookatme.smartstay.dto.ManagerDTO;
 import com.lookatme.smartstay.entity.Manager;
 import com.lookatme.smartstay.repository.ManagerRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,23 +48,35 @@ public class ManagerService {
 
     //manager 상세보기
     public ManagerDTO managerRead(Long id) {
-        Optional<Manager> manager = managerRepository.findById(id);
+        Manager manager = managerRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         ManagerDTO managerDTO = modelMapper.map(manager, ManagerDTO.class);
 
         return managerDTO;
     }
 
     //manager 수정
-    public void managerUpdate(ManagerDTO managerDTO){
-        Optional<Manager> manager = managerRepository.findById(managerDTO.getManager_num());
-        if(manager.isPresent()) {
-            Manager managers = modelMapper.map(managerDTO, Manager.class);
-            managerRepository.save(managers);
-        }
+    public void managerUpdate(ManagerDTO managerDTO,
+                              List<MultipartFile> multipartFiles) throws Exception{
+        Manager manager = managerRepository.findById(managerDTO.getManager_num())
+                .orElseThrow(EntityNotFoundException::new);
+
+        //set
+        manager.setManager_num(managerDTO.getManager_num());
+        manager.setHotel_name(managerDTO.getHotel_name());
+        manager.setBusiness_num(managerDTO.getBusiness_num());
+        manager.setOwner(managerDTO.getOwner());
+        manager.setAddress(managerDTO.getAddress());
+        manager.setTel(managerDTO.getTel());
+        manager.setScore(managerDTO.getScore());
+
+        managerRepository.save(manager);
     }
 
     //manager 삭제
-    public void managerDelete(Long manager_num){managerRepository.deleteById(manager_num); }
+    public void managerDelete(Long id){
+        log.info("서비스로 들어온 삭제될 번호: "+id);
+
+        managerRepository.deleteById(id); }
 
 
 

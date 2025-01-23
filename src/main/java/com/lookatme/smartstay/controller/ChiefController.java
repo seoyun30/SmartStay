@@ -31,7 +31,6 @@ import java.util.List;
 public class ChiefController {
 
     private final ChiefService chiefService;
-    private final ManagerService managerService;
     private PagenationUtil pagenation;
     private final PagenationUtil pagenationUtil;
 
