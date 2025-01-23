@@ -54,7 +54,7 @@ public class LoginController {
             return "member/adSignup";
         }
 
-        if(memberDTO.getCorm().equals("C")){
+        if(memberDTO.getCorn().equals("C")){
             log.info("치프로 저장");
 /*
         } else {
@@ -101,7 +101,7 @@ public class LoginController {
             return "member/cmSignup";
         }
 
-        if(memberDTO.getCorm().equals("C")){
+        if(memberDTO.getCorn().equals("C")){
             log.info("치프로 저장");
 
             memberService.saveChiefMember(memberDTO);
@@ -163,14 +163,7 @@ public class LoginController {
 
         if(principal != null){
             log.info("=========================");
-            log.info("||" + principal.getName() + "||");
-            log.info("||" + principal.getName() + "||");
-            log.info("||" + principal.getName() + "||");
-            log.info("||" + principal.getName() + "||");
-            log.info("||" + principal.getName() + "||");
-            log.info("||" + principal.getName() + "||");
-            log.info("정보오류");
-            log.info("정보오류");
+
         }
 
         return "member/login";
@@ -179,12 +172,7 @@ public class LoginController {
    @PostMapping("/login") //로그인
     public String loginPost(MemberDTO memberDTO, Principal principal){
 
-        log.info("로그인");
-        log.info("로그인");
-        log.info("로그인");
-        log.info("로그인");
-        log.info("로그인");
-        log.info("로그인");
+
         log.info("로그인");
 
         return "member/adLogin";

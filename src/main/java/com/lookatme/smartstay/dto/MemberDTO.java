@@ -47,7 +47,7 @@ public class MemberDTO {
 
     private ManagerDTO managerDTO; //호텔(매장)
 
-    private String corm; // 권한선택값
+    private String corn; // 권한선택값
 
     private LocalDateTime reg_date;
 
