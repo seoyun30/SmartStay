@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -13,14 +14,12 @@
 <th:block th:fragment="header">
     <header class="p-3 mb-3 border-bottom">
         <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-between w-100">
-                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
-                </a>
 
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="/" class="nav-link px-2 link-secondary">홈</a></li>
-                </ul>
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <a href="/" class="logo d-flex align-items-center">
+                    <img src="/assets/img/logo.png" alt="">
+                    <span class="d-none d-lg-block">SmartStay</span>
+                </a>
 
                 <div class="d-flex align-items-center w-100" style="max-width: 900px;">
                     <div class="w-50">
@@ -36,7 +35,7 @@
                             </button>
                         </div>
 
-                        <th:block sec:authorize="hasRole('ROLE_USER')">
+                        <th:block sec:authorize="isAuthenticated()">
                             <div class="ms-2">
                                 <div class="dropdown text-end">
                                     <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

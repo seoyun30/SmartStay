@@ -35,7 +35,7 @@ public class SecurityConfig {
             auth.requestMatchers("/**").permitAll(); //모든 매핑 허용
             auth.requestMatchers("/h2-console/**").permitAll(); //모든 매핑 허용
             //메인페이지 및 서브페이지
-            auth.requestMatchers("/").permitAll();
+            auth.requestMatchers("/", "/search").permitAll();
             //회원관련(모든 사용자)-로그인, 회원가입, 임시비밀번호발급
             auth.requestMatchers("/login", "/register", "/password").permitAll();
             //인증된 사용자만 접근 가능

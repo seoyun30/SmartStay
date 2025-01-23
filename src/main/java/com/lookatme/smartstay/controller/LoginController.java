@@ -4,6 +4,7 @@ import com.lookatme.smartstay.dto.ChiefDTO;
 import com.lookatme.smartstay.dto.ManagerDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.service.MemberService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -153,10 +154,26 @@ public class LoginController {
    }
 
    @GetMapping("/adLogin") //로그인페이지(총판,매니져)
-    public String adLoginGet(){
-        return "member/adSignup";
-        //return "member/adLogin";
+    public String adLoginGet(MemberDTO memberDTO, Principal principal){
+
+       if(principal != null){
+           log.info("=========================");
+
+       }
+
+       return "member/adLogin";
+        //return "member/adSignup";
    }
+
+    @PostMapping("/adLogin") //로그인
+    public String adLoginPost(MemberDTO memberDTO, Principal principal){
+
+
+        log.info("로그인");
+
+        return "member/adLogin";
+        //return "member/login";
+    }
 
    @GetMapping("/login") //로그인페이지(유저)
     public String loginGet(MemberDTO memberDTO, Principal principal){
@@ -175,13 +192,15 @@ public class LoginController {
 
         log.info("로그인");
 
-        return "member/adLogin";
-        //return "member/login";
+        return "member/login";
    }
 
    @PostMapping("/logout") //로그아웃
-    public String logout(Principal principal){
-        return null;
+    public String logout(Principal principal, HttpSession session){
+
+        session.invalidate();
+
+        return "redirect:/login";
    }
 
    @GetMapping("/adFindID") // 아이디찾기(관리자)
