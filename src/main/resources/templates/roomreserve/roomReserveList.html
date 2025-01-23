@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/userlayout}">
+      layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -12,7 +12,85 @@
 <body>
 
 <th:block layout:fragment="content">
+    <h2 class="my-3 text-center fw-bold">룸 예약 상태</h2>
+    <div class="row row-cols-1 row-cols-md-4 g-4" >
+        <div class="col">
+            <div class="card" style="box-shadow: none">
+                <div class="card-header">룸 번호</div>
+                <div class="card-body">
+                    <button class="h5 fw-bold" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+                        룸 이름
+                    </button>
+                    <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Offcanvas with body scrolling</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <p>Try scrolling the rest of the page to see this option in action.</p>
+                            <span>룸 정보</span> <br>
+                            <span>룸 타입</span> <br>
+                            <span>룸 인원수</span> <br>
+                            <span>룸 가격</span>
+                        </div>
+                    </div>
 
+                </div>
+                <div class="card-footer">
+                    <small class="text-body-secondary text-center">룸 상태</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card" style="box-shadow: none">
+                <div class="card-header">룸 번호</div>
+                <div class="card-body">
+                    <span class="h5 card-title fw-bold">룸 이름</span> <br>
+                    <span>룸 정보</span> <br>
+                    <span>룸 타입</span> <br>
+                    <span>룸 인원수</span> <br>
+                    <span>룸 가격</span>
+                </div>
+                <div class="card-footer">
+                    <small class="text-body-secondary text-center">룸 상태</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card" style="box-shadow: none">
+                <div class="card-header">룸 번호</div>
+                <div class="card-body">
+                    <span class="h5 card-title fw-bold">룸 이름</span> <br>
+                    <span>룸 정보</span> <br>
+                    <span>룸 타입</span> <br>
+                    <span>룸 인원수</span> <br>
+                    <span>룸 가격</span>
+                </div>
+                <div class="card-footer">
+                    <small class="text-body-secondary text-center">룸 상태</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card" style="box-shadow: none">
+                <div class="card-header">룸 번호</div>
+                <div class="card-body">
+                    <span class="h5 card-title fw-bold">룸 이름</span> <br>
+                    <span>룸 정보</span> <br>
+                    <span>룸 타입</span> <br>
+                    <span>룸 인원수</span> <br>
+                    <span>룸 가격</span>
+                </div>
+                <div class="card-footer">
+                    <small class="text-body-secondary text-center">룸 상태</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </th:block>
 
 </body>
