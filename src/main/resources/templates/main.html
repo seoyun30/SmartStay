@@ -14,35 +14,35 @@
 
 <th:block layout:fragment="content">
     <th:block>
-        <div id="carouselExampleIndicators" class="carousel slide">
-            <div class="carousel-indicators">
-                <th:block th:each="manager, index : ${list}">
-                    <button type="button" data-bs-target="#carouselExampleIndicators"
-                            th:data-bs-slide-to="${index}"
-                            th:classappend="${index == 0} ? 'active'"
-                            th:aria-current="${index == 0} ? 'true'"
-                            th:aria-label="'Slide ' + (${index + 1})"></button>
-                </th:block>
-            </div>
-            <div class="carousel-inner">
-                <th:block th:each="manager, index : ${list}">
-                    <div class="carousel-item" th:classappend="${index == 0} ? 'active'">
-                        <div class="d-block w-100 bg-secondary text-center" style="height: 300px;">
-                            <h5 th:text="${manager.hotel_name}">호텔 이름</h5>
-                            <p th:text="'별점: ' + ${manager.score}">별점</p>
-                            <p th:text="${manager.address}">호텔 주소</p>
+        <div class="row">
+            <div class="col">
+                <div id="carouselExample" class="carousel slide">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            이미지1
+                        </div>
+                        <div class="carousel-item">
+                            이미지2
+                        </div>
+                        <div class="carousel-item">
+                            이미지3
+                        </div>
+                        <div class="carousel-item">
+                            이미지4
                         </div>
                     </div>
-                </th:block>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                            data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                            data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
         </div>
     </th:block>
 
@@ -71,6 +71,5 @@
     </div>
 
 </th:block>
-
 </body>
 </html>
