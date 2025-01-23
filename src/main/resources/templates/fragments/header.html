@@ -35,11 +35,11 @@
                             </button>
                         </div>
 
-                        <th:block sec:authorize="isAuthenticated()">
+                        <th:block>
                             <div class="ms-2">
                                 <div class="dropdown text-end">
                                     <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span th:text="${#authentication.principal.username}"></span> 마이 페이지
+<!--                                        <span th:text="${#authentication.principal.username}"></span> --> 마이 페이지
                                     </a>
                                     <ul class="dropdown-menu text-small">
                                         <li><a class="dropdown-item" href="/member/mypage">내 정보</a></li>
@@ -50,7 +50,7 @@
                             </div>
                         </th:block>
 
-                        <th:block sec:authorize="isAnonymous()">
+                        <th:block>
                             <div class="ms-2">
                                 <button class="btn btn-outline-primary btn-lg" type="button" onclick="location.href='/member/login'" style="border: none">로그인</button>
                             </div>
