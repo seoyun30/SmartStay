@@ -26,26 +26,47 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
         // 요청 URI에 따라 다른 페이지로 리다이렉트
-            String requestURI = request.getRequestURI();
-            String referer = request.getHeader("referer");
-            //이전페이지를 가져오는 request객체의 header정보중 키값 referer
-        System.out.println(requestURI);
-        System.out.println(referer);
-        System.out.println(referer);
-        System.out.println(referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) ));
-        System.out.println(referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) ));
-        System.out.println(referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) ));
+//            String requestURI = request.getRequestURI();
+//            String referer = request.getHeader("referer");
+//            //이전페이지를 가져오는 request객체의 header정보중 키값 referer
+//        System.out.println(requestURI);
+//        System.out.println(referer);
+//        System.out.println(referer);
+//        System.out.println(referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) ));
+//        System.out.println(referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) ));
+//        System.out.println(referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) ));
+//
+//        String url = referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) );
+//
+//        if (url.equals("/member/login") || url.equals("/member/login?error")) {
+//            response.sendRedirect("/");
+//        } else if (url.equals("/member/adLogin") || url.equals("/member/adLogin?error")) {
+//            response.sendRedirect("/adMain");
+//        } else {
+//           // 기본 경로
+//            response.sendRedirect("/");
+//        }
 
-        String url = referer.substring( referer.lastIndexOf("/", referer.lastIndexOf("/")-1) );
-
-        if (url.equals("/member/login")) {
-            response.sendRedirect("/");
-        } else if (url.equals("/member/adLogin")) {
-            response.sendRedirect("/adMain");
-        } else {
-            response.sendRedirect("/"); // 기본 경로
+        String role = null;
+        if(authentication != null){
+            role = authentication.getAuthorities().iterator().next().getAuthority();
+            System.out.println(authentication.getAuthorities().iterator().next().getAuthority());
+            System.out.println(authentication.getAuthorities().iterator().next().getAuthority());
+            System.out.println(authentication.getAuthorities().iterator().next().getAuthority());
         }
 
+
+        String url = "/";
+        if(role != null && role.equals("CHIEF")) {
+            url = "/a";
+            System.out.println(url);
+        }else if (role != null && role.equals("USER")) {
+            url = "/";
+            System.out.println(url);
+
+        }
+
+        response.sendRedirect(url);
 //        response.sendRedirect("/"); //시작페이지로 이동
 
     }

@@ -37,7 +37,7 @@ public class LogoutSeccessHandler extends SimpleUrlLogoutSuccessHandler {
             url = "/a";
             System.out.println(url);
         }else if (role != null && role.equals("USER")) {
-            url = "/b";
+            url = "/";
             System.out.println(url);
 
         }
