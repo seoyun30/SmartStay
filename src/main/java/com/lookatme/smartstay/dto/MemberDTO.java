@@ -65,9 +65,6 @@ public class MemberDTO {
         member.setEmail(memberDTO.email);
         member.setTel(memberDTO.tel);
         member.setPassword(passwordEncoder.encode(memberDTO.password));
-        member.setRole(Role.SUPERADMIN);
-        member.setRole(Role.CHIEF);
-        member.setRole(Role.MANAGER);
         member.setRole(Role.USER);
 
         return member;
