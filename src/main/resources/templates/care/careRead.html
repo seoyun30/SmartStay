@@ -63,17 +63,20 @@
                     <div class="col-12">
                         <button type="button" th:onclick="|location.href='@{/care/careModify(care_num=${careDTO.care_num})}'|" class="btn btn-dark">수정</button>
                         <button type="button" onclick="location.href='/care/careList'"class="btn btn-dark">목록</button>
+                        <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
                     </div>
                 </div>
             </div>
         </div>
     </form>
 
+    <form id="deleteForm" action="/care/careDelete" method="post" style="display:none;">
+        <input type="hidden" name="id" th:value="${careDTO.care_num}" />
+    </form>
 
 </th:block>
 
 <th:block layout:fragment="script">
-
 </th:block>
 
 </body>

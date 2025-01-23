@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"
-
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
@@ -12,9 +12,7 @@
 <body>
 <th:block th:fragment="header">
     <header class="p-3 mb-3 border-bottom">
-
         <div class="container">
-
             <div class="d-flex flex-wrap align-items-center justify-content-between">
                 <a href="/" class="logo d-flex align-items-center">
                     <img src="/assets/img/logo.png" alt="">
@@ -27,7 +25,6 @@
                             <input type="search" class="form-control" placeholder="검색" aria-label="Search" readonly>
                         </a>
                     </div>
-
                     <div class="d-flex ms-auto">
                         <div class="ms-1">
                             <button class="btn btn-outline-dark btn-lg" type="button" onclick="location.href='/cart/cartList'" style="border: none">
@@ -35,21 +32,28 @@
                             </button>
                         </div>
 
-                        <div sec:authorize="isAuthenticated()">
+                        <th:block sec:authorize="isAuthenticated()">
                             <div class="ms-2">
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-box-arrow-right"></i>
-                                        <span th:text="${#authentication.principal.username}">사용자 이름</span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="/member/mypage">내 정보</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="/member/logout">로그아웃</a></li>
-                                    </ul>
-                                </div>
+                                <button class="btn btn-outline-primary btn-lg" type="button" onclick="location.href='/member/mypage'" style="border: none">내 정보</button>
                             </div>
-                        </div>
+                            <div class="ms-2">
+                                <button class="btn btn-outline-primary btn-lg" type="button" onclick="location.href='/member/logout'" style="border: none">로그아웃</button>
+                            </div>
+
+<!--                            <div class="ms-2">-->
+<!--                                <div class="dropdown">-->
+<!--                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                                        <i class="bi bi-box-arrow-right"></i>-->
+<!--                                        <span th:text="${#authentication.principal.username}">사용자 이름</span>-->
+<!--                                    </button>-->
+<!--                                    <ul class="dropdown-menu">-->
+<!--                                        <li><a class="dropdown-item" href="/member/mypage">내 정보</a></li>-->
+<!--                                        <li><hr class="dropdown-divider"></li>-->
+<!--                                        <li><a class="dropdown-item" href="/member/logout">로그아웃</a></li>-->
+<!--                                    </ul>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                        </th:block>
 
                         <th:block sec:authorize="isAnonymous()">
                             <div class="ms-2">
@@ -66,5 +70,6 @@
         </div>
     </header>
 </th:block>
+
 </body>
 </html>
