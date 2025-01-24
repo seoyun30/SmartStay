@@ -22,9 +22,7 @@ public class RoomItemDTO {
 
     private String reserve_request; //요청 사항
 
-    private RoomDTO roomDTO; //룸
-
-    private CartDTO cartDTO; //장바구니
+    private Long room_num; //룸 번호
 
     private LocalDateTime reg_date;
 
