@@ -3,12 +3,10 @@ package com.lookatme.smartstay.service;
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.repository.BrandRepository;
-import groovy.util.logging.Log4j2;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +20,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class BrandService {
 
-    private static final Logger log = LogManager.getLogger(BrandService.class);
     private final BrandRepository BrandRepository;
     private final ModelMapper modelMapper;
     private final ImageService imageService;
