@@ -2,7 +2,6 @@ package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.CareDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
-import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.service.CareService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -14,6 +13,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -38,7 +39,8 @@ public class CareController {
     }
 
     @PostMapping("/careRegister")
-    public String careRegisterPost(@Valid CareDTO careDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
+    public String careRegisterPost(@Valid CareDTO careDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes,
+                                   List<MultipartFile> multipartFiles, Model model) throws Exception {
 
         if (bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
@@ -46,7 +48,7 @@ public class CareController {
             return "care/careRegister";
         }
 
-        Long care_num = careService.careRegister(careDTO);
+        Long care_num = careService.careRegister(careDTO, multipartFiles);
         redirectAttributes.addFlashAttribute("msg", "케어서비스가 등록되었습니다. 케어서비스 번호 : " + care_num);
 
         return "redirect:/care/careRead?care_num=" + care_num;
@@ -93,7 +95,8 @@ public class CareController {
     }
 
     @PostMapping("/careModify")
-    public String careModifyPost(@Valid CareDTO careDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String careModifyPost(@Valid CareDTO careDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes,
+                                 List<MultipartFile> multipartFiles) {
 
         if (bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
@@ -101,12 +104,23 @@ public class CareController {
             return "care/careModify";
         }
 
-        careService.careModify(careDTO);
+        careService.careModify(careDTO, careDTO.getCare_num(), multipartFiles);
 
         redirectAttributes.addFlashAttribute("msg", "케어서비스가 등록되었습니다. 케어서비스 번호 : " + careDTO.getCare_num());
 
         return "redirect:/care/careRead?care_num=" + careDTO.getCare_num();
     }
 
+    @PostMapping("/careDelete")
+    public String careDelete(@RequestParam("id") Long care_num, RedirectAttributes redirectAttributes) {
+
+       try {
+           careService.careDelete(care_num);
+           redirectAttributes.addFlashAttribute("successMessage", "삭제가 완료되었습니다.");
+       }catch (Exception e) {
+           redirectAttributes.addFlashAttribute("errorMessage", "삭제 중 오류가 발생했습니다.");
+       }
+       return "redirect:/care/careList";
+    }
 }
 

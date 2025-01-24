@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ public class CareService {
     private final ModelMapper modelMapper;
     private final ImageService imageService;
 
-    public Long careRegister(CareDTO careDTO) {
+    public Long careRegister(CareDTO careDTO, List<MultipartFile> multipartFiles) {
 
         Care care = modelMapper.map(careDTO, Care.class);
 
@@ -52,7 +53,7 @@ public class CareService {
         return careDTOList;
     }
 
-    public CareDTO careModify(CareDTO careDTO) {
+    public CareDTO careModify(CareDTO careDTO, Long care_num, List<MultipartFile> multipartFiles) {
 
         Care care = careRepository.findById(careDTO.getCare_num()).orElseThrow(EntityNotFoundException::new);
 
@@ -65,4 +66,10 @@ public class CareService {
 
         return modelMapper.map(care, CareDTO.class);
     }
+
+    public void careDelete(Long id) {
+
+        careRepository.deleteById(id);
+    }
+
 }
