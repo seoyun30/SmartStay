@@ -101,4 +101,8 @@ public class RoomService {
         return modelMapper.map(room, RoomDTO.class);
     }
 
+    public void roomDelete(Long id) {
+
+        roomRepository.deleteById(id);
+    }
 }

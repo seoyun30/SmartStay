@@ -21,14 +21,14 @@
 
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="manager_num" class="form-label">호텔 정보</label>
-                            <p class="form-control" th:value="${memberDTO?.managerDTO?.manager_num}" id="manager_num"></p>
+                            <label for="hotel_num" class="form-label">호텔 정보</label>
+                            <p class="form-control" th:value="${hotelDTO?.hotelDTO?.hotel_num}" id="hotel_num"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="menu_sort" class="form-label">메뉴 분류</label>
-                            <input type="text" min="0" class="form-control" th:field="*{menu_sort}" id="service_info">
+                            <input type="text" min="0" class="form-control" th:field="*{menu_sort}" id="menu_sort">
                             <p th:if="${#fields.hasErrors('menu_sort')}" th:errors="*{menu_sort}" class="fieldError"></p>
                         </div>
                     </div>
@@ -57,17 +57,20 @@
                     <div class="col-12">
                         <button type="submit" class="btn btn-dark">저장</button>
                         <button type="button" class="btn btn-dark" onclick="location.href='/menu/menuList'">목록</button>
+                        <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
                     </div>
                 </div>
             </div>
         </div>
     </form>
 
+    <form id="deleteForm" action="/menu/menuDelete" method="post" style="display:none;">
+        <input type="hidden" name="id" th:value="${menuDTO.menu_num}">
+    </form>
 
 </th:block>
 
 <th:block layout:fragment="script">
-
 </th:block>
 
 </body>

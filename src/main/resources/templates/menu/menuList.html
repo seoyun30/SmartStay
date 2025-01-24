@@ -19,8 +19,8 @@
     </div>
     <div class="row mt-3">
         <div class="col text-end">
-            <label for="manager_num" class="form-label">호텔 정보</label>
-            <p class="form-control" th:value="${memberDTO?.managerDTO?.manager_num}" id="manager_num"></p>
+            <label for="hotel_num" class="form-label">호텔 정보</label>
+            <p class="form-control" th:value="${hotelDTO?.hotelDTO?.hotel_num}" id="hotel_num"></p>
         </div>
     </div>
 
@@ -53,7 +53,17 @@
                         </td>
                         <td th:text="${menu.menu_detail}"></td>
                         <td th:text="${menu.menu_price}"></td>
-
+                        <td th:text="${#temporals.format(menu.reg_date, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${#temporals.format(menu.modi_date, 'yyyy-MM-dd')}"></td>
+                        <td>
+                            <button type="button" th:attr="onclick='location.href=\'/menu/menuModify?menu_num=' + ${menu.menu_num} + '\''" class="btn btn-warning">수정</button>
+                        </td>
+                        <td>
+                            <form action="/menu/menuDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <input type="hidden" name="id" th:value="${menu.menu_num}">
+                                <button type="submit" class="btn btn-danger">삭제</button>
+                            </form>
+                        </td>
                     </tr>
                 </th:block>
                 </tbody>

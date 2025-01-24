@@ -106,7 +106,7 @@ public class CareController {
 
         careService.careModify(careDTO, careDTO.getCare_num(), multipartFiles);
 
-        redirectAttributes.addFlashAttribute("msg", "룸 케어가 등록되었습니다. 룸 케어 번호 : " + careDTO.getCare_num());
+        redirectAttributes.addFlashAttribute("msg", "룸 케어가 수정되었습니다. 룸 케어 번호 : " + careDTO.getCare_num());
 
         return "redirect:/care/careRead?care_num=" + careDTO.getCare_num();
     }

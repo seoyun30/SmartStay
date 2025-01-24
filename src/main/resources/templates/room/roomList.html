@@ -18,8 +18,8 @@
         </div>
         <div class="row mt-3">
             <div class="col text-end">
-                <label for="manager_num" class="form-label">호텔 정보</label>
-                <p class="form-control" th:value="${memberDTO?.managerDTO?.manager_num}" id="manager_num"></p>
+                <label for="hotel_num" class="form-label">호텔 정보</label>
+                <p class="form-control" th:value="${hotelDTO?.hotelDTO?.hotel_num}" id="hotel_num"></p>
             </div>
         </div>
 
@@ -37,6 +37,10 @@
                     <td>룸 인원수</td>
                     <td>룸 가격</td>
                     <td>룸 상태</td>
+                    <td>등록일자</td>
+                    <td>수정일자</td>
+                    <td>수정</td>
+                    <td>삭제</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -54,6 +58,17 @@
                         <td th:text="${room.room_bed}"></td>
                         <td th:text="${room.room_price}"></td>
                         <td th:text="${room.room_state}"></td>
+                        <td th:text="${#temporals.format(room.reg_date, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${#temporals.format(room.modi_date, 'yyyy-MM-dd')}"></td>
+                        <td>
+                            <button type="button" th:attr="onclick='location.href=\'/room/roomModify?room_num=' + ${room.room_num} + '\''" class="btn btn-warning">수정</button>
+                        </td>
+                        <td>
+                            <form action="/room/roomDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <input type="hidden" name="id" th:value="${room.room_num}">
+                                <button type="submit" class="btn btn-danger">삭제</button>
+                            </form>
+                        </td>
                     </tr>
                 </th:block>
                 </tbody>

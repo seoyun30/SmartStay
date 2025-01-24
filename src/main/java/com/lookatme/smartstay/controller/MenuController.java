@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -116,7 +117,18 @@ public class MenuController {
 
             return "redirect:/menu/menuList";
         }
+    }
 
+    @PostMapping("/menuDelete")
+    public String menuDelete(@RequestParam("id") Long menu_num, RedirectAttributes redirectAttributes) {
+
+        try {
+            menuService.menuDelete(menu_num);
+            redirectAttributes.addFlashAttribute("successMessage", "삭제가 완료되었습니다.");
+        }catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "삭제 중 오류가 발생했습니다.");
+        }
+        return "redirect:/menu/menuList";
     }
 }
 

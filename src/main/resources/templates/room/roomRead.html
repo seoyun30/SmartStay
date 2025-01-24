@@ -19,8 +19,8 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="manager_num" class="form-label">호텔 정보</label>
-                            <p class="form-control" th:value="${memberDTO?.managerDTO?.manager_num}" id="manager_num"></p>
+                            <label for="hotel_num" class="form-label">호텔 정보</label>
+                            <p class="form-control" th:value="${hotelDTO?.hotelDTO?.hotel_num}" id="hotel_num"></p>
                         </div>
                     </div>
                     <div class="col-12">
@@ -69,9 +69,9 @@
                         <div class="mb-3">
                             <label for="room_state" class="form-label">룸 상태</label>
                             <select th:field="*{room_state}" id="room_state" class="form-select" aria-label="Default select example">
-                                <option value="Y">이용 가능</option>
-                                <option value="N">품절</option>
-                                <option value="C">청소 중</option>
+                                <option value="YES">이용 가능</option>
+                                <option value="NO">사용 불가</option>
+                                <option value="PREPARE">준비 중</option>
                             </select>
                         </div>
                     </div>
@@ -79,12 +79,21 @@
                     <div class="col-12">
                         <button type="button" th:onclick="|location.href='@{/room/roomModify(room_num=${roomDTO.room_num})}'|" class="btn btn-dark">수정</button>
                         <button type="button" onclick="location.href='/room/roomList'"class="btn btn-dark">목록</button>
+                        <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
                     </div>
                 </div>
-
             </div>
         </div>
     </form>
+
+    <form id="deleteForm" action="/room/roomDelete" method="post" style="display:none;">
+        <input type="hidden" name="id" th:value="${roomDTO.room_num}" />
+    </form>
+
 </th:block>
+
+<th:block layout:fragment="script">
+</th:block>
+
 </body>
 </html>
