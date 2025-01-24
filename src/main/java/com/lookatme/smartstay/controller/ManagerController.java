@@ -2,7 +2,6 @@ package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.Util.PagenationUtil;
 import com.lookatme.smartstay.dto.*;
-import com.lookatme.smartstay.service.ChiefService;
 import com.lookatme.smartstay.service.ManagerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller

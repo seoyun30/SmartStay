@@ -6,7 +6,7 @@ import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.repository.ChiefRepository;
+import com.lookatme.smartstay.repository.BrandRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
-    private final ChiefRepository chiefRepository;
+    private final BrandRepository chiefRepository;
 
 
     @Override

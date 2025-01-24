@@ -11,8 +11,62 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-목록페이지
+    <h1 class="text-center">매장 목록</h1>
+    <div class="row mt-3">
+        <div class="col text-end">
+            <button type="button" onclick="location.href='/chief/chiefRegister'" class="btn btn-dark">매장 등록</button>
+        </div>
+    </div>
 
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>내용</th>
+                    <th>작성자</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <th:block th:each="qna : ${qnaDTOList}">
+                    <tr class="align-middle">
+                        <td th:text="${qna.qna_num}"></td>
+                        <td>
+                            <a th:href="@{/qna/qnaRead(qna_num=${qna.qna_num})}">
+                                [[${qna.hotel_name}]]
+                            </a>
+                        </td>
+                        <td th:text="${chief.business_num}"></td>
+                        <td th:text="${chief.owner}"></td>
+                        <td th:text="${chief.address}"></td>
+                        <td th:text="${chief.tel}"></td>
+                        <td th:text="${chief.score}"></td>
+
+                        <!--post 방식의 삭제버튼-->
+                        <td class="col text-end">
+                            <form action="/chief/chiefDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <input type="hidden" name="id" th:value="${chief.chief_num}"> <!-- 삭제할 chief의 ID를 hidden 필드로 전달 -->
+                                <button type="submit" class="btn btn-dark" style="background-color: red;">삭제</button>
+                            </form>
+                        </td>
+
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </th:block>
+<script th:inline="javascript" layout:fragment="script">
+    let messages = [[${msg}]];
+    if (messages != null && messages.trim() !== "") {
+        alert(messages);
+    }
+
+</script>
+
 </body>
 </html>

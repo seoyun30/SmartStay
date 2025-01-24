@@ -19,7 +19,7 @@ import java.util.Optional;
 @Transactional
 public class ImageService {
     private final ImageRepository imageRepository;
-    private final ChiefRepository chiefRepository;
+    private final BrandRepository chiefRepository;
     private final ManagerRepository managerRepository;
     private final RoomRepository roomRepository;
     private final MenuRepository menuRepository;
