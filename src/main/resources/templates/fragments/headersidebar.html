@@ -11,7 +11,6 @@
 <body>
 
 <th:block th:fragment="header">
-
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
 
@@ -29,7 +28,6 @@
                 <button type="submit" title="Search"><i class="bi bi-search"></i></button>
             </form>
         </div><!-- End Search Bar -->
-
 
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
@@ -237,28 +235,55 @@
                                 <span>로그아웃</span>
                             </a>
                         </li>
-
                     </ul><!-- End Profile Dropdown Items -->
                 </li><!-- End Profile Nav -->
-
             </ul>
         </nav><!-- End Icons Navigation -->
-
     </header><!-- End Header -->
-
     <!-- ======= Sidebar ======= -->
     <aside id="sidebar" class="sidebar">
-
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a href="/" class="nav-link">
+                <a href="/adMain" class="nav-link">
                     <i class="bi bi-house"></i> 홈
                 </a>
             </li>
 
 
             <th:block>
+                <li class="nav-item">
+
+                    <a class="nav-link collapsed" data-bs-target="#hotel-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-circle"></i><span>호텔 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+
+                    <a class="nav-link collapsed" data-bs-target="#brand-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-circle"></i><span>브랜드 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                      
+                    <ul id="brand-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+
+                            <a href="/hotel/hotelList" class="nav-link">
+                                <i class="bi bi-circle"></i> 호텔 목록
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/hotel/hotelRegister" class="nav-link">
+                                <i class="bi bi-circle"></i> 호텔 등록
+
+                            <a href="/brand/brandList" class="nav-link">
+                                <i class="bi bi-circle"></i> 브랜드 목록
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/brand/brandRegister" class="nav-link">
+                                <i class="bi bi-circle"></i> 브랜드 등록
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#hotel-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-circle"></i><span>호텔 관리</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -269,24 +294,7 @@
                                 <i class="bi bi-circle"></i> 호텔 목록
                             </a>
                         </li>
-                        <li>
-                            <a href="/hotel/hotelRegister" class="nav-link">
-                                <i class="bi bi-circle"></i> 호텔 등록
-                            </a>
-                        </li>
-                    </ul>
-                </li>
 
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#power-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-heart"></i><span>권한 승인 관리</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="power-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="#" class="nav-link">
-                                <i class="bi bi-heart"></i> 권한 승인 목록
-                            </a>
-                        </li>
                     </ul>
                 </li>
             </th:block>
@@ -444,12 +452,187 @@
                         <i class="bi bi-menu-button-wide"></i><span>회원</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
                     <ul id="Membership-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/user/list">
-                                <i class="bi bi-circle"></i><span>회원 목록</span>
-                            </a>
 
+                        <li>
+                            <a href="/hotel/hotelRegister" class="nav-link">
+                                <i class="bi bi-circle"></i> 호텔 등록
+                            </a>
                         </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#power-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-heart"></i><span>권한 승인 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="power-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-heart"></i> 권한 승인 목록
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#room-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-door-closed"></i><span>룸 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="room-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/room/roomList" class="nav-link">
+                                <i class="bi bi-door-closed"></i> 룸 목록
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/room/roomRegister" class="nav-link">
+                                <i class="bi bi-door-closed"></i> 룸 등록
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#menu-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-list"></i><span>메뉴 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="menu-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/menu/menuList" class="nav-link">
+                                <i class="bi bi-list"></i> 메뉴 목록
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/menu/menuRegister" class="nav-link">
+                                <i class="bi bi-list"></i> 메뉴 등록
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#care-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-heart"></i><span>룸 케어 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="care-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/care/careList" class="nav-link">
+                                <i class="bi bi-heart"></i> 룸 케어 목록
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/care/careRegister" class="nav-link">
+                                <i class="bi bi-heart"></i> 룸 케어 등록
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#notice-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-balloon"></i><span>공지사항 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="notice-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/notice/noticeList" class="nav-link">
+                                <i class="bi bi-balloon"></i> 공지사항 목록
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/notice/noticeRegister" class="nav-link">
+                                <i class="bi bi-balloon"></i> 공지사항 등록
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#qna-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-heart"></i><span>문의사항 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="qna-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/qna/qnaList" class="nav-link">
+                                <i class="bi bi-heart"></i> 문의사항 목록
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#review-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-heart"></i><span>리뷰 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="review-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-heart"></i> 리뷰 목록
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#member-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-heart"></i><span>회원 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="member-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-heart"></i> 회원 목록
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </th:block>
+
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link collapsed" data-bs-target="#field-nav" data-bs-toggle="collapse" href="#">-->
+<!--                    <i class="bi bi-menu-button-wide"></i><span>현장</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                </a>-->
+<!--                <ul id="field-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                    <li>-->
+<!--                        <a href="/site/list">-->
+<!--                            <i class="bi bi-circle"></i><span>매장 관리</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+
+<!--                    &lt;!&ndash; <li>-->
+<!--                         <a href="/site/details">-->
+<!--                             <i class="bi bi-circle"></i><span>현장 상세</span>-->
+<!--                         </a>-->
+<!--                     </li>&ndash;&gt;-->
+<!--                    <li>-->
+<!--                        <a href="/site/register">-->
+<!--                            <i class="bi bi-circle"></i><span>매장 목록</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                            <a href="site/update">&ndash;&gt;-->
+<!--                    &lt;!&ndash;                                <i class="bi bi-circle"></i><span>현장 수정</span>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<li>-->
+<!--                        <a href="site/del">-->
+<!--                            <i class="bi bi-circle"></i><span>현장 삭제</span>-->
+<!--                        </a>-->
+<!--                    </li>&ndash;&gt;-->
+<!--                </ul>-->
+<!--            </li>&lt;!&ndash; End 현장 Nav &ndash;&gt;-->
+
+<!--            <th:block sec:authorize="isAuthenticated()">-->
+<!--                <li class="nav-item" sec:authorize="hasRole('ADMIN')">-->
+<!--                    <a class="nav-link collapsed" data-bs-target="#Membership-nav" data-bs-toggle="collapse" href="#">-->
+<!--                        <i class="bi bi-menu-button-wide"></i><span>회원</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                    </a>-->
+<!--                    <ul id="Membership-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                        <li>-->
+<!--                            <a href="/user/list">-->
+<!--                                <i class="bi bi-circle"></i><span>회원 목록</span>-->
+<!--                            </a>-->
+
+<!--                        </li>-->
 
                         <!--회원정보상세보기는 관리자용-->
 
@@ -468,331 +651,326 @@
                         <!--                                <a href="/user/del">-->
                         <!--                                    <i class="bi bi-circle"></i><span>회원 삭제</span>-->
                         <!--                                </a>-->
-                        <!--                            </li>-->
-                    </ul>
-                </li><!-- End 회원 Nav -->
-            </th:block>
+<!--                        &lt;!&ndash;                            </li>&ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </li>&lt;!&ndash; End 회원 Nav &ndash;&gt;-->
+<!--            </th:block>-->
 
-            <th:block sec:authorize="isAuthenticated()">
+<!--            <th:block sec:authorize="isAuthenticated()">-->
 
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#site-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-menu-button-wide"></i><span>현장</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="site-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/site/list">
-                                <i class="bi bi-circle"></i><span>현장 목록</span>
-                            </a>
-                        </li>
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link collapsed" data-bs-target="#site-nav" data-bs-toggle="collapse" href="#">-->
+<!--                        <i class="bi bi-menu-button-wide"></i><span>현장</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                    </a>-->
+<!--                    <ul id="site-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                        <li>-->
+<!--                            <a href="/site/list">-->
+<!--                                <i class="bi bi-circle"></i><span>현장 목록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
 
-                        <!-- <li>
-                             <a href="/site/details">
-                                 <i class="bi bi-circle"></i><span>현장 상세</span>
-                             </a>
-                         </li>-->
-                        <li>
-                            <a href="/site/register">
-                                <i class="bi bi-circle"></i><span>현장 등록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="site/update">-->
-                        <!--                                <i class="bi bi-circle"></i><span>현장 수정</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <!--<li>
-                            <a href="site/del">
-                                <i class="bi bi-circle"></i><span>현장 삭제</span>
-                            </a>
-                        </li>-->
-                    </ul>
-                </li><!-- End 현장 Nav -->
+<!--                        &lt;!&ndash; <li>-->
+<!--                             <a href="/site/details">-->
+<!--                                 <i class="bi bi-circle"></i><span>현장 상세</span>-->
+<!--                             </a>-->
+<!--                         </li>&ndash;&gt;-->
+<!--                        <li>-->
+<!--                            <a href="/site/register">-->
+<!--                                <i class="bi bi-circle"></i><span>현장 등록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="site/update">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>현장 수정</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<li>-->
+<!--                            <a href="site/del">-->
+<!--                                <i class="bi bi-circle"></i><span>현장 삭제</span>-->
+<!--                            </a>-->
+<!--                        </li>&ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </li>&lt;!&ndash; End 현장 Nav &ndash;&gt;-->
 
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#company-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-journal-text"></i><span>회사</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="company-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/company/list">
-                                <i class="bi bi-circle"></i><span>회사 목록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/company/details">-->
-                        <!--                                <i class="bi bi-circle"></i><span>회사 상세</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <li>
-                            <a href="/company/register">
-                                <i class="bi bi-circle"></i><span>회사 등록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/company/update">-->
-                        <!--                                <i class="bi bi-circle"></i><span>회사 수정</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <!--<li>
-                            <a href="/company/del">
-                                <i class="bi bi-circle"></i><span>회사 삭제</span>
-                            </a>
-                        </li>-->
-                    </ul>
-                </li><!-- End 회사 Nav -->
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link collapsed" data-bs-target="#company-nav" data-bs-toggle="collapse" href="#">-->
+<!--                        <i class="bi bi-journal-text"></i><span>회사</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                    </a>-->
+<!--                    <ul id="company-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                        <li>-->
+<!--                            <a href="/company/list">-->
+<!--                                <i class="bi bi-circle"></i><span>회사 목록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/company/details">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>회사 상세</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        <li>-->
+<!--                            <a href="/company/register">-->
+<!--                                <i class="bi bi-circle"></i><span>회사 등록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/company/update">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>회사 수정</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<li>-->
+<!--                            <a href="/company/del">-->
+<!--                                <i class="bi bi-circle"></i><span>회사 삭제</span>-->
+<!--                            </a>-->
+<!--                        </li>&ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </li>&lt;!&ndash; End 회사 Nav &ndash;&gt;-->
 
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#business-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-layout-text-window-reverse"></i><span>거래처</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="business-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/correspondent/list">
-                                <i class="bi bi-circle"></i><span>거래처 목록</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/correspondent/register">
-                                <i class="bi bi-circle"></i><span>거래처 등록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/correspondent/detail">-->
-                        <!--                                <i class="bi bi-circle"></i><span>거래처 상세</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <!--                        <li>-->
-                        <!--                            <a href="/correspondent/update">-->
-                        <!--                                <i class="bi bi-circle"></i><span>거래처 수정</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <!--<li>
-                            <a href="/correspondent/del">
-                                <i class="bi bi-circle"></i><span>거래처 삭제</span>
-                            </a>
-                        </li>-->
-                    </ul>
-                </li><!-- End 거래처 Nav -->
-
-
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#human-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-journal-text"></i><span>인사</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="human-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/company/human/list">
-                                <i class="bi bi-circle"></i><span>인사 목록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/company/human/details">-->
-                        <!--                                <i class="bi bi-circle"></i><span>인사 상세</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <li>
-                            <a href="/company/human/register">
-                                <i class="bi bi-circle"></i><span>인사 등록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/company/human/update">-->
-                        <!--                                <i class="bi bi-circle"></i><span>인사 수정</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <!--<li>
-                            <a href="/company/human/del">
-                                <i class="bi bi-circle"></i><span>인사 삭제</span>
-                            </a>
-                        </li>-->
-                    </ul>
-                </li><!-- End 인사 Nav -->
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#machine-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-journal-text"></i><span>장비</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="machine-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/company/machine/list">
-                                <i class="bi bi-circle"></i><span>장비 목록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/company/machine/details">-->
-                        <!--                                <i class="bi bi-circle"></i><span>장비 상세</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <li>
-                            <a href="/company/machine/register">
-                                <i class="bi bi-circle"></i><span>장비 등록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/company/machine/update">-->
-                        <!--                                <i class="bi bi-circle"></i><span>장비 수정</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <!--                        <li>-->
-                        <!--                            <a href="/company/machine/del">-->
-                        <!--                                <i class="bi bi-circle"></i><span>장비 삭제</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                    </ul>
-                </li><!-- End 장비 Nav -->
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#meterial-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-journal-text"></i><span>자재</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="meterial-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/company/material/list">
-                                <i class="bi bi-circle"></i><span>자재 목록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/company/material/details">-->
-                        <!--                                <i class="bi bi-circle"></i><span>자재 상세</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <li>
-                            <a href="/company/material/register">
-                                <i class="bi bi-circle"></i><span>자재 등록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/company/material/update">-->
-                        <!--                                <i class="bi bi-circle"></i><span>자재 수정</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <!--<li>
-                            <a href="/company/material/del">
-                                <i class="bi bi-circle"></i><span>자재 삭제</span>
-                            </a>
-                        </li>-->
-                    </ul>
-                </li><!-- End 자재 Nav -->
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#purchase-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-journal-text"></i><span>매입</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="purchase-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/company/list">
-                                <i class="bi bi-circle"></i><span>매입 목록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/company/details">-->
-                        <!--                                <i class="bi bi-circle"></i><span>매입 상세</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <li>
-                            <a href="/company/register">
-                                <i class="bi bi-circle"></i><span>매입 등록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/company/update">-->
-                        <!--                                <i class="bi bi-circle"></i><span>매입 수정</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <!--<li>
-                            <a href="/company/del">
-                                <i class="bi bi-circle"></i><span>매입 삭제</span>
-                            </a>
-                        </li>-->
-                    </ul>
-                </li><!-- End 매입 Nav -->
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#sales-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-journal-text"></i><span>매출</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="sales-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/sales/list">
-                                <i class="bi bi-circle"></i><span>매출 목록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/sales/details">-->
-                        <!--                                <i class="bi bi-circle"></i><span>매출 상세</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <li>
-                            <a href="/sales/register">
-                                <i class="bi bi-circle"></i><span>매출 등록</span>
-                            </a>
-                        </li>
-                        <!--                        <li>-->
-                        <!--                            <a href="/sales/update">-->
-                        <!--                                <i class="bi bi-circle"></i><span>매출 수정</span>-->
-                        <!--                            </a>-->
-                        <!--                        </li>-->
-                        <!--<li>
-                            <a href="/company/del">
-                                <i class="bi bi-circle"></i><span>매출 삭제</span>
-                            </a>
-                        </li>-->
-                    </ul>
-                </li><!-- End 매출 Nav -->
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link collapsed" data-bs-target="#business-nav" data-bs-toggle="collapse" href="#">-->
+<!--                        <i class="bi bi-layout-text-window-reverse"></i><span>거래처</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                    </a>-->
+<!--                    <ul id="business-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                        <li>-->
+<!--                            <a href="/correspondent/list">-->
+<!--                                <i class="bi bi-circle"></i><span>거래처 목록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="/correspondent/register">-->
+<!--                                <i class="bi bi-circle"></i><span>거래처 등록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/correspondent/detail">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>거래처 상세</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/correspondent/update">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>거래처 수정</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<li>-->
+<!--                            <a href="/correspondent/del">-->
+<!--                                <i class="bi bi-circle"></i><span>거래처 삭제</span>-->
+<!--                            </a>-->
+<!--                        </li>&ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </li>&lt;!&ndash; End 거래처 Nav &ndash;&gt;-->
 
 
+
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link collapsed" data-bs-target="#human-nav" data-bs-toggle="collapse" href="#">-->
+<!--                        <i class="bi bi-journal-text"></i><span>인사</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                    </a>-->
+<!--                    <ul id="human-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                        <li>-->
+<!--                            <a href="/company/human/list">-->
+<!--                                <i class="bi bi-circle"></i><span>인사 목록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/company/human/details">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>인사 상세</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        <li>-->
+<!--                            <a href="/company/human/register">-->
+<!--                                <i class="bi bi-circle"></i><span>인사 등록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/company/human/update">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>인사 수정</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<li>-->
+<!--                            <a href="/company/human/del">-->
+<!--                                <i class="bi bi-circle"></i><span>인사 삭제</span>-->
+<!--                            </a>-->
+<!--                        </li>&ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </li>&lt;!&ndash; End 인사 Nav &ndash;&gt;-->
+
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link collapsed" data-bs-target="#machine-nav" data-bs-toggle="collapse" href="#">-->
+<!--                        <i class="bi bi-journal-text"></i><span>장비</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                    </a>-->
+<!--                    <ul id="machine-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                        <li>-->
+<!--                            <a href="/company/machine/list">-->
+<!--                                <i class="bi bi-circle"></i><span>장비 목록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/company/machine/details">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>장비 상세</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        <li>-->
+<!--                            <a href="/company/machine/register">-->
+<!--                                <i class="bi bi-circle"></i><span>장비 등록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/company/machine/update">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>장비 수정</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/company/machine/del">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>장비 삭제</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </li>&lt;!&ndash; End 장비 Nav &ndash;&gt;-->
+
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link collapsed" data-bs-target="#meterial-nav" data-bs-toggle="collapse" href="#">-->
+<!--                        <i class="bi bi-journal-text"></i><span>자재</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                    </a>-->
+<!--                    <ul id="meterial-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                        <li>-->
+<!--                            <a href="/company/material/list">-->
+<!--                                <i class="bi bi-circle"></i><span>자재 목록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/company/material/details">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>자재 상세</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        <li>-->
+<!--                            <a href="/company/material/register">-->
+<!--                                <i class="bi bi-circle"></i><span>자재 등록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/company/material/update">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>자재 수정</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<li>-->
+<!--                            <a href="/company/material/del">-->
+<!--                                <i class="bi bi-circle"></i><span>자재 삭제</span>-->
+<!--                            </a>-->
+<!--                        </li>&ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </li>&lt;!&ndash; End 자재 Nav &ndash;&gt;-->
+
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link collapsed" data-bs-target="#purchase-nav" data-bs-toggle="collapse" href="#">-->
+<!--                        <i class="bi bi-journal-text"></i><span>매입</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                    </a>-->
+<!--                    <ul id="purchase-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                        <li>-->
+<!--                            <a href="/company/list">-->
+<!--                                <i class="bi bi-circle"></i><span>매입 목록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/company/details">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>매입 상세</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        <li>-->
+<!--                            <a href="/company/register">-->
+<!--                                <i class="bi bi-circle"></i><span>매입 등록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/company/update">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>매입 수정</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<li>-->
+<!--                            <a href="/company/del">-->
+<!--                                <i class="bi bi-circle"></i><span>매입 삭제</span>-->
+<!--                            </a>-->
+<!--                        </li>&ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </li>&lt;!&ndash; End 매입 Nav &ndash;&gt;-->
+
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link collapsed" data-bs-target="#sales-nav" data-bs-toggle="collapse" href="#">-->
+<!--                        <i class="bi bi-journal-text"></i><span>매출</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                    </a>-->
+<!--                    <ul id="sales-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                        <li>-->
+<!--                            <a href="/sales/list">-->
+<!--                                <i class="bi bi-circle"></i><span>매출 목록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/sales/details">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>매출 상세</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        <li>-->
+<!--                            <a href="/sales/register">-->
+<!--                                <i class="bi bi-circle"></i><span>매출 등록</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            <a href="/sales/update">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                                <i class="bi bi-circle"></i><span>매출 수정</span>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<li>-->
+<!--                            <a href="/company/del">-->
+<!--                                <i class="bi bi-circle"></i><span>매출 삭제</span>-->
+<!--                            </a>-->
+<!--                        </li>&ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </li>&lt;!&ndash; End 매출 Nav &ndash;&gt;-->
 
 
 
 
 
-                <th:block sec:authorize="isAuthenticated()">
-                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                        <a class="nav-link collapsed" data-bs-target="#blacklist-nav" data-bs-toggle="collapse" href="#">
-                            <i class="bi bi-layout-text-window-reverse"></i><span>블랙리스트</span><i class="bi bi-chevron-down ms-auto"></i>
-                        </a>
-                        <ul id="blacklist-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                            <li>
-                                <a href="/blacklist/list">
-                                    <i class="bi bi-circle"></i><span>블랙리스트 목록</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/blacklist/register">
-                                    <i class="bi bi-circle"></i><span>블랙리스트 등록</span>
-                                </a>
-                            </li>
-                            <!--                        <li>-->
-                            <!--                            <a href="/blacklist/details">-->
-                            <!--                                <i class="bi bi-circle"></i><span>블랙리스트 상세</span>-->
-                            <!--                            </a>-->
-                            <!--                        </li>-->
-                            <!--                        <li>-->
-                            <!--                            <a href="/blacklist/update">-->
-                            <!--                                <i class="bi bi-circle"></i><span>블랙리스트 수정</span>-->
-                            <!--                            </a>-->
-                            <!--                        </li>-->
-                            <!--                        <li>-->
-                            <!--                            <a href="/blacklist/del">-->
-                            <!--                                <i class="bi bi-circle"></i><span>블랙리스트 삭제</span>-->
-                            <!--                            </a>-->
-                            <!--                        </li>-->
-                        </ul>
-                    </li><!-- End 블랙리스트 Nav -->
 
-                </th:block>
-            </th:block>
+
+<!--                <th:block sec:authorize="isAuthenticated()">-->
+<!--                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">-->
+<!--                        <a class="nav-link collapsed" data-bs-target="#blacklist-nav" data-bs-toggle="collapse" href="#">-->
+<!--                            <i class="bi bi-layout-text-window-reverse"></i><span>블랙리스트</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                        </a>-->
+<!--                        <ul id="blacklist-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                            <li>-->
+<!--                                <a href="/blacklist/list">-->
+<!--                                    <i class="bi bi-circle"></i><span>블랙리스트 목록</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href="/blacklist/register">-->
+<!--                                    <i class="bi bi-circle"></i><span>블랙리스트 등록</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                            <a href="/blacklist/details">&ndash;&gt;-->
+<!--                            &lt;!&ndash;                                <i class="bi bi-circle"></i><span>블랙리스트 상세</span>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                            <a href="/blacklist/update">&ndash;&gt;-->
+<!--                            &lt;!&ndash;                                <i class="bi bi-circle"></i><span>블랙리스트 수정</span>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                            <a href="/blacklist/del">&ndash;&gt;-->
+<!--                            &lt;!&ndash;                                <i class="bi bi-circle"></i><span>블랙리스트 삭제</span>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                        </ul>-->
+<!--                    </li>&lt;!&ndash; End 블랙리스트 Nav &ndash;&gt;-->
+
+<!--                </th:block>-->
+<!--            </th:block>-->
 
         </ul>
-
     </aside>
     <!-- End Sidebar-->
-
-
 </th:block>
-
-
 </body>
 </html>
