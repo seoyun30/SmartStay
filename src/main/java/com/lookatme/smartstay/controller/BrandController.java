@@ -3,7 +3,7 @@ package com.lookatme.smartstay.controller;
 import com.lookatme.smartstay.Util.PagenationUtil;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.service.ChiefService;
+import com.lookatme.smartstay.service.BrandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,75 +23,75 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("/chief")
-public class ChiefController {
+@RequestMapping("/hotel")
+public class BrandController {
 
-    private final ChiefService chiefService;
+    private final BrandService brandService;
     private PagenationUtil pagenation;
     private final PagenationUtil pagenationUtil;
 
     //등록
-    @GetMapping("/chiefRegister")
-    public String chiefRegisterGet(Model model) {
-        model.addAttribute("chiefDTO", new BrandDTO());
-        return "chief/chiefRegister";
+    @GetMapping("/hotelRegister")
+    public String hotelRegisterGet(Model model) {
+        model.addAttribute("hotelDTO", new BrandDTO());
+        return "hotel/hotelRegister";
     }
-    @PostMapping("/chiefRegister")
-    public String chiefRegisterPost(Model model, BrandDTO brandDTO,
+    @PostMapping("/hotelRegister")
+    public String hotelRegisterPost(Model model, BrandDTO brandDTO,
                                     List<MultipartFile> multipartFiles, RedirectAttributes redirectAttributes) throws Exception {
-        chiefService.insert(brandDTO, multipartFiles);
+        brandService.insert(brandDTO, multipartFiles);
         redirectAttributes.addFlashAttribute("msg", "등록이 완료되었습니다.");
-        return "redirect:/chief/chiefList";
+        return "redirect:/hotel/hotelList";
     }
 
     //목록
-    @GetMapping("/chiefList") //슈퍼어드민만 사용
-    public String chiefList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
+    @GetMapping("/hotelList") //슈퍼어드민만 사용
+    public String hotelList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
         log.info("목록진입");
 
-        List<BrandDTO> brandDTOList =  chiefService.chiefList();
-       model.addAttribute("chiefDTOList", brandDTOList);
-        return "chief/chiefList";
+        List<BrandDTO> brandDTOList =  brandService.chiefList();
+       model.addAttribute("hotelDTOList", brandDTOList);
+        return "hotel/hotelList";
     }
 
     //상세보기
-    @GetMapping("/chiefRead")
-    public String chiefRead(Long chief_num, Model model) {
-        BrandDTO brandDTO =chiefService.read(chief_num);
-        model.addAttribute("chiefDTO", brandDTO);
-        return "chief/chiefRead";
+    @GetMapping("/hotelRead")
+    public String hotelRead(Long hotel_num, Model model) {
+        BrandDTO brandDTO = brandService.read(hotel_num);
+        model.addAttribute("hotelDTO", brandDTO);
+        return "hotel/hotelRead";
     }
 
     //수정
-    @GetMapping("/chiefModify")
-    public String chiefModifyGet(Long chief_num, Model model) {
-        BrandDTO brandDTO =chiefService.read(chief_num);
-        model.addAttribute("chiefDTO", brandDTO);// end접속해제
-        return "chief/chiefModify";
+    @GetMapping("/hotelModify")
+    public String hotelModifyGet(Long hotel_num, Model model) {
+        BrandDTO brandDTO = brandService.read(hotel_num);
+        model.addAttribute("hotelDTO", brandDTO);// end접속해제
+        return "hotel/hotelModify";
     }
-    @PostMapping("/chiefModify")
-    public String chiefModifyPost(@Valid BrandDTO brandDTO, BindingResult bindingResult, @RequestParam("delnumList") List<Long> delnumList,
+    @PostMapping("/hotelModify")
+    public String hotelModifyPost(@Valid BrandDTO brandDTO, BindingResult bindingResult, @RequestParam("delnumList") List<Long> delnumList,
                                   @RequestParam("multipartFiles") List<MultipartFile> multipartFiles, ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
         //@RequestParam("delnumList") List<Long> delnumList, @RequestParam("multipartFiles") List<MultipartFile> multipartFiles
         //사진등록, 사진삭제번호 할때 사용하는 방법
 
         if (bindingResult.hasErrors()) {
             log.info("유효성 검사 실패:" + bindingResult.getAllErrors());
-            return "chief/chiefModify";
+            return "hotel/hotelModify";
         }
         log.info("유효성 통과");
 
-        chiefService.update(brandDTO, multipartFiles );
+        brandService.update(brandDTO, multipartFiles );
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
         log.info("수정 완료");
-        return "redirect:/chief/chiefList";
+        return "redirect:/hotel/hotelList";
     }
     //삭제
-    @PostMapping("/chiefDelete")
-    public String chiefDelete(long id) {
+    @PostMapping("/hotelDelete")
+    public String hotelDelete(long id) {
         log.info("삭제할 번호 :"+id);
-        chiefService.delete(id);
-        return "redirect:/chief/chiefList";
+        brandService.delete(id);
+        return "redirect:/hotel/hotelList";
     }
 }

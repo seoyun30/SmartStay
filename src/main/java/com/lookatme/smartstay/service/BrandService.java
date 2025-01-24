@@ -2,7 +2,7 @@ package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.entity.Brand;
-import com.lookatme.smartstay.repository.ChiefRepository;
+import com.lookatme.smartstay.repository.BrandRepository;
 import groovy.util.logging.Log4j2;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -20,29 +20,29 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Log4j2
 @Transactional
-public class ChiefService {
+public class BrandService {
 
-    private static final Logger log = LogManager.getLogger(ChiefService.class);
-    private final ChiefRepository chiefRepository;
+    private static final Logger log = LogManager.getLogger(BrandService.class);
+    private final BrandRepository BrandRepository;
     private final ModelMapper modelMapper;
     private final ImageService imageService;
 
-    //chief 등록
+    //hotel 등록
     public void insert(BrandDTO brandDTO,
                        List<MultipartFile> multipartFiles) throws Exception {
         Brand brand = modelMapper.map(brandDTO, Brand.class);
-        Brand brand1 = chiefRepository.save(brand);
+        Brand brand1 = BrandRepository.save(brand);
 
         //이미지
         if(multipartFiles != null && multipartFiles.size() > 0) {
-            imageService.saveImage(multipartFiles, "chief", brand1.getChief_num());
+            imageService.saveImage(multipartFiles, "brand", brand1.getBrand_num());
         }
 
     }
 
     //chief 목록
     public List<BrandDTO> chiefList(){
-        List<Brand> brands = chiefRepository.findAll();
+        List<Brand> brands = BrandRepository.findAll();
         List<BrandDTO> brandDTOS = brands.stream()
                 .map(chief -> modelMapper.map(chief, BrandDTO.class)).collect(Collectors.toList());
         return brandDTOS;
@@ -50,7 +50,7 @@ public class ChiefService {
 
     //chief 상세보기
     public BrandDTO read(Long id) {
-        Brand brand =chiefRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Brand brand = BrandRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
                     //.setItemImgDTOList(item.getItemImgList());
         return brandDTO;}
@@ -63,18 +63,16 @@ public class ChiefService {
     //chief 수정
     public void update(BrandDTO brandDTO,
                        List<MultipartFile> multipartFiles) throws Exception{
-        Brand brand = chiefRepository.findById(brandDTO.getChief_num())
+        Brand brand = BrandRepository.findById(brandDTO.getBrand_num())
                 .orElseThrow(EntityNotFoundException::new);
         //set
-        brand.setChief_num(brandDTO.getChief_num());
-        brand.setHotel_name(brandDTO.getHotel_name());
+        brand.setBrand_num(brandDTO.getBrand_num());
+        brand.setBrand_name(brandDTO.getBrand_name());
         brand.setBusiness_num(brandDTO.getBusiness_num());
         brand.setOwner(brandDTO.getOwner());
-        brand.setAddress(brandDTO.getAddress());
         brand.setTel(brandDTO.getTel());
-        brand.setScore(brandDTO.getScore());
 
-        chiefRepository.save(brand);
+        BrandRepository.save(brand);
 
        /* Optional<Chief> chief = chiefRepository.findById(chiefDTOList.getChief_num());
         if(chief.isPresent()){
@@ -86,7 +84,7 @@ public class ChiefService {
     public void delete(Long id){
         log.info("서비스로 들어온 삭제할 번호 :"+id);
 
-        chiefRepository.deleteById(id);
+        BrandRepository.deleteById(id);
     }
 
 

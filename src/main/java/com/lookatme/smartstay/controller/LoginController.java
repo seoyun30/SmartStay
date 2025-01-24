@@ -2,9 +2,8 @@ package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
-import com.lookatme.smartstay.service.ChiefService;
+import com.lookatme.smartstay.service.BrandService;
 import com.lookatme.smartstay.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ import java.util.List;
 public class LoginController {
 
     private final MemberService memberService;
-    private final ChiefService chiefService;
+    private final BrandService brandService;
 
     @GetMapping("/adTerms") // 약관페이지(총판,매니져)
     public String adTerms(){
@@ -78,7 +77,7 @@ public class LoginController {
         model.addAttribute("memberDTO", new MemberDTO());
 
         List<BrandDTO> brandDTOList =
-                chiefService.chiefList();
+                brandService.chiefList();
         BrandDTO brandDTO = new BrandDTO();
 
         model.addAttribute("cheifDToList", brandDTOList);
@@ -102,7 +101,7 @@ public class LoginController {
             log.info(bindingResult.getAllErrors());
 
             List<BrandDTO> brandDTOList =
-                    chiefService.chiefList();
+                    brandService.chiefList();
 
             model.addAttribute("chiefDTOList", brandDTOList);
 
