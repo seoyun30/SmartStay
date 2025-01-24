@@ -12,7 +12,7 @@
 <body>
 <th:block layout:fragment="content">
     <h1 class="text-center">매장 등록</h1>
-    <form action="/brand/chiefRegister" method="post" th:object="${brandDTO}">
+    <form action="/hotel/hotelRegister" method="post" th:object="${hotelDTO}">
 
         <div class="row">
             <div class="col-8 offset-2">
@@ -82,7 +82,7 @@
                         <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
                         <script>
                             $(".Listbtn").on("click", function () {
-                                location.href = "/brand/chiefList";
+                                location.href = "/hotel/hotelList";
                             })
                         </script>
                     </div>

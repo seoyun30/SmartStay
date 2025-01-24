@@ -23,7 +23,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("/hotel")
+@RequestMapping("/brand")
 public class BrandController {
 
     private final BrandService brandService;
@@ -31,53 +31,53 @@ public class BrandController {
     private final PagenationUtil pagenationUtil;
 
     //등록
-    @GetMapping("/hotelRegister")
-    public String hotelRegisterGet(Model model) {
-        model.addAttribute("hotelDTO", new BrandDTO());
-        return "hotel/hotelRegister";
+    @GetMapping("/brandRegister")
+    public String brandRegisterGet(Model model) {
+        model.addAttribute("brandDTO", new BrandDTO());
+        return "brand/brandRegister";
     }
-    @PostMapping("/hotelRegister")
-    public String hotelRegisterPost(Model model, BrandDTO brandDTO,
+    @PostMapping("/brandRegister")
+    public String brandRegisterPost(Model model, BrandDTO brandDTO,
                                     List<MultipartFile> multipartFiles, RedirectAttributes redirectAttributes) throws Exception {
         brandService.insert(brandDTO, multipartFiles);
         redirectAttributes.addFlashAttribute("msg", "등록이 완료되었습니다.");
-        return "redirect:/hotel/hotelList";
+        return "redirect:/brand/brandList";
     }
 
     //목록
-    @GetMapping("/hotelList") //슈퍼어드민만 사용
-    public String hotelList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
+    @GetMapping("/brandList") //슈퍼어드민만 사용
+    public String brandList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
         log.info("목록진입");
 
         List<BrandDTO> brandDTOList =  brandService.chiefList();
-       model.addAttribute("hotelDTOList", brandDTOList);
-        return "hotel/hotelList";
+       model.addAttribute("brandDTOList", brandDTOList);
+        return "brand/brandList";
     }
 
     //상세보기
-    @GetMapping("/hotelRead")
-    public String hotelRead(Long hotel_num, Model model) {
-        BrandDTO brandDTO = brandService.read(hotel_num);
-        model.addAttribute("hotelDTO", brandDTO);
-        return "hotel/hotelRead";
+    @GetMapping("/brandRead")
+    public String brandRead(Long brand_num, Model model) {
+        BrandDTO brandDTO = brandService.read(brand_num);
+        model.addAttribute("brandDTO", brandDTO);
+        return "brand/brandRead";
     }
 
     //수정
-    @GetMapping("/hotelModify")
-    public String hotelModifyGet(Long hotel_num, Model model) {
-        BrandDTO brandDTO = brandService.read(hotel_num);
-        model.addAttribute("hotelDTO", brandDTO);// end접속해제
-        return "hotel/hotelModify";
+    @GetMapping("/brandModify")
+    public String brandModifyGet(Long brand_num, Model model) {
+        BrandDTO brandDTO = brandService.read(brand_num);
+        model.addAttribute("brandDTO", brandDTO);// end접속해제
+        return "brand/brandModify";
     }
-    @PostMapping("/hotelModify")
-    public String hotelModifyPost(@Valid BrandDTO brandDTO, BindingResult bindingResult, @RequestParam("delnumList") List<Long> delnumList,
+    @PostMapping("/brandModify")
+    public String brandModifyPost(@Valid BrandDTO brandDTO, BindingResult bindingResult, @RequestParam("delnumList") List<Long> delnumList,
                                   @RequestParam("multipartFiles") List<MultipartFile> multipartFiles, ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
         //@RequestParam("delnumList") List<Long> delnumList, @RequestParam("multipartFiles") List<MultipartFile> multipartFiles
         //사진등록, 사진삭제번호 할때 사용하는 방법
 
         if (bindingResult.hasErrors()) {
             log.info("유효성 검사 실패:" + bindingResult.getAllErrors());
-            return "hotel/hotelModify";
+            return "brand/brandModify";
         }
         log.info("유효성 통과");
 
@@ -85,13 +85,13 @@ public class BrandController {
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
         log.info("수정 완료");
-        return "redirect:/hotel/hotelList";
+        return "redirect:/brand/brandList";
     }
     //삭제
-    @PostMapping("/hotelDelete")
-    public String hotelDelete(long id) {
+    @PostMapping("/brandDelete")
+    public String brandDelete(long id) {
         log.info("삭제할 번호 :"+id);
         brandService.delete(id);
-        return "redirect:/hotel/hotelList";
+        return "redirect:/brand/brandList";
     }
 }

@@ -15,7 +15,7 @@
   <h1 class="text-center">매장 목록</h1>
   <div class="row mt-3">
     <div class="col text-end">
-      <button type="button" onclick="location.href='/brand/chiefRegister'" class="btn btn-dark">매장 등록</button>
+      <button type="button" onclick="location.href='/hotel/hotelRegister'" class="btn btn-dark">매장 등록</button>
     </div>
   </div>
 
@@ -35,24 +35,24 @@
         </thead>
         <tbody>
 
-        <th:block th:each="brand : ${brandDTOList}">
+        <th:block th:each="hotel : ${hotelDTOList}">
           <tr class="align-middle">
-            <td th:text="${brand.chief_num}"></td>
+            <td th:text="${hotel.hotel_num}"></td>
             <td>
-              <a th:href="@{/brand/chiefRead(chief_num=${brand.chief_num})}">
-                [[${brand.hotel_name}]]
+              <a th:href="@{/hotel/hotelRead(hotel_num=${hotel.hotel_num})}">
+                [[${hotel.hotel_name}]]
               </a>
             </td>
-            <td th:text="${brand.business_num}"></td>
-            <td th:text="${brand.owner}"></td>
-            <td th:text="${brand.address}"></td>
-            <td th:text="${brand.tel}"></td>
-            <td th:text="${brand.score}"></td>
+            <td th:text="${hotel.business_num()}"></td>
+            <td th:text="${hotel.owner()}"></td>
+            <td th:text="${hotel.address()}"></td>
+            <td th:text="${hotel.tel()}"></td>
+            <td th:text="${hotel.score()}"></td>
 
             <!--post 방식의 삭제버튼-->
             <td class="col text-end">
-              <form action="/brand/chiefDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                <input type="hidden" name="id" th:value="${brand.chief_num}"> <!-- 삭제할 chief의 ID를 hidden 필드로 전달 -->
+              <form action="/hotel/hotelDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                <input type="hidden" name="id" th:value="${hotel.hotel_num}"> <!-- 삭제할 hotel의 ID를 hidden 필드로 전달 -->
                 <button type="submit" class="btn btn-dark" style="background-color: red;">삭제</button>
               </form>
             </td>
