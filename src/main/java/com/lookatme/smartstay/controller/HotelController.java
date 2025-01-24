@@ -16,44 +16,81 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("/manager")
+@RequestMapping("/hotel")
 public class HotelController {
 
     private final HotelService hotelService;
     private PagenationUtil pagenation;
     private final PagenationUtil pagenationUtil;
 
-    //매장 상세보기
-    @GetMapping("/managerRead")
-    public String managerRead(Long hotel_num, Model model) {
-        HotelDTO hotelDTO = hotelService.hotelRead(hotel_num);
-        model.addAttribute("manager", hotelDTO);
-        return "manager/managerRead";
+    //등록
+    @GetMapping("/hotelRegister")
+    public String hotelRegisterGet(Model model) {
+        model.addAttribute("hotelDTO", new HotelDTO());
+        return "hotel/hotelRegister";
+    }
+    @PostMapping("/hotelRegister")
+    public String hotelRegisterPost(Model model, HotelDTO hotelDTO,
+                                    List<MultipartFile> multipartFiles, RedirectAttributes redirectAttributes) throws Exception {
+        hotelService.insert(hotelDTO, multipartFiles);
+        redirectAttributes.addFlashAttribute("msg", "등록이 완료되었습니다.");
+        return "redirect:/hotel/hotelList";
     }
 
-    //매장 수정
-    @GetMapping("/managerModify")
-    public String managerModifyGet(Long hotel_num, Model model) {
-        HotelDTO hotelDTO = hotelService.hotelRead(hotel_num);
-        model.addAttribute("manager", hotelDTO);
-        return "manager/managerModify";
+    //목록
+    @GetMapping("/hotelList") //슈퍼어드민만 사용
+    public String hotelList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
+        log.info("목록진입");
+
+        List<HotelDTO> hotelDTOList =  hotelService.chiefList();
+        model.addAttribute("hotelDTOList", hotelDTOList);
+        return "hotel/hotelList";
     }
-    @PostMapping("/managerModify")
-    public String managerModifyPost(@Valid HotelDTO hotelDTO, BindingResult bindingResult, @RequestParam("delnumList") List<Long> delnumList,
-                                    @RequestParam("multipartFiles") List<MultipartFile> multipartFiles, ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
+
+    //상세보기
+    @GetMapping("/hotelRead")
+    public String hotelRead(Long hotel_num, Model model) {
+        HotelDTO hotelDTO = hotelService.read(hotel_num);
+        model.addAttribute("hotelDTO", hotelDTO);
+        return "hotel/hotelRead";
+    }
+
+    //수정
+    @GetMapping("/hotelModify")
+    public String hotelModifyGet(Long hotel_num, Model model) {
+        HotelDTO hotelDTO = hotelService.read(hotel_num);
+        model.addAttribute("hotelDTO", hotelDTO);// end접속해제
+        return "hotel/hotelModify";
+    }
+    @PostMapping("/hotelModify")
+    public String hotelModifyPost(@Valid HotelDTO hotelDTO, BindingResult bindingResult, @RequestParam("delnumList") List<Long> delnumList,
+                                  @RequestParam("multipartFiles") List<MultipartFile> multipartFiles, ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
+        //@RequestParam("delnumList") List<Long> delnumList, @RequestParam("multipartFiles") List<MultipartFile> multipartFiles
+        //사진등록, 사진삭제번호 할때 사용하는 방법
+
         if (bindingResult.hasErrors()) {
-            log.info("유효성 검사 실패 :"+bindingResult.getAllErrors());
-            return "manager/managerModify";
+            log.info("유효성 검사 실패:" + bindingResult.getAllErrors());
+            return "hotel/hotelModify";
         }
+        log.info("유효성 통과");
 
-        hotelService.hotelUpdate(hotelDTO, multipartFiles);
+        hotelService.update(hotelDTO, multipartFiles );
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
-        return "redirect:/manager/managerRead";
+        log.info("수정 완료");
+        return "redirect:/hotel/hotelList";
+    }
+    //삭제
+    @PostMapping("/hotelDelete")
+    public String hotelDelete(long id) {
+        log.info("삭제할 번호 :"+id);
+        hotelService.delete(id);
+        return "redirect:/hotel/hotelList";
     }
 }
