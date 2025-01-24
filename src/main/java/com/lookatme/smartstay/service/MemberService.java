@@ -2,8 +2,11 @@ package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
+import com.lookatme.smartstay.dto.ChiefDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.entity.Chief;
 import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.repository.ChiefRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +34,7 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ChiefRepository chiefRepository;
 
 
     @Override
@@ -113,12 +117,18 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
-    public Member saveChiefMember(MemberDTO memberDTO){
+    public Member saveChiefMember(MemberDTO memberDTO, ChiefDTO chiefDTO){
 
         validateDuplicateMember(memberDTO.getEmail());
 
         Member member =
                 MemberDTO.dtoEntity(memberDTO);
+
+        Chief chief =
+                chiefRepository.findById(chiefDTO.getChief_num()).get();
+
+        member.setRole(Role.CHIEF);
+        member.setChief(chief);
 
         member.setRole(Role.CHIEF);
 

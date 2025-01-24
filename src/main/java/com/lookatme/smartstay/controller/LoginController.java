@@ -112,7 +112,7 @@ public class LoginController {
         if(memberDTO.getCorn().equals("C")){
             log.info("치프로 저장");
 
-            memberService.saveChiefMember(memberDTO);
+            memberService.saveChiefMember(memberDTO, chiefDTO);
 
         } else {
             log.info("매니져로 저장");
