@@ -22,7 +22,7 @@ public class NoticeService {
 
     //공지 사항 목록
     public List<NoticeDTO> noticeList(){
-        List<Notice> notices = noticeRepository.findAll();
+        List<Notice> notices = noticeRepository.findAll(); //모두 조회
 
         List<NoticeDTO> noticeDTOS = Arrays.asList(modelMapper.map(notices, NoticeDTO[].class));
 
@@ -36,8 +36,8 @@ public class NoticeService {
     }
 
     //공지 사항 상세보기
-    public NoticeDTO noticeRead(Long id){
-        Optional<Notice> notice = noticeRepository.findById(id);
+    public NoticeDTO noticeRead(Long notice_num){
+        Optional<Notice> notice = noticeRepository.findById(notice_num);
 
         NoticeDTO noticeDTO = modelMapper.map(notice, NoticeDTO.class);
         return noticeDTO;
@@ -56,10 +56,19 @@ public class NoticeService {
     }
 
     //공지 사항 삭제
-    public void noticeDelete(Long id){
-        noticeRepository.deleteById(id);
+    public void noticeDelete(Long notice_num){
+        noticeRepository.deleteById(notice_num);
     }
 
-    //공지 사항 이미지
+    //공지 사항 검색
+
+
+    //이미지 추가
+
+
+    //이미지 수정
+
+
+    //이미지 삭제
 
 }
