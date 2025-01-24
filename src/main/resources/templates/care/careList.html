@@ -29,15 +29,18 @@
             <table class="table table-striped table-hover">
                 <thead>
                 <tr>
-                    <th>케어서비스 번호</th>
-                    <th>케어서비스 명</th>
-                    <th>케어서비스 정보</th>
-                    <th>케어서비스 상세</th>
-                    <th>케어서비스 가격</th>
+                    <td>케어서비스 번호</td>
+                    <td>케어서비스 명</td>
+                    <td>케어서비스 정보</td>
+                    <td>케어서비스 상세</td>
+                    <td>케어서비스 가격</td>
+                    <td>등록일자</td>
+                    <td>수정일자</td>
+                    <td>수정</td>
+                    <td>삭제</td>
                 </tr>
                 </thead>
                 <tbody>
-
                 <th:block th:each="care : ${list}">
                     <tr class="align-middle">
                         <td th:text="${care.care_num}"></td>
@@ -49,7 +52,17 @@
                         <td th:text="${care.care_info}"></td>
                         <td th:text="${care.care_detail}"></td>
                         <td th:text="${care.care_price}"></td>
-
+                        <td th:text="${#temporals.format(care.reg_date, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${#temporals.format(care.modi_date, 'yyyy-MM-dd')}"></td>
+                        <td>
+                            <button type="button" th:attr="onclick='location.href=\'/care/careModify?care_num=' + ${care.care_num} + '\''" class="btn btn-warning">수정</button>
+                        </td>
+                        <td>
+                            <form action="/care/careDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <input type="hidden" name="id" th:value="${care.care_num}">
+                                <button type="submit" class="btn btn-danger">삭제</button>
+                            </form>
+                        </td>
                     </tr>
                 </th:block>
                 </tbody>
@@ -57,6 +70,7 @@
         </div>
     </div>
 </th:block>
+
 
 </body>
 </html>
