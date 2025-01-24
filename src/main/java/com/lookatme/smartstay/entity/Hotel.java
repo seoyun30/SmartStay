@@ -34,4 +34,7 @@ public class Hotel extends BaseEntity{
     @JoinColumn(name = "brand_num")
     private Brand brand; //브랜드
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_num")
+    private Member member;
 }

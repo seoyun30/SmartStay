@@ -24,8 +24,42 @@
     <div sec:authentication="name"></div>
     Authenticated user roles:
 
+    <div>
+        Authenticated username: <span sec:authentication="name"></span>
+    </div>
 
-   관리자용 메인 페이지
+    <div>
+        Authenticated user roles:
+        <span sec:authentication="authorities"></span>
+    </div>
+
+    <div class="container">
+        <div th:if="${#lists.isEmpty(list)}">
+            <p>호텔 정보가 없습니다.</p>
+        </div>
+
+        <div th:each="hotel : ${list}" class="mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a th:href="@{/hotelRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}">호텔 이름</a>
+                    </h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>호텔 주소 : </strong> <span th:text="${hotel.address}">호텔 주소</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>연락처 : </strong> <span th:text="${hotel.tel}">연락처</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>별점 : </strong> <span th:text="${hotel.score}">별점</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </th:block>
 
 <th:block layout:fragment="script">

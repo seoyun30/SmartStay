@@ -185,7 +185,7 @@
                         <img src="/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
                         <span class="d-none d-md-block dropdown-toggle ps-2" th:text="${#authentication.principal.username}">로그인 아이디</span>
                     </a><!-- End Profile Iamge Icon -->
-                    <a sec:authorize="isAnonymous()" class="nav-link nav-profile d-flex align-items-center pe-0" href="/member/adLogin" >
+                    <a sec:authorize="isAnonymous()" class="nav-link nav-profile d-flex align-items-center pe-0" href="/member/login" >
                         <span class="d-none d-md-block  ps-2">로그인</span>
                     </a><!-- End Profile Iamge Icon -->
 
@@ -320,6 +320,19 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#roomreserve-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-door-closed"></i><span>룸 예약 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="roomreserve-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/roomreserve/roomReserveList" class="nav-link">
+                                <i class="bi bi-door-closed"></i> 룸 예약 목록
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#menu-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-list"></i><span>메뉴 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
@@ -350,6 +363,19 @@
                         <li>
                             <a href="/care/careRegister" class="nav-link">
                                 <i class="bi bi-heart"></i> 룸 케어 등록
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#orderreserve-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-door-closed"></i><span>룸 서비스 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="orderreserve-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/orderreserve/orderReserveList" class="nav-link">
+                                <i class="bi bi-door-closed"></i> 룸 서비스 신청 목록
                             </a>
                         </li>
                     </ul>
