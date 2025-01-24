@@ -10,8 +10,8 @@ import java.util.List;
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
     @Query("SELECT i FROM Image i WHERE " +
-            "(:targetType = 'chief' AND i.chief.chief_num = :targetId) OR " +
-            "(:targetType = 'manager' AND i.manager.manager_num = :targetId) OR " +
+            "(:targetType = 'brand' AND i.brand.brand_num = :targetId) OR " +
+            "(:targetType = 'hotel' AND i.hotel.hotel_num = :targetId) OR " +
             "(:targetType = 'room' AND i.room.room_num = :targetId) OR " +
             "(:targetType = 'menu' AND i.menu.menu_num = :targetId) OR " +
             "(:targetType = 'care' AND i.care.care_num = :targetId) OR " +
