@@ -11,7 +11,57 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-상세페이지
+    <h1 class="text-center">상세보기</h1>
+    <div class="d=flex vh-100">
+        <div class="container my-auto">
+            <div class=" row justify-content-center">
+
+                <form action="/qna/qnaRegister" method="post" th:object="${qnaDTO}">
+                    <div class="row mt-5">
+                        <div class="col text-center">
+                            <div class="row">
+                                <!--사진 들어갈 예정
+                                <div class="col">
+                                    <img th:src="${itemDTO.itemImgDTOList.get(0).imgUrl}" class="card-img-top" th:alt="${itemDTO.getItemImgDTOList().get(0).oriImgName}">
+                                </div> -->
+                                <div class="col text-center">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <input id="qna_num" type="hidden" th:value="${qnaDTO.qna_num}"></input>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">제목</span>
+                                                <input type="text" class="form-control" th:value="${qnaDTO.title}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">내용</span>
+                                                <textarea th:field="*{content}" min="0" name="content" class="form-control" th:value="${qnaDTO.content}" id="content" rows="3"></textarea>
+                                            </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
+                                    <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
+                                    <script>
+                                        let qna_num = document.getElementById("qna_num").value;
+
+                                        $(".Listbtn").on("click", function () {
+                                            location.href = "/qna/qnaList";
+                                        })
+
+                                        $(".Modbtn").on("click", function () {
+                                            location.href = "/qna/qnaModify?qna_num="+qna_num;
+                                        })
+                                    </script>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 </th:block>
 </body>
 </html>
