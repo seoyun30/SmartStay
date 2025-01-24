@@ -33,13 +33,21 @@ public class LogoutSeccessHandler extends SimpleUrlLogoutSuccessHandler {
         HttpSession session = request.getSession(false);
 
         String url = "/";
-        if(role != null && role.equals("CHIEF")) {
-            url = "/a";
-            System.out.println(url);
-        }else if (role != null && role.equals("USER")) {
-            url = "/";
+        if(role != null && role.equals("SUPERADMIN")) {
+            url = "/member/login";
             System.out.println(url);
 
+        } else if (role != null && role.equals("CHIEF")) {
+            url = "/member/login";
+            System.out.println(url);
+
+        } else if (role != null && role.equals("MANAGER")) {
+            url = "/member/login";
+            System.out.println(url);
+
+        } else if (role != null && role.equals("USER")) {
+            url = "/";
+            System.out.println(url);
         }
         System.out.println(url);
 
