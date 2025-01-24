@@ -20,8 +20,8 @@
 
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="manager_num" class="form-label">호텔 정보</label>
-                            <p class="form-control" th:value="${memberDTO?.managerDTO?.manager_num}" id="manager_num"></p>
+                            <label for="hotel_num" class="form-label">호텔 정보</label>
+                            <p class="form-control" th:value="${hotelDTO?.hotelDTO?.hotel_num}" id="hotel_num"></p>
                         </div>
                     </div>
 
@@ -65,7 +65,7 @@
                             <label for="room_state" class="form-label">룸 상태</label>
                             <select th:field="*{room_state}" id="room_state" class="form-select" aria-label="Default select example">
                                 <option value="YES">이용 가능</option>
-                                <option value="NO">이용 불가</option>
+                                <option value="NO">사용 불가</option>
                                 <option value="PREPARE">준비 중</option>
                             </select>
                         </div>
@@ -79,12 +79,9 @@
             </div>
         </div>
     </form>
-
-
 </th:block>
 
 <th:block layout:fragment="script">
-
 </th:block>
 
 </body>
