@@ -56,11 +56,11 @@ public class MemberService implements UserDetailsService {
             log.info("슈퍼어드민");
             role = Role.SUPERADMIN.name();
             authorities.add(new SimpleGrantedAuthority(Role.SUPERADMIN.name()));
-        }else if("CHIEF".equals(member.getRole().name()) ){
+        }else if("CHIEF".equals(member.getRole().name()) && member.getPower() == Power.YES){
             log.info("치프");
             role = Role.CHIEF.name();
             authorities.add(new SimpleGrantedAuthority(Role.CHIEF.name()));
-        }else if("MANAGER".equals(member.getRole().name()) && member.getPower() == Power.Y){
+        }else if("MANAGER".equals(member.getRole().name()) && member.getPower() == Power.YES){
             log.info("매니져");
             role = Role.MANAGER.name();
             authorities.add(new SimpleGrantedAuthority(Role.MANAGER.name()));

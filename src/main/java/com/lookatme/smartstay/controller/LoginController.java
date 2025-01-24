@@ -80,9 +80,9 @@ public class LoginController {
                 brandService.chiefList();
         BrandDTO brandDTO = new BrandDTO();
 
-        model.addAttribute("cheifDToList", brandDTOList);
+        model.addAttribute("brandDTOList", brandDTOList);
 
-        model.addAttribute("managerDTO", new HotelDTO());
+        model.addAttribute("hotelDTO", new HotelDTO());
 
         return "member/cmSignup";
     }
@@ -101,9 +101,10 @@ public class LoginController {
             log.info(bindingResult.getAllErrors());
 
             List<BrandDTO> brandDTOList =
-                    brandService.chiefList();
+                    brandService.brandList();
 
             model.addAttribute("chiefDTOList", brandDTOList);
+            model.addAttribute("hotelDTO", new HotelDTO());
 
             return "member/cmSignup";
         }
