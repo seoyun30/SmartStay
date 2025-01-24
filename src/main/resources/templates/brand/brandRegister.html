@@ -11,38 +11,31 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-
-    <form action="/brand/managerRegister" method="post" th:object="${managerDTO}">
+    <h1 class="text-center">브랜드 등록</h1>
+    <form action="/brand/brandRegister" method="post" th:object="${brandDTO}">
 
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="row">
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="hotel_name" class="form-label">호텔명</label>
-                            <input type="text" class="form-control" th:field="*{hotel_name}" required id="hotel_name" >
-                            <p th:if="${#fields.hasErrors('hotel_name')}" th:errors="*{hotel_name}" class="fieldError"></p>
+                            <label for="brand_name" class="form-label">브랜드명</label>
+                            <input type="text" class="form-control" th:field="*{brand_name}" required id="brand_name" >
+                            <p th:if="${#fields.hasErrors('brand_name')}" th:errors="*{brand_name}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="business_num" class="form-label">사업자번호</label>
+                            <label for="business_num" class="form-label">법인사업자번호</label>
                             <input type="number" min="0" class="form-control" th:field="*{business_num}" id="business_num">
                             <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="owner" class="form-label">대표자이름</label>
+                            <label for="owner" class="form-label">대표자</label>
                             <input type="text" min="0" class="form-control" th:field="*{owner}" id="owner">
                             <p th:if="${#fields.hasErrors('owner')}" th:errors="*{owner}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="address"  class="form-label">주소</label>
-                            <input type="text" min="0" class="form-control" th:field="*{address}" id="address">
-                            <p th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
@@ -52,20 +45,10 @@
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
                     </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="score" class="form-label">별점</label>
-                            <input type="number" min="0" class="form-control" th:field="*{score}" id="score">
-                            <p th:if="${#fields.hasErrors('score')}" th:errors="*{score}" class="fieldError"></p>
-                        </div>
-                    </div>
-
                     <div class="col-6">
                         <div class="mb-2">
                             <label for="head_office" class="form-label">본점</label>
                             <select name="head_office" id="head_office" class="form-select" aria-label="Default select example">
-                                <option value></option>
-                                <option value></option>
                                 <option value></option>
                             </select>
                         </div>
@@ -75,18 +58,16 @@
                             <label for="branches" class="form-label">분점</label>
                             <select name="branches" id="branches" class="form-select" aria-label="Default select example">
                                 <option value></option>
-                                <option value></option>
-                                <option value></option>
                             </select>
                         </div>
                     </div>
 
                     <div class="col-12">
-                        <button type="submit" class="btn btn-dark">등록</button>
-                        <button type="button" class="btn btn-dark listbtn">목록</button>
+                        <button type="submit" class="btn btn-dark" style="float:right">등록</button>
+                        <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
                         <script>
-                            $(".listbtn").on("click", function () {
-                                location.href = "/brand/chiefList";
+                            $(".Listbtn").on("click", function () {
+                                location.href = "/brand/brandList";
                             })
                         </script>
                     </div>
