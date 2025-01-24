@@ -47,22 +47,15 @@ public class SecurityConfig {
             auth.requestMatchers("/", "/search").permitAll();
             //회원관련(모든 사용자)-로그인, 회원가입, 임시비밀번호발급
            /* auth.requestMatchers("/login", "/logout", "/register", "/password").permitAll();*/
-            auth.requestMatchers( "/member/adLogin", "/register", "/password").permitAll();
+            auth.requestMatchers( "/member/login", "/register", "/password").permitAll();
             //인증된 사용자만 접근 가능
-            auth.requestMatchers("/modify", "/member/adLogout").permitAll(); //수정,로그아웃
+            auth.requestMatchers("/modify", "/member/logout").permitAll(); //수정,로그아웃
             //매핑명을 작업이름/매핑명
             //auth.requestMatchers("/modify/**").authenticated(); modify로 시작하는 모든 맵핑에 제한
             auth.anyRequest().authenticated();
         });
 
-        //관리자로그인 정보
-       /* http.formLogin(login -> login
-                .loginPage("/member/login") //로그인은 /login맵핑으로
-                .loginProcessingUrl("/member/login")
-                .usernameParameter("email") //userid를 username으로 사용
-                .permitAll() //모든 사용자가 로그인폼 사용
-                .successHandler(new CustomAuthenticationSuccessHandler())); //로그인 성공시처리할 클래스
-*/
+
         http.formLogin(login -> login
                 .loginPage("/member/login") //로그인은 /login맵핑으로 //인증을 요할때 권한을 요할때 로그인이 되어있지 않다면
                 // 해당 url로 이동   일반유저 로그인
@@ -77,17 +70,8 @@ public class SecurityConfig {
         //로그아웃 정보
         http.logout(logout -> logout
                         .logoutUrl("/member/logout")
-                        /*.logoutSuccessUrl("/member/adLogin")*/
                                 .logoutSuccessHandler(new LogoutSeccessHandler())
 
-                        /*  http.authenticationProvider(adminProvider());*/
-                /*.logoutRequestMatcher(
-                        new OrRequestMatcher(
-                                new AntPathRequestMatcher("/member/adLogout")
-                        )
-                )*/
-//                .invalidateHttpSession(true)
-//                .logoutSuccessHandler(new CustomLogoutSuccessHandler()) //로그아웃 성공시 로그인 페이지로 이동
         )
                 .exceptionHandling(
                         a -> a.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
