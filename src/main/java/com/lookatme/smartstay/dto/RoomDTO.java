@@ -1,8 +1,6 @@
 package com.lookatme.smartstay.dto;
 
 import com.lookatme.smartstay.constant.RoomState;
-import com.lookatme.smartstay.entity.Chief;
-import com.lookatme.smartstay.entity.Manager;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 
@@ -26,9 +24,7 @@ public class RoomDTO {
 
     private RoomState room_state; //룸 상태
 
-    private ChiefDTO chiefDTO; //호텔(총판)
-
-    private ManagerDTO managerDTO; //호텔(매장)
+    private HotelDTO hotelDTO; //호텔
 
     private LocalDateTime reg_date;
 

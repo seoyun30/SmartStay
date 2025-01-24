@@ -2064,7 +2064,7 @@ Initial list of features and changes is available at https://www.tiny.cloud/docs
 - Added a new api for providing meta data for plugins. It will show up in the help dialog if it's provided.
 
 ### Fixed
-- Fixed so that the notifications created by the notification manager are more screen reader accessible.
+- Fixed so that the notifications created by the notification hotel are more screen reader accessible.
 - Fixed bug where changing the list format on multiple selected lists didn't change all of the lists.
 - Fixed bug where the nonbreaking plugin would insert multiple undo levels when pressing the tab key.
 - Fixed bug where delete/backspace wouldn't render a caret when all editor contents where deleted.
@@ -2303,7 +2303,7 @@ Initial list of features and changes is available at https://www.tiny.cloud/docs
 - Fixed bug where cut on WebKit/Blink wouldn't add an undo level.
 - Fixed bug where IE 11 would scroll to the cE=false elements when they where selected.
 - Fixed bug where keys like F5 wouldn't work when a cE=false element was selected.
-- Fixed bug where the undo manager wouldn't stop the typing state when commands where executed.
+- Fixed bug where the undo hotel wouldn't stop the typing state when commands where executed.
 - Fixed bug where unlink on wrapped links wouldn't work properly.
 - Fixed bug with drag/drop of images on WebKit where the image would be deleted form the source editor.
 - Fixed bug where the visual characters mode would be disabled when contents was extracted from the editor.
@@ -2747,7 +2747,7 @@ Npm version bump due to package not being fully updated.
 - Fixed bug where removal of bogus elements would sometimes remove whitespace between nodes.
 - Fixed bug where the resize handles wasn't updated when the main window was resized.
 - Fixed so script elements gets removed by default to prevent possible XSS issues in default config implementations.
-- Fixed so the UI doesn't need manual reflows when using non native layout managers.
+- Fixed so the UI doesn't need manual reflows when using non native layout hotels.
 - Fixed so base64 encoded images doesn't slow down the editor on modern browsers while editing.
 - Fixed so all UI elements uses touch events to improve mobile device support.
 - Removed the touch click quirks patch for iOS since it did more harm than good.
@@ -2891,7 +2891,7 @@ Npm version bump due to package not being fully updated.
 - Fixed bug where the DomQuery filter function wouldn't remove non elements from collection.
 - Fixed bug where document with custom document.domain wouldn't properly render the editor.
 - Fixed bug where IE 8 would throw exception when trying to enter invalid color values into colorboxes.
-- Fixed bug where undo manager could incorrectly add an extra undo level when custom resize handles was removed.
+- Fixed bug where undo hotel could incorrectly add an extra undo level when custom resize handles was removed.
 - Fixed bug where it wouldn't be possible to alter cell properties properly on table cells on IE 8.
 - Fixed so the color picker button in table dialog isn't shown unless you include the colorpicker plugin or add your own custom color picker.
 - Fixed so activate/deactivate events fire when windowManager opens a window since.

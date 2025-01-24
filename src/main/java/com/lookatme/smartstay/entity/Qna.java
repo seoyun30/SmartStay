@@ -17,16 +17,12 @@ public class Qna extends BaseEntity{
     private Long qna_num; //문의 번호
 
     private String title; //문의 제목
+
     private String content; //문의 내용
-    private String writer; //작성자
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chief_num")
-    private Chief chief; //호텔(총판)
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_num")
-    private Manager	manager; //호텔(매장)
+    @JoinColumn(name = "hotel_num")
+    private Hotel hotel; //호텔
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reserve_num")

@@ -12,7 +12,7 @@
 <body>
 <th:block layout:fragment="content">
 
-    <form action="/chief/managerRegister" method="post" th:object="${managerDTO}">
+    <form action="/brand/managerRegister" method="post" th:object="${managerDTO}">
 
         <div class="row">
             <div class="col-8 offset-2">
@@ -86,7 +86,7 @@
                         <button type="button" class="btn btn-dark listbtn">목록</button>
                         <script>
                             $(".listbtn").on("click", function () {
-                                location.href = "/chief/chiefList";
+                                location.href = "/brand/chiefList";
                             })
                         </script>
                     </div>

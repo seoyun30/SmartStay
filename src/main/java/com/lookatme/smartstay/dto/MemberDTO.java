@@ -2,8 +2,6 @@ package com.lookatme.smartstay.dto;
 
 import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
-import com.lookatme.smartstay.entity.Chief;
-import com.lookatme.smartstay.entity.Manager;
 import com.lookatme.smartstay.entity.Member;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -43,9 +41,9 @@ public class MemberDTO {
 
     private Role role; //회원 권한
 
-    private ChiefDTO chiefDTO; //호텔(총판)
+    private BrandDTO brandDTO; //브랜드
 
-    private ManagerDTO managerDTO; //호텔(매장)
+    private HotelDTO hotelDTO; //호텔
 
     private String corn; // 권한선택값
 

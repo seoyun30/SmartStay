@@ -1,7 +1,7 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.dto.ManagerDTO;
-import com.lookatme.smartstay.entity.Manager;
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.repository.ManagerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,50 +25,50 @@ public class ManagerService {
     private final ImageService imageService;
 
     //manager 등록
-    public void managerInsert(ManagerDTO managerDTO,
+    public void managerInsert(HotelDTO hotelDTO,
                               List<MultipartFile> multipartFiles) throws Exception{
-        Manager manager = modelMapper.map(managerDTO, Manager.class);
-        Manager manager1 = managerRepository.save(manager);
+        Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
+        Hotel hotel1 = managerRepository.save(hotel);
 
         //이미지
         if(multipartFiles != null && multipartFiles.size() > 0) {
-            imageService.saveImage(multipartFiles, "manager", manager1.getManager_num());
+            imageService.saveImage(multipartFiles, "manager", hotel1.getManager_num());
         }
 
     }
 
     //manager 목록
-    public List<ManagerDTO> managerList(){
-        List<Manager> managers = managerRepository.findAll();
-        List<ManagerDTO> managerDTOS =managers.stream()
-                .map(manager->modelMapper.map(manager, ManagerDTO.class)).collect(Collectors.toList());
-        return managerDTOS;
+    public List<HotelDTO> managerList(){
+        List<Hotel> hotels = managerRepository.findAll();
+        List<HotelDTO> hotelDTOS = hotels.stream()
+                .map(manager->modelMapper.map(manager, HotelDTO.class)).collect(Collectors.toList());
+        return hotelDTOS;
     }
 
     //manager 상세보기
-    public ManagerDTO managerRead(Long id) {
-        Manager manager = managerRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        ManagerDTO managerDTO = modelMapper.map(manager, ManagerDTO.class);
+    public HotelDTO managerRead(Long id) {
+        Hotel hotel = managerRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
 
-        return managerDTO;
+        return hotelDTO;
     }
 
     //manager 수정
-    public void managerUpdate(ManagerDTO managerDTO,
+    public void managerUpdate(HotelDTO hotelDTO,
                               List<MultipartFile> multipartFiles) throws Exception{
-        Manager manager = managerRepository.findById(managerDTO.getManager_num())
+        Hotel hotel = managerRepository.findById(hotelDTO.getManager_num())
                 .orElseThrow(EntityNotFoundException::new);
 
         //set
-        manager.setManager_num(managerDTO.getManager_num());
-        manager.setHotel_name(managerDTO.getHotel_name());
-        manager.setBusiness_num(managerDTO.getBusiness_num());
-        manager.setOwner(managerDTO.getOwner());
-        manager.setAddress(managerDTO.getAddress());
-        manager.setTel(managerDTO.getTel());
-        manager.setScore(managerDTO.getScore());
+        hotel.setManager_num(hotelDTO.getManager_num());
+        hotel.setHotel_name(hotelDTO.getHotel_name());
+        hotel.setBusiness_num(hotelDTO.getBusiness_num());
+        hotel.setOwner(hotelDTO.getOwner());
+        hotel.setAddress(hotelDTO.getAddress());
+        hotel.setTel(hotelDTO.getTel());
+        hotel.setScore(hotelDTO.getScore());
 
-        managerRepository.save(manager);
+        managerRepository.save(hotel);
     }
 
     //manager 삭제
@@ -81,24 +80,24 @@ public class ManagerService {
 
 
 
-    public List<ManagerDTO> mainHotel() {
+    public List<HotelDTO> mainHotel() {
 
-        List<Manager> managerList = managerRepository.findAll();
-        List<ManagerDTO> managerDTOList = managerList.stream()
-                .map(manager -> modelMapper.map(manager, ManagerDTO.class))
+        List<Hotel> hotelList = managerRepository.findAll();
+        List<HotelDTO> hotelDTOList = hotelList.stream()
+                .map(manager -> modelMapper.map(manager, HotelDTO.class))
                 .collect(Collectors.toList());
 
-        return managerDTOList;
+        return hotelDTOList;
     }
 
-    public List<ManagerDTO> hotelList() {
+    public List<HotelDTO> hotelList() {
 
-        List<Manager> managers = managerRepository.findAll();
-        List<ManagerDTO> managerDTOList = managers.stream()
-                .map(manager -> modelMapper.map(manager, ManagerDTO.class))
+        List<Hotel> hotels = managerRepository.findAll();
+        List<HotelDTO> hotelDTOList = hotels.stream()
+                .map(manager -> modelMapper.map(manager, HotelDTO.class))
                 .collect(Collectors.toList());
 
-        return managerDTOList;
+        return hotelDTOList;
     }
 
 }

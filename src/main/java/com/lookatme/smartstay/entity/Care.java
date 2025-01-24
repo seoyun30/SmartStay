@@ -17,15 +17,12 @@ public class Care extends BaseEntity {
     private Long care_num; //케어 번호
 
     private String care_name; //케어 명
-    private String care_info; //케어 정보
+
     private String care_detail; //케어 상세
+
     private Long care_price; //케어 가격
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chief_num")
-    private Chief chief; //호텔(총판)
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_num")
-    private Manager	manager; //호텔(매장)
+    @JoinColumn(name = "hotel_num")
+    private Hotel hotel; //호텔
 }

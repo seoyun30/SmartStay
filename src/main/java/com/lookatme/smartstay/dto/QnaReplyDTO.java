@@ -17,10 +17,9 @@ import java.time.LocalDateTime;
 @Builder
 public class QnaReplyDTO {
 
-    private Long reply_num;
+    private Long qnaReply_num;
 
     private String comment;
-    private String writer;
 
     private QnaDTO qnaDTO;
 

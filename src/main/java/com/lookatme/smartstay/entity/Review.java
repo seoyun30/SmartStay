@@ -15,8 +15,9 @@ public class Review extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rev_num; //리뷰 번호
+
     private String content; //리뷰 내용
-    private String writer; //작성자
+
     private String score; //별점
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -26,4 +27,8 @@ public class Review extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_num")
     private Member member; //회원 조인
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hotel_num")
+    private Hotel hotel; //호텔
 }

@@ -1,11 +1,11 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.ChiefDTO;
-import com.lookatme.smartstay.dto.ManagerDTO;
+import com.lookatme.smartstay.dto.BrandDTO;
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.service.ChiefService;
 import com.lookatme.smartstay.service.MemberService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -42,7 +42,7 @@ public class LoginController {
     @GetMapping("/adSignup") //회원가입페이지(saveSuperAdminMember-슈퍼어드민이 승인해주는 첫번째 치프)
     public String adSignupGet(Model model){
         model.addAttribute("memberDTO", new MemberDTO());
-        model.addAttribute("chiefDTO", new ChiefDTO());
+        model.addAttribute("chiefDTO", new BrandDTO());
         log.info("회원가입");
         return "member/adSignup";
     }
@@ -77,34 +77,34 @@ public class LoginController {
     public String cmSignupGet(Model model){
         model.addAttribute("memberDTO", new MemberDTO());
 
-        List<ChiefDTO> chiefDTOList  =
+        List<BrandDTO> brandDTOList =
                 chiefService.chiefList();
-        ChiefDTO chiefDTO = new ChiefDTO();
+        BrandDTO brandDTO = new BrandDTO();
 
-        model.addAttribute("cheifDToList", chiefDTOList);
+        model.addAttribute("cheifDToList", brandDTOList);
 
-        model.addAttribute("managerDTO", new ManagerDTO());
+        model.addAttribute("managerDTO", new HotelDTO());
 
         return "member/cmSignup";
     }
 
     @PostMapping("/cmSignup") //회원가입포스트(saveChiefMember-치프가 승인해주는 치프,매니져)
     public String cmSignupPost(@Valid MemberDTO memberDTO, BindingResult bindingResult,
-                               ChiefDTO chiefDTO, ManagerDTO managerDTO,
+                               BrandDTO brandDTO, HotelDTO hotelDTO,
                                RedirectAttributes redirectAttributes, Model model){
 
 
         log.info("회원가입으로 들어오는 : " + memberDTO);
-        log.info("회원가입으로 들어오는 : " + chiefDTO);
-        log.info("회원가입으로 들어오는 : " + managerDTO);
+        log.info("회원가입으로 들어오는 : " + brandDTO);
+        log.info("회원가입으로 들어오는 : " + hotelDTO);
 
         if(bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
 
-            List<ChiefDTO> chiefDTOList  =
+            List<BrandDTO> brandDTOList =
                     chiefService.chiefList();
 
-            model.addAttribute("chiefDTOList", chiefDTOList);
+            model.addAttribute("chiefDTOList", brandDTOList);
 
             return "member/cmSignup";
         }
@@ -112,7 +112,7 @@ public class LoginController {
         if(memberDTO.getCorn().equals("C")){
             log.info("치프로 저장");
 
-            memberService.saveChiefMember(memberDTO, chiefDTO);
+            memberService.saveChiefMember(memberDTO, brandDTO);
 
         } else {
             log.info("매니져로 저장");
