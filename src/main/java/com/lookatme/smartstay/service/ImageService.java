@@ -19,8 +19,8 @@ import java.util.Optional;
 @Transactional
 public class ImageService {
     private final ImageRepository imageRepository;
-    private final BrandRepository chiefRepository;
-    private final ManagerRepository managerRepository;
+    private final BrandRepository brandRepository;
+    private final HotelRepository hotelRepository;
     private final RoomRepository roomRepository;
     private final MenuRepository menuRepository;
     private final CareRepository careRepository;
@@ -48,12 +48,12 @@ public class ImageService {
                 // targetType에 따라 연관관계 설정
                 switch (targetType) {
                     case "brand":
-                        Brand brand = chiefRepository.findById(targetId)
+                        Brand brand = brandRepository.findById(targetId)
                                 .orElseThrow(() -> new IllegalArgumentException("해당 브랜드 정보를 찾을 수 없습니다."));
                         image.setBrand(brand);
                         break;
                     case "hotel":
-                        Hotel hotel = managerRepository.findById(targetId)
+                        Hotel hotel = hotelRepository.findById(targetId)
                                 .orElseThrow(() -> new IllegalArgumentException("해당 호텔 정보를 찾을 수 없습니다."));
                         image.setHotel(hotel);
                         break;
@@ -139,12 +139,12 @@ public class ImageService {
                 // targetType에 따라 연관관계 설정 (기존 saveImage의 로직 재사용)
                 switch (targetType) {
                     case "brand":
-                        Brand brand = chiefRepository.findById(targetId)
+                        Brand brand = brandRepository.findById(targetId)
                                 .orElseThrow(() -> new IllegalArgumentException("해당 브랜드 정보를 찾을 수 없습니다."));
                         image.setBrand(brand);
                         break;
                     case "hotel":
-                        Hotel hotel = managerRepository.findById(targetId)
+                        Hotel hotel = hotelRepository.findById(targetId)
                                 .orElseThrow(() -> new IllegalArgumentException("해당 호텔 정보를 찾을 수 없습니다."));
                         image.setHotel(hotel);
                         break;

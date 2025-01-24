@@ -20,41 +20,34 @@
 
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="manager_num" class="form-label">매장 정보</label>
+                            <label for="manager_num" class="form-label">호텔 정보</label>
                             <p class="form-control" th:value="${memberDTO?.managerDTO?.manager_num}" id="manager_num"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="care_num" class="form-label">케어서비스 번호</label>
+                            <label for="care_num" class="form-label">룸 케어 번호</label>
                             <input type="text" class="form-control" th:field="*{care_num}" required id="care_num" readonly>
                             <p th:if="${#fields.hasErrors('care_num')}" th:errors="*{care_num}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="care_name" class="form-label">케어서비스 명</label>
+                            <label for="care_name" class="form-label">룸 케어 명</label>
                             <input type="text" class="form-control" th:field="*{care_name}" required id="care_name" readonly>
                             <p th:if="${#fields.hasErrors('care_name')}" th:errors="*{care_name}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="care_info" class="form-label">케어서비스 정보</label>
-                            <input type="text" min="0" class="form-control" th:field="*{care_info}" id="care_info" readonly>
-                            <p th:if="${#fields.hasErrors('care_info')}" th:errors="*{care_info}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="care_detail"  class="form-label">케어서비스 상세</label>
+                            <label for="care_detail"  class="form-label">룸 케어 상세</label>
                             <input type="text" min="0" class="form-control" th:field="*{care_detail}" id="care_detail" readonly>
                             <p th:if="${#fields.hasErrors('care_detail')}" th:errors="*{care_detail}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="care_price" class="form-label">케어서비스 가격</label>
+                            <label for="care_price" class="form-label">룸 케어 가격</label>
                             <input type="number" min="0" class="form-control" th:field="*{care_price}" id="care_price" readonly>
                             <p th:if="${#fields.hasErrors('care_price')}" th:errors="*{care_price}" class="fieldError"></p>
                         </div>

@@ -57,7 +57,7 @@ public class MenuService {
         Menu menu = menuRepository.findById(menuDTO.getMenu_num()).orElseThrow(EntityNotFoundException::new);
 
         menu.setMenu_name(menuDTO.getMenu_name());
-        menu.setService_info(menuDTO.getService_info());
+        menu.setMenu_sort(menuDTO.getMenu_sort());
         menu.setMenu_detail(menuDTO.getMenu_detail());
         menu.setMenu_price(menuDTO.getMenu_price());
 

@@ -20,23 +20,22 @@
 
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="manager_num" class="form-label">매장 정보</label>
+                            <label for="manager_num" class="form-label">호텔 정보</label>
                             <p class="form-control" th:value="${memberDTO?.managerDTO?.manager_num}" id="manager_num"></p>
                         </div>
                     </div>
-
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="menu_sort" class="form-label">메뉴 분류</label>
+                            <input type="text" min="0" class="form-control" th:field="*{menu_sort}" id="service_info">
+                            <p th:if="${#fields.hasErrors('menu_sort')}" th:errors="*{menu_sort}" class="fieldError"></p>
+                        </div>
+                    </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="menu_name" class="form-label">메뉴 명</label>
                             <input type="text" class="form-control" th:field="*{menu_name}" required id="menu_name" >
                             <p th:if="${#fields.hasErrors('menu_name')}" th:errors="*{menu_name}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="service_info" class="form-label">서비스 정보</label>
-                            <input type="text" min="0" class="form-control" th:field="*{service_info}" id="service_info">
-                            <p th:if="${#fields.hasErrors('service_info')}" th:errors="*{service_info}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">

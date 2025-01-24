@@ -49,7 +49,7 @@ public class CareController {
         }
 
         Long care_num = careService.careRegister(careDTO, multipartFiles);
-        redirectAttributes.addFlashAttribute("msg", "케어서비스가 등록되었습니다. 케어서비스 번호 : " + care_num);
+        redirectAttributes.addFlashAttribute("msg", "룸 케어가 등록되었습니다. 룸 케어 번호 : " + care_num);
 
         return "redirect:/care/careRead?care_num=" + care_num;
     }
@@ -73,7 +73,7 @@ public class CareController {
             return "care/careRead";
 
         }catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 케어서비스입니다.");
+            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 룸 케어입니다.");
 
             return "redirect:/care/careList";
         }
@@ -106,7 +106,7 @@ public class CareController {
 
         careService.careModify(careDTO, careDTO.getCare_num(), multipartFiles);
 
-        redirectAttributes.addFlashAttribute("msg", "케어서비스가 등록되었습니다. 케어서비스 번호 : " + careDTO.getCare_num());
+        redirectAttributes.addFlashAttribute("msg", "룸 케어가 등록되었습니다. 룸 케어 번호 : " + careDTO.getCare_num());
 
         return "redirect:/care/careRead?care_num=" + careDTO.getCare_num();
     }
