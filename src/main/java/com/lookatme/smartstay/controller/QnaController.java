@@ -5,6 +5,7 @@ import com.lookatme.smartstay.entity.Qna;
 import com.lookatme.smartstay.service.ImageService;
 import com.lookatme.smartstay.service.QnaServcieImpl;
 import com.lookatme.smartstay.service.QnaService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -55,13 +58,32 @@ public class QnaController {
 
     //목록
     @GetMapping("/qnaList")
-    public String qnaList() {
+    public String qnaList(Model model) {
+        log.info("pageRequestDTO");
+        List<QnaDTO> qnaDTOList = qnaService.list();
+        model.addAttribute("qnaDTOList", qnaDTOList);
         return "/qna/qnaList";
     }
 
     //상세
     @GetMapping("/qnaRead")
-    public String qnaRead(){
+    public String qnaRead(Long id, Model model) {
+        log.info("컨트롤러 읽기로 들어온 게시글 번호:" + id);
+        //log.info("컨트롤러 읽기로 들어온 게시글 번호:" + id);
+
+        if (id != null || id.equals("")) {
+            log.info("들어온 id 가 이상함");
+            return "redirect:/qna/qnaList";
+        }
+
+        try {
+            QnaDTO qnaDTO = qnaService.read(id);
+            model.addAttribute("qnaDTO", qnaDTO);
+        }catch (EntityNotFoundException e){
+            log.info("id로 값을 찾지 못함");
+            return "redirect:/qna/qnaList";
+        }
+
         return "/qna/qnaRead";
     }
 
