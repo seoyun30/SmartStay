@@ -40,7 +40,7 @@ public class HotelService {
     }
 
     //chief 목록
-    public List<HotelDTO> chiefList() {
+    public List<HotelDTO> hotelList() {
         List<Hotel> hotels = HotelRepository.findAll();
         List<HotelDTO> hotelDTOS = hotels.stream()
                 .map(chief -> modelMapper.map(chief, HotelDTO.class)).collect(Collectors.toList());

@@ -48,7 +48,7 @@ public class HotelController {
     public String hotelList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
         log.info("목록진입");
 
-        List<HotelDTO> hotelDTOList =  hotelService.chiefList();
+        List<HotelDTO> hotelDTOList =  hotelService.hotelList();
         model.addAttribute("hotelDTOList", hotelDTOList);
         return "hotel/hotelList";
     }

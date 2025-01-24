@@ -41,7 +41,7 @@ public class BrandService {
     }
 
     //chief 목록
-    public List<BrandDTO> chiefList(){
+    public List<BrandDTO> brandList(){
         List<Brand> brands = BrandRepository.findAll();
         List<BrandDTO> brandDTOS = brands.stream()
                 .map(chief -> modelMapper.map(chief, BrandDTO.class)).collect(Collectors.toList());

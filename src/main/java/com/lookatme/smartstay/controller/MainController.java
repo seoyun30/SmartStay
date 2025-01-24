@@ -20,7 +20,7 @@ public class MainController {
     @GetMapping("/")
     public String main(Model model) {
 
-        List<HotelDTO> list = hotelService.mainHotel();
+        List<HotelDTO> list = hotelService.hotelList();
         model.addAttribute("list", list);
 
         return "main";
@@ -29,7 +29,7 @@ public class MainController {
     @GetMapping("/search")
     public String search(Model model) {
 
-        List<HotelDTO> results = hotelService.searchList();
+        List<HotelDTO> results = hotelService.hotelList();
         model.addAttribute("results", results);
 
         return "search";

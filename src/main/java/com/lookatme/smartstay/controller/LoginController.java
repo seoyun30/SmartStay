@@ -77,7 +77,7 @@ public class LoginController {
         model.addAttribute("memberDTO", new MemberDTO());
 
         List<BrandDTO> brandDTOList =
-                brandService.chiefList();
+                brandService.brandList();
         BrandDTO brandDTO = new BrandDTO();
 
         model.addAttribute("brandDTOList", brandDTOList);
