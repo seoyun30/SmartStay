@@ -12,38 +12,119 @@
 <body>
 
 <th:block layout:fragment="content">
-    <h2 class="my-3 text-center fw-bold">룸 예약 상태</h2>
-    <div class="row row-cols-1 row-cols-md-4 g-4" >
-        <div class="col">
-            <div class="card" style="box-shadow: none">
-                <div class="card-header">룸 번호1</div>
-                <div class="card-body">
-                    <button class="h5 fw-bold" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
-                        룸 이름
-                    </button>
-                    <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
-                        <div class="offcanvas-header">
-                            <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Offcanvas with body scrolling</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <div class="row">
+        <div class="roomRead col-9">
+            <h2 class="my-3 text-center fw-bold">룸 예약 상태</h2>
+            <div class="row row-cols-1 row-cols-md-5 g-4" >
+                <div class="col">
+                    <div class="card" style="box-shadow: none">
+                        <div class="card-header">룸 번호</div>
+                        <div class="card-body">
+                            <button class="h5 fw-bold" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+                                룸 이름
+                            </button>
+                            <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+                                <div class="offcanvas-header">
+                                    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Offcanvas with body scrolling</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                </div>
+                                <div class="offcanvas-body">
+                                    <p>Try scrolling the rest of the page to see this option in action.</p>
+                                    <span>룸 정보</span> <br>
+                                    <span>룸 타입</span> <br>
+                                    <span>룸 인원수</span> <br>
+                                    <span>룸 가격</span>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="offcanvas-body">
-                            <p>Try scrolling the rest of the page to see this option in action.</p>
+                        <div class="card-footer">
+                            <small class="text-body-secondary text-center">룸 상태</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card" style="box-shadow: none">
+                        <div class="card-header">룸 번호</div>
+                        <div class="card-body">
+                            <span class="h5 card-title fw-bold">룸 이름</span> <br>
+                            <button id="toggleReadWindow" class="btn btn-primary">토글 창</button>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-body-secondary text-center">룸 상태</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card" style="box-shadow: none">
+                        <div class="card-header">룸 번호</div>
+                        <div class="card-body">
+                            <span class="h5 card-title fw-bold">룸 이름</span> <br>
                             <span>룸 정보</span> <br>
                             <span>룸 타입</span> <br>
                             <span>룸 인원수</span> <br>
                             <span>룸 가격</span>
                         </div>
+                        <div class="card-footer">
+                            <small class="text-body-secondary text-center">룸 상태</small>
+                        </div>
                     </div>
+                </div>
 
+                <div class="col">
+                    <div class="card" style="box-shadow: none">
+                        <div class="card-header">룸 번호</div>
+                        <div class="card-body">
+                            <span class="h5 card-title fw-bold">룸 이름</span> <br>
+                            <span>룸 정보</span> <br>
+                            <span>룸 타입</span> <br>
+                            <span>룸 인원수</span> <br>
+                            <span>룸 가격</span>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-body-secondary text-center">룸 상태</small>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-footer">
-                    <small class="text-body-secondary text-center">룸 상태</small>
+
+                <div class="col">
+                    <div class="card" style="box-shadow: none">
+                        <div class="card-header">룸 번호</div>
+                        <div class="card-body">
+                            <span class="h5 card-title fw-bold">룸 이름</span> <br>
+                            <span>룸 정보</span> <br>
+                            <span>룸 타입</span> <br>
+                            <span>룸 인원수</span> <br>
+                            <span>룸 가격</span>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-body-secondary text-center">룸 상태</small>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="col">
+                    <div class="card" style="box-shadow: none">
+                        <div class="card-header">룸 번호</div>
+                        <div class="card-body">
+                            <span class="h5 card-title fw-bold">룸 이름</span> <br>
+                            <span>룸 정보</span> <br>
+                            <span>룸 타입</span> <br>
+                            <span>룸 인원수</span> <br>
+                            <span>룸 가격</span>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-body-secondary text-center">룸 상태</small>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-
-        <div class="col">
-            <div class="card" style="box-shadow: none">
+        <div class="readWindow col-3 border-start">
+            <div class="mt-5" style="box-shadow: none">
                 <div class="card-header">룸 번호</div>
                 <div class="card-body">
                     <span class="h5 card-title fw-bold">룸 이름</span> <br>
@@ -57,41 +138,35 @@
                 </div>
             </div>
         </div>
-
-        <div class="col">
-            <div class="card" style="box-shadow: none">
-                <div class="card-header">룸 번호</div>
-                <div class="card-body">
-                    <span class="h5 card-title fw-bold">룸 이름</span> <br>
-                    <span>룸 정보</span> <br>
-                    <span>룸 타입</span> <br>
-                    <span>룸 인원수</span> <br>
-                    <span>룸 가격</span>
-                </div>
-                <div class="card-footer">
-                    <small class="text-body-secondary text-center">룸 상태</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card" style="box-shadow: none">
-                <div class="card-header">룸 번호</div>
-                <div class="card-body">
-                    <span class="h5 card-title fw-bold">룸 이름</span> <br>
-                    <span>룸 정보</span> <br>
-                    <span>룸 타입</span> <br>
-                    <span>룸 인원수</span> <br>
-                    <span>룸 가격</span>
-                </div>
-                <div class="card-footer">
-                    <small class="text-body-secondary text-center">룸 상태</small>
-                </div>
-            </div>
-        </div>
-
     </div>
+
 </th:block>
+<script th:inline="javascript" layout:fragment="script">
+
+    $(document).ready(function () {
+
+        let roomRead = $(".roomRead");
+        let readWindow = $(".readWindow");
+
+        // 초기 상태에서 readWindow를 숨기고 roomRead의 클래스를 col-12로 변경
+        readWindow.hide();
+        roomRead.removeClass('col-9').addClass('col-12');
+
+        // readWindow가 표시되거나 숨겨질 때 클래스를 동적으로 업데이트
+        $("#toggleReadWindow").on("click", function () {
+            if (readWindow.is(":visible")) {
+                readWindow.hide();
+                roomRead.removeClass('col-9').addClass('col-12');
+            } else {
+                readWindow.show();
+                roomRead.removeClass('col-12').addClass('col-9');
+            }
+        });
+
+
+    })
+
+</script>
 
 </body>
 </html>
