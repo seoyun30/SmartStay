@@ -36,6 +36,14 @@ public class OrderItem extends BaseEntity {
     @JoinColumn(name = "care_num")
     private Care care; //룸 케어 조인
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_num")
+    private OrderReserve orderReserve;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pay_num")
+    private Pay pay;
+
     @ManyToOne
     @JoinColumn(name = "cart_num")
     private Cart cart; //장바구니

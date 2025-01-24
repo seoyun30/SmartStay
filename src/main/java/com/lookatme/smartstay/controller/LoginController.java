@@ -41,7 +41,7 @@ public class LoginController {
     @GetMapping("/adSignup") //회원가입페이지(saveSuperAdminMember-슈퍼어드민이 승인해주는 첫번째 치프)
     public String adSignupGet(Model model){
         model.addAttribute("memberDTO", new MemberDTO());
-        model.addAttribute("chiefDTO", new BrandDTO());
+        model.addAttribute("brandDTO", new BrandDTO());
         log.info("회원가입");
         return "member/adSignup";
     }
@@ -116,7 +116,7 @@ public class LoginController {
         } else {
             log.info("매니져로 저장");
 
-            memberService.saveManagerMember(memberDTO);
+            memberService.saveManagerMember(memberDTO, hotelDTO);
         }
 
 

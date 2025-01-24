@@ -28,6 +28,14 @@ public class RoomItem extends BaseEntity{
     @JoinColumn(name = "room_num")
     private Room room; //룸
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reserve_num")
+    private RoomReserve roomReserve;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pay_num")
+    private Pay pay;
+
     @ManyToOne
     @JoinColumn(name = "cart_num")
     private Cart cart; //장바구니
