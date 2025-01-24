@@ -57,13 +57,21 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 
         String url = "/";
-        if(role != null && role.equals("CHIEF")) {
-            url = "/a";
-            System.out.println(url);
-        }else if (role != null && role.equals("USER")) {
-            url = "/";
+        if(role != null && role.equals("SUPERADMIN")) {
+            url = "/adMain";
             System.out.println(url);
 
+        } else if (role != null && role.equals("CHIEF")) {
+            url = "/adMain";
+            System.out.println(url);
+
+        } else if (role != null && role.equals("MANAGER")) {
+            url = "/adMain";
+            System.out.println(url);
+
+        } else if (role != null && role.equals("USER")) {
+            url = "/";
+            System.out.println(url);
         }
 
         response.sendRedirect(url);

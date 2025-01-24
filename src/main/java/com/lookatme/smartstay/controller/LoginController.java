@@ -160,7 +160,7 @@ public class LoginController {
         return "member/signup";
    }
 
-   @GetMapping("/adLogin") //로그인페이지(총판,매니져) 관리자들
+   /*@GetMapping("/adLogin") //로그인페이지(총판,매니져) 관리자들
     public String adLoginGet(MemberDTO memberDTO, Principal principal){
 
        if(principal != null){
@@ -170,7 +170,7 @@ public class LoginController {
 
        return "member/adLogin";
         //return "member/adSignup";
-   }
+   }*/
 
   /*  @PostMapping("/adLogin") //로그인
     public String adLoginPost(MemberDTO memberDTO, Principal principal){
