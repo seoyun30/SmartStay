@@ -27,7 +27,7 @@ public class BrandService {
     private final ModelMapper modelMapper;
     private final ImageService imageService;
 
-    //hotel 등록
+    //brand 등록
     public void insert(BrandDTO brandDTO,
                        List<MultipartFile> multipartFiles) throws Exception {
         Brand brand = modelMapper.map(brandDTO, Brand.class);
@@ -40,15 +40,15 @@ public class BrandService {
 
     }
 
-    //chief 목록
+    //brand 목록
     public List<BrandDTO> brandList(){
         List<Brand> brands = BrandRepository.findAll();
         List<BrandDTO> brandDTOS = brands.stream()
-                .map(chief -> modelMapper.map(chief, BrandDTO.class)).collect(Collectors.toList());
+                .map(brand -> modelMapper.map(brand, BrandDTO.class)).collect(Collectors.toList());
         return brandDTOS;
     }
 
-    //chief 상세보기
+    //brand 상세보기
     public BrandDTO read(Long id) {
         Brand brand = BrandRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
@@ -56,11 +56,11 @@ public class BrandService {
         return brandDTO;}
 
 
-        //Optional<Chief> chief = chiefRepository.findById(id);
-        //ChiefDTO chiefDTO = modelMapper.map(chief, ChiefDTO.class);
-        //return chiefDTO;
+        //Optional<Brand> brand = brandRepository.findById(id);
+        //BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
+        //return brandDTO;
 
-    //chief 수정
+    //brand 수정
     public void update(BrandDTO brandDTO,
                        List<MultipartFile> multipartFiles) throws Exception{
         Brand brand = BrandRepository.findById(brandDTO.getBrand_num())
@@ -74,13 +74,13 @@ public class BrandService {
 
         BrandRepository.save(brand);
 
-       /* Optional<Chief> chief = chiefRepository.findById(chiefDTOList.getChief_num());
-        if(chief.isPresent()){
-            Chief chiefs = modelMapper.map(chiefDTOList, Chief.class);
-            chiefRepository.save(chiefs);
+       /* Optional<Brand> brand = brandRepository.findById(brandDTOList.getBrand_num());
+        if(brand.isPresent()){
+            Brand brands = modelMapper.map(brandDTOList, Brand.class);
+            brandRepository.save(brands);
         } */
     }
-    //chief 삭제
+    //brand 삭제
     public void delete(Long id){
         log.info("서비스로 들어온 삭제할 번호 :"+id);
 
