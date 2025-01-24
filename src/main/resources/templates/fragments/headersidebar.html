@@ -253,11 +253,25 @@
 
             <th:block>
                 <li class="nav-item">
+
+                    <a class="nav-link collapsed" data-bs-target="#hotel-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-circle"></i><span>호텔 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+
                     <a class="nav-link collapsed" data-bs-target="#brand-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-circle"></i><span>브랜드 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
+                      
                     <ul id="brand-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li>
+
+                            <a href="/hotel/hotelList" class="nav-link">
+                                <i class="bi bi-circle"></i> 호텔 목록
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/hotel/hotelRegister" class="nav-link">
+                                <i class="bi bi-circle"></i> 호텔 등록
+
                             <a href="/brand/brandList" class="nav-link">
                                 <i class="bi bi-circle"></i> 브랜드 목록
                             </a>
@@ -280,6 +294,165 @@
                                 <i class="bi bi-circle"></i> 호텔 목록
                             </a>
                         </li>
+
+                    </ul>
+                </li>
+            </th:block>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#room-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-door-closed"></i><span>룸 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="room-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/room/roomList" class="nav-link">
+                            <i class="bi bi-door-closed"></i> 룸 목록
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/room/roomRegister" class="nav-link">
+                            <i class="bi bi-door-closed"></i> 룸 등록
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#menu-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-list"></i><span>메뉴 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="menu-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/menu/menuList" class="nav-link">
+                            <i class="bi bi-list"></i> 메뉴 목록
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/menu/menuRegister" class="nav-link">
+                            <i class="bi bi-list"></i> 메뉴 등록
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#care-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-heart"></i><span>룸 케어 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="care-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/care/careList" class="nav-link">
+                            <i class="bi bi-heart"></i> 룸 케어 목록
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/care/careRegister" class="nav-link">
+                            <i class="bi bi-heart"></i> 룸 케어 등록
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#notice-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-balloon"></i><span>공지사항 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="notice-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/notice/noticeList" class="nav-link">
+                            <i class="bi bi-balloon"></i> 공지사항 목록
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/notice/noticeRegister" class="nav-link">
+                            <i class="bi bi-balloon"></i> 공지사항 등록
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#qna-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-heart"></i><span>문의사항 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="qna-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/qna/qnaList" class="nav-link">
+                            <i class="bi bi-heart"></i> 문의사항 목록
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#review-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-heart"></i><span>리뷰 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="review-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-heart"></i> 리뷰 목록
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#member-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-heart"></i><span>회원 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="member-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-heart"></i> 회원 목록
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link collapsed" data-bs-target="#field-nav" data-bs-toggle="collapse" href="#">-->
+<!--                    <i class="bi bi-menu-button-wide"></i><span>현장</span><i class="bi bi-chevron-down ms-auto"></i>-->
+<!--                </a>-->
+<!--                <ul id="field-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">-->
+<!--                    <li>-->
+<!--                        <a href="/site/list">-->
+<!--                            <i class="bi bi-circle"></i><span>매장 관리</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+
+<!--                    &lt;!&ndash; <li>-->
+<!--                         <a href="/site/details">-->
+<!--                             <i class="bi bi-circle"></i><span>현장 상세</span>-->
+<!--                         </a>-->
+<!--                     </li>&ndash;&gt;-->
+<!--                    <li>-->
+<!--                        <a href="/site/register">-->
+<!--                            <i class="bi bi-circle"></i><span>매장 목록</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    &lt;!&ndash;                        <li>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                            <a href="site/update">&ndash;&gt;-->
+<!--                    &lt;!&ndash;                                <i class="bi bi-circle"></i><span>현장 수정</span>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                            </a>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        </li>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<li>-->
+<!--                        <a href="site/del">-->
+<!--                            <i class="bi bi-circle"></i><span>현장 삭제</span>-->
+<!--                        </a>-->
+<!--                    </li>&ndash;&gt;-->
+<!--                </ul>-->
+<!--            </li>&lt;!&ndash; End 현장 Nav &ndash;&gt;-->
+
+            <th:block sec:authorize="isAuthenticated()">
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link collapsed" data-bs-target="#Membership-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-menu-button-wide"></i><span>회원</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="Membership-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+
                         <li>
                             <a href="/hotel/hotelRegister" class="nav-link">
                                 <i class="bi bi-circle"></i> 호텔 등록
