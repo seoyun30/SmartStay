@@ -2,12 +2,13 @@ package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
+import com.lookatme.smartstay.dto.ChiefDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Chief;
 import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.repository.ChiefRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -33,6 +34,7 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ChiefRepository chiefRepository;
 
 
     @Override
@@ -53,7 +55,7 @@ public class MemberService implements UserDetailsService {
             log.info("슈퍼어드민");
             role = Role.SUPERADMIN.name();
             authorities.add(new SimpleGrantedAuthority(Role.SUPERADMIN.name()));
-        }else if("CHIEF".equals(member.getRole().name()) && member.getPower() == Power.Y){
+        }else if("CHIEF".equals(member.getRole().name()) ){
             log.info("치프");
             role = Role.CHIEF.name();
             authorities.add(new SimpleGrantedAuthority(Role.CHIEF.name()));
@@ -73,6 +75,16 @@ public class MemberService implements UserDetailsService {
                 .roles(role)
                 .authorities(authorities)
                 .build();
+    }
+
+    public MemberDTO findbyEmail(String email) {
+        Member member = this.memberRepository.findByEmail(email);
+        if(member != null) {
+            return modelMapper.map(member, MemberDTO.class);
+        }else {
+            return null;
+        }
+
     }
 
     public Member saveMember(MemberDTO memberDTO){
@@ -105,12 +117,18 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
-    public Member saveChiefMember(MemberDTO memberDTO){
+    public Member saveChiefMember(MemberDTO memberDTO, ChiefDTO chiefDTO){
 
         validateDuplicateMember(memberDTO.getEmail());
 
         Member member =
                 MemberDTO.dtoEntity(memberDTO);
+
+        Chief chief =
+                chiefRepository.findById(chiefDTO.getChief_num()).get();
+
+        member.setRole(Role.CHIEF);
+        member.setChief(chief);
 
         member.setRole(Role.CHIEF);
 
