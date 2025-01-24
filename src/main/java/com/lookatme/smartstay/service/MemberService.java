@@ -3,6 +3,7 @@ package com.lookatme.smartstay.service;
 import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.BrandDTO;
+import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Member;
@@ -34,7 +35,7 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
-    private final BrandRepository chiefRepository;
+    private final BrandRepository brandRepository;
 
 
     @Override
@@ -125,7 +126,7 @@ public class MemberService implements UserDetailsService {
                 MemberDTO.dtoEntity(memberDTO);
 
         Brand brand =
-                chiefRepository.findById(brandDTO.getChief_num()).get();
+                brandRepository.findById(brandDTO.getBrand_num()).get();
 
         member.setRole(Role.CHIEF);
         member.setBrand(brand);
@@ -138,7 +139,7 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
-    public Member saveManagerMember(MemberDTO memberDTO){
+    public Member saveManagerMember(MemberDTO memberDTO, HotelDTO hotelDTO){
 
         validateDuplicateMember(memberDTO.getEmail());
 
