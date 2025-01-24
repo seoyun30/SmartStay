@@ -52,9 +52,9 @@
                         </p>
                     </div>
 
-                    <div class="text-center d-flex justify-content-center">
+                    <div class="text-center d-flex justify-content-center" id="table_search">
                         <button type="button" class="btn btn-info fw-bold"
-                                th:onclick="|location.href='@{/notice/noticeModify}'|">수정</button>
+                                th:onclick="|location.href='@{/notice/noticeModify(notice_num=${notice.notice_num})}'|">수정</button>
                         <form class="delform" th:action="@{/notice/noticeDelete(notice_num=${notice.notice_num})}" method="post">
                             <input type="hidden" class="num" th:value="${notice.notice_num}">
                             <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>

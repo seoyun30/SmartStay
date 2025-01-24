@@ -25,6 +25,7 @@ public class NoticeController {
 
     private final NoticeService noticeService;
 
+    //목록 페이지
     @GetMapping("/noticeList")
     public String noticeListFrom(PageRequestDTO pageRequestDTO, Model model){
         log.info("모든 데이터를 읽어온다...");
@@ -34,6 +35,7 @@ public class NoticeController {
         return "notice/noticeList";
     }
 
+    //등록 페이지 이동
     @GetMapping("/noticeRegister")
     public String noticeRegisterFrom(){
         log.info("입력폼 페이지 이동...");
@@ -41,6 +43,7 @@ public class NoticeController {
         return "notice/noticeRegister";
     }
 
+    //등록 내용 저장
     @PostMapping("/noticeRegister")
     public String noticeRegisterPost(NoticeDTO noticeDTO, MemberDTO memberDTO, List<MultipartFile> multipartFileList){
         log.info("입력폼 내용을 저장...");
@@ -49,6 +52,7 @@ public class NoticeController {
         return "redirect:/notice/noticeList";
     }
 
+    //상세 보기 페이지
     @GetMapping("/noticeRead")
     public String noticeRead(Long id, PageRequestDTO pageRequestDTO, Model model){
         log.info("개별읽기...");
@@ -60,6 +64,7 @@ public class NoticeController {
         return "notice/noticeRead";
     }
 
+    //
     @GetMapping("/noticeModify")
     public String noticeModifyGet(Long notice_num, Principal principal, PageRequestDTO pageRequestDTO, Model model){
         log.info("수정할 데이터 읽기...");
