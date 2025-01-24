@@ -12,10 +12,10 @@
 <body>
 
 <th:block layout:fragment="content">
-  <h1 class="text-center">매장 목록</h1>
+  <h1 class="text-center">호텔 목록</h1>
   <div class="row mt-3">
     <div class="col text-end">
-      <button type="button" onclick="location.href='/hotel/hotelRegister'" class="btn btn-dark">매장 등록</button>
+      <button type="button" onclick="location.href='/hotel/hotelRegister'" class="btn btn-dark">호텔 등록</button>
     </div>
   </div>
 
@@ -43,11 +43,11 @@
                 [[${hotel.hotel_name}]]
               </a>
             </td>
-            <td th:text="${hotel.business_num()}"></td>
-            <td th:text="${hotel.owner()}"></td>
-            <td th:text="${hotel.address()}"></td>
-            <td th:text="${hotel.tel()}"></td>
-            <td th:text="${hotel.score()}"></td>
+            <td th:text="${hotel.business_num}"></td>
+            <td th:text="${hotel.owner}"></td>
+            <td th:text="${hotel.address}"></td>
+            <td th:text="${hotel.tel}"></td>
+            <td th:text="${hotel.score}"></td>
 
             <!--post 방식의 삭제버튼-->
             <td class="col text-end">
