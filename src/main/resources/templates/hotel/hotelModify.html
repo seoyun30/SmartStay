@@ -11,12 +11,12 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-    <h1 class="text-center">매장 수정</h1>
-    <form action="/brand/chiefModify" method="post" th:object="${brandDTO}" enctype="multipart/form-data">
+    <h1 class="text-center">호텔 수정</h1>
+    <form action="/hotel/hotelModify" method="post" th:object="${hotelDTO}" enctype="multipart/form-data">
 
         <div class="row">
             <div class="col-8 offset-2">
-                <input type="hidden" name="chief_num" th:value="${brandDTO.chief_num}">
+                <input type="hidden" name="hotel_num" th:value="${hotelDTO.hotel_num}">
                 <div class="row">
                     <div class="col-12">
                         <div class="mb-3">
@@ -90,7 +90,7 @@
                         <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
                         <script>
                             $(".Listbtn").on("click", function () {
-                                location.href = "/brand/chiefList";
+                                location.href = "/hotel/hotelList";
                             })
                         </script>
                     </div>

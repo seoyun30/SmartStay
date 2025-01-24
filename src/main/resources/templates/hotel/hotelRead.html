@@ -11,12 +11,12 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-    <h1 class="text-center">매장 상세보기</h1>
+    <h1 class="text-center">호텔 상세보기</h1>
     <div class="d=flex vh-100">
         <div class="container my-auto">
             <div class=" row justify-content-center">
 
-                <form action="/brand/chiefRegister" method="post" th:object="${brandDTO}">
+                <form action="/hotel/hotelRegister" method="post" th:object="${hotelDTO}">
                     <div class="row mt-5">
                         <div class="col text-center">
                             <div class="row">
@@ -27,30 +27,30 @@
                                     <div class="col text-center">
                                         <div class="card">
                                             <div class="card-body">
-                                                <input id="chief_num" type="hidden" th:value="${brandDTO.chief_num}"></input>
+                                                <input id="hotel_num" type="hidden" th:value="${hotelDTO.hotel_num}"></input>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">호텔명</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.hotel_name}">
+                                                    <input type="text" class="form-control" th:value="${hotelDTO.hotel_name}">
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">사업자번호</span>
-                                                    <input type="number" class="form-control" th:value="${brandDTO.business_num}">
+                                                    <input type="number" class="form-control" th:value="${hotelDTO.business_num}">
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">대표자</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.owner}">
+                                                    <input type="text" class="form-control" th:value="${hotelDTO.owner}">
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">주소</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.address}">
+                                                    <input type="text" class="form-control" th:value="${hotelDTO.address}">
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">전화번호</span>
-                                                    <input type="number" class="form-control" th:value="${brandDTO.tel}">
+                                                    <input type="number" class="form-control" th:value="${hotelDTO.tel}">
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">별점</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.score}">
+                                                    <input type="text" class="form-control" th:value="${hotelDTO.score}">
                                                 </div>
                                             </div>
                                         </div>
@@ -59,14 +59,14 @@
                                     <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
                                     <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
                                     <script>
-                                        let chief_num = document.getElementById("chief_num").value;
+                                        let hotel_num = document.getElementById("hotel_num").value;
 
                                         $(".Listbtn").on("click", function () {
-                                            location.href = "/brand/chiefList";
+                                            location.href = "/hotel/hotelList";
                                         })
 
                                         $(".Modbtn").on("click", function () {
-                                            location.href = "/brand/chiefModify?chief_num="+chief_num;
+                                            location.href = "/hotel/hotelModify?hotel_num="+hotel_num;
                                         })
                                     </script>
                                 </div>
