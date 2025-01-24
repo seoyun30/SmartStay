@@ -33,27 +33,27 @@ public class ManagerController {
     //매장 상세보기
     @GetMapping("/managerRead")
     public String managerRead(Long manager_num, Model model) {
-        ManagerDTO managerDTO = managerService.managerRead(manager_num);
-        model.addAttribute("manager", managerDTO);
+        HotelDTO hotelDTO = managerService.managerRead(manager_num);
+        model.addAttribute("manager", hotelDTO);
         return "manager/managerRead";
     }
 
     //매장 수정
     @GetMapping("/managerModify")
     public String managerModifyGet(Long manager_num, Model model) {
-        ManagerDTO managerDTO=managerService.managerRead(manager_num);
-        model.addAttribute("manager", managerDTO);
+        HotelDTO hotelDTO =managerService.managerRead(manager_num);
+        model.addAttribute("manager", hotelDTO);
         return "manager/managerModify";
     }
     @PostMapping("/managerModify")
-    public String managerModifyPost(@Valid ManagerDTO managerDTO, BindingResult bindingResult, @RequestParam("delnumList") List<Long> delnumList,
-                                   @RequestParam("multipartFiles") List<MultipartFile> multipartFiles, ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
+    public String managerModifyPost(@Valid HotelDTO hotelDTO, BindingResult bindingResult, @RequestParam("delnumList") List<Long> delnumList,
+                                    @RequestParam("multipartFiles") List<MultipartFile> multipartFiles, ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
         if (bindingResult.hasErrors()) {
             log.info("유효성 검사 실패 :"+bindingResult.getAllErrors());
             return "manager/managerModify";
         }
 
-        managerService.managerUpdate(managerDTO, multipartFiles);
+        managerService.managerUpdate(hotelDTO, multipartFiles);
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
         return "redirect:/manager/managerRead";

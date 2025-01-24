@@ -1,7 +1,5 @@
 package com.lookatme.smartstay.dto;
 
-import com.lookatme.smartstay.entity.BaseEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,17 +10,23 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @Builder
-public class ChiefDTO {
+public class HotelDTO {
 
-    private Long chief_num; //키
+    private Long hotel_num; //키
 
-    private String business_num; //사업자번호
+    private String business_num; //개인 사업자번호
 
     private String hotel_name; //호텔 명
+
     private String owner; //대표자 이름
+
     private String address; //호텔 주소
+
     private String tel; //연락처
+
     private String score; //별점
+
+    private BrandDTO brandDTO; //브랜드
 
     private LocalDateTime reg_date;
 
@@ -31,4 +35,5 @@ public class ChiefDTO {
     private String create_by;
 
     private String modified_by;
+
 }

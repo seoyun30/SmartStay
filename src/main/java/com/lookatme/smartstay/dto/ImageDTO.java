@@ -1,7 +1,5 @@
 package com.lookatme.smartstay.dto;
 
-import com.lookatme.smartstay.entity.*;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -24,21 +22,21 @@ public class ImageDTO {
 
     private String repimg_yn; //대표 이미지 여부
 
-    private ChiefDTO chiefDTO; //호텔 이미지
+    private BrandDTO brandDTO; //브랜드 이미지
 
-    private ManagerDTO managerDTO; //매장 이미지
+    private HotelDTO hotelDTO; //호텔 이미지
 
     private RoomDTO roomDTO; //룸 이미지
 
-    private MenuDTO menuDTO; //룸 서비스 이미지
+    private MenuDTO menuDTO; //메뉴 이미지
 
-    private CareDTO careDTO; //케어 서비스 이미지
+    private CareDTO careDTO; //룸 케어 이미지
 
-    private ReviewDTO reviewDTO; //후기 글 번호
+    private ReviewDTO reviewDTO; //리뷰 이미지
 
-    private QnaDTO qnaDTO; //후기 글 번호
+    private QnaDTO qnaDTO; //문의사항 이미지
 
-    private NoticeDTO noticeDTO; //후기 글 번호
+    private NoticeDTO noticeDTO; //공지사항 이미지
 
     private LocalDateTime reg_date;
 

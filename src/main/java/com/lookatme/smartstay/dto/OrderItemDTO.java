@@ -27,11 +27,9 @@ public class OrderItemDTO {
 
     private RoomDTO roomDTO; //룸 조인
 
-    private MenuDTO menuDTO; //룸 서비스 조인
+    private MenuDTO menuDTO; //음식 주문 조인
 
-    private CareDTO careDTO; //룸 케어서비스 조인
-
-    private OrderReserveDTO orderReserveDTO;
+    private CareDTO careDTO; //룸 케어 조인
 
     private CartDTO cartDTO; //장바구니
 

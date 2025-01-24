@@ -36,10 +36,10 @@ public class Member extends BaseEntity{
     private Role role; //회원 권한
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chief_num")
-    private Chief chief; //호텔(총판)
+    @JoinColumn(name = "brand_num")
+    private Brand brand; //브랜드
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_num")
-    private Manager	manager; //호텔(매장)
+    @JoinColumn(name = "hotel_num")
+    private Hotel hotel; //호텔
 }

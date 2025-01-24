@@ -1,7 +1,6 @@
 package com.lookatme.smartstay.entity;
 
 import com.lookatme.smartstay.constant.CheckState;
-import com.lookatme.smartstay.constant.PayState;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,10 +22,6 @@ public class RoomReserve extends BaseEntity{
 
     @Column(unique = true, nullable = false)
     private String reserve_id; //예약 기록 번호
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PayState pay_state; //결제 상태
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

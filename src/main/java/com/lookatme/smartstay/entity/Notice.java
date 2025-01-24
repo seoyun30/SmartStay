@@ -17,15 +17,12 @@ public class Notice extends BaseEntity {
     private Long notice_num; //공지 번호
 
     private String title; //제목
+
     private String content; //내용
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chief_num")
-    private Chief chief; //호텔(총판)
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_num")
-    private Manager	manager; //호텔(매장)
+    @JoinColumn(name = "hotel_num")
+    private Hotel hotel; //호텔
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_num")

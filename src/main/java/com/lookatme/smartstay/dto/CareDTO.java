@@ -1,9 +1,5 @@
 package com.lookatme.smartstay.dto;
 
-import com.lookatme.smartstay.entity.BaseEntity;
-import com.lookatme.smartstay.entity.Chief;
-import com.lookatme.smartstay.entity.Manager;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,13 +15,12 @@ public class CareDTO {
     private Long care_num; //케어 번호
 
     private String care_name; //케어 명
-    private String care_info; //케어 정보
+
     private String care_detail; //케어 상세
+
     private Long care_price; //케어 가격
 
-    private ChiefDTO chiefDTO; //호텔(총판)
-
-    private ManagerDTO managerDTO; //호텔(매장)
+    private HotelDTO hotelDTO; //호텔
 
     private LocalDateTime reg_date;
 

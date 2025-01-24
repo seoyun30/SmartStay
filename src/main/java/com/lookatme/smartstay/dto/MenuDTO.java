@@ -1,8 +1,5 @@
 package com.lookatme.smartstay.dto;
 
-import com.lookatme.smartstay.entity.BaseEntity;
-import com.lookatme.smartstay.entity.Manager;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,11 +14,11 @@ public class MenuDTO {
 
     private Long menu_num; //메뉴 번호
     private String menu_name; //메뉴 명
-    private String service_info; //서비스 정보
+    private String menu_sort; //메뉴 분류
     private String menu_detail; //메뉴 상세
     private Long menu_price; //메뉴 가격
 
-    private ManagerDTO managerDTO; //호텔(매장)
+    private HotelDTO hotelDTO; //호텔
 
     private LocalDateTime reg_date;
 

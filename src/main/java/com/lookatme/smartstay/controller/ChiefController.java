@@ -3,12 +3,8 @@ package com.lookatme.smartstay.controller;
 import com.lookatme.smartstay.Util.PagenationUtil;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.entity.Chief;
 import com.lookatme.smartstay.service.ChiefService;
-import com.lookatme.smartstay.service.ManagerService;
-import jakarta.persistence.Id;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -37,13 +33,13 @@ public class ChiefController {
     //등록
     @GetMapping("/chiefRegister")
     public String chiefRegisterGet(Model model) {
-        model.addAttribute("chiefDTO", new ChiefDTO());
+        model.addAttribute("chiefDTO", new BrandDTO());
         return "chief/chiefRegister";
     }
     @PostMapping("/chiefRegister")
-    public String chiefRegisterPost(Model model, ChiefDTO chiefDTO,
+    public String chiefRegisterPost(Model model, BrandDTO brandDTO,
                                     List<MultipartFile> multipartFiles, RedirectAttributes redirectAttributes) throws Exception {
-        chiefService.insert(chiefDTO, multipartFiles);
+        chiefService.insert(brandDTO, multipartFiles);
         redirectAttributes.addFlashAttribute("msg", "등록이 완료되었습니다.");
         return "redirect:/chief/chiefList";
     }
@@ -53,28 +49,28 @@ public class ChiefController {
     public String chiefList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
         log.info("목록진입");
 
-        List<ChiefDTO> chiefDTOList =  chiefService.chiefList();
-       model.addAttribute("chiefDTOList", chiefDTOList);
+        List<BrandDTO> brandDTOList =  chiefService.chiefList();
+       model.addAttribute("chiefDTOList", brandDTOList);
         return "chief/chiefList";
     }
 
     //상세보기
     @GetMapping("/chiefRead")
     public String chiefRead(Long chief_num, Model model) {
-        ChiefDTO chiefDTO=chiefService.read(chief_num);
-        model.addAttribute("chiefDTO", chiefDTO);
+        BrandDTO brandDTO =chiefService.read(chief_num);
+        model.addAttribute("chiefDTO", brandDTO);
         return "chief/chiefRead";
     }
 
     //수정
     @GetMapping("/chiefModify")
     public String chiefModifyGet(Long chief_num, Model model) {
-        ChiefDTO chiefDTO=chiefService.read(chief_num);
-        model.addAttribute("chiefDTO", chiefDTO);// end접속해제
+        BrandDTO brandDTO =chiefService.read(chief_num);
+        model.addAttribute("chiefDTO", brandDTO);// end접속해제
         return "chief/chiefModify";
     }
     @PostMapping("/chiefModify")
-    public String chiefModifyPost(@Valid ChiefDTO chiefDTO, BindingResult bindingResult, @RequestParam("delnumList") List<Long> delnumList,
+    public String chiefModifyPost(@Valid BrandDTO brandDTO, BindingResult bindingResult, @RequestParam("delnumList") List<Long> delnumList,
                                   @RequestParam("multipartFiles") List<MultipartFile> multipartFiles, ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
         //@RequestParam("delnumList") List<Long> delnumList, @RequestParam("multipartFiles") List<MultipartFile> multipartFiles
         //사진등록, 사진삭제번호 할때 사용하는 방법
@@ -85,7 +81,7 @@ public class ChiefController {
         }
         log.info("유효성 통과");
 
-        chiefService.update(chiefDTO, multipartFiles );
+        chiefService.update(brandDTO, multipartFiles );
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
         log.info("수정 완료");

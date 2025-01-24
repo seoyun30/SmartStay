@@ -29,12 +29,12 @@ public class Image extends BaseEntity {
     private String repimg_yn; //대표 이미지 여부
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chief_num")
-    private Chief chief; //호텔 이미지
+    @JoinColumn(name = "brand_num")
+    private Brand brand; //브랜드 이미지
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_num")
-    private Manager	manager; //매장 이미지
+    @JoinColumn(name = "hotel_num")
+    private Hotel hotel; //호텔 이미지
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_num")
@@ -42,22 +42,22 @@ public class Image extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_num")
-    private Menu menu; //룸 서비스 이미지
+    private Menu menu; //메뉴 이미지
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "care_num")
-    private Care care; //케어 서비스 이미지
+    private Care care; //룸 케어 이미지
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rev_num")
-    private Review review; //후기 글 번호
+    private Review review; //리뷰 이미지
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_num")
-    private Qna qna; //후기 글 번호
+    private Qna qna; //문의사항 이미지
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_num")
-    private Notice notice; //후기 글 번호
+    private Notice notice; //공지사항 이미지
 
 }

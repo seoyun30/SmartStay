@@ -1,6 +1,6 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.ManagerDTO;
+import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +22,7 @@ public class MainController {
     @GetMapping("/")
     public String main(Model model) {
 
-        List<ManagerDTO> list = managerService.mainHotel();
+        List<HotelDTO> list = managerService.mainHotel();
         model.addAttribute("list", list);
 
         return "main";
@@ -31,7 +31,7 @@ public class MainController {
     @GetMapping("/search")
     public String search(Model model) {
 
-        List<ManagerDTO> results = managerService.hotelList();
+        List<HotelDTO> results = managerService.hotelList();
         model.addAttribute("results", results);
 
         return "search";

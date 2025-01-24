@@ -7,15 +7,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,14 +48,14 @@ public class ImageService {
                 // targetType에 따라 연관관계 설정
                 switch (targetType) {
                     case "chief":
-                        Chief chief = chiefRepository.findById(targetId)
+                        Brand brand = chiefRepository.findById(targetId)
                                 .orElseThrow(() -> new IllegalArgumentException("해당 호텔 정보를 찾을 수 없습니다."));
-                        image.setChief(chief);
+                        image.setBrand(brand);
                         break;
                     case "manager":
-                        Manager manager = managerRepository.findById(targetId)
+                        Hotel hotel = managerRepository.findById(targetId)
                                 .orElseThrow(() -> new IllegalArgumentException("해당 매장 정보를 찾을 수 없습니다."));
-                        image.setManager(manager);
+                        image.setHotel(hotel);
                         break;
                     case "room":
                         Room room = roomRepository.findById(targetId)
@@ -145,14 +139,14 @@ public class ImageService {
                 // targetType에 따라 연관관계 설정 (기존 saveImage의 로직 재사용)
                 switch (targetType) {
                     case "chief":
-                        Chief chief = chiefRepository.findById(targetId)
+                        Brand brand = chiefRepository.findById(targetId)
                                 .orElseThrow(() -> new IllegalArgumentException("해당 호텔 정보를 찾을 수 없습니다."));
-                        image.setChief(chief);
+                        image.setBrand(brand);
                         break;
                     case "manager":
-                        Manager manager = managerRepository.findById(targetId)
+                        Hotel hotel = managerRepository.findById(targetId)
                                 .orElseThrow(() -> new IllegalArgumentException("해당 매장 정보를 찾을 수 없습니다."));
-                        image.setManager(manager);
+                        image.setHotel(hotel);
                         break;
                     case "room":
                         Room room = roomRepository.findById(targetId)
