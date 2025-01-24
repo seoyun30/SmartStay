@@ -58,7 +58,6 @@ public class CareService {
         Care care = careRepository.findById(careDTO.getCare_num()).orElseThrow(EntityNotFoundException::new);
 
         care.setCare_name(careDTO.getCare_name());
-        care.setCare_info(careDTO.getCare_info());
         care.setCare_detail(careDTO.getCare_detail());
         care.setCare_price(careDTO.getCare_price());
 
