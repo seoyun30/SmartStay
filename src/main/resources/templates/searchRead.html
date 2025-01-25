@@ -15,10 +15,11 @@
 <th:block layout:fragment="content">
 
     <section>
-        <form action="/searchList" method="get">
-            <input type="text" name="query" placeholder="호텔 이름을 입력하세요.">
-            <button type="submit">Search</button>
-        </form>
+        <h2 th:text="${hotelDTO.hotel_name}"></h2>
+        <p><strong>Owner:</strong> <span th:text="${hotelDTO.owner}"></span></p>
+        <p><strong>Phone:</strong> <span th:text="${hotelDTO.tel}"></span></p>
+        <p><strong>Business Number:</strong> <span th:text="${hotelDTO.business_num}"></span></p>
+        <a th:href="@{/searchList(query=${query})}">검색 결과로 돌아가기</a>
     </section>
 
 </th:block>
