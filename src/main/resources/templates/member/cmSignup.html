@@ -79,11 +79,15 @@
                                     <div class="row mt-4 mb-3">
                                         <div class="col-6">
                                             <div class="mb-2">
-                                                <label for="head_office" class="form-label">브랜드</label>
-                                                <select name="head_office" id="head_office" class="form-select" aria-label="Default select example">
-                                                    <option value></option>
-                                                    <option value></option>
-                                                    <option value></option>
+
+                                                <label for="brand" class="form-label">브랜드</label>
+                                                <select name="brand_num" id="brand" class="form-select" aria-label="Default select example">
+                                                    <option value = ""> ---브랜드선택--- </option>
+                                                    <th:block th:each="brand : ${brandDTOList}">
+                                                        <option  th:value="${brand.brand_num}" th:text="${brand.brand_name}"></option>
+                                                    </th:block>
+
+
                                                 </select>
                                             </div>
                                         </div>
@@ -92,26 +96,26 @@
                                 </div>
                             </th:block>
 
-                            <th:block th:object="${managerDTO}">
+                            <th:block>
                                 <div id="myDiv2" style="display:none">
                                     <div class="row mt-4 mb-3">
                                         <div class="col-6">
-                                            <div class="mb-2">
-                                                <label for="head_office" class="form-label">브랜드</label>
-                                                <select name="head_office" id="head_office" class="form-select" aria-label="Default select example">
-                                                    <option value></option>
-                                                    <option value></option>
-                                                    <option value></option>
+                                            <div class="mb-2" th:object="${brandDTO}">
+                                                <label for="brand1" class="form-label">브랜드</label>
+                                                <select name="brand_num" id="brand1" class="form-select brand1" aria-label="Default select example">
+                                                        <option value = ""> ---브랜드선택--- </option>
+                                                        <th:block th:each="brand : ${brandDTOList}">
+                                                            <option  th:value="${brand.brand_num}" th:text="${brand.brand_name}"></option>
+                                                        </th:block>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            <div class="mb-2">
-                                                <label for="branches" class="form-label">호텔명</label>
-                                                <select name="branches" id="branches" class="form-select" aria-label="Default select example">
-                                                    <option value></option>
-                                                    <option value></option>
-                                                    <option value></option>
+                                            <div class="mb-2" th:object="${hotelDTO}">
+                                                <label for="hotel" class="form-label">호텔</label>
+                                                <select name="hotel_num" id="hotel" class="form-select hotelselect" aria-label="Default select example">
+                                                    <option value = ""> ---호텔선택--- </option>
+
                                                 </select>
                                             </div>
                                         </div>
@@ -140,24 +144,71 @@
 
     </div>
 
+    <script>
+        function showDiv() {
+            var radios = document.querySelectorAll('input[type=radio]');
+            for (var i = 0; i < radios.length; i++) {
+                var radio = radios[i];
+                var div = document.getElementById('myDiv' + (i + 1));
+                if (radio.checked == true){
+                    div.style.display = "block";
+                } else {
+                    div.style.display = "none";
+                }
+            }
+        }
+
+
+    </script>
+
 </th:block>
 
 
-<script inline="javascript" layout:fragment="script">
 
+<script th:inline="javascript" layout:fragment="script" >
 
-    function showDiv() {
-        var radios = document.querySelectorAll('input[type=radio]');
-        for (var i = 0; i < radios.length; i++) {
-            var radio = radios[i];
-            var div = document.getElementById('myDiv' + (i + 1));
-            if (radio.checked == true){
-                div.style.display = "block";
-            } else {
-                div.style.display = "none";
-            }
+    $(document).ready(function () {
+
+        let msg = [[${msg}]]
+        if(msg){
+            alert(msg)
         }
-    }
+
+
+//     브랜드 선택시 호텔 리스트 매칭
+        let hotelDTOList = [[${hotelDTOList}]];
+        let hotelselect = $(".hotelselect")
+        console.log(hotelDTOList)
+
+        let str = ""
+
+        $(".brand1").on("change", function () {
+            str = `<option value = ""> ---호텔선택--- </option>`
+            hotelselect.html(str)
+            for (let i = 0; i < hotelDTOList.length; i++){
+                console.log($(this).val())
+                if(hotelDTOList[i].brandDTO != null){
+                    if(hotelDTOList[i].brandDTO.brand_num == $(this).val() ){
+                        console.log(hotelDTOList[i]);
+
+                       // str += "<option value='='"+hotelDTOList[i].hotel_num  +">" +hotelDTOList[i].hotel_name  +"</option>"
+                        str += `<option value="${hotelDTOList[i].hotel_num}">${hotelDTOList[i].hotel_name}</option>`
+
+                        console.log(str)
+
+                    }
+                }
+
+            }
+            console.log(str)
+            hotelselect.html(str)
+
+        })
+    })
+
+
+
+
 
 </script>
 

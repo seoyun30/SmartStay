@@ -28,6 +28,11 @@ public class HotelDTO {
 
     private BrandDTO brandDTO; //브랜드
 
+    public HotelDTO setBrandDTO(BrandDTO brandDTO) {
+        this.brandDTO = brandDTO;
+        return this;
+    } //추가
+
     private LocalDateTime reg_date;
 
     private LocalDateTime modi_date;

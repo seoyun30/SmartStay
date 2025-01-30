@@ -37,9 +37,9 @@ public class BrandController {
         return "brand/brandRegister";
     }
     @PostMapping("/brandRegister")
-    public String brandRegisterPost(Model model, BrandDTO brandDTO,
+    public String brandRegisterPost(Model model, BrandDTO brandDTO, Principal principal,
                                     List<MultipartFile> multipartFiles, RedirectAttributes redirectAttributes) throws Exception {
-        brandService.insert(brandDTO, multipartFiles);
+        brandService.insert(brandDTO, principal.getName(), multipartFiles);
         redirectAttributes.addFlashAttribute("msg", "등록이 완료되었습니다.");
         return "redirect:/brand/brandList";
     }
