@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -21,8 +22,37 @@ public class MainController {
     private final HotelService hotelService;
     private final MemberService memberService;
 
+    @GetMapping("/adMain")
+    public String adMain(Model model, Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            return "redirect:/member/login";
+        }
+
+        String email = authentication.getName();
+        MemberDTO memberDTO = memberService.findbyEmail(email);
+
+        if (memberDTO == null) {
+            log.error("회원 정보가 없습니다.");
+            return "redirect:/member/login";
+        }
+
+        List<HotelDTO> hotelDTOS = hotelService.getHotelByMember(memberDTO);
+        model.addAttribute("list", hotelDTOS);
+
+        return "adMain";
+    }
+
     @GetMapping("/")
     public String main(Model model) {
+
+        List<HotelDTO> list = hotelService.hotelList();
+        model.addAttribute("list", list);
+
+        return "main";
+    }
+
+    @GetMapping("/mainHotel")
+    public String mainHotel(Model model) {
 
         List<HotelDTO> list = hotelService.hotelList();
         model.addAttribute("list", list);
@@ -39,23 +69,31 @@ public class MainController {
         return "search";
     }
 
-    @GetMapping("/adMain")
-    public String adMain(Model model, Authentication authentication) {
-        if (authentication == null || authentication.getName() == null) {
-            return "redirect:/login";  // 로그인되지 않았으면 로그인 페이지로 리다이렉트
+    @GetMapping("/searchList")
+    public String searchList(@RequestParam(value = "query", required = false) String query, Model model) {
+
+        List<HotelDTO> results;
+
+        if (query == null || query.trim().isEmpty()) {
+            results = List.of();
+            model.addAttribute("message","검색어를 입력하세요.");
+        }else {
+            results = hotelService.searchList(query);
         }
 
-        String email = authentication.getName();
-        MemberDTO memberDTO = memberService.findbyEmail(email);
+        model.addAttribute("results", results);
+        model.addAttribute("query", query);
 
-        if (memberDTO == null) {
-            log.error("회원 정보가 없습니다.");
-            return "redirect:/login";  // 회원 정보가 없으면 로그인 페이지로 리다이렉트
-        }
-
-        List<HotelDTO> hotelDTOS = hotelService.getHotelByMember(memberDTO);
-        model.addAttribute("list", hotelDTOS);
-
-        return "adMain";
+        return "searchList";
     }
+
+    @GetMapping("/searchRead")
+    public String searchRead(Long hotel_num, Model model) {
+
+        HotelDTO hotelDTO = hotelService.read(hotel_num);
+        model.addAttribute("hotelDTO", hotelDTO);
+
+        return "searchRead";
+    }
+
 }

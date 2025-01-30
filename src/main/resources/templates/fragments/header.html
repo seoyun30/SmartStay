@@ -13,6 +13,7 @@
 <th:block th:fragment="header">
     <header class="p-3 mb-3 border-bottom">
         <div class="container">
+
             <div class="d-flex flex-wrap align-items-center justify-content-between">
                 <a href="/" class="logo d-flex align-items-center">
                     <img src="/assets/img/logo.png" alt="">
@@ -22,9 +23,10 @@
                 <div class="d-flex align-items-center w-100" style="max-width: 900px;">
                     <div class="w-50">
                         <a href="/search" class="w-100">
-                            <input type="search" class="form-control" placeholder="검색" aria-label="Search" readonly>
+                            <input type="search" class="form-control" placeholder="Search" aria-label="Search" readonly>
                         </a>
                     </div>
+
                     <div class="d-flex ms-auto">
                         <div class="ms-1">
                             <button class="btn btn-outline-dark btn-lg" type="button" onclick="location.href='/cart/cartList'" style="border: none">
@@ -34,36 +36,55 @@
 
                         <th:block sec:authorize="isAuthenticated()">
                             <div class="ms-2">
-
-                              <button class="btn btn-outline-primary btn-lg" type="button" onclick="location.href='/member/mypage'" style="border: none">내 정보</button>
-
+                              <button class="btn btn-outline-primary btn-lg" type="button" onclick="location.href='/member/mypage'" style="border: none">편의상달아놓은내정보</button>
                             </div>
                             <div class="ms-2">
-                                <button class="btn btn-outline-primary btn-lg" type="button" onclick="location.href='/member/logout'" style="border: none">로그아웃</button>
+                                <button class="btn btn-outline-primary btn-lg" type="button" onclick="location.href='/member/logout'" style="border: none">편의상달아놓은로그아웃</button>
                             </div>
 
-<!--                            <div class="ms-2">-->
-<!--                                <div class="dropdown">-->
-<!--                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                                        <i class="bi bi-box-arrow-right"></i>-->
-<!--                                        <span th:text="${#authentication.principal.username}">사용자 이름</span>-->
-<!--                                    </button>-->
-<!--                                    <ul class="dropdown-menu">-->
-<!--                                        <li><a class="dropdown-item" href="/member/mypage">내 정보</a></li>-->
-<!--                                        <li><hr class="dropdown-divider"></li>-->
-<!--                                        <li><a class="dropdown-item" href="/member/logout">로그아웃</a></li>-->
-<!--                                    </ul>-->
-<!--                                </div>-->
-<!--                            </div>-->
+                            <nav class="header-nav ms-auto">
+                                <ul class="d-flex align-items-center">
+                                    <li class="nav-item dropdown pe-3">
+                                        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                                            <span class="d-none d-md-block dropdown-toggle ps-2" th:text="${#authentication.principal.username}" style="font-size: 1.25rem;">로그인 아이디</span>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center" href="/member/mypage">
+                                                    <i class="bi bi-person"></i>
+                                                    <span>내 정보</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center" href="/member/logout">
+                                                    <i class="bi bi-box-arrow-right"></i>
+                                                    <span>로그아웃</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </nav>
                         </th:block>
 
                         <th:block sec:authorize="isAnonymous()">
-                            <div class="ms-2">
-                                <button class="btn btn-outline-primary btn-lg" type="button" onclick="location.href='/member/login'" style="border: none">로그인</button>
-                            </div>
-                            <div class="ms-2">
-                                <button class="btn btn-outline-primary btn-lg" type="button" onclick="location.href='/member/signup'" style="border: none">회원 가입</button>
-                            </div>
+                            <nav class="header-nav ms-auto">
+                                <ul class="d-flex align-items-center">
+                                    <li class="nav-item pe-3">
+                                        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="/member/login">
+                                            <span class="d-none d-md-block ps-2"style="font-size: 1.25rem;">로그인</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item pe-3">
+                                        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="/member/signup">
+                                            <span class="d-none d-md-block ps-2" style="font-size: 1.25rem;">회원가입</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </th:block>
 
                     </div>
@@ -72,6 +93,5 @@
         </div>
     </header>
 </th:block>
-
 </body>
 </html>

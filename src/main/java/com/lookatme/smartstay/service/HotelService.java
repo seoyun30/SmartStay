@@ -1,9 +1,7 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
-import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.BrandRepository;
@@ -114,6 +112,17 @@ public class HotelService {
         List<HotelDTO> hotelDTOS = hotels.stream()
                 .map(hotel -> modelMapper.map(hotel, HotelDTO.class)
                 ).collect(Collectors.toList());
+
+        return hotelDTOS;
+    }
+
+    public List<HotelDTO> searchList(String query) {
+
+        List<Hotel> hotels = hotelRepository.findByHotel_nameOrAddressContaining(query);
+
+        List<HotelDTO> hotelDTOS = hotels.stream().
+                map(hotel -> modelMapper.map(hotel, HotelDTO.class)).
+                collect(Collectors.toList());
 
         return hotelDTOS;
     }
