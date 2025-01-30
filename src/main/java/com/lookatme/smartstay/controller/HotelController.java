@@ -36,9 +36,9 @@ public class HotelController {
         return "hotel/hotelRegister";
     }
     @PostMapping("/hotelRegister")
-    public String hotelRegisterPost(Model model, HotelDTO hotelDTO,
+    public String hotelRegisterPost(Model model, HotelDTO hotelDTO, Principal principal, //수정
                                     List<MultipartFile> multipartFiles, RedirectAttributes redirectAttributes) throws Exception {
-        hotelService.insert(hotelDTO, multipartFiles);
+        hotelService.insert(hotelDTO, principal, multipartFiles);
         redirectAttributes.addFlashAttribute("msg", "등록이 완료되었습니다.");
         return "redirect:/hotel/hotelList";
     }

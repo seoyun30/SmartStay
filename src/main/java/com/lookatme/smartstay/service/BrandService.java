@@ -2,7 +2,9 @@ package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.entity.Brand;
+import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.BrandRepository;
+import com.lookatme.smartstay.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +25,18 @@ public class BrandService {
     private final BrandRepository BrandRepository;
     private final ModelMapper modelMapper;
     private final ImageService imageService;
+    private final MemberRepository memberRepository; //추가
 
     //brand 등록
-    public void insert(BrandDTO brandDTO,
+    public void insert(BrandDTO brandDTO, String email,
                        List<MultipartFile> multipartFiles) throws Exception {
         Brand brand = modelMapper.map(brandDTO, Brand.class);
+
+        Member member = memberRepository.findByEmail(email); // 추가
+
         Brand brand1 = BrandRepository.save(brand);
 
+        member.setBrand(brand1); //추가
         //이미지
         if(multipartFiles != null && multipartFiles.size() > 0) {
             imageService.saveImage(multipartFiles, "brand", brand1.getBrand_num());

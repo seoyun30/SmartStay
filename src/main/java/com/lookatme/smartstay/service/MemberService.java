@@ -6,8 +6,10 @@ import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Brand;
+import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.BrandRepository;
+import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,7 @@ public class MemberService implements UserDetailsService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final BrandRepository brandRepository;
+    private final HotelRepository hotelRepository;
 
 
     @Override
@@ -43,6 +46,8 @@ public class MemberService implements UserDetailsService {
 
         Member member =
                 this.memberRepository.findByEmail(email);
+
+        log.info("로그인 시도하는 사람: " + member);
 
         if(member == null) {
             throw new UsernameNotFoundException("가입된 회원이 아닙니다.");
@@ -56,11 +61,12 @@ public class MemberService implements UserDetailsService {
             log.info("슈퍼어드민");
             role = Role.SUPERADMIN.name();
             authorities.add(new SimpleGrantedAuthority(Role.SUPERADMIN.name()));
-        }else if("CHIEF".equals(member.getRole().name()) && member.getPower() == Power.YES){
+        }else if("CHIEF".equals(member.getRole().name()) ){ //&& member.getPower() == Power.YES
+                                                    //나중에 승인기능 개발후 적용예정
             log.info("치프");
             role = Role.CHIEF.name();
             authorities.add(new SimpleGrantedAuthority(Role.CHIEF.name()));
-        }else if("MANAGER".equals(member.getRole().name()) && member.getPower() == Power.YES){
+        }else if("MANAGER".equals(member.getRole().name()) ){  //&& member.getPower() == Power.YES
             log.info("매니져");
             role = Role.MANAGER.name();
             authorities.add(new SimpleGrantedAuthority(Role.MANAGER.name()));
@@ -120,6 +126,8 @@ public class MemberService implements UserDetailsService {
 
     public Member saveChiefMember(MemberDTO memberDTO, BrandDTO brandDTO){
 
+        log.info(memberDTO);
+        log.info(brandDTO);
         validateDuplicateMember(memberDTO.getEmail());
 
         Member member =
@@ -131,7 +139,6 @@ public class MemberService implements UserDetailsService {
         member.setRole(Role.CHIEF);
         member.setBrand(brand);
 
-        member.setRole(Role.CHIEF);
 
         member =
                 memberRepository.save(member);
@@ -139,13 +146,21 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
-    public Member saveManagerMember(MemberDTO memberDTO, HotelDTO hotelDTO){
+    public Member saveManagerMember(MemberDTO memberDTO, BrandDTO brandDTO, HotelDTO hotelDTO){
 
         validateDuplicateMember(memberDTO.getEmail());
 
         Member member =
                 MemberDTO.dtoEntity(memberDTO);
+
+        Hotel hotel =
+                hotelRepository.findById(hotelDTO.getHotel_num()).get();
+
         member.setRole(Role.MANAGER);
+        member.setHotel(hotel);
+
+        member.setBrand(hotel.getBrand());
+
 
         member =
                 memberRepository.save(member);

@@ -4,6 +4,7 @@ import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.service.BrandService;
+import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class LoginController {
 
     private final MemberService memberService;
     private final BrandService brandService;
+    private final HotelService hotelService;
 
     @GetMapping("/adTerms") // 약관페이지(총판,매니져)
     public String adTerms(){
@@ -78,11 +80,19 @@ public class LoginController {
 
         List<BrandDTO> brandDTOList =
                 brandService.brandList();
-        BrandDTO brandDTO = new BrandDTO();
+
+        log.info("매니저 치프 가입시 가져오는 총판목록 : ");
+        log.info("===" + brandDTOList);
 
         model.addAttribute("brandDTOList", brandDTOList);
 
         model.addAttribute("hotelDTO", new HotelDTO());
+
+        List<HotelDTO> hotelDTOList =
+                hotelService.hotelList();
+
+        model.addAttribute("hotelDTOList", hotelDTOList);
+
 
         return "member/cmSignup";
     }
@@ -103,8 +113,13 @@ public class LoginController {
             List<BrandDTO> brandDTOList =
                     brandService.brandList();
 
-            model.addAttribute("chiefDTOList", brandDTOList);
-            model.addAttribute("hotelDTO", new HotelDTO());
+            model.addAttribute("brandDTOList", brandDTOList);
+
+            List<HotelDTO> hotelDTOList =
+                    hotelService.hotelList();
+
+            model.addAttribute("hotelDTOList", hotelDTOList);
+
 
             return "member/cmSignup";
         }
@@ -112,17 +127,53 @@ public class LoginController {
         if(memberDTO.getCorn().equals("C")){
             log.info("치프로 저장");
 
-            memberService.saveChiefMember(memberDTO, brandDTO);
+            try{
+                memberService.saveChiefMember(memberDTO, brandDTO);
+
+            }catch (IllegalStateException e){
+
+                log.info("이메일 중복 발생 ");
+                model.addAttribute("msg", e.getMessage());
+
+                List<BrandDTO> brandDTOList =
+                        brandService.brandList();
+
+                model.addAttribute("brandDTOList", brandDTOList);
+
+                List<HotelDTO> hotelDTOList =
+                        hotelService.hotelList();
+
+                model.addAttribute("hotelDTOList", hotelDTOList);
+                return "member/cmSignup";
+            }
+
 
         } else {
             log.info("매니져로 저장");
 
-            memberService.saveManagerMember(memberDTO, hotelDTO);
+            try {
+                memberService.saveManagerMember(memberDTO, brandDTO, hotelDTO);
+            }catch (IllegalStateException e){
+                log.info("아이디 중복 발생 ");
+                model.addAttribute("msg", e.getMessage());
+
+                List<BrandDTO> brandDTOList =
+                        brandService.brandList();
+
+                model.addAttribute("brandDTOList", brandDTOList);
+
+                List<HotelDTO> hotelDTOList =
+                        hotelService.hotelList();
+
+                model.addAttribute("hotelDTOList", hotelDTOList);
+                return "member/cmSignup";
+            }
+
         }
 
 
         redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
-        return "member/cmSignup";
+        return "redirect:/member/login";
     }
 
 
