@@ -33,7 +33,7 @@ public class ImageService {
     //이미지 등록
     public void saveImage(List<MultipartFile> imageFileList, String targetType, Long targetId) throws Exception {
 
-        if (imageFileList == null || imageFileList.isEmpty()) {
+        if (imageFileList != null && !imageFileList.isEmpty()) {
             for (MultipartFile file : imageFileList) {
                 String imageName = fileUpload.FileUpload(file);
                 String originalName = file.getOriginalFilename();

@@ -43,9 +43,19 @@
 </head>
 <body>
 
-<header th:replace="fragments/header::header"></header>
+<header th:replace="~{fragments/header::header}"></header>
 
-<div id="main" layout:fragment="content"></div>
+<main id="main" class="main d-flex justify-content-center" style="padding: 0; margin: 0;">
+    <section class="section w-100" style="padding: 0; margin-top: 80px;">
+        <div class="row justify-content-center" style="padding: 0; margin: 0;">
+            <div class="col-12 col-md-9">
+                <th:block layout:fragment="content" class="container-fluid mt-5 p-4">
+
+                </th:block>
+            </div>
+        </div>
+    </section>
+</main>
 
 <th:block th:replace="~{fragments/footer::footer}">
 

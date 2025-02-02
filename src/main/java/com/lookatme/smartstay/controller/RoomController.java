@@ -1,23 +1,26 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.dto.RoomDTO;
-import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.entity.Hotel;
+import com.lookatme.smartstay.repository.HotelRepository;
+import com.lookatme.smartstay.repository.ImageRepository;
+import com.lookatme.smartstay.repository.RoomRepository;
+import com.lookatme.smartstay.service.ImageService;
 import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.RoomService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -33,97 +36,147 @@ public class RoomController {
 
     private final RoomService roomService;
     private final MemberService memberService;
+    private final ImageService imageService;
+    private final ImageRepository imageRepository;
+    private final RoomRepository roomRepository;
+    private final HotelRepository hotelRepository;
 
     @GetMapping("/roomRegister")
-    public String roomRegisterGet(Model model, Principal principal){
+    public String roomRegisterGet(Model model, Principal principal) {
 
-        model.addAttribute("roomDTO", new RoomDTO());
-        model.addAttribute("memberDTO", new MemberDTO());
+        String created_by = principal.getName();
+        log.info("로그인한 사용자: {}", created_by);
+
+        Hotel hotel = hotelRepository.findByCreate_by(created_by)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 호텔 정보를 찾을 수 없습니다."));
+        log.info("조회된 호텔 정보: {}", hotel);
+
+        RoomDTO roomDTO = new RoomDTO();
+        HotelDTO hotelDTO = new HotelDTO();
+
+        hotelDTO.setHotel_num(hotel.getHotel_num());
+        hotelDTO.setHotel_name(hotel.getHotel_name());
+        roomDTO.setHotelDTO(hotelDTO);
+
+        model.addAttribute("roomDTO", roomDTO);
 
         return "room/roomRegister";
     }
 
     @PostMapping("/roomRegister")
-    public String roomRegisterPost(@Valid RoomDTO roomDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
+    public String roomRegisterPost(@Valid RoomDTO roomDTO, BindingResult bindingResult, Principal principal,
+                                   @RequestParam(value = "multipartFiles", required = false)  List<MultipartFile> multipartFiles,
+                                   @RequestParam(value = "mainImageIndex", required = false, defaultValue = "0") Long mainImageIndex,
+                                   RedirectAttributes redirectAttributes, Model model) throws Exception {
+
+        log.info("컨트롤러에서 받은 값 : "  + roomDTO);
 
         if (bindingResult.hasErrors()) {
             log.info(bindingResult.getAllErrors());
-
-            return "room/roomRegister";
+            redirectAttributes.addFlashAttribute("result", "룸 등록 실패");
+            return "redirect:/room/roomRegister";
         }
+        String created_by = principal.getName();
+        Hotel hotel = hotelRepository.findByCreate_by(created_by)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 호텔 정보를 찾을 수 없습니다."));
 
-        Long room_num = roomService.roomRegister(roomDTO);
-        redirectAttributes.addFlashAttribute("msg", "룸이 등록되었습니다. 룸 번호 : " + room_num);
+        try {
+            roomService.roomRegister(roomDTO, hotel.getHotel_num(), multipartFiles, mainImageIndex);
+            redirectAttributes.addFlashAttribute("msg", "룸이 등록되었습니다.");
+            return "redirect:/room/roomList";
 
-        return "redirect:/room/roomRead?room_num=" + room_num;
+        } catch (IllegalArgumentException e) {
+            log.error("룸 등록 실패: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/room/roomRegister";
+        }
     }
 
     @GetMapping("/roomList")
-    public String roomList(PageRequestDTO pageRequestDTO, Model model){
+    public String roomList(PageRequestDTO pageRequestDTO, Model model, Principal principal){
 
-//        PageResponseDTO<RoomDTO> pageResponseDTO = roomService.roomList(pageRequestDTO);
-//        log.info(pageResponseDTO);
-//
-//        model.addAttribute("pageResponseDTO", pageResponseDTO);
+        String created_by = principal.getName();
 
-        List<RoomDTO> list = roomService.list();
-        model.addAttribute("list", list);
+        Hotel hotel = hotelRepository.findByCreate_by(created_by)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 호텔 정보를 찾을 수 없습니다."));
+
+        PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotel, pageRequestDTO);
+        model.addAttribute("hotel_name", hotel.getHotel_name());
+        log.info("PageResponseDTO: " + pageResponseDTO);
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
 
         return "room/roomList";
     }
 
     @GetMapping("/roomRead")
-    public String roomRead(Long room_num, Model model, RedirectAttributes redirectAttributes){
+    public String roomRead(@RequestParam(required = false) Long room_num, Model model, RedirectAttributes redirectAttributes){
+
+        if (room_num == null) {
+            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 룸입니다.");
+            return "redirect:/room/roomList";
+        }
 
         try {
             RoomDTO roomDTO = roomService.roomRead(room_num);
-
             model.addAttribute("roomDTO", roomDTO);
 
+            if (roomDTO.getHotelDTO() != null) {
+                model.addAttribute("hotel_name", roomDTO.getHotelDTO().getHotel_name());
+            }else {
+                model.addAttribute("hotel_name", "호텔 정보 없음");
+            }
             return "room/roomRead";
-
         }catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 룸입니다.");
+            redirectAttributes.addFlashAttribute("msg", "해당 룸 정보를 찾을 수 없습니다.");
+            return "redirect:/room/roomList";
+        }catch (Exception e) {
+            redirectAttributes.addFlashAttribute("msg", "알 수 없는 오류 발생");
             return "redirect:/room/roomList";
         }
     }
 
     @GetMapping("/roomModify")
-    public String roomModifyGet(Long room_num, PageRequestDTO pageRequestDTO, Model model){
+    public String roomModifyGet(@RequestParam Long room_num, Model model, Principal principal){
 
         RoomDTO roomDTO = roomService.roomRead(room_num);
-        if (roomDTO != null){
-            model.addAttribute("roomDTO", roomDTO);
-            return "room/roomModify";
-        }else {
-            return "redirect:/room/roomList";
+
+        String email = principal.getName();
+        Hotel hotel = hotelRepository.findByCreate_by(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 호텔 정보를 찾을 수 없습니다."));
+
+        if (!roomDTO.getHotelDTO().getHotel_num().equals(hotel.getHotel_num())) {
+            throw new SecurityException("권한이 없습니다.");
         }
+        model.addAttribute("roomDTO", roomDTO);
+
+        return "room/roomModify";
     }
 
     @PostMapping("/roomModify")
-    public String roomModifyPost(@Valid RoomDTO roomDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String roomModifyPost(@Valid RoomDTO roomDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes,
+                                 @RequestParam(value = "multipartFiles", required = false) List<MultipartFile> multipartFiles,
+                                 @RequestParam(value = "del_num", required = false) Long[] del_num,
+                                 @RequestParam(value = "main_num", required = false) Long main_num, Principal principal) throws Exception {
 
-        log.info(roomDTO);
+        log.info("룸 수정 요청: {}", roomDTO);
 
         if (bindingResult.hasErrors()){
+            log.info("유효성검사 오류");
             log.info(bindingResult.getAllErrors());
-
-            return "room/roomModify";
+            redirectAttributes.addFlashAttribute("result", "룸 정보를 다시 확인해주세요." );
+            return "redirect:/room/roomModify?room_num=" + roomDTO.getRoom_num();
         }
 
-        try {
-            roomService.roomModify(roomDTO);
-            redirectAttributes.addFlashAttribute("msg", "룸 정보가 수정되었습니다. 룸 번호 : " + roomDTO.getRoom_num());
-            return "redirect:/room/roomRead?room_num=" + roomDTO.getRoom_num();
-        } catch (EntityNotFoundException e) {
-            log.error("Room not found: {}", roomDTO.getRoom_num(), e);
-            redirectAttributes.addFlashAttribute("msg", "수정하려는 룸이 존재하지 않습니다.");
-            return "redirect:/room/roomList";
-        } catch (Exception e) {
-            log.error("Error during room modification", e);
-            redirectAttributes.addFlashAttribute("msg", "룸 수정 중 오류가 발생했습니다.");
-            return "redirect:/room/roomList";
-        }
+        String email = principal.getName();
+        Hotel hotel = hotelRepository.findByCreate_by(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 호텔 정보를 찾을 수 없습니다."));
+
+        roomService.roomModify(roomDTO, multipartFiles, del_num, main_num, hotel);
+
+        redirectAttributes.addFlashAttribute("msg", "룸 정보가 수정되었습니다. 룸 번호 : " + roomDTO.getRoom_num());
+
+        return "redirect:/room/roomList";
+
     }
 
     @PostMapping("/roomDelete")
@@ -137,4 +190,17 @@ public class RoomController {
         }
         return "redirect:/room/roomList";
     }
+
+    @DeleteMapping("/deleteImage/{imageId}")
+    public ResponseEntity<String> deleteImage(@PathVariable Long imageId) {
+        try {
+            imageService.deleteImage(imageId);
+            imageRepository.deleteById(imageId);
+            return ResponseEntity.ok("이미지가 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            log.error("이미지 삭제 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
+        }
+    }
+
 }
