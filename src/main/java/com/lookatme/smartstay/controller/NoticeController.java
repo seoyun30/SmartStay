@@ -77,7 +77,8 @@ public class NoticeController {
     }
 
     @PostMapping("/noticeModify")
-    public String noticeModifyPost(NoticeDTO noticeDTO, MemberDTO memberDTO, List<MultipartFile> multipartFileList,
+    public String noticeModifyPost(NoticeDTO noticeDTO, MemberDTO memberDTO,
+                                   List<MultipartFile> multipartFileList,
                                    PageRequestDTO pageRequestDTO, ImageDTO imageDTO){
         log.info("수정된 데이터 저장...");
         noticeService.noticeModify(noticeDTO);

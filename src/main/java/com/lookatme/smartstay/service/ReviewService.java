@@ -7,9 +7,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +31,7 @@ public class ReviewService {
 
     //해당 호텔 리뷰 목록
     public List<ReviewDTO> hotelReviewList() {
+        List<Review> reviews = reviewRepository.findAll(); //모두 조회
 
         return null;
     }
@@ -80,12 +79,10 @@ public class ReviewService {
     //리뷰 삭제(User)
     public void reviewDelete(Long rev_num) {
         reviewRepository.deleteById(rev_num);
-
     }
 
-
-
     //검색
+
 
     //
 
