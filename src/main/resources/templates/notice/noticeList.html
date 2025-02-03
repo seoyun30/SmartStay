@@ -9,92 +9,105 @@
 <body>
 <div layout:fragment="content" id="container" class="container">
     <div class="row">
-        <div id="search" class="border mb-5">
-            <form th:action="@{/notice/noticeList}" method="get">
-                <!--검색창-->
-                <div class="row">
-                    <div class="col-2 border py-2">조직선택</div>
-                    <div class="col-4 border py-2">
-                        <select class="form-select" name="">
-                            <option value="1">총판조직</option>
-                            <option value="2">지점조직</option>
-                        </select>
-                        <label> 작성일을 검색하세요
-                            <input type="datetime-local" name="schedule" min="2022-04-01T09:00" max="2022-04-30T22:00" />
-                        </label>
-                    </div>
-                    <div class="row">
-                        <div class="col-2 border py-2">작성자</div>
-                        <div class="col-4 border py-2">
+        <div class="row">
+            <div class="border my-2">
+                <form th:action="@{/notice/noticeList}" method="get">
+                    <!--검색창-->
+                    <div class="search-container row border my-2 mx-2">
+                        <div class="col-3 my-2">
+                            <div class="border text-center">조직선택</div>
+                        </div>
+                        <div class="col-2">
+                            <select class="form-select" name="">
+                                <option value="1">본점</option>
+                                <option value="2">지점</option>
+                            </select>
+                        </div>
+                        <div class="col-3 my-2">
+                            <div class="border text-center">작성자</div>
+                        </div>
+                        <div class="col-4">
                             <input type="text" class="form-control" name="name">
                         </div>
-                    </div>
-                    <!--조회버튼-->
-                    <div class="d-flex justify-content-center my-3">
-                        <button type="button" class="btn btn-dark">
-                            조회
-                        </button>
-                    </div>
-                </div>
-            </form>
-            <div id="list" class="border: none;">
-                <!--회원목록-->
-                <!--추가버튼-->
-                <div class="d-flex justify-content-end">
-                    <a th:href="@{/notice/noticeRegister}" class="btn btn-dark">등록</a>
-                </div>
-                <h3>공지 사항</h3>
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th style="width:7%; text-align: center">No</th>
-                        <th style="width:10%; text-align: center">조직</th>
-                        <th style="width:26%; text-align: center">제목</th>
-                        <th style="width:20%; text-align: center">작성자</th>
-                        <th style="width:10%; text-align: center">작성일</th>
-                        <th style="width:9%; text-align: center">조회수</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr><!--최대값으로 더미값을 입력-->
-                    <tr th:each="data:${noticeDTOList}"><!--더미값으로 채우기(가장 긴값)-->
-                        <td th:text="${data.notice_num}" class="text-center"></td>
-                        <td th:href="@{/}" class="text-center"></td>
-                        <td>
-                            <a th:href="@{/notice/noticeRead(id=${data.notice_num})}" th:text="${data.title}" class="text-center">
-                                이것은 제목입니다.
-                            </a>
-                        </td>
-                        <td th:text="${data.create_by}" class="text-center"></td>
-                        <td th:text="${#temporals.format(data.reg_date, 'yyyy-MM-dd')}" class="text-center"></td>
-                        <td class="last-column"></td> <!-- 조회수 셀의 오른쪽 테두리 제거 -->
-                    </tr>
-                    </tr>
-                    </tbody>
-                </table>
-                <!--페이지번호-->
-                <div class="d-flex justify-content-center">
-                    <ul class="pagination custom-pagination">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                        <div class="row">
 
+                        </div>
+                        <label for="date">날짜를 선택하세요:
+                        <input type="date"
+                               id="date"
+                               max="YYYY-MM-DD"
+                               min="2000-01-01"
+                               value="2025-01-01">
+                        </label>
+                        <!--조회버튼-->
+                        <div class="d-flex justify-content-center">
+                            <button type="button" class="btn btn-dark">
+                                조회
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div id="list" class="border: none;">
+                    <!--회원목록-->
+                    <!--추가버튼-->
+                    <div class="d-flex justify-content-end">
+                        <a th:href="@{/notice/noticeRegister}" class="btn btn-dark">등록</a>
+                    </div>
+                    <h3>공지 사항</h3>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th style="width:7%; text-align: center">No</th>
+                            <th style="width:10%; text-align: center">조직</th>
+                            <th style="width:26%; text-align: center">제목</th>
+                            <th style="width:20%; text-align: center">작성자</th>
+                            <th style="width:10%; text-align: center">작성일</th>
+                            <th style="width:9%; text-align: center">조회수</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><!--최대값으로 더미값을 입력-->
+                        <tr th:each="data:${noticeDTOList}"><!--더미값으로 채우기(가장 긴값)-->
+                            <td th:text="${data.notice_num}" class="text-center"></td>
+                            <td th:href="@{/}" class="text-center"></td>
+                            <td>
+                                <a th:href="@{/notice/noticeRead(id=${data.notice_num})}" th:text="${data.title}" class="text-center">
+                                    이것은 제목입니다.
+                                </a>
+                            </td>
+                            <td th:text="${data.create_by}" class="text-center"></td>
+                            <td th:text="${#temporals.format(data.reg_date, 'yyyy-MM-dd')}" class="text-center"></td>
+                            <td class="last-column"></td> <!-- 조회수 셀의 오른쪽 테두리 제거 -->
+                        </tr>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!--페이지번호-->
+                    <div class="d-flex justify-content-center">
+                        <ul class="pagination custom-pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
             </div>
         </div>
-
     </div>
 </div>
+<script th:inline="javascript" layout:fragment="script">
+
+</script>
 </body>
 </html>

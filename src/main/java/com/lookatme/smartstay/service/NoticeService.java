@@ -1,11 +1,14 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.dto.NoticeDTO;
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.entity.Notice;
 import com.lookatme.smartstay.repository.NoticeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -19,6 +22,9 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
     private final ModelMapper modelMapper;
+
+    //검색 기능
+
 
     //공지 사항 목록
     public List<NoticeDTO> noticeList(){
@@ -36,8 +42,8 @@ public class NoticeService {
     }
 
     //공지 사항 상세보기
-    public NoticeDTO noticeRead(Long notice_num){
-        Optional<Notice> notice = noticeRepository.findById(notice_num);
+    public NoticeDTO noticeRead(Long id){
+        Optional<Notice> notice = noticeRepository.findById(id);
 
         NoticeDTO noticeDTO = modelMapper.map(notice, NoticeDTO.class);
         return noticeDTO;
