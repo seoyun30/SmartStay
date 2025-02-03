@@ -16,6 +16,6 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     @Query("select h from Hotel h where h.hotel_name like %:query% or h.address like %:query")
     List<Hotel> findByHotel_nameOrAddressContaining(@Param("query") String query);
 
-    @Query("select h from Hotel h where h.create_by = :created_by")
-    Optional<Hotel> findByCreate_by(@Param("created_by") String created_by);
+    @Query("select h from Hotel h where h.member.email = :email")
+    Optional<Hotel> findHotelByMemberEmail(@Param("email") String email);
 }

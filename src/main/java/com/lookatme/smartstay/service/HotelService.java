@@ -67,10 +67,20 @@ public class HotelService {
         return hotelDTO;
     }
 
-
     //Optional<Chief> chief = chiefRepository.findById(id);
     //ChiefDTO chiefDTO = modelMapper.map(chief, ChiefDTO.class);
     //return chiefDTO;
+
+    public HotelDTO myHotel(String email) {
+        Member member = memberRepository.findByEmail(email);
+        if (member == null || member.getHotel() == null) {
+            throw new IllegalArgumentException("호텔 정보를 찾을 수 없습니다.");
+            }
+        Hotel hotel = hotelRepository.findById(member.getHotel().getHotel_num()).orElseThrow(EntityNotFoundException::new);
+        HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+        return hotelDTO;
+    }
+
 
     //chief 수정
     public void update(HotelDTO hotelDTO,

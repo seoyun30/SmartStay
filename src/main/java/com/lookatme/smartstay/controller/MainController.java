@@ -1,7 +1,9 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.service.BrandService;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class MainController {
 
     private final HotelService hotelService;
     private final MemberService memberService;
+    private final BrandService brandService;
 
     @GetMapping("/adMain")
     public String adMain(Model model, Authentication authentication) {
@@ -30,14 +33,27 @@ public class MainController {
 
         String email = authentication.getName();
         MemberDTO memberDTO = memberService.findbyEmail(email);
+        log.info(memberDTO);
 
         if (memberDTO == null) {
             log.error("회원 정보가 없습니다.");
             return "redirect:/member/login";
         }
+        log.info("user:{}", memberDTO);
 
-        List<HotelDTO> hotelDTOS = hotelService.getHotelByMember(memberDTO);
-        model.addAttribute("list", hotelDTOS);
+        if ("CHIEF".equals(memberDTO.getRole().name())) {
+            BrandDTO brandDTO = brandService.read(memberDTO.getBrandDTO().getBrand_num());
+            log.info("Brand details: {}", brandService.read(memberDTO.getBrandDTO().getBrand_num()));
+            model.addAttribute("brandDTO", brandDTO);
+
+
+        } else if ("MANAGER".equals(memberDTO.getRole().name())) {
+            HotelDTO hotelDTO = hotelService.myHotel(memberDTO.getEmail());
+            log.info("Hotel details: {}", hotelService.myHotel(memberDTO.getEmail()));
+            model.addAttribute("hotelDTO", hotelDTO);
+        }
+
+        log.info("User authorities in controller: {}", authentication.getAuthorities());
 
         return "adMain";
     }

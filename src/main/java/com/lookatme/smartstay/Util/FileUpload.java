@@ -39,7 +39,10 @@ public class FileUpload {
         try { //정상적인 작업
             File folder = new File(imgLocation); //작얼할 파일지정, c:/movie/432-erw3342-4324.jpg
             if (!folder.exists()) { //지정된 위치에 폴더가 없으면, /moive/
-                boolean result = folder.mkdir(); //지정된 위치에 폴더를 생성, /movie/
+                boolean result = folder.mkdirs(); //지정된 위치에 폴더를 생성, /movie/
+                if (!result) {
+                    throw new IOException("폴더 생성 실패:" + imgLocation);
+                }
             }
             byte[] filedata = imageFile.getBytes(); //sample.jpg파일을 바이트단위로 읽어서 저장
             //c:/movie/432-erw3342-4324.jpg파일을 쓰기파일로 열기
