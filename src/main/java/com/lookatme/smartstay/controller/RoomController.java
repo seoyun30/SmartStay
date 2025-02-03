@@ -8,6 +8,7 @@ import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.RoomRepository;
+import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.ImageService;
 import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.RoomService;
@@ -40,27 +41,19 @@ public class RoomController {
     private final ImageRepository imageRepository;
     private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
+    private final HotelService hotelService;
 
     @GetMapping("/roomRegister")
     public String roomRegisterGet(Model model, Principal principal) {
 
-        String created_by = principal.getName();
-        log.info("로그인한 사용자: {}", created_by);
-
-        Hotel hotel = hotelRepository.findByCreate_by(created_by)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 호텔 정보를 찾을 수 없습니다."));
-        log.info("조회된 호텔 정보: {}", hotel);
-
-        RoomDTO roomDTO = new RoomDTO();
-        HotelDTO hotelDTO = new HotelDTO();
-
-        hotelDTO.setHotel_num(hotel.getHotel_num());
-        hotelDTO.setHotel_name(hotel.getHotel_name());
-        roomDTO.setHotelDTO(hotelDTO);
-
-        model.addAttribute("roomDTO", roomDTO);
-
-        return "room/roomRegister";
+       HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+       if (hotelDTO == null) {
+         return "redirect:/adMain";
+       }
+       RoomDTO roomDTO = new RoomDTO();
+       roomDTO.setHotelDTO(hotelDTO);
+       model.addAttribute("roomDTO", roomDTO);
+       return "room/roomRegister";
     }
 
     @PostMapping("/roomRegister")
@@ -76,12 +69,12 @@ public class RoomController {
             redirectAttributes.addFlashAttribute("result", "룸 등록 실패");
             return "redirect:/room/roomRegister";
         }
-        String created_by = principal.getName();
-        Hotel hotel = hotelRepository.findByCreate_by(created_by)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 호텔 정보를 찾을 수 없습니다."));
-
+        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+        if (hotelDTO == null) {
+            return "redirect:/adMain";
+        }
         try {
-            roomService.roomRegister(roomDTO, hotel.getHotel_num(), multipartFiles, mainImageIndex);
+            roomService.roomRegister(roomDTO, hotelDTO.getHotel_num(), multipartFiles, mainImageIndex);
             redirectAttributes.addFlashAttribute("msg", "룸이 등록되었습니다.");
             return "redirect:/room/roomList";
 
@@ -95,13 +88,13 @@ public class RoomController {
     @GetMapping("/roomList")
     public String roomList(PageRequestDTO pageRequestDTO, Model model, Principal principal){
 
-        String created_by = principal.getName();
+        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+        if (hotelDTO == null) {
+            return "redirect:/adMain";
+        }
 
-        Hotel hotel = hotelRepository.findByCreate_by(created_by)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 호텔 정보를 찾을 수 없습니다."));
-
-        PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotel, pageRequestDTO);
-        model.addAttribute("hotel_name", hotel.getHotel_name());
+        PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotelDTO, pageRequestDTO);
+        model.addAttribute("hotel_name", hotelDTO.getHotel_name());
         log.info("PageResponseDTO: " + pageResponseDTO);
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
@@ -140,11 +133,11 @@ public class RoomController {
 
         RoomDTO roomDTO = roomService.roomRead(room_num);
 
-        String email = principal.getName();
-        Hotel hotel = hotelRepository.findByCreate_by(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 호텔 정보를 찾을 수 없습니다."));
-
-        if (!roomDTO.getHotelDTO().getHotel_num().equals(hotel.getHotel_num())) {
+        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+        if (hotelDTO == null) {
+            return "redirect:/adMain";
+        }
+        if (!roomDTO.getHotelDTO().getHotel_num().equals(hotelDTO.getHotel_num())) {
             throw new SecurityException("권한이 없습니다.");
         }
         model.addAttribute("roomDTO", roomDTO);
@@ -155,8 +148,7 @@ public class RoomController {
     @PostMapping("/roomModify")
     public String roomModifyPost(@Valid RoomDTO roomDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes,
                                  @RequestParam(value = "multipartFiles", required = false) List<MultipartFile> multipartFiles,
-                                 @RequestParam(value = "del_num", required = false) Long[] del_num,
-                                 @RequestParam(value = "main_num", required = false) Long main_num, Principal principal) throws Exception {
+                                 Principal principal) throws Exception {
 
         log.info("룸 수정 요청: {}", roomDTO);
 
@@ -167,11 +159,11 @@ public class RoomController {
             return "redirect:/room/roomModify?room_num=" + roomDTO.getRoom_num();
         }
 
-        String email = principal.getName();
-        Hotel hotel = hotelRepository.findByCreate_by(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 호텔 정보를 찾을 수 없습니다."));
-
-        roomService.roomModify(roomDTO, multipartFiles, del_num, main_num, hotel);
+        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+        if (hotelDTO == null) {
+            return "redirect:/adMain";
+        }
+        roomService.roomModify(roomDTO, multipartFiles, hotelDTO);
 
         redirectAttributes.addFlashAttribute("msg", "룸 정보가 수정되었습니다. 룸 번호 : " + roomDTO.getRoom_num());
 

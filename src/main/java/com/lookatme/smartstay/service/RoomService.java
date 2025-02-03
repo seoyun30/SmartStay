@@ -43,23 +43,11 @@ public class RoomService {
         roomRepository.save(room);
 
         if (multipartFiles != null && !multipartFiles.isEmpty()) {
-            if (mainImageIndex < 0 || mainImageIndex >= multipartFiles.size()) {
-                throw new IllegalArgumentException("유효하지 않은 대표 이미지입니다.");
-            }
 
-            for (int i = 0; i < multipartFiles.size(); i++) {
-                MultipartFile file = multipartFiles.get(i);
-                Image imageEntity = new Image();
-                imageEntity.setRoom(room);
-                if (i == mainImageIndex) {
-                    imageEntity.setRepimg_yn("Y");
-                } else {
-                    imageEntity.setRepimg_yn("N");
-                }
-                imageService.saveImage(List.of(file), "room", room.getRoom_num());
-            }
+                imageService.saveImage(multipartFiles, "room", room.getRoom_num());
         }
     }
+
 
     public RoomDTO roomRead(Long room_num) {
 
@@ -92,7 +80,9 @@ public class RoomService {
         return roomDTO;
     }
 
-    public PageResponseDTO<RoomDTO> getRoomsByHotel(Hotel hotel, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<RoomDTO> getRoomsByHotel(HotelDTO hotelDTO, PageRequestDTO pageRequestDTO) {
+
+        Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
 
         Pageable pageable = pageRequestDTO.getPageable("room_num");
         log.info("Pageable created with room_num sort: {}", pageable);
@@ -107,8 +97,6 @@ public class RoomService {
                 })
                 .collect(Collectors.toList());
 
-        HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
-
         PageResponseDTO<RoomDTO> roomDTOPageResponseDTO =
                 PageResponseDTO.<RoomDTO>withAll().pageRequestDTO(pageRequestDTO)
                         .dtoList(roomDTOList).total((int)result.getTotalElements()).build();
@@ -118,7 +106,7 @@ public class RoomService {
         return roomDTOPageResponseDTO;
     }
 
-    public void roomModify(RoomDTO roomDTO, List<MultipartFile> multipartFiles, Long[] del_num, Long main_num, Hotel hotel) throws Exception {
+    public void roomModify(RoomDTO roomDTO, List<MultipartFile> multipartFiles, HotelDTO hotel) throws Exception {
 
         log.info("룸 수정 시작 : {}", roomDTO);
 
@@ -138,36 +126,11 @@ public class RoomService {
 
         roomRepository.save(room);
 
-        if (del_num != null && del_num.length > 0) {
-            for (Long imageId : del_num) {
-                imageService.deleteImage(imageId);
-                imageRepository.deleteById(imageId);
-            }
-        }
-
         if (multipartFiles != null && !multipartFiles.isEmpty()) {
-            for (int i = 0; i < multipartFiles.size(); i++) {
-                MultipartFile file = multipartFiles.get(i);
-                Image imageEntity = new Image();
-                imageEntity.setRoom(room);
-                imageEntity.setRepimg_yn("N");
-            }
+            log.info("이미지 업데이트 실행");
             imageService.updateImage(multipartFiles, null, "room", room.getRoom_num());
-        }
-
-        if (main_num != null) {
-            Image mainImage = imageRepository.findById(main_num)
-                    .orElseThrow(()->new IllegalArgumentException("대표 이미지를 찾을 수 없습니다."));
-
-            List<Image> allImages = imageRepository.findByTarget("room", room.getRoom_num());
-            for (Image image : allImages) {
-                if ("N".equals(image.getRepimg_yn())) {
-                    image.setRepimg_yn("N");
-                    imageRepository.save(image);
-                }
-            }
-            mainImage.setRepimg_yn("Y");
-            imageRepository.save(mainImage);
+        } else {
+            log.info("이미지 업데이트 없이 룸 정보만 수정");
         }
     }
 

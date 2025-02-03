@@ -125,6 +125,7 @@ public class ImageService {
 
         // 2. 추가/변경할 이미지 처리
         if (imageFileList != null && !imageFileList.isEmpty()) {
+
             for (MultipartFile file : imageFileList) {
                 String imageName = fileUpload.FileUpload(file);
                 String originalName = file.getOriginalFilename();

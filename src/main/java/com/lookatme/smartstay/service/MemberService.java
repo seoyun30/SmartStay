@@ -90,7 +90,22 @@ public class MemberService implements UserDetailsService {
     public MemberDTO findbyEmail(String email) {
         Member member = this.memberRepository.findByEmail(email);
         if(member != null) {
-            return modelMapper.map(member, MemberDTO.class);
+            MemberDTO memberDTO = modelMapper.map(member, MemberDTO.class);
+
+            if (member.getBrand() != null) {
+                Brand brand = brandRepository.findById(member.getBrand().getBrand_num()).orElseThrow(EntityNotFoundException::new);
+                BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
+                memberDTO.setBrandDTO(brandDTO);
+            }
+
+            if (member.getHotel() != null) {
+                Hotel hotel = hotelRepository.findById(member.getHotel().getHotel_num()).orElseThrow(EntityNotFoundException::new);
+                HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+                memberDTO.setHotelDTO(hotelDTO);
+            }
+
+            return memberDTO;
+
         }else {
             return null;
         }

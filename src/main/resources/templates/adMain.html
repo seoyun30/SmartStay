@@ -10,52 +10,91 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-    <div sec:authorize="hasRole('USER')">Has USER ROLE</div>
-    <div sec:authorize="hasRole('MANAGER')">Has MANAGER ROLE</div>
-    <div sec:authorize="hasRole('ADMIN')">Has ADMIN ROLE</div>
 
-    <div sec:authorize="isAuthenticated()">
-        Only Authenticated user can see this Text
-    </div>
+<!--    <div sec:authorize="hasAuthority('CHIEF')">-->
+<!--        This content is visible only to CHIEF role.-->
+<!--    </div>-->
 
-    Authenticated username:
-    <div sec:authentication="name"></div>
-    Authenticated user roles:
+<!--    <div sec:authentication="name">사용자 이름</div>-->
+<!--    <div sec:authentication="authorities">사용자 권한</div>-->
 
-    <div>
-        Authenticated username: <span sec:authentication="name"></span>
-    </div>
+<!--    <div sec:authorize access="hasRole('USER')">Has USER ROLE</div>-->
+<!--    <div sec:authorize access="hasRole('MANAGER')">Has MANAGER ROLE</div>-->
+<!--    <div sec:authorize access="hasRole('ADMIN')">Has ADMIN ROLE</div>-->
 
-    <div>
-        Authenticated user roles:
-        <span sec:authentication="authorities"></span>
-    </div>
+<!--    <div sec:authorize="isAuthenticated()">-->
+<!--        Only Authenticated user can see this Text-->
+<!--    </div>-->
+
+<!--    Authenticated username:-->
+<!--    <div sec:authentication="name"></div>-->
+<!--    Authenticated user roles:-->
+
+<!--    <div>-->
+<!--        Authenticated username: <span sec:authentication="name"></span>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        Authenticated user roles:-->
+<!--        <span sec:authentication="authorities"></span>-->
+<!--    </div>-->
 
     <div class="container">
-        <div th:if="${#lists.isEmpty(list)}">
-            <p>호텔 정보가 없습니다.</p>
+
+        <div sec:authorize="hasAuthority('CHIEF')">
+            <th:block th:if="${brandDTO != null}">
+                <div class="mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="#" th:text="${brandDTO.brand_name}">브랜드 이름</a>
+                            </h5>
+                            <ul class="list-group list-group-flush">
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+
+            <th:block th:unless="${brandDTO != null}">
+                <div>
+                    <p>브랜드 정보가 없습니다.</p>
+                </div>
+            </th:block>
         </div>
 
-        <div th:each="hotel : ${list}" class="mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <a th:href="@{/hotel/hotelRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}">호텔 이름</a>
-                    </h5>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <strong>호텔 주소 : </strong> <span th:text="${hotel.address}">호텔 주소</span>
-                        </li>
-                        <li class="list-group-item">
-                            <strong>연락처 : </strong> <span th:text="${hotel.tel}">연락처</span>
-                        </li>
-                        <li class="list-group-item">
-                            <strong>별점 : </strong> <span th:text="${hotel.score}">별점</span>
-                        </li>
-                    </ul>
+        <div sec:authorize="hasAuthority('MANAGER')">
+            <th:block th:if="${hotelDTO != null}">
+                <div class="mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a th:href="@{/hotel/hotelRead(hotel_num=${hotelDTO.hotel_num})}" th:text="${hotelDTO.hotel_name}">호텔 이름</a>
+                            </h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>호텔 주소 : </strong> <span th:text="${hotelDTO.address}">호텔 주소</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>연락처 : </strong> <span th:text="${hotelDTO.tel}">연락처</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>별점 : </strong> <span th:text="${hotelDTO.score}">별점</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </th:block>
+
+            <th:block th:unless="${hotelDTO != null}">
+                <div>
+                    <p>호텔 정보가 없습니다.</p>
+                </div>
+            </th:block>
         </div>
+
     </div>
 
 </th:block>
