@@ -17,9 +17,10 @@
             <button type="button" onclick="location.href='/room/roomRegister'" class="btn btn-dark">룸 등록</button>
         </div>
         <div class="row mt-3">
-            <div class="col text-end">
-                <label for="hotel_num" class="form-label">호텔 정보</label>
-                <p class="form-control" th:value="${hotelDTO?.hotelDTO?.hotel_num}" id="hotel_num"></p>
+            <div class="col-12">
+                <div class="mb-3 text-center">
+                    <h2 th:text="${hotel_name}">호텔 이름</h2>
+                </div>
             </div>
         </div>
 
@@ -43,29 +44,31 @@
                     <td>삭제</td>
                 </tr>
                 </thead>
-                <tbody>
 
-                <th:block th:each="room : ${list}">
+                <tbody>
+                <th:block th:each="roomDTO : ${pageResponseDTO.dtoList}">
                     <tr class="align-middle">
-                        <td th:text="${room.room_num}"></td>
+
+
+                        <td th:text="${roomDTO.room_num}"></td>
                         <td>
-                            <a th:href="@{/room/roomRead(room_num=${room.room_num})}">
-                                [[${room.room_name}]]
+                            <a th:href="@{/room/roomRead(room_num=${roomDTO.room_num})}">
+                                [[${roomDTO.room_name}]]
                             </a>
                         </td>
-                        <td th:text="${room.room_info}"></td>
-                        <td th:text="${room.room_type}"></td>
-                        <td th:text="${room.room_bed}"></td>
-                        <td th:text="${room.room_price}"></td>
-                        <td th:text="${room.room_state}"></td>
-                        <td th:text="${#temporals.format(room.reg_date, 'yyyy-MM-dd')}"></td>
-                        <td th:text="${#temporals.format(room.modi_date, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${roomDTO.room_info}"></td>
+                        <td th:text="${roomDTO.room_type}"></td>
+                        <td th:text="${roomDTO.room_bed}"></td>
+                        <td th:text="${roomDTO.room_price}"></td>
+                        <td th:text="${roomDTO.room_state}"></td>
+                        <td th:text="${#temporals.format(roomDTO.reg_date, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${#temporals.format(roomDTO.modi_date, 'yyyy-MM-dd')}"></td>
                         <td>
-                            <button type="button" th:attr="onclick='location.href=\'/room/roomModify?room_num=' + ${room.room_num} + '\''" class="btn btn-warning">수정</button>
+                            <button type="button" th:attr="onclick='location.href=\'/room/roomModify?room_num=' + ${roomDTO.room_num} + '\''" class="btn btn-warning">수정</button>
                         </td>
                         <td>
                             <form action="/room/roomDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                <input type="hidden" name="id" th:value="${room.room_num}">
+                                <input type="hidden" name="id" th:value="${roomDTO.room_num}">
                                 <button type="submit" class="btn btn-danger">삭제</button>
                             </form>
                         </td>
@@ -74,6 +77,42 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="row mt-3">
+        <th:block th:if="${not #lists.isEmpty(pageResponseDTO.dtoList)}">
+
+            <div class="row d-flex justify-content-center">
+                <div class="col-5">
+                    <div class="input-group">
+                        <input class="form-control" type="search" placeholder="검색어를 입력하세요." aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-end">
+                            <th:block th:if="${pageResponseDTO.prev}">
+                                <li class="page-item"><a class="page-link" th:href="|@{'/room/roomList?page=' +${pageResponseDTO.start-1}}|">Previous</a></li>
+                            </th:block>
+
+                            <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+                                <li class="page-item"><a class="page-link" th:href="|@{'/room/roomList?page=' +${num}}|">[[${num}]]</a></li>
+                            </th:block>
+
+                            <th:block th:if="${pageResponseDTO.next}">
+                                <li class="page-item"><a class="page-link" th:href="|@{'/room/roomList?page=' +${pageResponseDTO.end+1}}|">Next</a></li>
+                            </th:block>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </th:block>
+
     </div>
 </th:block>
 

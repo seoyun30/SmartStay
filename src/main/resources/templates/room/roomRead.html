@@ -17,10 +17,10 @@
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="row">
+
                     <div class="col-12">
-                        <div class="mb-3">
-                            <label for="hotel_num" class="form-label">호텔 정보</label>
-                            <p class="form-control" th:value="${hotelDTO?.hotelDTO?.hotel_num}" id="hotel_num"></p>
+                        <div class="mb-3 text-center">
+                            <h2 th:text="${roomDTO.hotelDTO.hotel_name}"></h2>
                         </div>
                     </div>
                     <div class="col-12">
@@ -73,6 +73,32 @@
                                 <option value="NO">사용 불가</option>
                                 <option value="PREPARE">준비 중</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3 imgA">
+                            <div class="row mb-5">
+                                <th:block th:each="img: ${roomDTO.imageDTOList}">
+                                    <th:block th:if="${img.repimg_yn == 'Y'}">
+                                        <div class="col-12">
+                                            대표 이미지
+                                            <img width="100%" th:src="${img.image_url}" alt="대표 이미지">
+                                        </div>
+                                    </th:block>
+                                </th:block>
+                            </div>
+
+                            <div class="row row-cols-md-2 ">
+                                <th:block th:each="img: ${roomDTO.imageDTOList}">
+                                    <th:block th:unless="${img.repimg_yn == 'Y'}">
+                                        <div class="col-12">
+                                            상세 이미지
+                                            <img width="100%" th:src="${img.image_url}" alt="상세 이미지">
+                                        </div>
+                                    </th:block>
+                                </th:block>
+                            </div>
                         </div>
                     </div>
 
