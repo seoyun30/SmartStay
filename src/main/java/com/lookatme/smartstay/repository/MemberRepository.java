@@ -15,9 +15,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     void deleteByEmail (String email);
 
     @Query("select m  from Member m " +
-            "where m.role = 'CHIEF' and m.power = 'NO'  and m.brand.brand_num is null")
+            "where m.role = 'CHIEF' and m.power = 'NO' and m.brand.brand_num is null")
     public List<Member> selectByCPB();
 
+
+    @Query("select m from Member m " + "where (m.role = 'CHIEF' or m.role = 'MANAGER') and m.brand.brand_num = :brand_num")
+    public List<Member> selectByChief(Long brand_num);
 
     public List<Member> findByRoleAndPowerAndBrandIsNull(Role role, Power power);
 
