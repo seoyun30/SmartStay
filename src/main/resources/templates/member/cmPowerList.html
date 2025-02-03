@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/adminlayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 승인 페이지</title>
+
+</head>
+<body>
+
+<th:block layout:fragment="content">
+    <h1 class="text-center">권한 승인 목록</h1>
+
+
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>이메일</th>
+                    <th>이름</th>
+                    <th>휴대폰번호</th>
+                    <th>브랜드명</th>
+                    <th>호텔명</th>
+                    <th>권한</th>
+                    <th>승인여부</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="member : ${cmPowerList}">
+                    <tr class="align-middle">
+                        <td th:text="${member.member_num}"></td>
+                        <td th:text="${member.email}"></td>
+                        <td th:text="${member.name}"></td>
+                        <td th:text="${member.tel}"></td>
+                        <td th:text="${member.brand.brand_name}"></td>
+                        <td th:text="${member.hotel?.hotel_name}"></td>
+                        <td th:text="${member.role}"></td>
+                        <td>
+                            <span th:if="${member.power == 'YES'}" th:text="${member.power}"></span>
+                            <span th:if="${member.power == 'NO'}" th:text="${member.power}"></span>
+                            <button th:if="${member.power == 'NO'}" class="btn btn-primary"
+                                    onclick="powerMember(this)" data-email="${member.email}"> 승인 </button>
+
+                        </td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</th:block>
+
+
+<script th:inline="javascript" layout:fragment="script">
+
+    function powerMember(button) {
+        let email = button.getAttribute("data-email");
+
+        if (confirm("승인하시겠습니까?")) {
+            fetch(`/approveMember?email=${email}`, {
+                method: "POST"
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("승인 완료!");
+                        location.reload(); // 페이지 새로고침
+                    } else {
+                        alert("승인 실패!");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+    }
+
+
+</script>
+
+</body>
+</html>

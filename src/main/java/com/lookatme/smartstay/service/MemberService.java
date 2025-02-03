@@ -11,6 +11,7 @@ import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.BrandRepository;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -61,12 +64,12 @@ public class MemberService implements UserDetailsService {
             log.info("슈퍼어드민");
             role = Role.SUPERADMIN.name();
             authorities.add(new SimpleGrantedAuthority(Role.SUPERADMIN.name()));
-        }else if("CHIEF".equals(member.getRole().name()) ){ //&& member.getPower() == Power.YES
+        }else if("CHIEF".equals(member.getRole().name()) && member.getPower() == Power.YES){
                                                     //나중에 승인기능 개발후 적용예정
             log.info("치프");
             role = Role.CHIEF.name();
             authorities.add(new SimpleGrantedAuthority(Role.CHIEF.name()));
-        }else if("MANAGER".equals(member.getRole().name()) ){  //&& member.getPower() == Power.YES
+        }else if("MANAGER".equals(member.getRole().name()) && member.getPower() == Power.YES){
             log.info("매니져");
             role = Role.MANAGER.name();
             authorities.add(new SimpleGrantedAuthority(Role.MANAGER.name()));
@@ -189,6 +192,7 @@ public class MemberService implements UserDetailsService {
 
 
 
+
     public Member update(MemberDTO memberDTO){
 
         validateDuplicateMember(memberDTO.getEmail());
@@ -198,5 +202,64 @@ public class MemberService implements UserDetailsService {
 
             return memberRepository.save(member);
         }
+
+
+
+    public List<MemberDTO> adPowerList(){
+        List<Member> roleList = memberRepository.selectBySuperAdmin();
+
+        log.info("권한리스트");
+        roleList.forEach(role -> log.info(role));
+
+        return roleList.stream()
+                .map(member -> modelMapper.map(member, MemberDTO.class)).collect(Collectors.toList());
+
+
+    }
+
+    public List<MemberDTO> cmPowerList(String email) {
+
+        Member member = memberRepository.findByEmail(email);
+
+        List<Member> roleList = memberRepository.selectByChief(member.getBrand().getBrand_num());
+
+        log.info("권한리스트");
+        roleList.forEach(role -> log.info(role));
+
+        List<MemberDTO> memberDTOList = roleList.stream()
+                .map(role -> {
+                    MemberDTO memberDTO = modelMapper.map(role, MemberDTO.class);
+
+                    // Brand 정보 설정
+                    if (role.getBrand() != null) {
+                        Brand brand = role.getBrand();
+                        BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
+                        memberDTO.setBrandDTO(brandDTO);
+                    }
+
+                    // Hotel 정보 설정
+                    if (role.getHotel() != null) {
+                        Hotel hotel = role.getHotel();
+                        HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+                        log.info("hotel name:{}", hotelDTO.getHotel_name());
+                        memberDTO.setHotelDTO(hotelDTO);
+                    }
+
+                    return memberDTO;
+                })
+                .collect(Collectors.toList());
+
+        return memberDTOList;
+    }
+
+
+    public void powerMember(String email) {
+
+        Member member = memberRepository.findByEmail(email);
+        if (member != null) {
+            member.setPower(Power.YES);
+            memberRepository.save(member);
+        }
+    }
     }
 

@@ -5,14 +5,17 @@ import com.lookatme.smartstay.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.Authentication;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.sql.Struct;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -54,19 +57,36 @@ public class MemberController {
         return "member/allMemberList";
     }
 
-    @GetMapping("/chiefAcceptList") // 권한승인(총판)
-    public String chiefAcceptList(){
-        return "chiefPowerList";
+    @GetMapping("/adPowerList") // 권한승인(총판)
+    public String adPowerList(Principal principal, Model model) {
+
+        List<MemberDTO> adPowerList = memberService.adPowerList();
+        model.addAttribute("adPowerList", adPowerList);
+
+        return "member/adPowerList";
     }
 
-    @GetMapping("/managerAcceptList") // 권한승인(매니져)
-    public String managerAcceptList(){
-        return "managerPowerList";
+    @GetMapping("/cmPowerList") // 권한승인(치프, 매니져)
+    public String cmPowerList(Principal principal, Model model){
+
+        List<MemberDTO> cmPowerList = memberService.cmPowerList(principal.getName());
+        model.addAttribute("cmPowerList", cmPowerList);
+
+
+        return "member/cmPowerList";
     }
 
-    @PostMapping("/accept") //권한 승인
-    public String accept(MemberDTO memberDTO){
-        return "chiefPowerList";
+    @PostMapping("/powerMember") //권한 승인
+    @ResponseBody
+    public String powerMember(@RequestParam("email") String email, MemberDTO memberDTO, Model model){
+
+        try {
+            memberService.powerMember(email);
+            model.addAttribute("message", "승인완료");
+        }catch (Exception e) {
+            model.addAttribute("message", "승인오류");
+        }
+        return "redirect:/cmPowerList";
         //return "member/managerAcceptList";
     }
 
