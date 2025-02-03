@@ -1,6 +1,5 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
@@ -26,6 +25,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -189,6 +190,7 @@ public class MemberService implements UserDetailsService {
 
 
 
+
     public Member update(MemberDTO memberDTO){
 
         validateDuplicateMember(memberDTO.getEmail());
@@ -198,5 +200,36 @@ public class MemberService implements UserDetailsService {
 
             return memberRepository.save(member);
         }
+
+
+
+    public List<MemberDTO> adPowerList(){
+        List<Member> roleList = memberRepository.selectBySuperAdmin();
+
+        return roleList.stream()
+                .map(member -> modelMapper.map(member, MemberDTO.class)).collect(Collectors.toList());
+
+
+    }
+
+    public List<MemberDTO> cmPowerList(Long brand_num) {
+        List<Member> roleList = memberRepository.selectByChief(brand_num);
+
+        return roleList.stream()
+                .map(member -> modelMapper.map(member, MemberDTO.class)).collect(Collectors.toList());
+
+    }
+
+    public void powerMember(String email) {
+        Optional<Member> memberOptional = Optional.ofNullable(memberRepository.findByEmail(email));
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            member.setRole(Role.valueOf("YES"));
+            memberRepository.save(member);
+
+        }else {
+            throw new RuntimeException("Member not found with email : " + email);
+        }
+    }
     }
 
