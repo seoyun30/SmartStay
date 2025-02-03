@@ -20,4 +20,10 @@ public class Cart {
     @JoinColumn(name = "member_num")
     private Member member; //회원 조인
 
+    public static Cart createCart(Member member) {
+        Cart cart = new Cart();
+        cart.setMember(member);
+        return cart;
+    }
+
 }

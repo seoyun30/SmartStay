@@ -1,5 +1,5 @@
 package com.lookatme.smartstay.constant;
 
 public enum CheckState {
-    IN, OUT
+    IN, OUT, RESERVE
 }
