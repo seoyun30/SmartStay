@@ -35,4 +35,12 @@ public class RoomReserve extends BaseEntity{
     @JoinColumn(name = "member_num")
     private Member member; //회원
 
+    public void setRoomItemList(RoomItem roomItem) {
+        this.roomItemList.add(roomItem);
+    }
+
+    public void setRoomItemList(List<RoomItem> roomItemList) {
+        this.roomItemList = roomItemList;
+    }
+
 }

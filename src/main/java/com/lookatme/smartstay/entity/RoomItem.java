@@ -20,7 +20,7 @@ public class RoomItem extends BaseEntity{
 
     private String out_date; //체크아웃 날짜
 
-    private String count; //예약 인원수
+    private Long count; //예약 인원수
 
     private String reserve_request; //요청 사항
 
@@ -39,5 +39,17 @@ public class RoomItem extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "cart_num")
     private Cart cart; //장바구니
+
+    public static RoomItem createRoomItem(Cart cart, Room room, String in_date
+            , String out_date, String reserve_request, Long count) {
+        RoomItem roomItem = new RoomItem();
+        roomItem.setRoom(room);
+        roomItem.setIn_date(in_date);
+        roomItem.setOut_date(out_date);
+        roomItem.setReserve_request(reserve_request);
+        roomItem.setCount(count);
+
+        return roomItem;
+    }
 
 }
