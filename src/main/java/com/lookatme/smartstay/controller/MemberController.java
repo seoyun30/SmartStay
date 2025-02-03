@@ -10,10 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.sql.Struct;
@@ -66,27 +63,28 @@ public class MemberController {
         List<MemberDTO> adPowerList = memberService.adPowerList();
         model.addAttribute("adPowerList", adPowerList);
 
-        return "adPowerList";
+        return "member/adPowerList";
     }
 
     @GetMapping("/cmPowerList") // 권한승인(치프, 매니져)
     public String cmPowerList(Principal principal, Model model){
 
-        List<MemberDTO> cmPowerList = memberService.cmPowerList(Long);
+        List<MemberDTO> cmPowerList = memberService.cmPowerList(principal.getName());
         model.addAttribute("cmPowerList", cmPowerList);
 
 
-        return "cmPowerList";
+        return "member/cmPowerList";
     }
 
-    @PostMapping("/power") //권한 승인
-    public String power(@RequestParam("email") String email, MemberDTO memberDTO, Model model){
+    @PostMapping("/powerMember") //권한 승인
+    @ResponseBody
+    public String powerMember(@RequestParam("email") String email, MemberDTO memberDTO, Model model){
 
         try {
             memberService.powerMember(email);
             model.addAttribute("message", "승인완료");
         }catch (Exception e) {
-            model.addAttribute("message", "승인오류" + e.getMessage());
+            model.addAttribute("message", "승인오류");
         }
         return "redirect:/cmPowerList";
         //return "member/managerAcceptList";

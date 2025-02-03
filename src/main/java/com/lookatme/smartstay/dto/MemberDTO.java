@@ -41,9 +41,9 @@ public class MemberDTO {
 
     private Role role; //회원 권한
 
-    private BrandDTO brandDTO; //브랜드
+    private BrandDTO brand; //브랜드
 
-    private HotelDTO hotelDTO; //호텔
+    private HotelDTO hotel; //호텔
 
     private String corn; // 권한선택값
 
@@ -56,15 +56,12 @@ public class MemberDTO {
     private String modified_by;
 
     public static Member dtoEntity(MemberDTO memberDTO) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return null;
+    }
 
-        Member member = new Member();
-        member.setName(memberDTO.name);
-        member.setEmail(memberDTO.email);
-        member.setTel(memberDTO.tel);
-        member.setPassword(passwordEncoder.encode(memberDTO.password));
-        member.setRole(Role.USER);
+    public void setBrandDTO(BrandDTO brandDTO) {
+    }
 
-        return member;
+    public void setHotelDTO(HotelDTO hotelDTO) {
     }
 }
