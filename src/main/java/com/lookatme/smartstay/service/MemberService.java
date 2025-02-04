@@ -223,23 +223,55 @@ public class MemberService implements UserDetailsService {
     public List<MemberDTO> adPowerList(){
         List<Member> roleList = memberRepository.selectBySuperAdmin();
 
-        log.info("권한리스트");
-        roleList.forEach(role -> log.info(role));
+        if(roleList == null) {
+            return null;
+        }else {
+            List<MemberDTO> memberDTOList = roleList.stream()
+                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class).setBrandDTO( modelMapper.map(memberA.getBrand() , BrandDTO.class) ).setHotelDTO(modelMapper.map(memberA.getHotel(), HotelDTO.class)))
+                    .collect(Collectors.toList());
 
-        return roleList.stream()
-                .map(member -> modelMapper.map(member, MemberDTO.class)).collect(Collectors.toList());
+            log.info("dto변환");
+            memberDTOList.forEach(dto -> log.info(dto));
 
-
+            return memberDTOList;
+        }
     }
 
     public List<MemberDTO> cmPowerList(String email) {
 
         Member member = memberRepository.findByEmail(email);
+        log.info(member);
+        List<Member> roleList = null;
+        if(member != null && member.getBrand() != null) {
+            roleList = memberRepository.selectByChief(member.getBrand().getBrand_num());
 
-        List<Member> roleList = memberRepository.selectByChief(member.getBrand().getBrand_num());
+            log.info("권한리스트");
+            roleList.forEach(role -> log.info(role));
+        }
 
-        log.info("권한리스트");
-        roleList.forEach(role -> log.info(role));
+        if(roleList == null) {
+            return null;
+        }else {
+            List<MemberDTO> memberDTOList = roleList.stream()
+                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class).setBrandDTO( modelMapper.map(memberA.getBrand() , BrandDTO.class) ).setHotelDTO(modelMapper.map(memberA.getHotel(), HotelDTO.class)))
+                    .collect(Collectors.toList());
+
+            log.info("dto변환");
+            memberDTOList.forEach(dto -> log.info(dto));
+
+            return memberDTOList;
+        }
+
+       /*
+        Member member = memberRepository.findByEmail(email);
+        List<Member> roleList = null;
+        if(member != null && member.getBrand() != null) {
+            roleList = memberRepository.selectByChief(member.getBrand().getBrand_num());
+
+            log.info("권한리스트");
+            roleList.forEach(role -> log.info(role));
+        }
+
 
         List<MemberDTO> memberDTOList = roleList.stream()
                 .map(role -> {
@@ -264,13 +296,21 @@ public class MemberService implements UserDetailsService {
                 })
                 .collect(Collectors.toList());
 
-        return memberDTOList;
+        return memberDTOList;*/
     }
 
 
     public void powerMember(String email) {
 
         Member member = memberRepository.findByEmail(email);
+        log.info("파워승인파워승인" +email);
+        log.info("파워승인파워승인" +email);
+        log.info("파워승인파워승인" +email);
+        log.info("파워승인파워승인");
+        log.info("파워승인파워승인");
+        log.info("파워승인파워승인");
+        log.info(member);
+        log.info(member);
         if (member != null) {
             member.setPower(Power.YES);
             memberRepository.save(member);

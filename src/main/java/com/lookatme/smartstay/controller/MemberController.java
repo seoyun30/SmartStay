@@ -69,6 +69,8 @@ public class MemberController {
     @GetMapping("/cmPowerList") // 권한승인(치프, 매니져)
     public String cmPowerList(Principal principal, Model model){
 
+        log.info(principal);
+        log.info(principal.getName());
         List<MemberDTO> cmPowerList = memberService.cmPowerList(principal.getName());
         model.addAttribute("cmPowerList", cmPowerList);
 
@@ -77,8 +79,8 @@ public class MemberController {
     }
 
     @PostMapping("/powerMember") //권한 승인
-    @ResponseBody
-    public String powerMember(@RequestParam("email") String email, MemberDTO memberDTO, Model model){
+    public String powerMember(String email, Model model){
+
 
         try {
             memberService.powerMember(email);
@@ -86,7 +88,7 @@ public class MemberController {
         }catch (Exception e) {
             model.addAttribute("message", "승인오류");
         }
-        return "redirect:/cmPowerList";
+        return "redirect:/member/cmPowerList";
         //return "member/managerAcceptList";
     }
 

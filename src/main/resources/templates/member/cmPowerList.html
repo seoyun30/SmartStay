@@ -30,20 +30,44 @@
                 </tr>
                 </thead>
                 <tbody>
-                <th:block th:each="member : ${cmPowerList}">
+
+                <th:block th:each="memberDTO : ${cmPowerList}">
                     <tr class="align-middle">
-                        <td th:text="${member.member_num}"></td>
-                        <td th:text="${member.email}"></td>
-                        <td th:text="${member.name}"></td>
-                        <td th:text="${member.tel}"></td>
-                        <td th:text="${member.brand.brand_name}"></td>
-                        <td th:text="${member.hotel?.hotel_name}"></td>
-                        <td th:text="${member.role}"></td>
-                        <td>
-                            <span th:if="${member.power == 'YES'}" th:text="${member.power}"></span>
-                            <span th:if="${member.power == 'NO'}" th:text="${member.power}"></span>
-                            <button th:if="${member.power == 'NO'}" class="btn btn-primary"
-                                    onclick="powerMember(this)" data-email="${member.email}"> 승인 </button>
+                        <td th:text="${memberDTO.member_num}"></td>
+                        <td th:text="${memberDTO.email}"></td>
+                        <td th:text="${memberDTO.name}"></td>
+                        <td th:text="${memberDTO.tel}"></td>
+                        <th:block th:if="${not #strings.isEmpty(memberDTO.brandDTO)}">
+                            <td th:text="${memberDTO.brandDTO.brand_name}"></td>
+                        </th:block>
+                        <th:block th:if="${#strings.isEmpty(memberDTO.brandDTO)}">
+                            <td ></td>
+                        </th:block>
+                        <th:block th:if="${not #strings.isEmpty(memberDTO.hotelDTO)}">
+                            <td th:text="${memberDTO.hotelDTO.hotel_name}"></td>
+                        </th:block>
+                        <th:block th:if="${#strings.isEmpty(memberDTO.hotelDTO)}">
+                            <td ></td>
+                        </th:block>
+                        <th:block th:if="${not #strings.isEmpty(memberDTO.role)}">
+                            <td th:text="${memberDTO.role}"></td>
+                        </th:block>
+                        <th:block th:if="${#strings.isEmpty(memberDTO.role)}">
+                            <td ></td>
+                        </th:block>
+                       <td>
+                            <th:block th:if="${memberDTO.power.name() == 'YES'}">
+                                <span  th:text="${memberDTO.power}"></span>
+                            </th:block>
+                            <th:block th:if="${memberDTO.power.name() == 'NO'}">
+                                <span th:text="${memberDTO.power}"></span>
+                            </th:block>
+                            <th:block th:if="${memberDTO.power.name() == 'NO'}">
+                                <button  class="btn btn-primary yesbtn" th:value="${memberDTO.email}"
+                                         data-email="${memberDTO.email}"> 승인 </button>
+                            </th:block>
+
+
 
                         </td>
                     </tr>
@@ -52,31 +76,33 @@
             </table>
         </div>
     </div>
+    <form action="aa" method="post" class="formyes">
+
+    </form>
 
 </th:block>
 
 
 <script th:inline="javascript" layout:fragment="script">
+    
+    $(document).ready(function () {
+        let yesbtn = $(".yesbtn")
+        let formyes = document.querySelector(".formyes")
 
-    function powerMember(button) {
-        let email = button.getAttribute("data-email");
+        yesbtn.on("click", function () {
+            let email = $(this).val()
+            console.log($(this).val())
+            formyes.action = "/member/powerMember";
+            formyes.method = "post";
+            let str = `<input type="hidden" name="email" value="${email}">`
+            formyes.innerHTML += str;
+            formyes.submit();
 
-        if (confirm("승인하시겠습니까?")) {
-            fetch(`/approveMember?email=${email}`, {
-                method: "POST"
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("승인 완료!");
-                        location.reload(); // 페이지 새로고침
-                    } else {
-                        alert("승인 실패!");
-                    }
-                })
-                .catch(error => console.error("Error:", error));
-        }
-    }
+        })
+        
+    })
+
+
 
 
 </script>
