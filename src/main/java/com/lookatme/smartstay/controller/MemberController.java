@@ -58,9 +58,9 @@ public class MemberController {
     }
 
     @GetMapping("/adPowerList") // 권한승인(총판)
-    public String adPowerList(Principal principal, Model model) {
+    public String adPowerList(Model model) {
 
-        List<MemberDTO> adPowerList = memberService.adPowerList();
+        List<MemberDTO> adPowerList = memberService.adPowerList(null);
         model.addAttribute("adPowerList", adPowerList);
 
         return "member/adPowerList";
@@ -69,15 +69,17 @@ public class MemberController {
     }
 
     @PostMapping("/adPowerMember") //권한 승인
-    public String adPowerMember(String email, Model model){
-
+    public String adePowerMember(@RequestParam("email") String email, Model model){
 
         try {
-            memberService.adPowerMember(email);
-            model.addAttribute("message", "승인완료");
-        }catch (Exception e) {
-            model.addAttribute("message", "승인오류");
+            List<MemberDTO> adPowerList = memberService.adPowerList(email);
+            model.addAttribute("adPowerList", adPowerList);
+            model.addAttribute("message", "변경완료");
+
+        } catch (Exception e) {
+            model.addAttribute("message", "변경오류");
         }
+
         return "redirect:/member/adPowerList";
 
     }
@@ -96,14 +98,17 @@ public class MemberController {
 
 
     @PostMapping("/powerMember") //권한 승인
-    public String powerMember(String email, Model model){
+    public String powerMember(@RequestParam("email") String email, Model model){
 
 
         try {
             memberService.powerMember(email);
-            model.addAttribute("message", "승인완료");
-        }catch (Exception e) {
-            model.addAttribute("message", "승인오류");
+            List<MemberDTO> cmPowerList = memberService.cmPowerList(email);
+            model.addAttribute("cmPowerList", cmPowerList);
+            model.addAttribute("message", "변경완료");
+
+        } catch (Exception e) {
+            model.addAttribute("message", "변경오류");
         }
         return "redirect:/member/cmPowerList";
 
