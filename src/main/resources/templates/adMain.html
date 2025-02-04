@@ -11,35 +11,7 @@
 <body>
 <th:block layout:fragment="content">
 
-<!--    <div sec:authorize="hasAuthority('CHIEF')">-->
-<!--        This content is visible only to CHIEF role.-->
-<!--    </div>-->
-
-<!--    <div sec:authentication="name">사용자 이름</div>-->
-<!--    <div sec:authentication="authorities">사용자 권한</div>-->
-
-<!--    <div sec:authorize access="hasRole('USER')">Has USER ROLE</div>-->
-<!--    <div sec:authorize access="hasRole('MANAGER')">Has MANAGER ROLE</div>-->
-<!--    <div sec:authorize access="hasRole('ADMIN')">Has ADMIN ROLE</div>-->
-
-<!--    <div sec:authorize="isAuthenticated()">-->
-<!--        Only Authenticated user can see this Text-->
-<!--    </div>-->
-
-<!--    Authenticated username:-->
-<!--    <div sec:authentication="name"></div>-->
-<!--    Authenticated user roles:-->
-
-<!--    <div>-->
-<!--        Authenticated username: <span sec:authentication="name"></span>-->
-<!--    </div>-->
-
-<!--    <div>-->
-<!--        Authenticated user roles:-->
-<!--        <span sec:authentication="authorities"></span>-->
-<!--    </div>-->
-
-    <div class="container">
+    <div class="container mt-3">
 
         <div sec:authorize="hasAuthority('CHIEF')">
             <th:block th:if="${brandDTO != null}">

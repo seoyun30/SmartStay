@@ -21,15 +21,6 @@
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
 
-        <div class="d-flex justify-content-center w-100" style="max-width: 900px;">
-            <div class="search-bar w-50">
-                <form class="search-form d-flex align-items-center" method="get" action="#">
-                    <input type="text" class="form-control" name="query" placeholder="Search" title="Enter search keyword">
-                    <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-                </form>
-            </div><!-- End Search Bar -->
-        </div>
-
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
                 <li class="nav-item dropdown pe-3">
@@ -73,17 +64,17 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#brand-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-circle"></i><span>브랜드 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
                     <ul id="brand-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
+                        <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')">
                             <a href="/brand/brandList" class="nav-link">
                                 <i class="bi bi-circle"></i> 브랜드 목록
                             </a>
                         </li>
-                        <li>
+                        <li sec:authorize="hasAuthority('CHIEF')">
                             <a href="/brand/brandRegister" class="nav-link">
                                 <i class="bi bi-circle"></i> 브랜드 등록
                             </a>
@@ -91,7 +82,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li sec:authorize="hasAnyAuthority('CHIEF', 'MANAGER')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#hotel-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-circle"></i><span>호텔 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
@@ -101,7 +92,7 @@
                                 <i class="bi bi-circle"></i> 호텔 목록
                             </a>
                         </li>
-                        <li>
+                        <li sec:authorize="hasAuthority('CHIEF')">
                             <a href="/hotel/hotelRegister" class="nav-link">
                                 <i class="bi bi-circle"></i> 호텔 등록
                             </a>
@@ -116,18 +107,18 @@
                     <ul id="power-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')">
                             <a href="/member/adPowerList" class="nav-link">
-                                <i class="bi bi-layout-text-window-reverse"></i> 권한 승인 목록 (브랜드)
+                                <i class="bi bi-layout-text-window-reverse"></i> 권한 승인 목록 (치프)
                             </a>
                         </li>
                         <li sec:authorize="hasAuthority('CHIEF')">
                             <a href="/member/cmPowerList" class="nav-link">
-                                <i class="bi bi-layout-text-window-reverse"></i> 권한 승인 목록 (호텔)
+                                <i class="bi bi-layout-text-window-reverse"></i> 권한 승인 목록 (매니저)
                             </a>
                         </li>
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('MANAGER')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#roomreserve-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-cart"></i><span>룸 예약 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
@@ -140,7 +131,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('MANAGER')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#orderreserve-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-balloon"></i><span>룸 서비스 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
@@ -153,7 +144,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('MANAGER')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#room-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-door-closed"></i><span>룸 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
@@ -171,7 +162,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('MANAGER')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#menu-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-list"></i><span>메뉴 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
@@ -189,7 +180,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('MANAGER')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#care-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-heart"></i><span>룸 케어 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
@@ -207,7 +198,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('MANAGER')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#notice-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-bell"></i><span>공지사항 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
@@ -225,7 +216,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('SUPERADMIN')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#member-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-person"></i><span>회원 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
@@ -238,7 +229,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li sec:authorize="hasAnyAuthority('CHIEF', 'MANAGER')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#qna-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-question-circle"></i><span>문의사항 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
@@ -251,7 +242,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('MANAGER')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#review-nav" data-bs-toggle="collapse" href="#">
                         <i class="bi bi-menu-button-wide"></i><span>리뷰 관리</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>

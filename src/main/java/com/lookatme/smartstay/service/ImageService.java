@@ -126,10 +126,18 @@ public class ImageService {
         // 2. 추가/변경할 이미지 처리
         if (imageFileList != null && !imageFileList.isEmpty()) {
 
+            List<Image> existingImages = imageRepository.findByTarget(targetType, targetId);
+
             for (MultipartFile file : imageFileList) {
+
+                if (file.isEmpty()) {
+                    log.warn("빈 파일이 업로드되었습니다: {}", file.getOriginalFilename());
+                    continue;
+                }
+
                 String imageName = fileUpload.FileUpload(file);
                 String originalName = file.getOriginalFilename();
-                String imageUrl = "/images/" + imageName;
+                String imageUrl = "/images/image" + imageName;
 
                 Image image = Image.builder()
                         .image_name(imageName)
@@ -137,7 +145,6 @@ public class ImageService {
                         .image_url(imageUrl)
                         .build();
 
-                // targetType에 따라 연관관계 설정 (기존 saveImage의 로직 재사용)
                 switch (targetType) {
                     case "brand":
                         Brand brand = brandRepository.findById(targetId)
@@ -182,22 +189,19 @@ public class ImageService {
                     default:
                         throw new IllegalArgumentException("잘못된 targetType입니다.");
                 }
-
-                // 기존 이미지 중 대표 이미지가 있었다면, 새로 추가되는 이미지가 첫 번째일 경우에만 대표 이미지로 설정
-                List<Image> existingImages = imageRepository.findByTarget(targetType, targetId); //targetType과 targetId로 기존 이미지 조회
-                Optional<Image> existingRepImage = existingImages.stream().filter(img -> img.getRepimg_yn().equals("Y")).findFirst();
-
-                if (existingRepImage.isEmpty() && imageFileList.indexOf(file) == 0) {
-                    //기존 대표 이미지가 없고, 현재 추가하는 이미지가 첫번째 이미지라면
-                    image.setRepimg_yn("Y");
-                } else if (existingRepImage.isPresent() && imageFileList.indexOf(file) == 0) {
-                    //기존 대표 이미지가 있고, 현재 추가하는 이미지가 첫번째 이미지라면 기존 대표 이미지를 N으로 변경
-                    existingRepImage.get().setRepimg_yn("N");
-                    imageRepository.save(existingRepImage.get());
-                    image.setRepimg_yn("Y");
+                if (!existingImages.isEmpty()) {
+                    if (imageFileList.indexOf(file) == 0) {
+                        existingImages.stream()
+                                .filter(img -> "Y".equals(img.getRepimg_yn()))
+                                .forEach(img -> {deleteImage(img.getImage_id());});
+                        image.setRepimg_yn("Y");
+                    } else {
+                        image.setRepimg_yn("N");
+                    }
                 } else {
-                    image.setRepimg_yn("N");
+                    image.setRepimg_yn(imageFileList.indexOf(file) == 0 ? "Y" : "N");
                 }
+
                 imageRepository.save(image);
             }
         }
