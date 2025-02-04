@@ -42,8 +42,8 @@ public class MainController {
         log.info("user:{}", memberDTO);
 
         if ("CHIEF".equals(memberDTO.getRole().name())) {
-            BrandDTO brandDTO = brandService.read(memberDTO.getBrand().getBrand_num());
-            log.info("Brand details: {}", brandService.read(memberDTO.getBrand().getBrand_num()));
+            BrandDTO brandDTO = brandService.read(memberDTO.getBrandDTO().getBrand_num());
+            log.info("Brand details: {}", brandService.read(memberDTO.getBrandDTO().getBrand_num()));
             model.addAttribute("brandDTO", brandDTO);
 
 
