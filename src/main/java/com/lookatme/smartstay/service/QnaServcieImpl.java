@@ -1,8 +1,11 @@
 package com.lookatme.smartstay.service;
 
 
+import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.dto.QnaDTO;
+import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.Qna;
+import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.QnaReplyRepository;
 import com.lookatme.smartstay.repository.QnaRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -31,11 +35,16 @@ public class QnaServcieImpl implements QnaService {
     private final ModelMapper modelMapper = new ModelMapper();
     private final ImageService imageService;
     private final QnaReplyRepository qnaReplyRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public void register(QnaDTO qnaDTO) {
         log.info("등록 서비스 들어온값:"+qnaDTO);
-        Qna qna = modelMapper.map(qnaDTO, Qna.class);
+        // Qna 객체에 title, content 및 member 설정
+        Qna qna = Qna.builder()
+                .title(qnaDTO.getTitle())
+                .content(qnaDTO.getContent())
+                .build();
         qnaRepository.save(qna);
     }
 
@@ -64,8 +73,16 @@ public class QnaServcieImpl implements QnaService {
     @Override
     public QnaDTO read(Long qna_num) {
         log.info("서비스 읽기로 들어온값 : " +  qna_num);
+
+        // qna_num이 null이거나 유효하지 않으면 예외 처리
+        if (qna_num == null || qna_num <= 0) {
+            log.error("유효하지 않은 qna_num 값: " + qna_num);
+            throw new EntityNotFoundException("잘못된 게시글 번호입니다.");
+        }
+
         Optional<Qna> optionalQna =
                qnaRepository.findById(qna_num);
+
         Qna qna = optionalQna.orElseThrow(EntityNotFoundException::new);
 
         QnaDTO qnaDTO = modelMapper.map( qna, QnaDTO.class );
@@ -77,19 +94,25 @@ public class QnaServcieImpl implements QnaService {
 
     @Override
     public List<QnaDTO> list() {
-
+        // 모든 QnA 게시글을 조회
         List<Qna> qnaList = qnaRepository.findAll();
-        qnaList.forEach(  qna -> log.info(qna));
 
-        List<QnaDTO> qnaDTOList = qnaList.stream().map( qna -> modelMapper.map(qna, QnaDTO.class)  )
-                        .collect(Collectors.toList());
-        qnaDTOList.forEach(qnaDTO -> log.info(qnaDTO));
+        // 조회한 QnA 리스트를 로깅
+        qnaList.forEach(qna -> log.info(qna.toString()));
 
-        return qnaDTOList;
+        // QnA 엔티티 리스트를 QnA DTO로 변환
+        List<QnaDTO> qnaDTOList = qnaList.stream()
+                .map(qna -> modelMapper.map(qna, QnaDTO.class))  // 괄호가 빠져있었음
+                .collect(Collectors.toList()); // 리스트로 변환
+
+        // 변환된 DTO 리스트 로깅
+        qnaDTOList.forEach(qnaDTO -> log.info(qnaDTO.toString()));
+
+        return qnaDTOList;  // DTO 리스트 반환
     }
 
     @Override
-    public void update(QnaDTO qnaDTO) {
+    public void modify(QnaDTO qnaDTO) {
         //이미지 추가하게 되면 사용 메소드 MultipartFile[] multipartFiles, Long[] delino
         log.info("수정 서비스 들어온값:" + qnaDTO);
 

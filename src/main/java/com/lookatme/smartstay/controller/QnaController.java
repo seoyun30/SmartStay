@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.dto.QnaDTO;
 import com.lookatme.smartstay.entity.Qna;
 import com.lookatme.smartstay.service.ImageService;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -62,6 +64,8 @@ public class QnaController {
         log.info("pageRequestDTO");
         List<QnaDTO> qnaDTOList = qnaService.list();
         model.addAttribute("qnaDTOList", qnaDTOList);
+
+        qnaDTOList.forEach(qnaDTO -> {log.info("qnaDTO: " + qnaDTO);});
         return "/qna/qnaList";
     }
 
@@ -71,7 +75,7 @@ public class QnaController {
         log.info("컨트롤러 읽기로 들어온 게시글 번호:" + id);
         //log.info("컨트롤러 읽기로 들어온 게시글 번호:" + id);
 
-        if (id != null || id.equals("")) {
+        if (id == null || id<= 0) {
             log.info("들어온 id 가 이상함");
             return "redirect:/qna/qnaList";
         }
@@ -89,14 +93,29 @@ public class QnaController {
 
     //수정
     @GetMapping("/qnaModify")
-    public String qnaModifyGet(){
+    public String qnaModifyGet(Long id, Model model) { //PageRequestDTO pageRequestDTO
+        /*
+        if(id == null || id.equals("")) {
+            log.info("들어온 qna_num이 이상함");
+            return "redirect:/qna/qnaList"; //+pageRequestDTO.getLink();
+        }*/
+        //try~chach문으로 이미지 넣을것
         return "/qna/qnaModify";
     }
 
     @PostMapping("/qnaModify")
-    public String qnaModifyPost(Qna qna) {
-        return "/qna/qnaModify";
+    public String qnaModifyPost(QnaDTO qnaDTO, BindingResult bindingResult, Long[] delino, Model model) {
+        log.info("업데이트포스"+qnaDTO);
+        //log.info("업데이트포스"+pageRequestDTO);
+        if (bindingResult.hasErrors()) {
+            log.info("유효성검사 확인!!");
+            log.info(bindingResult.getAllErrors()); //유효성 내용 콘솔창에 출력
+            return "/qna/qnaList";
+        }
+
+        return "/qna/qnaModify"; //+pageRequestDTO.getLink()
     }
+
     //삭제
     @PostMapping("/qnaDelete")
     public String qnaDelete(Long qna_num) {

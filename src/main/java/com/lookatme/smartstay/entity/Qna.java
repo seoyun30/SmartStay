@@ -20,16 +20,4 @@ public class Qna extends BaseEntity{
 
     private String content; //문의 내용
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hotel_num")
-    private Hotel hotel; //호텔
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reserve_num")
-    private RoomReserve	roomReserve; //룸 예약
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_num")
-    private Member member; //회원 조인
-
 }
