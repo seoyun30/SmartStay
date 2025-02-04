@@ -106,7 +106,7 @@ public class RoomService {
         return roomDTOPageResponseDTO;
     }
 
-    public void roomModify(RoomDTO roomDTO, List<MultipartFile> multipartFiles, HotelDTO hotel) throws Exception {
+    public void roomModify(RoomDTO roomDTO, List<MultipartFile> multipartFiles, HotelDTO hotel, List<Long> delnumList) throws Exception {
 
         log.info("룸 수정 시작 : {}", roomDTO);
 
@@ -130,11 +130,24 @@ public class RoomService {
 
         roomRepository.save(room);
 
-        if (multipartFiles != null && multipartFiles.stream().anyMatch(file -> !file.isEmpty())) {
+        boolean hasNewImages = multipartFiles != null && multipartFiles.stream().anyMatch(file -> !file.isEmpty());
+        boolean hasDeletedImages = delnumList != null && !delnumList.isEmpty();
+
+        if (hasNewImages || hasDeletedImages) {
             log.info("이미지 업데이트 실행");
-            imageService.updateImage(multipartFiles, null, "room", room.getRoom_num());
+            try {
+                imageService.updateImage(
+                        hasNewImages ? multipartFiles : null,
+                        hasDeletedImages ? delnumList : null,
+                        "room",
+                        room.getRoom_num()
+                );
+            } catch (IndexOutOfBoundsException e) {
+                log.error("이미지 업데이트 중 인덱스 오류 발생: {}", e.getMessage());
+                throw new IllegalArgumentException("업로드된 파일이나 삭제 요청이 잘못되었습니다.");
+            }
         } else {
-            log.info("이미지 업데이트 없이 룸 정보만 수정");
+            log.info("이미지 업데이트 없이 텍스트 정보만 수정");
         }
     }
 
@@ -159,4 +172,14 @@ public class RoomService {
         log.info("룸이 삭제되었습니다. room_num: " + id);
     }
 
+    public List<RoomDTO> searchList(String query) {
+
+        List<Room> rooms = roomRepository.findByRoom_nameContaining(query);
+
+        List<RoomDTO> roomDTOS = rooms.stream().
+                map(room -> modelMapper.map(room, RoomDTO.class)).
+                collect(Collectors.toList());
+
+        return roomDTOS;
+    }
 }

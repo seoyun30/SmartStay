@@ -12,35 +12,37 @@
 
 <th:block layout:fragment="content">
 
-    <div class="container">
+    <div class="container mt-5">
         <div th:each="hotel : ${hotelDTO}" class="mb-4">
-            <div class="card">
+            <div class="card shadow-lg border-0">
                 <div class="card-body">
-                    <h5 class="card-title">
+                    <h5 class="card-title text-primary font-weight-bold">
                         <h2 th:text="${hotel.hotel_name}">호텔 이름</h2>
                     </h5>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
-                            <strong>호텔 주소 : </strong> <span th:text="${hotel.address}">호텔 주소</span>
+                            (호텔 대표 이미지)
                         </li>
                         <li class="list-group-item">
-                            <strong>연락처 : </strong> <span th:text="${hotel.tel}">연락처</span>
+                            <span class="font-weight-bold text-secondary">주소 : </span>
+                            <span class="text-dark" th:text="${hotel.address}">주소</span>
                         </li>
                         <li class="list-group-item">
-                            <strong>별점 : </strong> <span th:text="${hotel.score}">별점</span>
+                            <span class="font-weight-bold text-secondary">연락처 : </span>
+                            <span class="text-dark" th:text="${hotel.tel}">연락처</span>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="font-weight-bold text-secondary">별점 : </span>
+                            <span class="text-dark" th:text="${hotel.score}">별점</span>
+                        </li>
+                        <li class="list-group-item mb-3">
+                            (호텔 상세 이미지)
                         </li>
                     </ul>
                     <button type="button" class="btn btn-primary" onclick="location.href='/roomreserve/roomReserveRegister'">예약하기</button>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div>
-        <h2 th:text="${hotelDTO.hotel_name}"></h2>
-        <p><strong>Owner:</strong> <span th:text="${hotelDTO.owner}"></span></p>
-        <p><strong>Phone:</strong> <span th:text="${hotelDTO.tel}"></span></p>
-        <p><strong>Business Number:</strong> <span th:text="${hotelDTO.business_num}"></span></p>
     </div>
 
 </th:block>

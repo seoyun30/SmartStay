@@ -15,24 +15,35 @@
     <p th:if="${message}" th:text="${message}"></p>
 
         <table class="table" th:if="${results != null && results.size() > 0}">
-            <thead>
-            <tr>
-                <th>호텔 명</th>
-                <th>Owner</th>
-                <th>Phone</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="hotel : ${results}">
-                <td th:text="${hotel.hotel_name}"></td>
-                <td th:text="${hotel.owner}"></td>
-                <td th:text="${hotel.tel}"></td>
-                <td>
-                    <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}">호텔 정보 보기</a>
-                </td>
-            </tr>
-            </tbody>
+            <div class="container mt-5">
+                <div th:each="hotel : ${results}" class="mb-4">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary font-weight-bold">
+                                <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none">호텔 이름</a>
+                            </h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    (호텔 대표 이미지)
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="font-weight-bold text-secondary">주소 : </span>
+                                    <span class="text-dark" th:text="${hotel.address}">주소</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="font-weight-bold text-secondary">연락처 : </span>
+                                    <span class="text-dark" th:text="${hotel.tel}">연락처</span>
+                                </li>
+                                <li class="list-group-item  mb-3">
+                                    <span class="font-weight-bold text-secondary">별점 : </span>
+                                    <span class="text-dark" th:text="${hotel.score}">별점</span>
+                                </li>
+                            </ul>
+                            <button type="button" class="btn btn-primary" onclick="location.href='/roomreserve/roomReserveRegister'">예약하기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </table>
 
     <p th:if="${results.size() == 0}">검색 결과가 없습니다.</p>

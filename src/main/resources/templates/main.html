@@ -12,23 +12,12 @@
 <body>
 
 <th:block layout:fragment="content">
-    <div sec:authorize="hasRole('USER')">Has USER ROLE</div>
-    <div sec:authorize="hasRole('MANAGER')">Has MANAGER ROLE</div>
-    <div sec:authorize="hasRole('ADMIN')">Has ADMIN ROLE</div>
-
-    <div sec:authorize="isAuthenticated()">
-        Only Authenticated user can see this Text
-    </div>
-
-    Authenticated username:
-    <div sec:authentication="name"></div>
-    Authenticated user roles:
 
     <th:block>
         <div class="row">
             <div class="col">
                 <div id="carouselExample" class="carousel slide">
-                    <div class="carousel-inner">
+                    <div class="carousel-inner mt-3">
                         <div class="carousel-item active">
                             이미지1
                         </div>
@@ -58,22 +47,28 @@
         </div>
     </th:block>
 
-    <div class="container">
+    <div class="container mt-5">
         <div th:each="hotel : ${list}" class="mb-4">
-            <div class="card">
+            <div class="card shadow-lg border-0">
                 <div class="card-body">
-                    <h5 class="card-title">
-                        <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}">호텔 이름</a>
+                    <h5 class="card-title text-primary font-weight-bold">
+                        <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none">호텔 이름</a>
                     </h5>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
-                            <strong>호텔 주소 : </strong> <span th:text="${hotel.address}">호텔 주소</span>
+                            (호텔 대표 이미지)
                         </li>
                         <li class="list-group-item">
-                            <strong>연락처 : </strong> <span th:text="${hotel.tel}">연락처</span>
+                            <span class="font-weight-bold text-secondary">주소 : </span>
+                            <span class="text-dark" th:text="${hotel.address}">주소</span>
                         </li>
                         <li class="list-group-item">
-                            <strong>별점 : </strong> <span th:text="${hotel.score}">별점</span>
+                            <span class="font-weight-bold text-secondary">연락처 : </span>
+                            <span class="text-dark" th:text="${hotel.tel}">연락처</span>
+                        </li>
+                        <li class="list-group-item mb-3">
+                            <span class="font-weight-bold text-secondary">별점 : </span>
+                            <span class="text-dark" th:text="${hotel.score}">별점</span>
                         </li>
                     </ul>
                     <button type="button" class="btn btn-primary" onclick="location.href='/roomreserve/roomReserveRegister'">예약하기</button>

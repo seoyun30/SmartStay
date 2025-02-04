@@ -86,18 +86,28 @@ public class RoomController {
     }
 
     @GetMapping("/roomList")
-    public String roomList(PageRequestDTO pageRequestDTO, Model model, Principal principal){
+    public String roomList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
+                           @RequestParam(value = "query", required = false) String query) {
 
         HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
         if (hotelDTO == null) {
             return "redirect:/adMain";
         }
 
-        PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotelDTO, pageRequestDTO);
-        model.addAttribute("hotel_name", hotelDTO.getHotel_name());
-        log.info("PageResponseDTO: " + pageResponseDTO);
-        model.addAttribute("pageResponseDTO", pageResponseDTO);
+        if (query == null || query.trim().isEmpty()) {
+            PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotelDTO, pageRequestDTO);
+            model.addAttribute("hotel_name", hotelDTO.getHotel_name());
+            log.info("PageResponseDTO: " + pageResponseDTO);
+            model.addAttribute("pageResponseDTO", pageResponseDTO);
+            model.addAttribute("isSearch", false);
 
+        }else {
+            List<RoomDTO> results = roomService.searchList(query);
+            model.addAttribute("results", results);
+            model.addAttribute("query", query);
+            model.addAttribute("isSearch", true);
+            model.addAttribute("pageResponseDTO", null);
+        }
         return "room/roomList";
     }
 
@@ -146,30 +156,37 @@ public class RoomController {
     }
 
     @PostMapping("/roomModify")
-    public String roomModifyPost(@Valid RoomDTO roomDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes,
+    public String roomModifyPost(RoomDTO roomDTO, RedirectAttributes redirectAttributes,
                                  @RequestParam(value = "multipartFiles", required = false) List<MultipartFile> multipartFiles,
+                                 @RequestParam(value = "delnumList", required = false) List<Long> delnumList,
                                  Principal principal) throws Exception {
 
         log.info("룸 수정 요청: {}", roomDTO);
-
-        if (bindingResult.hasErrors()){
-            log.info("유효성검사 오류");
-            log.info(bindingResult.getAllErrors());
-            redirectAttributes.addFlashAttribute("result", "룸 정보를 다시 확인해주세요." );
-            return "redirect:/room/roomModify?room_num=" + roomDTO.getRoom_num();
-        }
 
         HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
         if (hotelDTO == null) {
             return "redirect:/adMain";
         }
-        roomService.roomModify(roomDTO, multipartFiles, hotelDTO);
 
-        redirectAttributes.addFlashAttribute("msg", "룸 정보가 수정되었습니다. 룸 번호 : " + roomDTO.getRoom_num());
+        if (multipartFiles != null && multipartFiles.stream().allMatch(MultipartFile::isEmpty)) {
+            multipartFiles = null;
+        }
+        if (delnumList != null && delnumList.isEmpty()) {
+            delnumList = null;
+        }
+
+        try {
+            roomService.roomModify(roomDTO, multipartFiles, hotelDTO, delnumList);
+            redirectAttributes.addFlashAttribute("msg", "룸 정보가 수정되었습니다. 룸 번호: " + roomDTO.getRoom_num());
+        } catch (Exception e) {
+            log.error("룸 수정 실패: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "룸 수정 중 오류가 발생했습니다.");
+            return "redirect:/room/roomModify?room_num=" + roomDTO.getRoom_num();
+        }
 
         return "redirect:/room/roomList";
-
     }
+
 
     @PostMapping("/roomDelete")
     public String roomDelete(@RequestParam("id") Long room_num, RedirectAttributes redirectAttributes) {
