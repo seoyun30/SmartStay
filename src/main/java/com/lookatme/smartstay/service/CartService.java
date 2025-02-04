@@ -1,6 +1,8 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.dto.CartOrderDTO;
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.RoomDTO;
 import com.lookatme.smartstay.dto.RoomItemDTO;
 import com.lookatme.smartstay.entity.Cart;
 import com.lookatme.smartstay.entity.Member;
@@ -42,7 +44,7 @@ public class CartService {
         Member member = memberRepository.findByEmail(email);
         log.info("장바구니 서비스 member : " + member);
 
-        Room room = roomRepository.findById(roomItemDTO.getRoom_num())
+        Room room = roomRepository.findById(roomItemDTO.getRoomDTO().getRoom_num())
                 .orElseThrow(EntityNotFoundException::new);
         log.info("장바구니 서비스 room : " + room);
 
@@ -52,24 +54,28 @@ public class CartService {
             cart = Cart.createCart(member);
             cartRepository.save(cart);
         }
+        log.info("장바구니 서비스 cart : " + cart);
 
-        RoomItem savedRoomItem =
-                roomItemRepository.findByCart_Cart_numAndRoom_num(cart.getCart_num(), room.getRoom_num());
+//        List<RoomItem> savedRoomItems =
+//                roomItemRepository.findByCart_Cart_numAndRoom_num(cart.getCart_num(), room.getRoom_num());
+//
+//        RoomItem savedRoomItem = savedRoomItems.get(0);
 
-        //장바구니가 이미 있다면
-        if (savedRoomItem != null) {
-            return savedRoomItem.getRoomitem_num();
-        } else {
-            RoomItem roomItem =
-                    RoomItem.createRoomItem(cart, room, roomItemDTO.getIn_date(),
-                            roomItemDTO.getOut_date(), roomItemDTO.getReserve_request(), roomItemDTO.getCount()
-                            );
+        //장바구니에 이미 있다면
+//        if (savedRoomItem != null) {
+//            return savedRoomItem.getRoomitem_num(); // 이미 있으면 기존 roomItem 반환
+//        } else {
+//
+//        }
 
-            roomItemRepository.save(roomItem);
+        RoomItem roomItem =
+                RoomItem.createRoomItem(cart, room, roomItemDTO.getIn_date(),
+                        roomItemDTO.getOut_date(), roomItemDTO.getReserve_request(), roomItemDTO.getCount()
+                );
 
-            return roomItem.getRoomitem_num();
-        }
+        roomItemRepository.save(roomItem);
 
+        return roomItem.getRoomitem_num();
     }
 
     //룸예약 장바구니 조회
@@ -80,14 +86,23 @@ public class CartService {
 
         Cart cart = cartRepository.findByMemberEmail(email);
 
+        log.info(cart);
+
         if (cart == null) {
             return roomItemDTOList;
         }
 
         List<RoomItem> roomItemList = roomItemRepository.findByCart_Cart_num(cart.getCart_num());
+
+        roomItemList.forEach(roomItem -> {log.info("서비스 roomItem : " + roomItem);});
+
         roomItemDTOList = roomItemList.stream()
-                .map(roomItem -> modelMapper.map(roomItem, RoomItemDTO.class))
+                .map(roomItem -> modelMapper.map(roomItem, RoomItemDTO.class)
+                        .setRoomDTO(modelMapper.map(roomItem.getRoom(), RoomDTO.class)
+                                .setHotelDTO(modelMapper.map(roomItem.getRoom().getHotel(), HotelDTO.class))))
                 .collect(Collectors.toList());
+
+        roomItemDTOList.forEach(roomItemDTO -> {log.info("서비스 roomItemDTO : " + roomItemDTO);});
 
         return roomItemDTOList;
     }

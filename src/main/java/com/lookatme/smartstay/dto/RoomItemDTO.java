@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.dto;
 
+import com.lookatme.smartstay.entity.Room;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -22,13 +23,14 @@ public class RoomItemDTO {
     @NotNull
     private String out_date; //체크아웃 날짜
 
+    private Long day; //n박
+
     @Min(value = 1, message = "최소 예약 인원수는 1명입니다.")
     private Long count; //예약 인원수
 
     private String reserve_request; //요청 사항
 
-    @NotNull
-    private Long room_num; //룸 번호
+    private RoomDTO roomDTO;
 
     private LocalDateTime reg_date;
 
@@ -38,4 +40,8 @@ public class RoomItemDTO {
 
     private String modified_by;
 
+    public RoomItemDTO setRoomDTO(RoomDTO roomDTO) {
+        this.roomDTO = roomDTO;
+        return this;
+    }
 }

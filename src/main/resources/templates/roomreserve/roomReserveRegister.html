@@ -5,7 +5,7 @@
       layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>룸예약</title>
 </head>
 <body>
 
@@ -15,45 +15,45 @@
 
         <div class="card w-75 mt-5 mx-auto">
             <div class="card-title">
-                <h2 class="mt-3 text-center fw-bold">예약</h2>
+                <h2 class="mt-3 text-center fw-bold">룸예약</h2>
             </div>
             <div class="card-body">
                 <h3 class="card-title fw-bold" th:text="${roomDTO.hotelDTO.hotel_name}">호텔 매장 이름</h3>
                 <p class="card-text fs-4 fw-bold" th:text="${roomDTO.room_name}">룸 이름 / 룸 타입</p>
-                <input type="text" th:value="${roomDTO.room_num}" name="room_num">
+                추후 숨길것 <input type="text" class="room_num" th:value="${roomDTO.room_num}" name="room_num">
 
                 <div class="row mb-3">
                     <div class="col-4">
                         <span class="fs-6 text-secondary">체크인</span> <br>
-                        <input type="datetime-local" name="in_date">
+                        <input class="in_date" type="datetime-local" name="in_date">
                     </div>
                     <div class="col-4">
                         <span class="fs-6 text-secondary">체크아웃</span> <br>
-                        <input type="datetime-local" name="out_date">
+                        <input class="out_date" type="datetime-local" name="out_date">
                     </div>
                 </div>
 
                 <span class="fs-6">최대 [[${roomDTO.room_bed}]]명 예약 가능</span>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">예약 인원</span>
-                    <input type="number" class="form-control" name="count" min="1" th:max="${roomDTO.room_bed}"
+                    <input type="number" class="form-control count" name="count" min="1" th:max="${roomDTO.room_bed}"
                            placeholder="예약 인원 수를 입력하세요.">
                 </div>
 
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">요청사항</label>
-                    <textarea class="form-control" name="reserve_request" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    <textarea class="form-control reserve_request" name="reserve_request" id="exampleFormControlTextarea1" rows="3"></textarea>
                 </div>
 
                 <div class="text-end mb-3">
-                    <span>숙박/1박 </span>
-                    <span class="fs-5 fw-bold" th:text="${roomDTO.room_price}">10000</span>
+                    <span>숙박/1박당 </span> <input type="hidden" class="day" name="day">
+                    <span class="fs-5 fw-bold price" th:text="${roomDTO.room_price}">10000</span>
                     <span>원</span>
-                    <h3 class="fw-bold">총 금액 <span class="text-danger" th:text="${roomDTO.room_price}">10000</span>원</h3>
+                    <h3 class="fw-bold">총 금액 <span class="text-danger totalPrice" th:text="${roomDTO.room_price}">10000</span>원</h3>
                 </div>
 
                 <div class="text-center">
-                    <button class="btn btn-outline-dark btn-lg" type="button"><i class="bi bi-cart"></i></button>
+                    <button class="btn btn-outline-dark btn-lg cartBtn" type="button"><i class="bi bi-cart"></i></button>
                     <button class="btn btn-primary btn-lg" type="submit">예약하기</button>
                 </div>
 
@@ -64,6 +64,145 @@
 
 
 </th:block>
+<script th:inline="javascript" layout:fragment="script">
+    $(document).ready(function () {
 
+        let price = [[${roomDTO.room_price}]];
+
+        //현재 이전 날짜 설정 불가 함수
+        function setMinDateTime() {
+            let today = new Date();
+            let year = today.getFullYear();
+            let month = String(today.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1 필요)
+            let day = String(today.getDate()).padStart(2, '0'); // 일
+            let hours = String(today.getHours()).padStart(2, '0'); // 현재 시간
+            let minutes = String(today.getMinutes()).padStart(2, '0'); // 현재 분
+
+            let minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+            $(".in_date").attr("min", minDateTime);
+        }
+        // 페이지 로드 시 실행
+        setMinDateTime();
+
+        // 체크인 날짜 변경 시, 과거 시간 선택 제한
+        $(".in_date").on("change", function () {
+            let selectedDate = new Date($(this).val());
+            let today = new Date();
+
+            // 사용자가 오늘 날짜를 선택한 경우, 현재 시간 이전을 선택 못 하게 변경
+            if (selectedDate.toDateString() === today.toDateString()) {
+                let minTime = today.getHours().toString().padStart(2, '0') + ":" + today.getMinutes().toString().padStart(2, '0');
+                let selectedTime = selectedDate.getHours().toString().padStart(2, '0') + ":" + selectedDate.getMinutes().toString().padStart(2, '0');
+
+                if (selectedTime < minTime) {
+                    alert("현재 시간 이전은 선택할 수 없습니다.");
+                    $(this).val(""); // 잘못된 값 초기화
+                }
+            }
+        });
+
+        // 날짜 변경 시 총 가격 업데이트
+        $(".in_date, .out_date").on("change", function () {
+            totalpriceChange();
+        });
+
+        //총 가격 계산 함수
+        function totalpriceChange(){
+
+            let in_date = $(".in_date").val()
+            let out_date = $(".out_date").val()
+
+            // 날짜가 모두 입력되지 않으면 계산하지 않음
+            if (!in_date || !out_date) {
+                $(".totalPrice").text(price); // 기본 1박 요금 표시
+                return;
+            }
+
+            // 날짜 차이 계산
+            let checkInDate = new Date(in_date);
+            let checkOutDate = new Date(out_date);
+            let dayDifference = (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24);
+
+            // 체크아웃 날짜가 체크인 날짜보다 같거나 이전이면 계산하지 않음
+            if (dayDifference <= 0) {
+                alert("체크아웃 날짜는 체크인 날짜보다 이후여야 합니다.");
+                $(".out_date").val(""); // 잘못된 체크아웃 날짜 초기화
+                $(".totalPrice").text(price); // 기본 가격으로 되돌리기
+                return;
+            }
+
+            // 총 가격 계산
+            let totalPrice = price * dayDifference;
+            let roundedPrice = Math.ceil(totalPrice); // 소수점 올림
+
+            $(".day").val(dayDifference)
+            $(".totalPrice").text(roundedPrice)
+        }
+
+        //장바구니 추가 버튼
+        $(".cartBtn").on("click", function () {
+            let room_num = $(".room_num").val()
+            let in_date = $(".in_date").val()
+            let out_date = $(".out_date").val()
+            let count = $(".count").val()
+            let reserve_request = $(".reserve_request").val()
+
+            //유효성 검사
+            if (!room_num) {
+                alert("잘못된 방 정보입니다.");
+                return;
+            }
+            if (!in_date) {
+                alert("체크인 날짜를 선택해주세요.");
+                return;
+            }
+            if (!out_date) {
+                alert("체크아웃 날짜를 선택해주세요.");
+                return;
+            }
+            if (!count || count < 1) {
+                alert("예약 인원 수를 입력해주세요.");
+                return;
+            }
+
+
+            addCart(room_num, in_date, out_date, count, reserve_request);
+        })
+
+        //장바구니 추가 실행
+        function addCart(room_num, in_date, out_date, count, reserve_request) {
+            let roomItem = {
+                room_num : room_num,
+                in_date : in_date,
+                out_date : out_date,
+                count : count,
+                reserve_request : reserve_request
+            }
+
+            console.log(roomItem)
+
+            $.ajax({
+                url : "/cart/cartRoomReserveRegister",
+                type : "post",
+                data : roomItem,
+                success : function (result) {
+                    alert("장바구니에 추가하였습니다.")
+                    console.log(result)
+                    location.href = "/mainHotel"
+                },
+                error : function (result, status, error) {
+                    console.log(result)
+                    if (result.status == '401') {
+                        alert("로그인 후 이용가능 서비스입니다.")
+                        location.href = "/member/login";
+                    } else {
+                        alert(result.responseText)
+                    }
+                }
+            })
+        }
+
+    })
+</script>
 </body>
 </html>

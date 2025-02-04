@@ -51,7 +51,7 @@ public class RoomReserveService {
 
     //주문 진행
     public Long order (RoomItemDTO roomItemDTO, String email) {
-        Room room = roomRepository.findById(roomItemDTO.getRoom_num())
+        Room room = roomRepository.findById(roomItemDTO.getRoomDTO().getRoom_num())
                 .orElseThrow(EntityNotFoundException::new);
 
         Member member = memberRepository.findByEmail(email);
