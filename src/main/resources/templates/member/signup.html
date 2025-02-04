@@ -54,7 +54,7 @@
                                 <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                             </div>
 
-
+                            <th:block th:replace="~{fragments/terms :: terms}"></th:block>
 
 
                             <div class="col text-center">
@@ -71,10 +71,14 @@
     </div>
 
 
+
 </th:block>
 
 
 <th:block layout:fragment="script">
+
+
+
 
 
 
