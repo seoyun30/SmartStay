@@ -54,7 +54,7 @@ public class CartService {
         }
 
         RoomItem savedRoomItem =
-                roomItemRepository.findByCartIdAndRoom_num(cart.getCart_num(), room.getRoom_num());
+                roomItemRepository.findByCart_Cart_numAndRoom_num(cart.getCart_num(), room.getRoom_num());
 
         //장바구니가 이미 있다면
         if (savedRoomItem != null) {
@@ -84,7 +84,7 @@ public class CartService {
             return roomItemDTOList;
         }
 
-        List<RoomItem> roomItemList = roomItemRepository.findByCartId(cart.getCart_num());
+        List<RoomItem> roomItemList = roomItemRepository.findByCart_Cart_num(cart.getCart_num());
         roomItemDTOList = roomItemList.stream()
                 .map(roomItem -> modelMapper.map(roomItem, RoomItemDTO.class))
                 .collect(Collectors.toList());
