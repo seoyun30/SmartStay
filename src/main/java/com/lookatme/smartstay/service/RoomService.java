@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,6 +98,10 @@ public class RoomService {
                 })
                 .collect(Collectors.toList());
 
+        if (roomDTOList == null) {
+            roomDTOList = Collections.emptyList();
+        }
+
         PageResponseDTO<RoomDTO> roomDTOPageResponseDTO =
                 PageResponseDTO.<RoomDTO>withAll().pageRequestDTO(pageRequestDTO)
                         .dtoList(roomDTOList).total((int)result.getTotalElements()).build();
@@ -175,6 +180,10 @@ public class RoomService {
     public List<RoomDTO> searchList(String query) {
 
         List<Room> rooms = roomRepository.findByRoom_nameContaining(query);
+
+        if (rooms == null || rooms.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         List<RoomDTO> roomDTOS = rooms.stream().
                 map(room -> modelMapper.map(room, RoomDTO.class)).

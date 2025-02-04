@@ -41,4 +41,5 @@ public class HotelDTO {
 
     private String modified_by;
 
+    public Long lowestPrice;
 }

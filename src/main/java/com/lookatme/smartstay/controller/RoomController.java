@@ -4,7 +4,6 @@ import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.dto.RoomDTO;
-import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.RoomRepository;
@@ -26,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -103,7 +103,7 @@ public class RoomController {
 
         }else {
             List<RoomDTO> results = roomService.searchList(query);
-            model.addAttribute("results", results);
+            model.addAttribute("results", results != null ? results : Collections.emptyList());
             model.addAttribute("query", query);
             model.addAttribute("isSearch", true);
             model.addAttribute("pageResponseDTO", null);
