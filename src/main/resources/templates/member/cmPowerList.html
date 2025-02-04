@@ -63,11 +63,9 @@
                                 <span th:text="${memberDTO.power}"></span>
                             </th:block>
                             <th:block th:if="${memberDTO.power.name() == 'NO'}">
-                                <button  class="btn btn-primary yesbtn" th:value="${memberDTO.email}"
+                                <button  class="btn btn-primary powerbtn" th:value="${memberDTO.email}"
                                          data-email="${memberDTO.email}"> 승인 </button>
                             </th:block>
-
-
 
                         </td>
                     </tr>
@@ -76,7 +74,7 @@
             </table>
         </div>
     </div>
-    <form action="aa" method="post" class="formyes">
+    <form action="aa" method="post" class="powerform">
 
     </form>
 
@@ -86,17 +84,17 @@
 <script th:inline="javascript" layout:fragment="script">
     
     $(document).ready(function () {
-        let yesbtn = $(".yesbtn")
-        let formyes = document.querySelector(".formyes")
+        let powerbtn = $(".powerbtn")
+        let powerform = document.querySelector(".powerform")
 
-        yesbtn.on("click", function () {
+        powerbtn.on("click", function () {
             let email = $(this).val()
             console.log($(this).val())
-            formyes.action = "/member/powerMember";
-            formyes.method = "post";
+            powerform.action = "/member/powerMember";
+            powerform.method = "post";
             let str = `<input type="hidden" name="email" value="${email}">`
-            formyes.innerHTML += str;
-            formyes.submit();
+            powerform.innerHTML += str;
+            powerform.submit();
 
         })
         

@@ -64,12 +64,12 @@ public class MemberService implements UserDetailsService {
             log.info("슈퍼어드민");
             role = Role.SUPERADMIN.name();
             authorities.add(new SimpleGrantedAuthority(Role.SUPERADMIN.name()));
-        }else if("CHIEF".equals(member.getRole().name()) && member.getPower() == Power.YES){
+        }else if("CHIEF".equals(member.getRole().name())){ // && member.getPower() == Power.YES
                                                     //나중에 승인기능 개발후 적용예정
             log.info("치프");
             role = Role.CHIEF.name();
             authorities.add(new SimpleGrantedAuthority(Role.CHIEF.name()));
-        }else if("MANAGER".equals(member.getRole().name()) && member.getPower() == Power.YES){
+        }else if("MANAGER".equals(member.getRole().name()) ){ //&& member.getPower() == Power.YES
             log.info("매니져");
             role = Role.MANAGER.name();
             authorities.add(new SimpleGrantedAuthority(Role.MANAGER.name()));
@@ -118,6 +118,7 @@ public class MemberService implements UserDetailsService {
 
         Member member =
                 MemberDTO.dtoEntity(memberDTO);
+
         member.setRole(Role.USER);
 
         log.info(member);
@@ -221,14 +222,15 @@ public class MemberService implements UserDetailsService {
 
 
     public List<MemberDTO> adPowerList(){
-        List<Member> roleList = memberRepository.selectBySuperAdmin();
+        List<Member> memberList = memberRepository.selectBySuperAdmin();
 
-        if(roleList == null) {
+        if(memberList == null) {
             return null;
         }else {
-            List<MemberDTO> memberDTOList = roleList.stream()
-                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class).setBrandDTO( modelMapper.map(memberA.getBrand() , BrandDTO.class) ).setHotelDTO(modelMapper.map(memberA.getHotel(), HotelDTO.class)))
-                    .collect(Collectors.toList());
+            List<MemberDTO> memberDTOList = memberList.stream()
+                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class)
+                            .setBrandDTO( modelMapper.map(memberA.getBrand() , BrandDTO.class)))
+                            .collect(Collectors.toList());
 
             log.info("dto변환");
             memberDTOList.forEach(dto -> log.info(dto));
@@ -237,66 +239,45 @@ public class MemberService implements UserDetailsService {
         }
     }
 
+
     public List<MemberDTO> cmPowerList(String email) {
 
         Member member = memberRepository.findByEmail(email);
         log.info(member);
-        List<Member> roleList = null;
+        List<Member> memberList = null;
         if(member != null && member.getBrand() != null) {
-            roleList = memberRepository.selectByChief(member.getBrand().getBrand_num());
+            memberList = memberRepository.selectByChief(member.getBrand().getBrand_num());
 
             log.info("권한리스트");
-            roleList.forEach(role -> log.info(role));
+            memberList.forEach(role -> log.info(role));
         }
 
-        if(roleList == null) {
+        if(memberList == null) {
             return null;
         }else {
-            List<MemberDTO> memberDTOList = roleList.stream()
-                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class).setBrandDTO( modelMapper.map(memberA.getBrand() , BrandDTO.class) ).setHotelDTO(modelMapper.map(memberA.getHotel(), HotelDTO.class)))
-                    .collect(Collectors.toList());
+            List<MemberDTO> memberDTOList = memberList.stream()
+                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class)
+                            .setBrandDTO( modelMapper.map(memberA.getBrand() , BrandDTO.class) )
+                            .setHotelDTO(modelMapper.map(memberA.getHotel(), HotelDTO.class)))
+                            .collect(Collectors.toList());
 
             log.info("dto변환");
             memberDTOList.forEach(dto -> log.info(dto));
 
             return memberDTOList;
         }
+    }
 
-       /*
+
+    public void adPowerMember(String email) {
+
         Member member = memberRepository.findByEmail(email);
-        List<Member> roleList = null;
-        if(member != null && member.getBrand() != null) {
-            roleList = memberRepository.selectByChief(member.getBrand().getBrand_num());
-
-            log.info("권한리스트");
-            roleList.forEach(role -> log.info(role));
+        log.info("파워승인파워승인" +email);
+        log.info(member);
+        if (member != null) {
+            member.setPower(Power.YES);
+            memberRepository.save(member);
         }
-
-
-        List<MemberDTO> memberDTOList = roleList.stream()
-                .map(role -> {
-                    MemberDTO memberDTO = modelMapper.map(role, MemberDTO.class);
-
-                    // Brand 정보 설정
-                    if (role.getBrand() != null) {
-                        Brand brand = role.getBrand();
-                        BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
-                        memberDTO.setBrandDTO(brandDTO);
-                    }
-
-                    // Hotel 정보 설정
-                    if (role.getHotel() != null) {
-                        Hotel hotel = role.getHotel();
-                        HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
-                        log.info("hotel name:{}", hotelDTO.getHotel_name());
-                        memberDTO.setHotelDTO(hotelDTO);
-                    }
-
-                    return memberDTO;
-                })
-                .collect(Collectors.toList());
-
-        return memberDTOList;*/
     }
 
 
@@ -304,17 +285,14 @@ public class MemberService implements UserDetailsService {
 
         Member member = memberRepository.findByEmail(email);
         log.info("파워승인파워승인" +email);
-        log.info("파워승인파워승인" +email);
-        log.info("파워승인파워승인" +email);
-        log.info("파워승인파워승인");
-        log.info("파워승인파워승인");
-        log.info("파워승인파워승인");
-        log.info(member);
         log.info(member);
         if (member != null) {
             member.setPower(Power.YES);
             memberRepository.save(member);
         }
     }
+
+
+
     }
 

@@ -5,13 +5,13 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>관리자 승인 페이지</title>
+    <title>슈퍼관리자 승인 페이지</title>
 
 </head>
 <body>
 
 <th:block layout:fragment="content">
-    <h1 class="text-center">권한 승인 목록</h1>
+    <h1 class="text-center">슈퍼어드민이 승인하는 권한 승인 목록</h1>
 
 
     <div class="row mt-3">
@@ -27,39 +27,62 @@
                 </tr>
                 </thead>
                 <tbody>
-                <th:block th:each="member : ${adPowerList}">
+                <th:block th:each="memberDTO : ${adPowerList}">
                     <tr class="align-middle">
-                        <td th:text="${member.member_num}"></td>
-                        <td th:text="${member.email}"></td>
-                        <td th:text="${member.name}"></td>
-                        <td th:text="${member.tel}"></td>
-                        <td th:text="${member.role}"></td>
+                        <td th:text="${memberDTO.member_num}"></td>
+                        <td th:text="${memberDTO.email}"></td>
+                        <td th:text="${memberDTO.name}"></td>
+                        <td th:text="${memberDTO.tel}"></td>
 
-
-                        <td class="col text-end">
-                            <!-- 관리자가 이메일로 승인 버튼을 클릭할 수 있도록 하는 폼 -->
-                            <form th:action="@{/powerMember}" method="post">
-                                <input type="hidden" name="email" th:value="${member.email}" />
-                                <button type="submit">승인</button>
-                                <!-- 승인 후 메시지 출력 -->
-                                <div th:if="${message}">
-                                    <p th:text="${message}"></p>
-                                </div>
-
-                            </form>
+                        <th:block th:if="${not #strings.inEmpty(memberDTO.role)}">
+                            <td th:text="${memberDTO.role}"></td>
+                        </th:block>
+                        <th:block th:if="${#strings.isEmpty(memberDTO.role)}">
+                            <td></td>
+                        </th:block>
+                        <td>
+                           <th:block th:if="${memberDTO.power.name() == 'YES'}">
+                               <span th:text="${memberDTO.power}"></span>
+                           </th:block>
+                            <th:block th:if="${memberDTO.power.name() == 'NO'}">
+                                <span th:text="${memberDTO.power}"></span>
+                            </th:block>
+                            <th:block th:if="${memberDTO.power.name() == 'NO'}">
+                                <button class="btn btn-primary powerbtn" th:value="${memberDTO.email}"
+                                data-email="${memberDTO.email}">승인</button>
+                            </th:block>
                         </td>
-
                     </tr>
                 </th:block>
                 </tbody>
             </table>
         </div>
     </div>
+    <form action="aa" method="post" class="powerform">
+
+    </form>
 
 </th:block>
 
 
-<script layout:fragment="script">
+<script th:inline="javascript" layout:fragment="script">
+
+    $(document).ready(function () {
+        let powerbtn = $(".powerbtn")
+        let powerform = document.querySelector(".powerform")
+
+        powerbtn.on("click", function () {
+            let email = $(this).val()
+            console.log($(this).val())
+            powerform.action = "/member/powerMember";
+            powerform.method = "post";
+            let str = `<input type="hidden" name="email" value="${email}">`
+            powerform.innerHTML += str;
+            powerform.submit();
+
+        })
+
+    })
 
 
 </script>
