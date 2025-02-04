@@ -64,6 +64,22 @@ public class MemberController {
         model.addAttribute("adPowerList", adPowerList);
 
         return "member/adPowerList";
+
+
+    }
+
+    @PostMapping("/adPowerMember") //권한 승인
+    public String adPowerMember(String email, Model model){
+
+
+        try {
+            memberService.adPowerMember(email);
+            model.addAttribute("message", "승인완료");
+        }catch (Exception e) {
+            model.addAttribute("message", "승인오류");
+        }
+        return "redirect:/member/adPowerList";
+
     }
 
     @GetMapping("/cmPowerList") // 권한승인(치프, 매니져)
@@ -78,6 +94,7 @@ public class MemberController {
         return "member/cmPowerList";
     }
 
+
     @PostMapping("/powerMember") //권한 승인
     public String powerMember(String email, Model model){
 
@@ -89,10 +106,8 @@ public class MemberController {
             model.addAttribute("message", "승인오류");
         }
         return "redirect:/member/cmPowerList";
-        //return "member/managerAcceptList";
+
     }
-
-
 
 
 }

@@ -56,7 +56,18 @@ public class MemberDTO {
     private String modified_by;
 
     public static Member dtoEntity(MemberDTO memberDTO) {
-        return null;
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        Member member = new Member();
+        member.setName(memberDTO.name);
+        member.setEmail(memberDTO.email);
+        member.setTel(memberDTO.tel);
+        member.setPassword(passwordEncoder.encode(memberDTO.password));
+        member.setRole(Role.SUPERADMIN);
+        member.setRole(Role.CHIEF);
+        member.setRole(Role.MANAGER);
+        member.setRole(Role.USER);
+
+        return member;
     }
 
     public MemberDTO setBrandDTO(BrandDTO brandDTO) {
