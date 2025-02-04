@@ -32,7 +32,7 @@ public interface QnaService {
     // 이 DTO들이 어떻게 정의되고 처리될지에 대한 정의가 필요합니다.
 
     //수정
-    public void update(QnaDTO qnaDTO);
+    public void modify(QnaDTO qnaDTO);
     //, MultipartFile[] multipartFiles, Long[] delino==>나중에 이미지 추가시 메소드추가
 
     //삭제

@@ -9,7 +9,47 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-수정페이지
+    <h1 class="text-center">문의사항 수정</h1>
+    <form action="/qna/qnaModify" method="post" th:object="${qnaDTO}">
+
+        <div class="row">
+            <div class="col-8 offset-2">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="qna_num" class="form-label">번호</label>
+                            <input type="text" class="form-control" th:field="*{qna_num}" required id="qna_num" >
+                            <p th:if="${#fields.hasErrors('qna_num')}" th:errors="*{qna_num}" class="fieldError"></p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">제목</label>
+                            <input type="text" class="form-control" th:field="*{title}" required id="title" >
+                            <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="content" class="form-label">내용</label>
+                            <textarea th:field="*{content}" min="0" name="content" class="form-control" id="content" rows="3"></textarea>
+                            <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-dark" style="float:right">수정</button>
+                        <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
+                        <script>
+                            $(".Listbtn").on("click", function () {
+                                location.href = "/qna/qnaList";
+                            })
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </th:block>
 </body>
 </html>
