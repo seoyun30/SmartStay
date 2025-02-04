@@ -29,11 +29,7 @@
             </div>
         </div>
 
-        <div class="ms-2">
-            <button class="btn btn-outline-dark btn-lg" type="button" onclick="location.href='/cart/cartList'" style="border: none">
-                <i class="bi bi-cart"></i>
-            </button>
-        </div>
+
 
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
@@ -60,6 +56,12 @@
                         </li>
                     </ul><!-- End Profile Dropdown Items -->
                 </li><!-- End Profile Nav -->
+
+                <li class="nav-item pe-3">
+                    <button class="btn btn-outline-dark btn-lg" type="button" onclick="location.href='/cart/cartList'" style="border: none">
+                        <i class="bi bi-cart"></i>
+                    </button>
+                </li>
 
                 <li class="nav-item pe-3">
                     <a sec:authorize="isAnonymous()" class="nav-link nav-profile d-flex align-items-center pe-0" href="/member/login">
