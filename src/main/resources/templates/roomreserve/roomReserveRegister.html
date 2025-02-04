@@ -20,29 +20,29 @@
             <div class="card-body">
                 <h3 class="card-title fw-bold" th:text="${roomDTO.hotelDTO.hotel_name}">호텔 매장 이름</h3>
                 <p class="card-text fs-4 fw-bold" th:text="${roomDTO.room_name}">룸 이름 / 룸 타입</p>
-                <input type="text" th:value="${roomDTO.room_num}" name="room_num">
+                <input type="text" class="room_num" th:value="${roomDTO.room_num}" name="room_num">
 
                 <div class="row mb-3">
                     <div class="col-4">
                         <span class="fs-6 text-secondary">체크인</span> <br>
-                        <input type="datetime-local" name="in_date">
+                        <input class="in_date" type="datetime-local" name="in_date">
                     </div>
                     <div class="col-4">
                         <span class="fs-6 text-secondary">체크아웃</span> <br>
-                        <input type="datetime-local" name="out_date">
+                        <input class="out_date" type="datetime-local" name="out_date">
                     </div>
                 </div>
 
                 <span class="fs-6">최대 [[${roomDTO.room_bed}]]명 예약 가능</span>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">예약 인원</span>
-                    <input type="number" class="form-control" name="count" min="1" th:max="${roomDTO.room_bed}"
+                    <input type="number" class="form-control count" name="count" min="1" th:max="${roomDTO.room_bed}"
                            placeholder="예약 인원 수를 입력하세요.">
                 </div>
 
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">요청사항</label>
-                    <textarea class="form-control" name="reserve_request" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    <textarea class="form-control reserve_request" name="reserve_request" id="exampleFormControlTextarea1" rows="3"></textarea>
                 </div>
 
                 <div class="text-end mb-3">
@@ -53,7 +53,7 @@
                 </div>
 
                 <div class="text-center">
-                    <button class="btn btn-outline-dark btn-lg" type="button"><i class="bi bi-cart"></i></button>
+                    <button class="btn btn-outline-dark btn-lg cartBtn" type="button"><i class="bi bi-cart"></i></button>
                     <button class="btn btn-primary btn-lg" type="submit">예약하기</button>
                 </div>
 
@@ -64,6 +64,71 @@
 
 
 </th:block>
+<script th:inline="javascript" layout:fragment="script">
+    $(document).ready(function () {
 
+        $(".cartBtn").on("click", function () {
+            let room_num = $(".room_num").val()
+            let in_date = $(".in_date").val()
+            let out_date = $(".out_date").val()
+            let count = $(".count").val()
+            let reserve_request = $(".reserve_request").val()
+
+            //유효성 검사
+            if (!room_num) {
+                alert("잘못된 방 정보입니다.");
+                return;
+            }
+            if (!in_date) {
+                alert("체크인 날짜를 선택해주세요.");
+                return;
+            }
+            if (!out_date) {
+                alert("체크아웃 날짜를 선택해주세요.");
+                return;
+            }
+            if (!count || count < 1) {
+                alert("예약 인원 수를 입력해주세요.");
+                return;
+            }
+
+
+            addCart(room_num, in_date, out_date, count, reserve_request);
+        })
+
+        function addCart(room_num, in_date, out_date, count, reserve_request) {
+            let roomItem = {
+                room_num : room_num,
+                in_date : in_date,
+                out_date : out_date,
+                count : count,
+                reserve_request : reserve_request
+            }
+
+            console.log(roomItem)
+
+            $.ajax({
+                url : "/cart/cartRoomReserveRegister",
+                type : "post",
+                data : roomItem,
+                success : function (result) {
+                    alert("장바구니에 추가하였습니다.")
+                    console.log(result)
+                    location.href = "/mainHotel"
+                },
+                error : function (result, status, error) {
+                    console.log(result)
+                    if (result.status == '401') {
+                        alert("로그인 후 이용가능 서비스입니다.")
+                        location.href = "/member/login";
+                    } else {
+                        alert(result.responseText)
+                    }
+                }
+            })
+        }
+
+    })
+</script>
 </body>
 </html>
