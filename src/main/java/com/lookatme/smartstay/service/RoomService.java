@@ -117,6 +117,10 @@ public class RoomService {
             throw new SecurityException("권한이 없습니다.");
         }
 
+        Hotel hotel1 = hotelRepository.findById(hotel.getHotel_num())
+                .orElseThrow(() -> new EntityNotFoundException("해당 호텔 정보 찾을 수 없음."));
+        room.setHotel(hotel1);
+
         room.setRoom_name(roomDTO.getRoom_name());
         room.setRoom_info(roomDTO.getRoom_info());
         room.setRoom_type(roomDTO.getRoom_type());
@@ -126,7 +130,7 @@ public class RoomService {
 
         roomRepository.save(room);
 
-        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+        if (multipartFiles != null && multipartFiles.stream().anyMatch(file -> !file.isEmpty())) {
             log.info("이미지 업데이트 실행");
             imageService.updateImage(multipartFiles, null, "room", room.getRoom_num());
         } else {
