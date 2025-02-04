@@ -46,7 +46,7 @@
                 </div>
 
                 <div class="text-end mb-3">
-                    <span>숙박/1박당 </span>
+                    <span>숙박/1박당 </span> <input type="hidden" class="day" name="day">
                     <span class="fs-5 fw-bold price" th:text="${roomDTO.room_price}">10000</span>
                     <span>원</span>
                     <h3 class="fw-bold">총 금액 <span class="text-danger totalPrice" th:text="${roomDTO.room_price}">10000</span>원</h3>
@@ -135,6 +135,7 @@
             let totalPrice = price * dayDifference;
             let roundedPrice = Math.ceil(totalPrice); // 소수점 올림
 
+            $(".day").val(dayDifference)
             $(".totalPrice").text(roundedPrice)
         }
 

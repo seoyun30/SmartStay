@@ -55,7 +55,9 @@ public class RoomDTO {
     public HotelDTO getHotelDTO() {
         return hotelDTO;
     }
-    public void setHotelDTO(HotelDTO hotelDTO) {
+
+    public RoomDTO setHotelDTO(HotelDTO hotelDTO) {
         this.hotelDTO = hotelDTO;
+        return this;
     }
 }

@@ -66,6 +66,9 @@ public class CartController {
 
         //룸 예약 장바구니 목록
         List<RoomItemDTO> roomItemDTOList = cartService.getCartRoomItemList(principal.getName());
+
+        roomItemDTOList.forEach(roomItemDTO -> log.info("roomItemDTO: " + roomItemDTO));
+
         model.addAttribute("roomItemDTOList", roomItemDTOList);
 
         //차후 서비스 예약 장바구니 목록 추가
