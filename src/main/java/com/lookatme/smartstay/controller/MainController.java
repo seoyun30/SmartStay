@@ -42,11 +42,14 @@ public class MainController {
         log.info("user:{}", memberDTO);
 
         if ("CHIEF".equals(memberDTO.getRole().name())) {
-            BrandDTO brandDTO = brandService.read(memberDTO.getBrandDTO().getBrand_num());
-            log.info("Brand details: {}", brandService.read(memberDTO.getBrandDTO().getBrand_num()));
-            model.addAttribute("brandDTO", brandDTO);
-
-
+            if (memberDTO.getBrandDTO() != null && memberDTO.getBrandDTO().getBrand_num() != null){
+                BrandDTO brandDTO = brandService.read(memberDTO.getBrandDTO().getBrand_num());
+                log.info("Brand details: {}", brandService.read(memberDTO.getBrandDTO().getBrand_num()));
+                model.addAttribute("brandDTO", brandDTO);
+            }else {
+                log.info("SUPER CHIEF:{}", memberDTO.getEmail());
+                model.addAttribute("brandDTO", null);
+            }
         } else if ("MANAGER".equals(memberDTO.getRole().name())) {
             HotelDTO hotelDTO = hotelService.myHotel(memberDTO.getEmail());
             log.info("Hotel details: {}", hotelService.myHotel(memberDTO.getEmail()));
