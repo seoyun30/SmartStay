@@ -30,15 +30,7 @@ public class LoginController {
     private final BrandService brandService;
     private final HotelService hotelService;
 
-    @GetMapping("/adTerms") // 약관페이지(총판,매니져)
-    public String adTerms(){
-        return "member/adTerms";
-    }
 
-    @GetMapping("/terms") //약관페이지(유저)
-    public String terms(){
-        return "member/adTerms";
-    }
 
     @GetMapping("/adSignup") //회원가입페이지(saveSuperAdminMember-슈퍼어드민이 승인해주는 첫번째 치프)
     public String adSignupGet(Model model){

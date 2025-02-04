@@ -221,15 +221,22 @@ public class MemberService implements UserDetailsService {
 
 
 
-    public List<MemberDTO> adPowerList(){
+    public List<MemberDTO> adPowerList(String email){
         List<Member> memberList = memberRepository.selectBySuperAdmin();
+
+        if (email != null && !email.isEmpty()) {
+            Member member = memberRepository.findByEmail(email);
+            if (member != null) {
+                member.setPower(member.getPower() == Power.YES ? Power.NO : Power.YES);
+                memberRepository.save(member);
+            }
+        }
 
         if(memberList == null) {
             return null;
         }else {
             List<MemberDTO> memberDTOList = memberList.stream()
-                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class)
-                            .setBrandDTO( modelMapper.map(memberA.getBrand() , BrandDTO.class)))
+                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class))
                             .collect(Collectors.toList());
 
             log.info("dto변환");
@@ -243,6 +250,7 @@ public class MemberService implements UserDetailsService {
     public List<MemberDTO> cmPowerList(String email) {
 
         Member member = memberRepository.findByEmail(email);
+
         log.info(member);
         List<Member> memberList = null;
         if(member != null && member.getBrand() != null) {
@@ -269,7 +277,7 @@ public class MemberService implements UserDetailsService {
     }
 
 
-    public void adPowerMember(String email) {
+   /* public void adPowerMember(String email) {
 
         Member member = memberRepository.findByEmail(email);
         log.info("파워승인파워승인" +email);
@@ -278,19 +286,24 @@ public class MemberService implements UserDetailsService {
             member.setPower(Power.YES);
             memberRepository.save(member);
         }
-    }
+    }*/
 
 
     public void powerMember(String email) {
 
-        Member member = memberRepository.findByEmail(email);
-        log.info("파워승인파워승인" +email);
-        log.info(member);
-        if (member != null) {
-            member.setPower(Power.YES);
-            memberRepository.save(member);
+        log.info("파워승인파워승인" + email);
+        if (email != null && !email.isEmpty()) {
+            Member member = memberRepository.findByEmail(email);
+            if (member != null) {
+                member.setPower(member.getPower() == Power.YES ? Power.NO : Power.YES);
+                memberRepository.save(member);
+                log.info("power 변경: " + email + " -> " + member.getPower());
+            } else {
+                log.info("해당 이메일로 회원을 찾을 수 없음: " + email);
+            }
+            }
+
         }
-    }
 
 
 
