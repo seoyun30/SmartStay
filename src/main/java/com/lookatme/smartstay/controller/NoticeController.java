@@ -1,10 +1,7 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.ImageDTO;
-import com.lookatme.smartstay.dto.MemberDTO;
-import com.lookatme.smartstay.dto.NoticeDTO;
-import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.service.NoticeService;
+import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.service.NoticeServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -23,7 +20,8 @@ import java.util.List;
 @RequestMapping("/notice")
 public class NoticeController {
 
-    private final NoticeService noticeService;
+    private final NoticeServiceImpl noticeService;
+
 
     //목록 페이지
     @GetMapping("/noticeList")
@@ -81,7 +79,7 @@ public class NoticeController {
                                    List<MultipartFile> multipartFileList,
                                    PageRequestDTO pageRequestDTO, ImageDTO imageDTO){
         log.info("수정된 데이터 저장...");
-        noticeService.noticeModify(noticeDTO);
+        noticeService.noticeModify(noticeDTO, multipartFileList);
 
         return "redirect:/notice/noticeList";
     }
