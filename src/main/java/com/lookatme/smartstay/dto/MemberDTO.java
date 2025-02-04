@@ -41,9 +41,9 @@ public class MemberDTO {
 
     private Role role; //회원 권한
 
-    private BrandDTO brand; //브랜드
+    private BrandDTO brandDTO; //브랜드
 
-    private HotelDTO hotel; //호텔
+    private HotelDTO hotelDTO; //호텔
 
     private String corn; // 권한선택값
 
@@ -59,9 +59,13 @@ public class MemberDTO {
         return null;
     }
 
-    public void setBrandDTO(BrandDTO brandDTO) {
+    public MemberDTO setBrandDTO(BrandDTO brandDTO) {
+        this.brandDTO = brandDTO;
+        return this;
     }
 
-    public void setHotelDTO(HotelDTO hotelDTO) {
+    public MemberDTO setHotelDTO(HotelDTO hotelDTO) {
+        this.hotelDTO = hotelDTO;
+        return this;
     }
 }
