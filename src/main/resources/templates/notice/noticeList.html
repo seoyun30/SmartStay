@@ -14,33 +14,27 @@
                 <form th:action="@{/notice/noticeList}" method="get">
                     <!--검색창-->
                     <div class="search-container row border my-2 mx-2">
-                        <div class="col-3 my-2">
-                            <div class="border text-center">조직선택</div>
-                        </div>
-                        <div class="col-2">
+                        <div class="col-2 mt-2">
                             <select class="form-select" name="">
-                                <option value="1">브랜드</option>
-                                <option value="2">호텔</option>
+                                <option value="1">호텔명</option>
+                                <option value="2">작성자</option>
+                                <option value="3">제목</option>
                             </select>
                         </div>
-                        <div class="col-3 my-2">
-                            <div class="border text-center">작성자</div>
-                        </div>
-                        <div class="col-4">
+                        <div class="col-4 mt-2">
                             <input type="text" class="form-control" name="name">
                         </div>
-                        <div class="row">
-
+                        <div class="col-3 mt-3">
+                            <label for="date">
+                                <input type="date"
+                                       id="date"
+                                       max="YYYY-MM-DD"
+                                       min="2000-01-01"
+                                       value="2025-01-01">
+                            </label>
                         </div>
-                        <label for="date">날짜를 선택하세요:
-                        <input type="date"
-                               id="date"
-                               max="YYYY-MM-DD"
-                               min="2000-01-01"
-                               value="2025-01-01">
-                        </label>
                         <!--조회버튼-->
-                        <div class="d-flex justify-content-center">
+                        <div class="d-flex justify-content-center mt-1 mb-1">
                             <button type="button" class="btn btn-dark">
                                 조회
                             </button>
@@ -61,7 +55,7 @@
                             <th style="width:10%; text-align: center">호텔명</th>
                             <th style="width:26%; text-align: center">제목</th>
                             <th style="width:20%; text-align: center">작성자</th>
-                            <th style="width:10%; text-align: center">작성일</th>
+                            <th style="width:10%; text-align: center">등록일</th>
                             <th style="width:9%; text-align: center">조회수</th>
                         </tr>
                         </thead>

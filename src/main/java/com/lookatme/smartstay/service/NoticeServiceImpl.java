@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -48,26 +49,27 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public void register(NoticeDTO noticeDTO, List<MultipartFile> multipartFileList){
 
-        log.info("등록 서비스 들어온값: "+noticeDTO);
-        log.info("등록 서비스 들어온값: "+multipartFileList);
-        //글을 컨트롤러로부터 받아 entity변환헤서 저장
-        Notice notice = modelMapper.map(noticeDTO, Notice.class);
-        log.info("저장전에 noticeDTO를 notice로 변경한" + notice);
+//        log.info("등록 서비스 들어온값: "+noticeDTO);
+//        log.info("등록 서비스 들어온값: "+multipartFileList);
+//        //글을 컨트롤러로부터 받아 entity변환헤서 저장
+//        Notice notice = modelMapper.map(noticeDTO, Notice.class);
+//        log.info("저장전에 noticeDTO를 notice로 변경한" + notice);
+//
+//        notice = noticeRepository.save(notice);
+//        log.info("저장후에 결과를 가지고 있는notice" + notice);
+//        //본문을 저장하고 나서
+//        //사진 등록
+//        if (multipartFileList != null) {
+//            for (MultipartFile file : multipartFileList) {
+//                if ( !multipartFileList.isEmpty()) {
+//                    log.info("사진이 등록되었습니다.");
+//                    log.info("사진이 등록되었습니다.");
+//                    log.info("사진이 등록되었습니다.");
+//                }
+//
+//            }
+//        }
 
-        notice = noticeRepository.save(notice);
-        log.info("저장후에 결과를 가지고 있는notice" + notice);
-        //본문을 저장하고 나서
-        //사진 등록
-        if (multipartFileList != null) {
-            for (MultipartFile file : multipartFileList) {
-                if ( !multipartFileList.isEmpty()) {
-                    log.info("사진이 등록되었습니다.");
-                    log.info("사진이 등록되었습니다.");
-                    log.info("사진이 등록되었습니다.");
-                }
-
-            }
-        }
     }
 
     //공지 사항 상세보기
@@ -98,19 +100,70 @@ public class NoticeServiceImpl implements NoticeService {
         Pageable pageable = pageRequestDTO.getPageable("notice_num");
         log.info(pageRequestDTO);
 
-        if (pageRequestDTO.getType() == null || pageRequestDTO.getKeyword()==null || pageRequestDTO.getKeyword().equals("")){
+        if (pageRequestDTO.getType() == null || pageRequestDTO.getKeyword()==null || pageRequestDTO.getKeyword().equals("")) {
             noticePage = noticeRepository.findAll(pageable);
 
-        }else if (pageRequestDTO.getType().equals("")){
+        }else if (pageRequestDTO.getKeyword().equals("T")) {
+            log.info("제목으로 검색 검색키워드는" + pageRequestDTO.getKeyword());
+            List<Notice> noticePage1 = noticeRepository.searchByTitle(pageRequestDTO.getKeyword());
 
+        }else if (pageRequestDTO.getKeyword().equals("H")) {
+            log.info("호텔명으로 검색 검색키워드는" + pageRequestDTO.getKeyword());
+            List<Notice> noticePage1 = noticeRepository.searchByHotel(pageRequestDTO.getKeyword());
+
+        }else if (pageRequestDTO.getKeyword().equals("R")) {
+            log.info("작성자로 검색 검색키워드는" + pageRequestDTO.getKeyword());
+            List<Notice> noticePage1 = noticeRepository.searchByWriter(pageRequestDTO.getKeyword());
+
+        }else if (pageRequestDTO.getType().equals("THR")){
+            log.info("제목 또는 호텔명 또는 작성자 작성일로 검색 검색키워드는" + pageRequestDTO.getKeyword());
+            List<Notice> noticePage1 = noticeRepository.searchByHotelOrWriter(pageRequestDTO.getKeyword());
         }
-        return null;
+
+        List<Notice> noticeList = noticePage.getContent();
+
+        List<NoticeDTO> noticeDTOList =
+                noticeList.stream().map(notice -> modelMapper.map(notice, NoticeDTO.class))
+                        .collect(Collectors.toList());
+
+        PageResponseDTO<NoticeDTO> noticeDTOPageResponseDTO
+                = PageResponseDTO.<NoticeDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(noticeDTOList)
+                .total((int)noticePage.getTotalElements())
+                .build();
+
+        return noticeDTOPageResponseDTO;
     }
 
     //페이징처리 ok 검색 동적 처리
     @Override
     public PageResponseDTO<NoticeDTO> pageListsearchdsl(PageRequestDTO pageRequestDTO){
-
+//        log.info(pageRequestDTO);
+//
+//        Pageable pageable = pageRequestDTO.getPageable("notice_num");
+//        String[] types = pageRequestDTO.getTypes();
+//        String keyword = pageRequestDTO.getKeyword();
+//        String searchDateType = pageRequestDTO.getSearchDateType();
+//
+//        Page<Notice> noticePage = noticeRepository.findAll(types, keyword, searchDateType, pageable);
+//
+//        //변환
+//        List<Notice> noticeList = noticePage.getContent();
+//
+//        //dto 변환
+//        List<NoticeDTO> noticeDTOList=
+//                noticeList.stream().map(notice -> modelMapper.map(notice, NoticeDTO.class))
+//                .collect(Collectors.toList());
+//
+//        PageResponseDTO<NoticeDTO> noticeDTOPageResponseDTO
+//                = PageResponseDTO.<NoticeDTO>withAll()
+//                .pageRequestDTO(pageRequestDTO)
+//                .dtoList(noticeDTOList)
+//                .total((int)noticePage.getTotalElements())
+//                .build();
+//
+//        return noticeDTOPageResponseDTO;
         return null;
     }
 
