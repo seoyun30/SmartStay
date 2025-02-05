@@ -2,13 +2,75 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/mainlayout}">
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>마이페이지</title>
 
 </head>
 <body>
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col">
+            <h1>내정보</h1>
+        </div>
+    </div>
+
+
+    <div class="row">
+
+
+        <div class="col shadow p-5 mt-5 mb-5 bg-body-tertiary rounded">
+            <form action="/member/mypage" method="post" th:object="${memberDTO}">
+                <div class="mb-3 row">
+                    <label for="email" class="col-sm-2 col-form-label">회원Email</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" value="Disabled readonly input" aria-label="Disabled input example" disabled readonly id="email" th:field="*{email}">
+                    </div>
+
+                </div>
+                <div class="mb-3 row">
+                    <label for="name" class="col-sm-2 col-form-label">회원이름</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" value="Disabled readonly input" aria-label="Disabled input example" disabled readonly id="name" th:field="*{name}">
+                    </div>
+
+                </div>
+                <div class="mb-5 row">
+                    <label for="tel" class="col-sm-2 col-form-label">전화번호</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="tel" th:field="*{tel}">
+
+                    </div>
+                </div>
+
+                    <div class="mb-3 row">
+                        <label for="reg_date" class="col-sm-2 col-form-label">가입일자</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" value="Disabled readonly input" aria-label="Disabled input example" disabled readonly id="reg_date" th:value="${memberDTO.reg_date}">
+
+                        </div>
+                    </div>
+
+                    <div class="row text-end">
+                        <div class="col">
+                            <button type="button" class="btn btn-primary modifybtnMain">수정</button>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+
 
 </body>
 </html>
