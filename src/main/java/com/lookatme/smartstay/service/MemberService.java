@@ -22,12 +22,12 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -89,6 +89,7 @@ public class MemberService implements UserDetailsService {
 
     public MemberDTO findbyEmail(String email) {
         Member member = this.memberRepository.findByEmail(email);
+
         if(member != null) {
             MemberDTO memberDTO = modelMapper.map(member, MemberDTO.class);
 
@@ -201,20 +202,39 @@ public class MemberService implements UserDetailsService {
     }
 
 
-    public MemberDTO read(String memberDTO){
+    public MemberDTO readMember(String email){
+        Member member = memberRepository.findByEmail(email);
 
-      return null;
+        if (member == null) {
+            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
+        }
+
+      return MemberDTO.builder()
+              .email(member.getEmail())
+              .name(member.getName())
+              .tel(member.getTel())
+              .role(member.getRole())
+              .reg_date(member.getReg_date())
+              .build();
     }
 
 
 
 
-    public Member update(MemberDTO memberDTO){
+    public Member updateMember(String email, MemberDTO memberDTO){
 
-        validateDuplicateMember(memberDTO.getEmail());
+            Member member = memberRepository.findByEmail(email);
 
-            Member member =
-                    MemberDTO.dtoEntity(memberDTO);
+            if(member == null){
+                throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
+            }
+
+            if(memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()){
+                memberDTO.setPassword(new BCryptPasswordEncoder().encode(memberDTO.getPassword()));
+            }
+
+            member.setTel(memberDTO.getTel());
+
 
             return memberRepository.save(member);
         }

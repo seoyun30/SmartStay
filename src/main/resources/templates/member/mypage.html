@@ -10,37 +10,38 @@
 </head>
 <body>
 
-<div class="container">
+<th:block layout:fragment="content">
     <div class="row mt-5">
-        <div class="col">
+        <div class="col-6 offset-3">
+            <div class="col text-center">
             <h1>내정보</h1>
         </div>
     </div>
 
+        <div class="container my-auto">
+                <div class="col shadow p-5 mt-5 mb-5 bg-body-tertiary rounded">
 
-    <div class="row">
+            <div class="row">
 
-
-        <div class="col shadow p-5 mt-5 mb-5 bg-body-tertiary rounded">
-            <form action="/member/mypage" method="post" th:object="${memberDTO}">
+                  <th:block th:object="${memberDTO}">
                 <div class="mb-3 row">
                     <label for="email" class="col-sm-2 col-form-label">회원Email</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" value="Disabled readonly input" aria-label="Disabled input example" disabled readonly id="email" th:field="*{email}">
+                        <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="email" th:value="${memberDTO.email}">
                     </div>
 
                 </div>
                 <div class="mb-3 row">
                     <label for="name" class="col-sm-2 col-form-label">회원이름</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" value="Disabled readonly input" aria-label="Disabled input example" disabled readonly id="name" th:field="*{name}">
+                        <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="name" th:value="${memberDTO.name}">
                     </div>
 
                 </div>
                 <div class="mb-5 row">
                     <label for="tel" class="col-sm-2 col-form-label">전화번호</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="tel" th:field="*{tel}">
+                        <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="tel" th:value="${memberDTO.tel}">
 
                     </div>
                 </div>
@@ -48,29 +49,29 @@
                     <div class="mb-3 row">
                         <label for="reg_date" class="col-sm-2 col-form-label">가입일자</label>
                         <div class="col-sm-10">
-                            <input class="form-control" type="text" value="Disabled readonly input" aria-label="Disabled input example" disabled readonly id="reg_date" th:value="${memberDTO.reg_date}">
+                            <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="reg_date" th:value="${#temporals.format(memberDTO.reg_date, 'yyyy-MM-dd')}">
 
                         </div>
                     </div>
 
                     <div class="row text-end">
                         <div class="col">
-                            <button type="button" class="btn btn-primary modifybtnMain">수정</button>
+                            <button type="button" class="btn btn-primary modifybtnMain" onclick="location.href='/member/mypageModify'">수정</button>
 
 
                         </div>
 
                     </div>
-                </div>
-
-            </form>
+                  </th:block>
+            </div>
 
 
         </div>
 
 
     </div>
-
+</div>
+</th:block>
 
 </body>
 </html>
