@@ -9,6 +9,7 @@ import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.BrandRepository;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
+import com.lookatme.smartstay.repository.RoomRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,8 @@ public class HotelService {
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
     private final ImageService imageService;
+    private final RoomRepository roomRepository;
+
     //hotel 등록
     public void insert(HotelDTO hotelDTO, Principal principal,
                        List<MultipartFile> multipartFiles) throws Exception {
@@ -53,9 +56,16 @@ public class HotelService {
         List<Hotel> hotels = hotelRepository.findAll();
         hotels.forEach(hotel -> log.info(hotel));
         List<HotelDTO> hotelDTOS = hotels.stream()
-                .map(hotel -> modelMapper.map(hotel, HotelDTO.class).setBrandDTO(
-                        modelMapper.map(hotel.getBrand(), BrandDTO.class)
-                ) ).collect(Collectors.toList());
+                .map(hotel -> {
+                    HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+                    BrandDTO brandDTO = modelMapper.map(hotel.getBrand(), BrandDTO.class);
+                    hotelDTO.setBrandDTO(brandDTO);
+                    Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
+                    hotelDTO.setLowestPrice(lowestPrice);
+                    return hotelDTO;
+                })
+                .collect(Collectors.toList());
+
         return hotelDTOS;
     }
 
@@ -137,10 +147,19 @@ public class HotelService {
 
         List<Hotel> hotels = hotelRepository.findByHotel_nameOrAddressContaining(query);
 
-        List<HotelDTO> hotelDTOS = hotels.stream().
-                map(hotel -> modelMapper.map(hotel, HotelDTO.class)).
-                collect(Collectors.toList());
+        List<HotelDTO> hotelDTOS = hotels.stream()
+                        .map(hotel -> {
+                                    HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+                                    Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
+                                    hotelDTO.setLowestPrice(lowestPrice);
+                                    return hotelDTO;
+                                })
+                .collect(Collectors.toList());
 
         return hotelDTOS;
+    }
+
+    public Long getHotelLowestPrice(Long hotel_num) {
+        return roomRepository.findLowestRoomPriceByHotelNum(hotel_num);
     }
 }

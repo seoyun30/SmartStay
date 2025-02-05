@@ -19,4 +19,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     @Query("select r from Room r where r.room_name like %:query%")
     List<Room> findByRoom_nameContaining(@Param("query") String query);
+
+    @Query("select min(r.room_price) from Room r where r.hotel.hotel_num = :hotel_num")
+    Long findLowestRoomPriceByHotelNum(@Param("hotel_num") Long hotel_num);
 }

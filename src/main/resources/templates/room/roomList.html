@@ -116,7 +116,7 @@
        </div>
    </div>
     <div class="row mt-3">
-        <th:block th:if="${not #lists.isEmpty(pageResponseDTO.dtoList)}">
+        <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
             <div class="row">
                 <div class="col-12">
                     <nav aria-label="Page navigation example">
