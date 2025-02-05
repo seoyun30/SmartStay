@@ -5,9 +5,13 @@ import com.lookatme.smartstay.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.Banner;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +35,13 @@ public class MemberController {
     }
 
     @GetMapping("/mypage") // 마이페이지 정보보기(유저)
-    public String mypage(Principal principal){
-        return "member/mypage";
+    public ResponseEntity<MemberDTO> mypage(@AuthenticationPrincipal UserDetails userDetails) {
+
+        String email = userDetails.getUsername();
+
+        MemberDTO memberDTO = memberService.findbyEmail(email);
+
+        return ResponseEntity.ok(memberDTO);
     }
 
     @GetMapping("/adMypageModify") // 마이페이지 정보수정(관리자)
