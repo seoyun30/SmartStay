@@ -77,11 +77,10 @@
                     <div class="col-12">
                         <div class="mb-3 imgA">
                             <label for="formFilede" class="form-label">상세 이미지</label>
-                            <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple required>
+                            <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
                             <div class="row imgpreviewinput"></div>
                         </div>
                     </div>
-
 
                     <div class="col-12">
                         <button type="submit" class="btn btn-dark">등록</button>
@@ -104,7 +103,6 @@
 
             const formFilede = document.getElementById('formFilede');
             const imgPreviewInput = document.querySelector('.imgpreviewinput');
-            const removeDetailImage = document.getElementById('removeDetailImage');
 
             formFile.addEventListener('change', function(event) {
                 const file = event.target.files[0];
@@ -183,7 +181,6 @@
                 });
             });
         });
-
     </script>
 </th:block>
 </body>

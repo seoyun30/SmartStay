@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +34,12 @@ public class ImageService {
 
         if (imageFileList != null && !imageFileList.isEmpty()) {
             for (MultipartFile file : imageFileList) {
+
+                if (file.isEmpty()) {
+                    log.warn("빈 파일이 업로드 되었습니다.:{}", file.getOriginalFilename());
+                    continue;
+                }
+
                 String imageName = fileUpload.FileUpload(file);
                 String originalName = file.getOriginalFilename();
                 String imageUrl = "/images/image" + imageName; // 실제 서비스 시에는 S3 URL 등으로 변경해야 함

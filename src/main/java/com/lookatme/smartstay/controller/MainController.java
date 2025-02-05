@@ -1,11 +1,10 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.BrandDTO;
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.service.BrandService;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
+import com.lookatme.smartstay.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
@@ -24,6 +23,7 @@ public class MainController {
     private final HotelService hotelService;
     private final MemberService memberService;
     private final BrandService brandService;
+    private final RoomService roomService;
 
     @GetMapping("/adMain")
     public String adMain(Model model, Authentication authentication) {
@@ -111,6 +111,11 @@ public class MainController {
 
         HotelDTO hotelDTO = hotelService.read(hotel_num);
         model.addAttribute("hotelDTO", hotelDTO);
+
+        PageRequestDTO pageRequestDTO = new PageRequestDTO();
+        PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotelDTO, pageRequestDTO);
+        List<RoomDTO> roomList = pageResponseDTO.getDtoList();
+        model.addAttribute("roomList", roomList);
 
         return "searchRead";
     }

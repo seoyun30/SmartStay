@@ -10,52 +10,89 @@
 <body>
 <th:block layout:fragment="content">
 
-    <form action="/menu/menuModify" method="post" th:object="${menuDTO}">
-
+    <form action="/menu/menuModify" method="post" th:object="${menuDTO}" enctype="multipart/form-data">
         <div class="row">
             <div class="col-8 offset-2">
-                <div class="row">
-                    <input type="hidden" th:field="*{menu_num}">
+                <input type="hidden" th:field="*{menu_num}">
 
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="hotel_num" class="form-label">호텔 정보</label>
-                            <p class="form-control" th:value="${hotelDTO?.hotelDTO?.hotel_num}" id="hotel_num"></p>
-                        </div>
+                <div class="col-12">
+                    <div class="mb-3 text-center">
+                        <h2 th:text="${menuDTO.hotelDTO.hotel_name}"></h2>
                     </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="menu_sort" class="form-label">메뉴 분류</label>
-                            <input type="text" min="0" class="form-control" th:field="*{menu_sort}" id="menu_sort">
-                            <p th:if="${#fields.hasErrors('menu_sort')}" th:errors="*{menu_sort}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="menu_name" class="form-label">메뉴 명</label>
-                            <input type="text" class="form-control" th:field="*{menu_name}" required id="menu_name" >
-                            <p th:if="${#fields.hasErrors('menu_name')}" th:errors="*{menu_name}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="menu_detail"  class="form-label">메뉴 상세</label>
-                            <input type="text" min="0" class="form-control" th:field="*{menu_detail}" id="menu_detail">
-                            <p th:if="${#fields.hasErrors('menu_detail')}" th:errors="*{menu_detail}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="menu_price" class="form-label">메뉴 가격</label>
-                            <input type="number" min="0" class="form-control" th:field="*{menu_price}" id="menu_price">
-                            <p th:if="${#fields.hasErrors('menu_price')}" th:errors="*{menu_price}" class="fieldError"></p>
-                        </div>
-                    </div>
+                </div>
 
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-dark">저장</button>
-                        <button type="button" class="btn btn-dark" onclick="location.href='/menu/menuList'">목록</button>
-                        <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="menu_sort" class="form-label">메뉴 분류</label>
+                        <input type="text" min="0" class="form-control" th:field="*{menu_sort}" id="menu_sort">
+                        <p th:if="${#fields.hasErrors('menu_sort')}" th:errors="*{menu_sort}" class="fieldError"></p>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="menu_name" class="form-label">메뉴 명</label>
+                        <input type="text" class="form-control" th:field="*{menu_name}" required id="menu_name" >
+                        <p th:if="${#fields.hasErrors('menu_name')}" th:errors="*{menu_name}" class="fieldError"></p>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="menu_detail"  class="form-label">메뉴 상세</label>
+                        <input type="text" min="0" class="form-control" th:field="*{menu_detail}" id="menu_detail">
+                        <p th:if="${#fields.hasErrors('menu_detail')}" th:errors="*{menu_detail}" class="fieldError"></p>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="menu_price" class="form-label">메뉴 가격</label>
+                        <input type="number" min="0" class="form-control" th:field="*{menu_price}" id="menu_price">
+                        <p th:if="${#fields.hasErrors('menu_price')}" th:errors="*{menu_price}" class="fieldError"></p>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <input type="hidden" name="delnumList" id="delnumList">
+                    <div class="mb-3">
+                        <div id="image-list">
+                            <div id="image-main">
+                                대표 이미지
+                                <th:block th:each="img : ${menuDTO.imageDTOList}">
+                                    <th:block th:if="${img.repimg_yn == 'Y'}">
+                                        <img th:src="${img.image_url}" alt="Main Image" width="300px">
+                                        <button type="button" th:data-image-id="${img.image_id}" class="delete-image-btn">삭제</button>
+                                    </th:block>
+                                </th:block>
+                            </div>
+
+                            <div id="detail-images">
+                                상세 이미지
+                                <th:block th:each="img : ${menuDTO.imageDTOList}">
+                                    <th:block th:unless="${img.repimg_yn == 'Y'}">
+                                        <div class="col-12" th:id="'image-' + ${img.image_id}">
+                                            <img th:src="${img.image_url}" alt="Detail Image" width="200px">
+                                            <button type="button" th:data-image-id="${img.image_id}" class="delete-image-btn">삭제</button>
+                                        </div>
+                                    </th:block>
+                                </th:block>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 imgA">
+                            <label for="formFile" class="form-label">대표 이미지 변경</label>
+                            <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file">
+                            <div class="row main imgpreview"></div>
+                            <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
+
+                            <label for="formFilede" class="form-label">상세 이미지 추가</label>
+                            <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
+                            <div class="row imgpreviewinput"></div>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-dark">저장</button>
+                            <button type="button" class="btn btn-dark" onclick="location.href='/menu/menuList'">목록</button>
+                            <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -69,7 +106,141 @@
 </th:block>
 
 <th:block layout:fragment="script">
-</th:block>
 
+    <script th:inline="javascript">
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteButtons = document.querySelectorAll('.delete-image-btn');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const imageId = this.getAttribute('data-image-id');
+
+                    if (!imageId) {
+                        alert('이미지 ID가 유효하지 않습니다.');
+                        return;
+                    }
+
+                    if (confirm('이미지를 삭제하시겠습니까?')) {
+                        fetch(`/room/deleteImage/${imageId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': ''
+                            }
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    document.getElementById(`image-${imageId}`).remove();
+                                    alert('이미지가 성공적으로 삭제되었습니다.');
+                                } else {
+                                    alert('이미지 삭제에 실패했습니다.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('오류가 발생했습니다.');
+                            });
+                    }
+                });
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const formFile = document.getElementById('formFile');
+            const removeMainImage = document.getElementById('removeMainImage');
+            const imgPreview = document.querySelector('.imgpreview');
+
+            const formFilede = document.getElementById('formFilede');
+            const imgPreviewInput = document.querySelector('.imgpreviewinput');
+
+            formFile.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        img.style.width = '350px';
+                        img.style.height = 'auto';
+                        img.style.objectFit = 'cover';
+
+                        imgPreview.innerHTML = '';
+                        imgPreview.appendChild(img);
+
+                        removeMainImage.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            removeMainImage.addEventListener('click', function() {
+                formFile.value = '';
+                imgPreview.innerHTML = '';
+                removeMainImage.style.display = 'none';
+            });
+
+            formFilede.addEventListener('change', function(event) {
+                const files = event.target.files;
+
+                Array.from(files).forEach((file, index) => {
+                    if (file) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            const imgWrapper = document.createElement('div');
+                            imgWrapper.classList.add('img-wrapper');
+                            imgWrapper.style.position = 'relative';
+                            imgWrapper.style.display = 'inline-block';
+                            imgWrapper.style.marginRight = '10px';
+
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = file.name;
+                            img.style.width = '200px';
+                            img.style.height = 'auto';
+                            img.style.objectFit = 'cover';
+
+                            const removeButton = document.createElement('button');
+                            removeButton.type = 'button';
+                            removeButton.textContent = '올리지 않기';
+                            removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+                            removeButton.style.top = '5px';
+                            removeButton.style.right = '5px';
+
+                            removeButton.addEventListener('click', function () {
+                                imgWrapper.remove();
+
+                                const dataTransfer = new DataTransfer();
+                                Array.from(formFilede.files).forEach((f, i) => {
+                                    if (i !== index) {
+                                        dataTransfer.items.add(f);
+                                    }
+                                });
+                                formFilede.files = dataTransfer.files;
+                            });
+
+                            imgWrapper.appendChild(img);
+                            imgWrapper.appendChild(removeButton);
+                            imgPreviewInput.appendChild(imgWrapper);
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+            document.querySelectorAll('.removeImage').forEach(button => {
+                button.addEventListener('click', function () {
+                    const imageId = this.getAttribute('data-id');
+                    if (confirm('이미지를 삭제하시겠습니까?')) {
+                        alert(`Deleting image with ID: ${imageId}`);
+                    }
+                });
+            });
+        });
+    </script>
+</th:block>
 </body>
 </html>

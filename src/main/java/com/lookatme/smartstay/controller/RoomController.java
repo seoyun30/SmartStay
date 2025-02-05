@@ -12,14 +12,12 @@ import com.lookatme.smartstay.service.ImageService;
 import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.RoomService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -57,21 +55,20 @@ public class RoomController {
     }
 
     @PostMapping("/roomRegister")
-    public String roomRegisterPost(@Valid RoomDTO roomDTO, BindingResult bindingResult, Principal principal,
+    public String roomRegisterPost(RoomDTO roomDTO, RedirectAttributes redirectAttributes,
                                    @RequestParam(value = "multipartFiles", required = false)  List<MultipartFile> multipartFiles,
                                    @RequestParam(value = "mainImageIndex", required = false, defaultValue = "0") Long mainImageIndex,
-                                   RedirectAttributes redirectAttributes, Model model) throws Exception {
+                                   Principal principal) throws Exception {
 
         log.info("컨트롤러에서 받은 값 : "  + roomDTO);
 
-        if (bindingResult.hasErrors()) {
-            log.info(bindingResult.getAllErrors());
-            redirectAttributes.addFlashAttribute("result", "룸 등록 실패");
-            return "redirect:/room/roomRegister";
-        }
+
         HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
         if (hotelDTO == null) {
             return "redirect:/adMain";
+        }
+        if (multipartFiles != null && multipartFiles.stream().allMatch(MultipartFile::isEmpty)) {
+            multipartFiles = null;
         }
         try {
             roomService.roomRegister(roomDTO, hotelDTO.getHotel_num(), multipartFiles, mainImageIndex);

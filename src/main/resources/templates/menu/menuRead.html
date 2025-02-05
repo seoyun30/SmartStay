@@ -11,15 +11,13 @@
 <th:block layout:fragment="content">
 
     <form th:object="${menuDTO}" action="" method="">
-
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="row">
 
                     <div class="col-12">
-                        <div class="mb-3">
-                            <label for="hotel_num" class="form-label">호텔 정보</label>
-                            <p class="form-control" th:value="${hotelDTO?.hotelDTO?.hotel_num}" id="hotel_num"></p>
+                        <div class="mb-3 text-center">
+                            <h2 th:text="${menuDTO.hotelDTO.hotel_name}"></h2>
                         </div>
                     </div>
                     <div class="col-12">
@@ -55,6 +53,32 @@
                             <label for="menu_price" class="form-label">메뉴 가격</label>
                             <input type="number" min="0" class="form-control" th:field="*{menu_price}" id="menu_price" readonly>
                             <p th:if="${#fields.hasErrors('menu_price')}" th:errors="*{menu_price}" class="fieldError"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3 imgA">
+                            <div class="row mb-5">
+                                <th:block th:each="img: ${menuDTO.imageDTOList}">
+                                    <th:block th:if="${img.repimg_yn == 'Y'}">
+                                        <div class="col-12">
+                                            대표 이미지
+                                            <img width="100%" th:src="${img.image_url}" alt="대표 이미지">
+                                        </div>
+                                    </th:block>
+                                </th:block>
+                            </div>
+
+                            <div class="row row-cols-md-2 ">
+                                <th:block th:each="img: ${menuDTO.imageDTOList}">
+                                    <th:block th:unless="${img.repimg_yn == 'Y'}">
+                                        <div class="col-12">
+                                            상세 이미지
+                                            <img width="100%" th:src="${img.image_url}" alt="상세 이미지">
+                                        </div>
+                                    </th:block>
+                                </th:block>
+                            </div>
                         </div>
                     </div>
 
