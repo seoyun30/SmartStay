@@ -107,14 +107,12 @@ public class MainController {
     }
 
     @GetMapping("/searchRead")
-    public String searchRead(Long hotel_num, Model model) {
+    public String searchRead(@RequestParam Long hotel_num, Model model) {
 
         HotelDTO hotelDTO = hotelService.read(hotel_num);
         model.addAttribute("hotelDTO", hotelDTO);
 
-        PageRequestDTO pageRequestDTO = new PageRequestDTO();
-        PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotelDTO, pageRequestDTO);
-        List<RoomDTO> roomList = pageResponseDTO.getDtoList();
+        List<RoomDTO> roomList = roomService.searchRead(hotel_num);
         model.addAttribute("roomList", roomList);
 
         return "searchRead";

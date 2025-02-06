@@ -191,4 +191,18 @@ public class RoomService {
 
         return roomDTOS;
     }
+
+    public List<RoomDTO> searchRead(Long hotel_num) {
+
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(()->new EntityNotFoundException("호텔을 찾을 수 없습니다."));
+
+        List<Room> rooms = roomRepository.findByHotel(hotel);
+
+        List<RoomDTO> roomDTOS = rooms.stream()
+                .map(room -> modelMapper.map(room, RoomDTO.class))
+                .collect(Collectors.toList());
+
+        return roomDTOS;
+    }
 }

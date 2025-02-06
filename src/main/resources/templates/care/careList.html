@@ -16,55 +16,123 @@
         </div>
     </div>
     <div class="row mt-3">
-        <div class="col text-end">
-            <label for="hotel_num" class="form-label">호텔 정보</label>
-            <p class="form-control" th:value="${hotelDTO?.hotelDTO?.hotel_num}" id="hotel_num"></p>
+        <div class="col-12">
+            <div class="mb-3 text-center">
+                <h2 th:text="${hotel_name}"></h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center">
+        <div class="col-5">
+            <div class="input-group">
+                <div class="container-fluid d-flex flex-wrap justify-content-center align-items-center">
+                    <div class="search-bar mx-2">
+                        <form class="search-form d-flex align-items-center w-100" method="get" action="/care/careList">
+                            <input type="text" class="form-control" name="query" placeholder="Search" title="Enter search keyword">
+                            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${isSearch}">
+        <h5>검색 결과</h5>
+        <table class="table" th:if="${results != null && results.size() > 0}">
+            <div class="container mt-5">
+                <div th:each="care : ${results}" class="mb-4">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary font-weight-bold">
+                                <a th:href="@{/searchRead(care_num=${care.care_)num})}" th:text="${care.care_name}" class="text-decoration-none">룸 케어 명</a>
+                            </h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    (룸 케어 대표 이미지)
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </table>
+        <p th:if="${results.size() == 0}">검색 결과가 없습니다.</p>
+    </div>
+
+    <div th:if="${!isSearch}">
+        <div class="row mt-3">
+            <div class="col">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <td>룸 케어 번호</td>
+                        <td>룸 케어 명</td>
+                        <td>룸 케어 상세</td>
+                        <td>룸 케어 가격</td>
+                        <td>등록일자</td>
+                        <td>수정일자</td>
+                        <td>수정</td>
+                        <td>삭제</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <th:block th:if="${pageResponseDTO != null}" th:each="careDTO : ${pageResponseDTO.dtoList}">
+                        <tr class="align-middle">
+                            <td th:text="${careDTO.care_num}"></td>
+                            <td>
+                                <a th:href="@{/care/careRead(care_num=${careDTO.care_num})}">
+                                    [[${careDTO.care_name}]]
+                                </a>
+                            </td>
+                            <td th:text="${careDTO.care_detail}"></td>
+                            <td th:text="${careDTO.care_price}"></td>
+                            <td th:text="${#temporals.format(careDTO.reg_date, 'yyyy-MM-dd')}"></td>
+                            <td th:text="${#temporals.format(careDTO.modi_date, 'yyyy-MM-dd')}"></td>
+                            <td>
+                                <button type="button" th:attr="onclick='location.href=\'/care/careModify?care_num=' + ${careDTO.care_num} + '\''" class="btn btn-warning">수정</button>
+                            </td>
+                            <td>
+                                <form action="/care/careDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                    <input type="hidden" name="id" th:value="${careDTO.care_num}">
+                                    <button type="submit" class="btn btn-danger">삭제</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <div class="row mt-3">
-        <div class="col">
-            <table class="table table-striped table-hover">
-                <thead>
-                <tr>
-                    <td>룸 케어 번호</td>
-                    <td>룸 케어 명</td>
-                    <td>룸 케어 상세</td>
-                    <td>룸 케어 가격</td>
-                    <td>등록일자</td>
-                    <td>수정일자</td>
-                    <td>수정</td>
-                    <td>삭제</td>
-                </tr>
-                </thead>
-                <tbody>
-                <th:block th:each="care : ${list}">
-                    <tr class="align-middle">
-                        <td th:text="${care.care_num}"></td>
-                        <td>
-                            <a th:href="@{/care/careRead(care_num=${care.care_num})}">
-                                [[${care.care_name}]]
-                            </a>
-                        </td>
-                        <td th:text="${care.care_detail}"></td>
-                        <td th:text="${care.care_price}"></td>
-                        <td th:text="${#temporals.format(care.reg_date, 'yyyy-MM-dd')}"></td>
-                        <td th:text="${#temporals.format(care.modi_date, 'yyyy-MM-dd')}"></td>
-                        <td>
-                            <button type="button" th:attr="onclick='location.href=\'/care/careModify?care_num=' + ${care.care_num} + '\''" class="btn btn-warning">수정</button>
-                        </td>
-                        <td>
-                            <form action="/care/careDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                <input type="hidden" name="id" th:value="${care.care_num}">
-                                <button type="submit" class="btn btn-danger">삭제</button>
-                            </form>
-                        </td>
-                    </tr>
-                </th:block>
-                </tbody>
-            </table>
-        </div>
+        <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <th:block th:if="${pageResponseDTO.prev}">
+                                <li class="page-item"><a class="page-link" th:href="|@{'/care/careList?page=' +${pageResponseDTO.start-1}}|">Previous</a></li>
+                            </th:block>
+
+                            <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+                                <li class="page-item"><a class="page-link" th:href="|@{'/care/careList?page=' +${num}}|">[[${num}]]</a></li>
+                            </th:block>
+
+                            <th:block th:if="${pageResponseDTO.next}">
+                                <li class="page-item"><a class="page-link" th:href="|@{'/care/careList?page=' +${pageResponseDTO.end+1}}|">Next</a></li>
+                            </th:block>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </th:block>
     </div>
+
+
 </th:block>
 
 
