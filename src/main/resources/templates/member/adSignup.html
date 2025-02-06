@@ -11,73 +11,60 @@
 <body>
 
 <th:block layout:fragment="content">
-    <div class="row mt-5">
-        <div class="col-6 offset-3">
-            <div class="col text-center">
-                <h1>총판 회원가입</h1>
-            </div>
-            <div class="d=flex vh-100">
-                <div class="container my-auto">
-                    <div class=" row justify-content-center">
-
-                        <form class="row g-3" action="/member/adSignup" method="post" >
-
-                               <th:block th:object="${memberDTO}">
-                                   <div class="row mb-3">
-                                       <div class="col">
-                                           <label for="email" class="form-label">Email</label>
-                                           <input type="email" th:field="*{email}" class="form-control" id="email" placeholder="이메일 형식에 맞춰서 작성해주세요." required>
-                                       </div>
-                                       <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError"></p>
-                                   </div>
-
-                                   <div class="row mb-3">
-                                       <div class="col">
-                                           <label for="password" class="form-label">Password</label>
-                                           <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="비밀번호는 8 ~ 20 글자로 입력해주세요." required>
-                                       </div>
-                                       <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError"></p>
-                                   </div>
-
-                                   <div class="row mb-3">
-                                       <div class="col">
-                                           <label for="name" class="form-label">name</label>
-                                           <input type="text" th:field="*{name}" class="form-control name" id="name">
-                                       </div>
-                                       <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
-                                       <span class="name"></span>
-                                   </div>
-
-                                   <div class="row mb-3">
-                                       <div class="col">
-                                           <label for="tel" class="form-label">tel</label>
-                                           <input type="text" th:field="*{tel}" class="form-control" id="tel">
-                                       </div>
-                                       <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
-                                   </div>
-                               </th:block>
-
-                            <div class="container mt-5">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="corn" id="C" value="C">
-                                        <label class="form-check-label" for="C">
-                                           브랜드
-                                        </label>
-                                    </div>
-                            </div>
-
-                            <div class="col text-center mt-5">
-                                <button type="submit" class="btn btn-primary">회원가입</button>
-                            </div>
-
-                        </form>
-
-                    </div>
+    <div class="container">
+        <div class="row mt-5 justify-content-center">
+            <div class="col-4">
+                <div class="text-center">
+                    <h1>총판 회원가입</h1>
                 </div>
+
+                <form class="row g-3" action="/member/adSignup" method="post" >
+
+                    <th:block th:object="${memberDTO}">
+                        <div class="mb-1">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" th:field="*{email}" class="form-control" id="email" placeholder="이메일 형식에 맞춰서 작성해주세요." required>
+                            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError"></p>
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="비밀번호는 8 ~ 20 글자로 입력해주세요." required>
+                            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError"></p>
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="name" class="form-label">name</label>
+                            <input type="text" th:field="*{name}" class="form-control name" id="name">
+                            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
+                            <span class="name"></span>
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="tel" class="form-label">tel</label>
+                            <input type="text" th:field="*{tel}" class="form-control" id="tel">
+                            <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
+                        </div>
+                    </th:block>
+
+                    <div class="container mt-5">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="corn" id="C" value="C">
+                            <label class="form-check-label" for="C">
+                                브랜드
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col text-center d-flex justify-content-center gap-3 mt-4">
+                        <button type="submit" class="btn btn-primary">회원가입</button>
+                    </div>
+
+                </form>
+
+
             </div>
-
         </div>
-
     </div>
 
 </th:block>
