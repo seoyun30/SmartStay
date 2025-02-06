@@ -1,24 +1,25 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.MemberService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.modelmapper.ModelMapper;
-import org.springframework.boot.Banner;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.sql.Struct;
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -28,6 +29,7 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     @GetMapping("/adMypage") // 마이페이지 정보보기(관리자)
     public String adMypage(Principal principal){
@@ -35,13 +37,14 @@ public class MemberController {
     }
 
     @GetMapping("/mypage") // 마이페이지 정보보기(유저)
-    public ResponseEntity<MemberDTO> mypage(@AuthenticationPrincipal UserDetails userDetails) {
+    public String mypage(Model model, Authentication authentication) {
 
-        String email = userDetails.getUsername();
+        String email = authentication.getName();
+        MemberDTO memberDTO = memberService.readMember(email);
+        log.info(memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+        return "member/mypage";
 
-        MemberDTO memberDTO = memberService.findbyEmail(email);
-
-        return ResponseEntity.ok(memberDTO);
     }
 
     @GetMapping("/adMypageModify") // 마이페이지 정보수정(관리자)
@@ -51,14 +54,51 @@ public class MemberController {
     }
 
     @GetMapping("/mypageModify") // 마이페이지 정보수정(유저)
-    public String mypageModifyGet(Principal principal){
+    public String mypageModifyGet(Model model, Principal principal){
+
+        MemberDTO memberDTO = memberService.findbyEmail(principal.getName());
+
+        log.info("memberDTO" + memberDTO);
+
+        if(memberDTO == null){
+            return "redirect:/member/mypage";
+        }
+
+        model.addAttribute("memberDTO", memberDTO);
+
         return "member/mypageModify";
     }
 
     @PostMapping("/mypageModify") // 마이페이지 정보수정
-    public String mypageModifyPost(MemberDTO memberDTO){
-        return "member/mypageModify";
-        //return "member/adMypageModify";
+    public String mypageModifyPost(@Valid MemberDTO memberDTO, BindingResult bindingResult, Principal principal, Model model){
+
+        log.info("정보업데이트" + memberDTO);
+
+        if(bindingResult.hasErrors()){
+            log.info("에러발생됨 " + bindingResult.getAllErrors());
+
+            model.addAttribute("memberDTO", memberDTO);
+
+            return "member/mypageModify";
+        }
+
+        try {
+            if(memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()){
+                String encodedPassword = new BCryptPasswordEncoder().encode(memberDTO.getPassword());
+                memberDTO.setPassword(encodedPassword);
+
+            } else {
+                Member member = memberRepository.findByEmail(principal.getName());
+                memberDTO.setPassword(member.getPassword());
+            }
+
+            memberService.updateMember(principal.getName(), memberDTO);
+
+        }catch (EntityNotFoundException e) {
+            return "redirect:/member/mypage";
+        }
+        return "redirect:/member/mypage";
+
     }
 
     @GetMapping("/allMemberList") //전체 회원 목록
