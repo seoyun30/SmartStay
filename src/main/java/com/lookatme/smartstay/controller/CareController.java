@@ -1,23 +1,28 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.CareDTO;
-import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.PageResponseDTO;
+import com.lookatme.smartstay.repository.HotelRepository;
+import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.service.CareService;
+import com.lookatme.smartstay.service.HotelService;
+import com.lookatme.smartstay.service.ImageService;
+import com.lookatme.smartstay.service.MemberService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -28,87 +33,148 @@ import java.util.List;
 public class CareController {
 
     private final CareService careService;
+    private final ImageService imageService;
+    private final ImageRepository imageRepository;
+    private final MemberService memberService;
+    private final HotelRepository hotelRepository;
+    private final HotelService hotelService;
 
     @GetMapping("/careRegister")
     public String careRegisterGet(Model model, Principal principal){
 
-        model.addAttribute("careDTO", new CareDTO());
-        model.addAttribute("memberDTO", new MemberDTO());
+        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+        if (hotelDTO == null) {
+            return "redirect:/adMain";
+        }
+        CareDTO careDTO = new CareDTO();
+        careDTO.setHotelDTO(hotelDTO);
+        model.addAttribute("careDTO", careDTO);
 
         return "care/careRegister";
     }
 
     @PostMapping("/careRegister")
-    public String careRegisterPost(@Valid CareDTO careDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes,
-                                   List<MultipartFile> multipartFiles, Model model) throws Exception {
+    public String careRegisterPost(CareDTO careDTO, RedirectAttributes redirectAttributes,
+                                   @RequestParam(value = "multipartFiles", required = false)  List<MultipartFile> multipartFiles,
+                                   @RequestParam(value = "mainImageIndex", required = false, defaultValue = "0") Long mainImageIndex,
+                                   Principal principal) throws Exception {
 
-        if (bindingResult.hasErrors()){
-            log.info(bindingResult.getAllErrors());
-
-            return "care/careRegister";
+        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+        if (hotelDTO == null) {
+            return "redirect:/adMain";
         }
+        if (multipartFiles != null && multipartFiles.stream().allMatch(MultipartFile::isEmpty)) {
+            multipartFiles = null;
+        }
+        try {
+            careService.careRegister(careDTO, hotelDTO.getHotel_num(), multipartFiles, mainImageIndex);
+            redirectAttributes.addFlashAttribute("msg", "케어가 등록되었습니다.");
+            return "redirect:/care/careList";
 
-        Long care_num = careService.careRegister(careDTO, multipartFiles);
-        redirectAttributes.addFlashAttribute("msg", "룸 케어가 등록되었습니다. 룸 케어 번호 : " + care_num);
-
-        return "redirect:/care/careRead?care_num=" + care_num;
+        }catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("msg", e.getMessage());
+            return "redirect:/care/careRegister";
+        }
     }
 
     @GetMapping("/careList")
-    public String careList(Model model) {
+    public String careList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
+                           @RequestParam(value = "query", required = false) String query) {
 
-        List<CareDTO> list = careService.careList();
-        model.addAttribute("list", list);
+        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+        if (hotelDTO == null) {
+            return "redirect:/adMain";
+        }
 
+        if (query == null || query.trim().isEmpty()) {
+            PageResponseDTO<CareDTO> pageResponseDTO = careService.careList(hotelDTO, pageRequestDTO);
+            model.addAttribute("hotel_name", hotelDTO.getHotel_name());
+            model.addAttribute("pageResponseDTO", pageResponseDTO);
+            model.addAttribute("isSearch", false);
+        }else {
+            List<CareDTO> results = careService.searchList(query);
+            model.addAttribute("results", results != null ? results : Collections.emptyList());
+            model.addAttribute("query", query);
+            model.addAttribute("isSearch", true);
+            model.addAttribute("pageResponseDTO", null);
+        }
         return "care/careList";
     }
 
     @GetMapping("/careRead")
-    public String careRead(Long care_num, Model model, RedirectAttributes redirectAttributes) {
+    public String careRead(@RequestParam(required = false) Long care_num, Model model, RedirectAttributes redirectAttributes) {
+
+        if (care_num == null) {
+            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 케어입니다.");
+            return "redirect:/care/careList";
+        }
 
         try {
             CareDTO careDTO = careService.careRead(care_num);
             model.addAttribute("careDTO", careDTO);
 
+            if (careDTO.getHotelDTO() != null) {
+                model.addAttribute("hotel_name", careDTO.getHotelDTO().getHotel_name());
+            }else {
+                model.addAttribute("hotel_name", "호텔 정보 없음");
+            }
             return "care/careRead";
 
         }catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 룸 케어입니다.");
-
+            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 케어입니다.");
             return "redirect:/care/careList";
         }
     }
 
     @GetMapping("/careModify")
-    public String careModifyGet(Long care_num, Model model) {
+    public String careModifyGet(@RequestParam Long care_num, Model model, Principal principal) {
 
         CareDTO careDTO = careService.careRead(care_num);
 
-        if (careDTO != null) {
-            model.addAttribute("careDTO", careDTO);
+        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
 
-            return "care/careModify";
-        }else {
-
-            return "redirect:/care/careList";
+        if (hotelDTO == null) {
+            return "redirect:/adMain";
         }
+
+        if (!careDTO.getHotelDTO().getHotel_num().equals(hotelDTO.getHotel_num())) {
+            throw new SecurityException("권한이 없습니다.");
+        }
+        model.addAttribute("careDTO", careDTO);
+
+        return "care/careModify";
     }
 
     @PostMapping("/careModify")
-    public String careModifyPost(@Valid CareDTO careDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes,
-                                 List<MultipartFile> multipartFiles) {
+    public String careModifyPost(CareDTO careDTO, RedirectAttributes redirectAttributes,
+                                 @RequestParam(value = "multipartFiles", required = false) List<MultipartFile> multipartFiles,
+                                 @RequestParam(value = "delnumList", required = false) List<Long> delnumList,
+                                 Principal principal) throws Exception {
 
-        if (bindingResult.hasErrors()){
-            log.info(bindingResult.getAllErrors());
+       HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+       if (hotelDTO == null) {
+           return "redirect:/adMain";
+       }
 
-            return "care/careModify";
-        }
+       if (multipartFiles != null && multipartFiles.stream().allMatch(MultipartFile::isEmpty)) {
+           multipartFiles = null;
+       }
 
-        careService.careModify(careDTO, careDTO.getCare_num(), multipartFiles);
+       if (delnumList != null && delnumList.isEmpty()) {
+           delnumList = null;
+       }
 
-        redirectAttributes.addFlashAttribute("msg", "룸 케어가 수정되었습니다. 룸 케어 번호 : " + careDTO.getCare_num());
+       try {
+           careService.careModify(careDTO, multipartFiles, hotelDTO, delnumList);
+           redirectAttributes.addFlashAttribute("msg", "케어가 수정되었습니다. 케어 번호 : " +careDTO.getCare_num());
 
-        return "redirect:/care/careRead?care_num=" + careDTO.getCare_num();
+       }catch (Exception e) {
+           log.error("케어 수정 중 오류 발생 : {}", e.getMessage());
+           redirectAttributes.addFlashAttribute("msg", "케어 수정 중 오류가 발생했습니다.");
+           return "redirect:/care/careModify?care_num=" + careDTO.getCare_num();
+       }
+
+       return "redirect:/care/careList";
     }
 
     @PostMapping("/careDelete")
@@ -121,6 +187,18 @@ public class CareController {
            redirectAttributes.addFlashAttribute("errorMessage", "삭제 중 오류가 발생했습니다.");
        }
        return "redirect:/care/careList";
+    }
+
+    @DeleteMapping("/deleteImage/{imageId}")
+    public ResponseEntity<String> deleteImage(@PathVariable Long imageId) {
+        try {
+            imageService.deleteImage(imageId);
+            imageRepository.deleteById(imageId);
+            return ResponseEntity.ok("이미지가 성공적으로 삭제되었습니다.");
+        }catch (Exception e) {
+            log.error("이미지 삭제 실패 : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
+        }
     }
 }
 

@@ -17,6 +17,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("SELECT r FROM Room r WHERE r.hotel = :hotel")
     Page<Room> findByHotel(@Param("hotel") Hotel hotel, Pageable pageable);
 
+    List<Room> findByHotel(Hotel hotel);
+
     @Query("select r from Room r where r.room_name like %:query%")
     List<Room> findByRoom_nameContaining(@Param("query") String query);
 

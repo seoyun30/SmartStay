@@ -199,6 +199,5 @@ public class MenuController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
         }
     }
-
 }
 
