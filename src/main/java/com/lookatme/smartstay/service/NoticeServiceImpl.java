@@ -8,6 +8,7 @@ import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.entity.Notice;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.NoticeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,28 +48,30 @@ public class NoticeServiceImpl implements NoticeService {
 
     //사진을 추가한 등록
     @Override
-    public void register(NoticeDTO noticeDTO, List<MultipartFile> multipartFileList){
+    public void register(NoticeDTO noticeDTO, List<MultipartFile> multipartFileList) throws Exception {
 
-//        log.info("등록 서비스 들어온값: "+noticeDTO);
-//        log.info("등록 서비스 들어온값: "+multipartFileList);
-//        //글을 컨트롤러로부터 받아 entity변환헤서 저장
-//        Notice notice = modelMapper.map(noticeDTO, Notice.class);
-//        log.info("저장전에 noticeDTO를 notice로 변경한" + notice);
-//
-//        notice = noticeRepository.save(notice);
-//        log.info("저장후에 결과를 가지고 있는notice" + notice);
-//        //본문을 저장하고 나서
-//        //사진 등록
-//        if (multipartFileList != null) {
-//            for (MultipartFile file : multipartFileList) {
-//                if ( !multipartFileList.isEmpty()) {
-//                    log.info("사진이 등록되었습니다.");
-//                    log.info("사진이 등록되었습니다.");
-//                    log.info("사진이 등록되었습니다.");
-//                }
-//
-//            }
-//        }
+        log.info("등록 서비스 들어온값: "+noticeDTO);
+        log.info("등록 서비스 들어온값: "+multipartFileList);
+        //글을 컨트롤러로부터 받아 entity변환헤서 저장
+        Notice notice = modelMapper.map(noticeDTO, Notice.class);
+        log.info("저장전에 noticeDTO를 notice로 변경한" + notice);
+
+        notice = noticeRepository.save(notice);
+        log.info("저장후에 결과를 가지고 있는notice" + notice);
+        //본문을 저장하고 나서
+        //사진 등록
+        if (multipartFileList != null) {
+            for (MultipartFile file : multipartFileList) {
+                if ( !multipartFileList.isEmpty()) {
+                    log.info("사진이 등록되었습니다.");
+                    log.info("사진이 등록되었습니다.");
+                    log.info("사진이 등록되었습니다.");
+                    // 이미지 등록
+                    imageService.saveImage(multipartFileList,"notice", notice.getNotice_num());
+                }
+
+            }
+        }
 
     }
 
@@ -103,19 +106,19 @@ public class NoticeServiceImpl implements NoticeService {
         if (pageRequestDTO.getType() == null || pageRequestDTO.getKeyword()==null || pageRequestDTO.getKeyword().equals("")) {
             noticePage = noticeRepository.findAll(pageable);
 
-        }else if (pageRequestDTO.getKeyword().equals("T")) {
+        }else if (pageRequestDTO.getKeyword().equals("t")) {
             log.info("제목으로 검색 검색키워드는" + pageRequestDTO.getKeyword());
             List<Notice> noticePage1 = noticeRepository.searchByTitle(pageRequestDTO.getKeyword());
 
-        }else if (pageRequestDTO.getKeyword().equals("H")) {
+        }else if (pageRequestDTO.getKeyword().equals("h")) {
             log.info("호텔명으로 검색 검색키워드는" + pageRequestDTO.getKeyword());
             List<Notice> noticePage1 = noticeRepository.searchByHotel(pageRequestDTO.getKeyword());
 
-        }else if (pageRequestDTO.getKeyword().equals("R")) {
+        }else if (pageRequestDTO.getKeyword().equals("w")) {
             log.info("작성자로 검색 검색키워드는" + pageRequestDTO.getKeyword());
             List<Notice> noticePage1 = noticeRepository.searchByWriter(pageRequestDTO.getKeyword());
 
-        }else if (pageRequestDTO.getType().equals("THR")){
+        }else if (pageRequestDTO.getType().equals("thw")){
             log.info("제목 또는 호텔명 또는 작성자 작성일로 검색 검색키워드는" + pageRequestDTO.getKeyword());
             List<Notice> noticePage1 = noticeRepository.searchByHotelOrWriter(pageRequestDTO.getKeyword());
         }
@@ -146,25 +149,24 @@ public class NoticeServiceImpl implements NoticeService {
         String keyword = pageRequestDTO.getKeyword();
         String searchDateType = pageRequestDTO.getSearchDateType();
 
-        //Page<Notice> noticePage = noticeRepository.findAll(types, keyword, searchDateType, pageable);
+        Page<Notice> noticePage = noticeRepository.searchAll(types, keyword, searchDateType, pageable);
 
         //변환
-        //List<Notice> noticeList = noticePage.getContent();
+        List<Notice> noticeList = noticePage.getContent();
 
-//        //dto 변환
-//        List<NoticeDTO> noticeDTOList=
-//                noticeList.stream().map(notice -> modelMapper.map(notice, NoticeDTO.class))
-//                .collect(Collectors.toList());
-//
-//        PageResponseDTO<NoticeDTO> noticeDTOPageResponseDTO
-//                = PageResponseDTO.<NoticeDTO>withAll()
-//                .pageRequestDTO(pageRequestDTO)
-//                .dtoList(noticeDTOList)
-//                .total((int)noticePage.getTotalElements())
-//                .build();
-//
-//        return noticeDTOPageResponseDTO;
-        return null;
+        //dto 변환
+        List<NoticeDTO> noticeDTOList=
+                noticeList.stream().map(notice -> modelMapper.map(notice, NoticeDTO.class))
+                .collect(Collectors.toList());
+
+        PageResponseDTO<NoticeDTO> noticeDTOPageResponseDTO
+                = PageResponseDTO.<NoticeDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(noticeDTOList)
+                .total((int)noticePage.getTotalElements())
+                .build();
+
+        return noticeDTOPageResponseDTO;
     }
 
     //공지 사항 수정
@@ -178,6 +180,8 @@ public class NoticeServiceImpl implements NoticeService {
 
             noticeRepository.save(notices);
         }
+
+        //파일 삭제
     }
 
     //공지 사항 삭제
@@ -186,15 +190,5 @@ public class NoticeServiceImpl implements NoticeService {
         noticeRepository.deleteById(notice_num);
     }
 
-    //공지 사항 검색
-
-
-    //이미지 추가
-
-
-    //이미지 수정
-
-
-    //이미지 삭제
 
 }

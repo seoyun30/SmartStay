@@ -16,7 +16,7 @@ public interface NoticeService {
     public void noticeRegister(NoticeDTO noticeDTO);
 
     //사진을 추가한 등록
-    public void register(NoticeDTO noticeDTO,List<MultipartFile> multipartFileList);
+    public void register(NoticeDTO noticeDTO,List<MultipartFile> multipartFileList) throws Exception;
 
     //상세보기
     public NoticeDTO noticeRead(Long id);

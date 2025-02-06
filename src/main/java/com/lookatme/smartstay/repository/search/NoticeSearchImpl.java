@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,8 +23,6 @@ public class NoticeSearchImpl extends QuerydslRepositorySupport implements Notic
 
     @Override
     public Page<Notice> searchAll(String[] types, String keyword , String searchDateType, Pageable pageable) {
-
-
 
         QNotice notice = QNotice.notice; // Q도메인 객체 entity를 QNotice로 바꾼것
 
@@ -122,6 +121,20 @@ public class NoticeSearchImpl extends QuerydslRepositorySupport implements Notic
         return new PageImpl<>(noticeList.stream().map(notice1 -> new ModelMapper().map(notice1, NoticeDTO.class)).collect(Collectors.toList()), pageable, count);
 
     }
+
+
+//    private BooleanBuilder betweemTime(LocalDateTime reg_date, LocalDateTime modi_date, boolean conTainTimeClosing) {
+//
+//        if (conTainTimeClosing) {
+//
+//            if (reg_date == null){
+//                return null;
+//            }
+//
+//            return betweemTime(reg_dateAppointmentDate.between(reg_date, modi_date)).;
+//
+//        }
+//    }
 
 
 
