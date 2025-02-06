@@ -27,6 +27,7 @@ public class Member extends BaseEntity{
 
     private String name; //회원 이름
 
+    @Column(unique = true)
     private String tel; //연락처
 
     @Enumerated(EnumType.STRING)

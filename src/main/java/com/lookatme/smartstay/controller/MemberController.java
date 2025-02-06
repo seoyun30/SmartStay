@@ -83,13 +83,16 @@ public class MemberController {
         }
 
         try {
-            if(memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()){
+            Member member = memberRepository.findByEmail(principal.getName());
+
+
+            if(memberDTO.getPassword() != null && !memberDTO.getPassword().trim().isEmpty()){
                 String encodedPassword = new BCryptPasswordEncoder().encode(memberDTO.getPassword());
                 memberDTO.setPassword(encodedPassword);
 
             } else {
-                Member member = memberRepository.findByEmail(principal.getName());
-                memberDTO.setPassword(member.getPassword());
+                Member existingMember = memberRepository.findByEmail(principal.getName());
+                memberDTO.setPassword(existingMember.getPassword());
             }
 
             memberService.updateMember(principal.getName(), memberDTO);

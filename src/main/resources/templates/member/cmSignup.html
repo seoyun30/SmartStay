@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/adminlayout}">
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
     <title>회원가입</title>
@@ -22,35 +22,27 @@
 
                             <th:block th:object="${memberDTO}">
                                 <div class="mb-1">
-
                                         <label for="email" class="form-label">Email</label>
                                         <input type="email" th:field="*{email}" class="form-control" id="email" placeholder="이메일 형식에 맞춰서 작성해주세요." required>
-
                                     <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError"></p>
                                 </div>
 
                                 <div class="mb-1">
-
                                         <label for="password" class="form-label">Password</label>
                                         <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="비밀번호는 8 ~ 20 글자로 입력해주세요." required>
-
                                     <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError"></p>
                                 </div>
 
                                 <div class="mb-1">
-
                                         <label for="name" class="form-label">name</label>
                                         <input type="text" th:field="*{name}" class="form-control name" id="name">
-
                                     <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
                                     <span class="name"></span>
                                 </div>
 
                                 <div class="mb-1">
-
                                         <label for="tel" class="form-label">tel</label>
                                         <input type="text" th:field="*{tel}" class="form-control" id="tel">
-
                                     <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                                 </div>
                             </th:block>
@@ -129,7 +121,7 @@
                             </th:block>
 
 
-                            <div class="col text-center mt-5">
+                            <div class="col text-center d-flex justify-content-center gap-3 mt-4">
                                 <button type="submit" class="btn btn-primary">회원가입</button>
                             </div>
                         </form>
