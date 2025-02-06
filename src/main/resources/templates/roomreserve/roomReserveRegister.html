@@ -166,6 +166,10 @@
                 return;
             }
 
+            // 요청 사항이 비어 있을 경우 기본값 설정
+            if (reserve_request === "") {
+                reserve_request = "요청 사항 없음";
+            }
 
             addCart(room_num, in_date, out_date, day, count, reserve_request);
         })
