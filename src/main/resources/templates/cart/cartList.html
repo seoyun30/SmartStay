@@ -23,6 +23,7 @@
 <th:block layout:fragment="content">
 
     <div id="contain" class="card w-75 mt-5 mx-auto">
+
         <div class="card-title">
             <h2 class="mt-3 text-center fw-bold">장바구니</h2>
             <hr>
@@ -32,39 +33,71 @@
 
         <div class="card-body">
 
-            <th:block th:each="roomItem : ${roomItemDTOList}">
+            <th:block th:if="${roomItemDTOList.isEmpty()}">
+                <div class="mt-3">
+                    <span class="h5 fw-bold">장바구니가 비어있습니다.</span>
+                </div>
+            </th:block>
 
-                <div class="card p-3 mb-3" style="box-shadow: none">
-                    <span class="h4 fw-bold" th:text="${roomItem.roomDTO.hotelDTO.hotel_name}">호텔 매장 이름</span>
-                    <small class="text-body-secondary" th:text="${roomItem.roomDTO.hotelDTO.address}">매장 주소</small>
-                    <hr>
+            <th:block th:unless="${roomItemDTOList.isEmpty()}" th:each="roomItem, iterStat : ${roomItemDTOList}">
+
+                <th:block th:if="${iterStat.index == 0 or roomItem.roomDTO.hotelDTO.hotel_name != roomItemDTOList[iterStat.index - 1].roomDTO.hotelDTO.hotel_name or roomItem.roomDTO.hotelDTO.address != roomItemDTOList[iterStat.index - 1].roomDTO.hotelDTO.address}">
+                    <div class="p-3">
+                        <span class="h4 fw-bold" th:text="${roomItem.roomDTO.hotelDTO.hotel_name}">호텔 매장 이름</span> <br>
+                        <small class="text-body-secondary" th:text="${roomItem.roomDTO.hotelDTO.address}">매장 주소</small>
+                        <hr>
+                    </div>
+                </th:block>
+
+                <div class="p-3">
                     <div class="row mb-2">
                         <div class="col-md-8">
                             <p class="card-text fs-5 fw-bold"> [[${roomItem.roomDTO.room_name}]] / [[${roomItem.roomDTO.room_type}]] </p>
                         </div>
                         <div class="col-md-4 text-end">
-                            <button type="button" class="btn-close" aria-label="Close"></button>
+                            <button th:value="${roomItem.roomitem_num}" class="btn btn-outline-dark btn-sm roomremovebtn" aria-label="Close"><i class="bi bi-x-lg"></i></button>
                         </div>
                     </div>
 
                     <div class="row g-0">
+                        <div class="col-md-1 align-self-center">
+                            <input type="checkbox" class="btn-check" name="cartChkBox" th:value="${roomItem.roomitem_num}" th:id="'btn-check-' + ${iterStat.index}" autocomplete="off">
+                            <label class="btn btn-outline-secondary" th:for="'btn-check-' + ${iterStat.index}"><i class="bi bi-check-lg"></i></label><br>
+                        </div>
+
                         <div class="col-md-2 align-self-center">
-                            <input type="checkbox" class="text-center">
                             <img src="https://picsum.photos/200" class="img-fluid">
                         </div>
-                        <div class="col-md-10 align-self-center">
+
+                        <div class="col-md-9 align-self-center">
                             <div class="card-body">
-                                <span>체크인 : </span><input class="in_date" type="datetime-local" name="in_date" th:value="${roomItem.in_date}" style="border: none" readonly> <br>
-                                <span>체크아웃 : </span><input class="out_date" type="datetime-local" name="out_date" th:value="${roomItem.out_date}" style="border: none" readonly> <br>
-                                <span>[[${roomItem.in_date}]]~[[${roomItem.out_date}]] | n박</span> <br>
-                                <span class="fs-6">기준 n명 / 예약인원 n명</span> <br>
+                                <span>[[${#temporals.format(roomItem.in_date, 'yyyy-MM-dd HH:mm')}]]~[[${#temporals.format(roomItem.out_date,'yyyy-MM-dd HH:mm')}]] | [[${roomItem.day}]]박</span> <br>
+                                <span class="fs-6">최대 [[${roomItem.roomDTO.room_bed}]]명 / 예약인원 [[${roomItem.count}]]명</span> <br>
                                 <span>룸서비스 신청</span> <br>
-                                <span>요청사항</span>
-                                <h5 class="text-end fw-bold">숙박/연박 <span class="text-danger">10000</span>원</h5>
+                                <span>요청사항 : [[${roomItem.reserve_request}]]</span>
+                                <th:block th:if="${roomItem.day == 1}">
+                                    <h5 class="text-end fw-bold">숙박 <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.day * roomItem.roomDTO.room_price}">10000</span>원</h5>
+                                </th:block>
+                                <th:block th:unless="${roomItem.day == 1}">
+                                    <h5 class="text-end fw-bold">연박 <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.day * roomItem.roomDTO.room_price}">10000</span>원</h5>
+                                </th:block>
                             </div>
                         </div>
+
+                        <th:block th:if="${iterStat.index == 0
+                        or roomItem.roomDTO.room_name != roomItemDTOList[iterStat.index - 1].roomDTO.room_name
+                        or roomItem.in_date != roomItemDTOList[iterStat.index - 1].in_date
+                        or roomItem.out_date != roomItemDTOList[iterStat.index - 1].out_date
+                        or roomItem.reserve_request != roomItemDTOList[iterStat.index - 1].reserve_request}">
+                            <div>
+                                <hr>
+                            </div>
+                        </th:block>
                     </div>
+
                 </div>
+
+
 
             </th:block>
 
@@ -117,11 +150,11 @@
         <div class="p-3 mb-3">
             <div class="row">
                 <div class="col-md-6 align-self-center">
-                    <span class="card-text fs-5 fw-bold">총 n건</span>
+                    <span class="card-text fs-5 fw-bold checkedCount">총 n건</span>
                 </div>
                 <div class="col-md-6 align-self-center text-end">
                     <span class="card-text fs-5 fw-bold">총 결제 금액</span>
-                    <h3 class="fw-bold"><span class="text-danger">10000</span>원</h3>
+                    <h3 class="fw-bold"><span class="text-danger" id="orderTotalPrice">0</span>원</h3>
                 </div>
             </div>
 
@@ -135,6 +168,65 @@
     </aside>
 
 </th:block>
+
+<script th:inline="javascript" layout:fragment="script">
+
+    $(document).ready(function () {
+
+        //체크시 가격 반영
+        $("input[name=cartChkBox]").change(function () {
+            getOrderTotalPrice()
+        })
+
+        function getOrderTotalPrice() {
+
+            let orderTotalPrice  = 0;
+            let checkedCount = 0;
+
+            $("input[name=cartChkBox]:checked").each(
+                function () {
+                    let roomitem_num = $(this).val()
+                    let price = $("#price-" + roomitem_num).text()
+                    price = parseInt(price.replace(/[^0-9]/g, ''));
+                    orderTotalPrice += price;
+                    checkedCount++;
+                }
+            )
+
+            $("#orderTotalPrice").text(orderTotalPrice)
+            $(".checkedCount").text("총 " + checkedCount + "건");
+
+        }
+        //룸예약 장바구니 삭제
+        $(".roomremovebtn").on("click", function () {
+            let roomitem_num =  $(this).val()
+
+            let url = "/cart/cartRoomReserveDelete/" + roomitem_num
+
+            $.ajax({
+                url : url ,
+                type: "delete",
+                dataType : "json",
+                success : function (result) {
+                    location.href = "/cart/cartList"
+                },
+                error : function (result, status, error) {
+
+                    if(result.status == '401'){
+                        alert("로그인 후 이용해주세요")
+                        location.href = "/member/login"
+                    }else {
+                        alert(result.responseText)
+                    }
+
+                }
+
+            })
+
+        })
+    })
+
+</script>
 
 </body>
 </html>

@@ -46,7 +46,7 @@
                 </div>
 
                 <div class="text-end mb-3">
-                    <span>숙박/1박당 </span> <input type="hidden" class="day" name="day">
+                    <span>숙박/1박당 </span> <input type="text" class="day" name="day">
                     <span class="fs-5 fw-bold price" th:text="${roomDTO.room_price}">10000</span>
                     <span>원</span>
                     <h3 class="fw-bold">총 금액 <span class="text-danger totalPrice" th:text="${roomDTO.room_price}">10000</span>원</h3>
@@ -121,7 +121,7 @@
             // 날짜 차이 계산
             let checkInDate = new Date(in_date);
             let checkOutDate = new Date(out_date);
-            let dayDifference = (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24);
+            let dayDifference = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
 
             // 체크아웃 날짜가 체크인 날짜보다 같거나 이전이면 계산하지 않음
             if (dayDifference <= 0) {
@@ -144,6 +144,7 @@
             let room_num = $(".room_num").val()
             let in_date = $(".in_date").val()
             let out_date = $(".out_date").val()
+            let day = $(".day").val()
             let count = $(".count").val()
             let reserve_request = $(".reserve_request").val()
 
@@ -166,15 +167,16 @@
             }
 
 
-            addCart(room_num, in_date, out_date, count, reserve_request);
+            addCart(room_num, in_date, out_date, day, count, reserve_request);
         })
 
         //장바구니 추가 실행
-        function addCart(room_num, in_date, out_date, count, reserve_request) {
+        function addCart(room_num, in_date, out_date, day, count, reserve_request) {
             let roomItem = {
                 room_num : room_num,
                 in_date : in_date,
                 out_date : out_date,
+                day : day,
                 count : count,
                 reserve_request : reserve_request
             }
