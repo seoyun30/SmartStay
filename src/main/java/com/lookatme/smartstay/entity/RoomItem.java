@@ -3,6 +3,8 @@ package com.lookatme.smartstay.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -16,9 +18,9 @@ public class RoomItem extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomitem_num; //룸 아이템 기록 번호
 
-    private String in_date; //체크인 날짜
+    private LocalDateTime in_date; //체크인 날짜
 
-    private String out_date; //체크아웃 날짜
+    private LocalDateTime out_date; //체크아웃 날짜
 
     private Long day; //n박
 
@@ -42,13 +44,14 @@ public class RoomItem extends BaseEntity{
     @JoinColumn(name = "cart_num")
     private Cart cart; //장바구니
 
-    public static RoomItem createRoomItem(Cart cart, Room room, String in_date
-            , String out_date, String reserve_request, Long count) {
+    public static RoomItem createRoomItem(Cart cart, Room room, LocalDateTime in_date
+            , LocalDateTime out_date, Long day, String reserve_request, Long count) {
         RoomItem roomItem = new RoomItem();
         roomItem.setCart(cart);
         roomItem.setRoom(room);
         roomItem.setIn_date(in_date);
         roomItem.setOut_date(out_date);
+        roomItem.setDay(day);
         roomItem.setReserve_request(reserve_request);
         roomItem.setCount(count);
 

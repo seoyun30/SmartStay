@@ -44,7 +44,7 @@ public class CartService {
         Member member = memberRepository.findByEmail(email);
         log.info("장바구니 서비스 member : " + member);
 
-        Room room = roomRepository.findById(roomItemDTO.getRoomDTO().getRoom_num())
+        Room room = roomRepository.findById(roomItemDTO.getRoom_num())
                 .orElseThrow(EntityNotFoundException::new);
         log.info("장바구니 서비스 room : " + room);
 
@@ -70,7 +70,7 @@ public class CartService {
 
         RoomItem roomItem =
                 RoomItem.createRoomItem(cart, room, roomItemDTO.getIn_date(),
-                        roomItemDTO.getOut_date(), roomItemDTO.getReserve_request(), roomItemDTO.getCount()
+                        roomItemDTO.getOut_date(), roomItemDTO.getDay(), roomItemDTO.getReserve_request(), roomItemDTO.getCount()
                 );
 
         roomItemRepository.save(roomItem);

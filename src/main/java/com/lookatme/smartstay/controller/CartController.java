@@ -107,7 +107,7 @@ public class CartController {
     }
 
     //룸예약 장바구니 삭제
-    @PostMapping("/cartRoomReserveDelete/{roomitem_num}")
+    @DeleteMapping("/cartRoomReserveDelete/{roomitem_num}")
     public ResponseEntity cartRoomReserveDelete (@PathVariable("roomitem_num") Long roomitem_num,
                                                  Principal principal) {
 

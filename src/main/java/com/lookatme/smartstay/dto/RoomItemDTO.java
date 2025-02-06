@@ -1,6 +1,5 @@
 package com.lookatme.smartstay.dto;
 
-import com.lookatme.smartstay.entity.Room;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -18,10 +17,13 @@ public class RoomItemDTO {
     private Long roomitem_num; //룸 아이템 기록 번호
 
     @NotNull
-    private String in_date; //체크인 날짜
+    private LocalDateTime in_date; //체크인 날짜
 
     @NotNull
-    private String out_date; //체크아웃 날짜
+    private LocalDateTime out_date; //체크아웃 날짜
+
+    @NotNull
+    private Long room_num;
 
     private Long day; //n박
 
