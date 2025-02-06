@@ -13,10 +13,6 @@ import java.util.List;
 public interface NoticeRepository extends JpaRepository<Notice, Long>  {
 
 
-    //Page<Notice> searchAll(String[] types, String keyword , String searchDateType, Pageable pageable);
-
-
-    //Page<NoticeDTO> searchAll1(String[] types, String keyword , String searchDateType, Pageable pageable);
 
     //호텔명으로 검색
     @Query("select n from Notice n where n.hotel.hotel_name like %:keyword%")
