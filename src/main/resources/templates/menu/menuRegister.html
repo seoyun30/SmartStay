@@ -10,16 +10,14 @@
 <body>
 <th:block layout:fragment="content">
 
-    <form action="/menu/menuRegister" method="post" th:object="${menuDTO}">
+    <form action="/menu/menuRegister" method="post" th:object="${menuDTO}" enctype="multipart/form-data">
 
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="row">
-
                     <div class="col-12">
-                        <div class="mb-3">
-                            <label for="hotel_num" class="form-label">호텔 정보</label>
-                            <p class="form-control" th:value="${hotelDTO?.hotelDTO?.hotel_num}" id="hotel_num"></p>
+                        <div class="mb-3 text-center">
+                            <h2 th:text="${menuDTO.hotelDTO.hotel_name}"></h2>
                         </div>
                     </div>
                     <div class="col-12">
@@ -52,6 +50,23 @@
                     </div>
 
                     <div class="col-12">
+                        <div class="mb-3 imgA">
+                            <label for="formFile" class="form-label">대표 이미지</label>
+                            <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file" required>
+                            <div class="row main imgpreview"></div>
+                            <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3 imgA">
+                            <label for="formFilede" class="form-label">상세 이미지</label>
+                            <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
+                            <div class="row imgpreviewinput"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
                         <button type="submit" class="btn btn-dark">등록</button>
                         <button type="button" class="btn btn-dark" onclick="location.href='/menu/menuList'">목록</button>
                     </div>
@@ -62,6 +77,96 @@
 </th:block>
 
 <th:block layout:fragment="script">
+
+    <script th:inline="javascript">
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const formFile = document.getElementById('formFile');
+            const imgPreview = document.querySelector('.imgpreview');
+            const removeMainImage = document.getElementById('removeMainImage');
+
+            const formFilede = document.getElementById('formFilede');
+            const imgPreviewInput = document.querySelector('.imgpreviewinput');
+
+            formFile.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        img.style.width = '350px';
+                        img.style.height = 'auto';
+                        img.style.objectFit = 'cover';
+
+                        imgPreview.innerHTML = '';
+                        imgPreview.appendChild(img);
+
+                        removeMainImage.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            removeMainImage.addEventListener('click', function() {
+                formFile.value = '';
+                imgPreview.innerHTML = '';
+                removeMainImage.style.display = 'none';
+            });
+
+            formFilede.addEventListener('change', function(event) {
+                const files = event.target.files;
+
+                Array.from(files).forEach((file, index) => {
+                    if (file) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            const imgWrapper = document.createElement('div');
+                            imgWrapper.classList.add('img-wrapper');
+                            imgWrapper.style.position = 'relative';
+                            imgWrapper.style.display = 'inline-block';
+                            imgWrapper.style.marginRight = '10px';
+
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = file.name;
+                            img.style.width = '200px';
+                            img.style.height = 'auto';
+                            img.style.objectFit = 'cover';
+
+                            const removeButton = document.createElement('button');
+                            removeButton.type = 'button';
+                            removeButton.textContent = '올리지 않기';
+                            removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+                            removeButton.style.top = '5px';
+                            removeButton.style.right = '5px';
+
+                            removeButton.addEventListener('click', function () {
+                                imgWrapper.remove();
+
+                                const dataTransfer = new DataTransfer();
+                                Array.from(formFilede.files).forEach((f, i) => {
+                                    if (i !== index) {
+                                        dataTransfer.items.add(f);
+                                    }
+                                });
+                                formFilede.files = dataTransfer.files;
+                            });
+
+                            imgWrapper.appendChild(img);
+                            imgWrapper.appendChild(removeButton);
+                            imgPreviewInput.appendChild(imgWrapper);
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+        });
+    </script>
 </th:block>
 
 </body>

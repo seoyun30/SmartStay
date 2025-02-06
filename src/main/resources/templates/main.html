@@ -7,7 +7,7 @@
 >
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>SmartStay</title>
 </head>
 <body>
 
@@ -19,16 +19,16 @@
                 <div id="carouselExample" class="carousel slide">
                     <div class="carousel-inner mt-3">
                         <div class="carousel-item active">
-                            이미지1
+                            (이미지1)
                         </div>
                         <div class="carousel-item">
-                            이미지2
+                            (이미지2)
                         </div>
                         <div class="carousel-item">
-                            이미지3
+                            (이미지3)
                         </div>
                         <div class="carousel-item">
-                            이미지4
+                            (이미지4)
                         </div>
                     </div>
 
@@ -47,36 +47,23 @@
         </div>
     </th:block>
 
+
     <div class="container mt-5">
-        <div th:each="hotel : ${list}" class="mb-4">
-            <div class="card shadow-lg border-0">
-                <div class="card-body">
-                    <h5 class="card-title text-primary font-weight-bold">
-                        <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none">호텔 이름</a>
-                    </h5>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            (호텔 대표 이미지)
-                        </li>
-                        <li class="list-group-item">
-                            <span class="font-weight-bold text-secondary">주소 : </span>
-                            <span class="text-dark" th:text="${hotel.address}">주소</span>
-                        </li>
-                        <li class="list-group-item">
-                            <span class="font-weight-bold text-secondary">최저가 : </span>
-                            <span class="text-dark" th:text="${hotel.lowestPrice}">연락처</span>
-                        </li>
-                        <li class="list-group-item mb-3">
-                            <span class="font-weight-bold text-secondary">별점 : </span>
-                            <span class="text-dark" th:text="${hotel.score}">별점</span>
-                        </li>
-                    </ul>
-                    <button type="button" class="btn btn-primary" onclick="location.href='/roomreserve/roomReserveRegister'">예약하기</button>
-                </div>
+        <div class="row g-4">
+            <div th:each="hotel : ${list}" class="col-md-3 col-sm-6">
+                <div class="card border-0 shadow-sm h-100">
+                    (호텔 대표 이미지)
+                     <div class="card-body text-center">
+                         <h6 class="card-title fw-bold">
+                            <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none"></a>
+                        </h6>
+                        <span class="text-dark" th:text="${hotel.lowestPrice + '원~'}"></span>
+                        <span class="text-dark" th:text="${hotel.score}"></span>
+                     </div>
+                 </div>
             </div>
         </div>
     </div>
-
 </th:block>
 </body>
 </html>

@@ -84,8 +84,6 @@
                    <tbody>
                    <th:block th:if="${pageResponseDTO != null}" th:each="roomDTO : ${pageResponseDTO.dtoList}">
                        <tr class="align-middle">
-
-
                            <td th:text="${roomDTO.room_num}"></td>
                            <td>
                                <a th:href="@{/room/roomRead(room_num=${roomDTO.room_num})}">
