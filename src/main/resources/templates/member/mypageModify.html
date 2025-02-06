@@ -52,7 +52,7 @@
                                 <label for="password" class="col-sm-2 col-form-label">비밀번호 변경</label>
                                 <div class="col-sm-10">
                                     <input class="form-control" type="password" aria-label="With text" id="password" name="password" th:field="*{password}">
-                                    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">전화번호 입력 오류</span>
+                                    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">비밀번호 입력 오류</span>
 
                                 </div>
                             </div>

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -200,7 +201,7 @@ public class LoginController {
        }
 
        redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
-        return "member/signup";
+        return "member/login";
    }
 
    /*@GetMapping("/adLogin") //로그인페이지(총판,매니져) 관리자들
@@ -297,8 +298,17 @@ public class LoginController {
     }
 
     @PostMapping("/findPW") //회원정보 확인(유저)
-    public String findPWPost(MemberDTO memberDTO){
-        return "member/findPW";
+    public String findPWPost(@ModelAttribute MemberDTO memberDTO, Model model){
+       try{
+           memberService.passwordSend(memberDTO);
+           return "member/findPW";
+       }catch (IllegalStateException e){
+           model.addAttribute("msg", e.getMessage());
+           return "member/findPW";
+       }catch (Exception e){
+           model.addAttribute("msg", "예기치 않은 오류가 발생했습니다.");
+           return "member/findPW";
+       }
     }
 
     @GetMapping("/adChangePW") //비밀번호 재설정(관리자)

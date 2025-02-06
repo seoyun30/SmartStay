@@ -26,6 +26,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +43,9 @@ public class MemberService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final BrandRepository brandRepository;
     private final HotelRepository hotelRepository;
+    private final EmailService emailService;
+
+
 
 
     @Override
@@ -325,7 +329,57 @@ public class MemberService implements UserDetailsService {
 
         }
 
+    public void passwordSend(MemberDTO memberDTO){
 
+        try{
+            Member member = memberRepository.findByEmail(memberDTO.getEmail() );
+            if(!member.getEmail().equals(memberDTO.getEmail())){
+                throw new IllegalStateException("일치하는 회원이 없습니다.");
+            }
+            if(!member.getName().equals(memberDTO.getName())){
+                throw new IllegalStateException("회원 이름이 일치하지 않습니다.");
+            }
+            if(!member.getTel().equals(memberDTO.getTel())){
+                throw new IllegalStateException("전화번호가 일치하지 않습니다.");
+            }
+            String tempPassword = generateTempPassword(8);
+            member.setPassword(passwordEncoder.encode(tempPassword));
+            memberRepository.save(member);
+
+            String emailSubject = "임시비밀번호 발급";
+            String emailText = "안녕하세요"+member.getName()+"님.\n"+"요청하신 임시비밀번호는 다음과 같습니다.\n" +
+                    tempPassword+"\n"+"로그인 후 반드시 비밀번호를 변경해 주세요.";
+
+            emailService.sendEmail(member.getEmail(), emailSubject, emailText);
+            System.out.println("전송완료");
+
+        }catch (IllegalStateException e) {
+            System.out.println("회원 가입을 실패하였습니다. " + e.getMessage());
+            throw e;
+        }catch (Exception e){
+            System.out.println("예기치 않은 문제가 발생하였습니다." + e.getMessage());
+            throw new RuntimeException("가입 중 오류가 발생하였습니다.");
+        }
+    }
+
+
+
+    private String generateTempPassword(int length){    //비밀번호생성기
+
+        final String chars = "ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(length);
+        try {
+            for(int i = 0; i < length; i++) {
+                int index = random.nextInt(chars.length());
+                sb.append(chars.charAt(index));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            System.err.println("임시 비밀번호 생성 실패!!");
+            throw new RuntimeException("임시 비밀번호 생성을 실패하였습니다.");
+        }
+    }
 
     }
 
