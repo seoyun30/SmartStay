@@ -139,18 +139,18 @@ public class NoticeServiceImpl implements NoticeService {
     //페이징처리 ok 검색 동적 처리
     @Override
     public PageResponseDTO<NoticeDTO> pageListsearchdsl(PageRequestDTO pageRequestDTO){
-//        log.info(pageRequestDTO);
-//
-//        Pageable pageable = pageRequestDTO.getPageable("notice_num");
-//        String[] types = pageRequestDTO.getTypes();
-//        String keyword = pageRequestDTO.getKeyword();
-//        String searchDateType = pageRequestDTO.getSearchDateType();
-//
-//        Page<Notice> noticePage = noticeRepository.findAll(types, keyword, searchDateType, pageable);
-//
-//        //변환
-//        List<Notice> noticeList = noticePage.getContent();
-//
+        log.info(pageRequestDTO);
+
+        Pageable pageable = pageRequestDTO.getPageable("notice_num");
+        String[] types = pageRequestDTO.getTypes();
+        String keyword = pageRequestDTO.getKeyword();
+        String searchDateType = pageRequestDTO.getSearchDateType();
+
+        //Page<Notice> noticePage = noticeRepository.findAll(types, keyword, searchDateType, pageable);
+
+        //변환
+        //List<Notice> noticeList = noticePage.getContent();
+
 //        //dto 변환
 //        List<NoticeDTO> noticeDTOList=
 //                noticeList.stream().map(notice -> modelMapper.map(notice, NoticeDTO.class))
