@@ -22,7 +22,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -229,19 +228,20 @@ public class MemberService implements UserDetailsService {
 
             Member member = memberRepository.findByEmail(email);
 
-            if(member == null){
-                throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
-            }
-
-            if(memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()){
-                memberDTO.setPassword(new BCryptPasswordEncoder().encode(memberDTO.getPassword()));
-            }
-
-            member.setTel(memberDTO.getTel());
-
-
-            return memberRepository.save(member);
+        if(member == null){
+            throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
         }
+
+
+        if (memberDTO.getTel() != null) {
+            member.setTel(memberDTO.getTel());
+        }
+        if (memberDTO.getPassword() != null) { // 비밀번호가 null이 아닌 경우에만 업데이트
+            member.setPassword(memberDTO.getPassword());
+        }
+
+        return memberRepository.save(member);
+    }
 
 
 
@@ -333,7 +333,7 @@ public class MemberService implements UserDetailsService {
 
         try{
             Member member = memberRepository.findByEmail(memberDTO.getEmail() );
-            if(!member.getEmail().equals(memberDTO.getEmail())){
+            if(member == null){
                 throw new IllegalStateException("일치하는 회원이 없습니다.");
             }
             if(!member.getName().equals(memberDTO.getName())){
@@ -347,7 +347,7 @@ public class MemberService implements UserDetailsService {
             memberRepository.save(member);
 
             String emailSubject = "임시비밀번호 발급";
-            String emailText = "안녕하세요"+member.getName()+"님.\n"+"요청하신 임시비밀번호는 다음과 같습니다.\n" +
+            String emailText = "안녕하세요 " +member.getName()+ " 님.\n"+"요청하신 임시 비밀번호는 다음과 같습니다.\n" +
                     tempPassword+"\n"+"로그인 후 반드시 비밀번호를 변경해 주세요.";
 
             emailService.sendEmail(member.getEmail(), emailSubject, emailText);

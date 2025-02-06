@@ -9,69 +9,52 @@
 
 </head>
 <body>
-
 <th:block layout:fragment="content">
-    <div class="row mt-5">
-        <div class="col-6 offset-3">
-            <div class="col text-center">
-            <h1>내정보</h1>
-        </div>
-    </div>
-
-        <div class="container my-auto">
-                <div class="col shadow p-5 mt-5 mb-5 bg-body-tertiary rounded">
-
-            <div class="row">
-
-                  <th:block th:object="${memberDTO}">
-                <div class="mb-3 row">
-                    <label for="email" class="col-sm-2 col-form-label">회원Email</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="email" th:value="${memberDTO.email}">
-                    </div>
-
-                </div>
-                <div class="mb-3 row">
-                    <label for="name" class="col-sm-2 col-form-label">회원이름</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="name" th:value="${memberDTO.name}">
-                    </div>
-
-                </div>
-                <div class="mb-5 row">
-                    <label for="tel" class="col-sm-2 col-form-label">전화번호</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="tel" th:value="${memberDTO.tel}">
-
-                    </div>
+    <div class="container">
+        <div class="row mt-5 justify-content-center">
+            <div class="col-4">
+                <div class="text-center">
+                    <h1>내정보</h1>
                 </div>
 
-                    <div class="mb-3 row">
-                        <label for="reg_date" class="col-sm-2 col-form-label">가입일자</label>
-                        <div class="col-sm-10">
-                            <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="reg_date" th:value="${#temporals.format(memberDTO.reg_date, 'yyyy-MM-dd')}">
 
+                <div class="row g-3">
+
+                    <th:block th:object="${memberDTO}">
+                        <div class="mb-1">
+                            <label for="email" class="form-label">Email</label>
+                            <input class="form-control" type="email" aria-label="Disabled input example" disabled readonly id="email" th:value="${memberDTO.email}">
                         </div>
-                    </div>
 
-                    <div class="row text-end">
-                        <div class="col">
+                        <div class="mb-1">
+                            <label for="name" class="form-label">name</label>
+                            <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="name" th:value="${memberDTO.name}">
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="tel" class="form-label">tel</label>
+                            <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="tel" th:value="${memberDTO.tel}">
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="reg_date" class="form-label">가입일자</label>
+                            <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="reg_date" th:value="${#temporals.format(memberDTO.reg_date, 'yyyy-MM-dd')}">
+                        </div>
+
+                        <div class="col text-center d-flex justify-content-center gap-3 mt-4">
                             <button type="button" class="btn btn-primary modifybtnMain" onclick="location.href='/member/mypageModify'">수정</button>
 
-
                         </div>
 
-                    </div>
-                  </th:block>
+
+                    </th:block>
+                </div>
             </div>
-
-
         </div>
-
-
     </div>
-</div>
+
 </th:block>
 
 </body>
+
 </html>
