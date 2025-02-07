@@ -31,7 +31,7 @@ public interface NoticeService {
     public PageResponseDTO<NoticeDTO> pageListsearchdsl(PageRequestDTO pageRequestDTO);
 
     //수정
-    public void noticeModify(NoticeDTO noticeDTO, List<MultipartFile> multipartFileList);
+    public void noticeModify(NoticeDTO noticeDTO, List<MultipartFile> multipartFileList, List<Long> delnumList);
 
     //삭제
     public void noticeDelete(Long notice_num);

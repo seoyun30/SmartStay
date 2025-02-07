@@ -1,8 +1,10 @@
 package com.lookatme.smartstay.repository;
 
+import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Notice;
 
 import com.lookatme.smartstay.repository.search.NoticeSearch;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -33,6 +35,10 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>  , NoticeS
 //
 //    @Query("select n from Notice n where n.reg_date in : reg_dates")
 //    List<Notice> findByRegDate(@Param("reg_dates") List<LocalDateTime> reg_dates);
+
+
+
+
 }
 
 
