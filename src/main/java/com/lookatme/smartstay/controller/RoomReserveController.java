@@ -2,13 +2,11 @@ package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.RoomDTO;
 import com.lookatme.smartstay.dto.RoomItemDTO;
-import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.service.RoomReserveService;
 import com.lookatme.smartstay.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,8 +24,6 @@ import java.util.List;
 @RequestMapping("/roomreserve")
 public class RoomReserveController {
     private final RoomService roomService;
-    private final HotelRepository hotelRepository;
-    private final ModelMapper modelMapper;
     private final RoomReserveService roomReserveService;
 
     @GetMapping("/roomReserveRegister")
