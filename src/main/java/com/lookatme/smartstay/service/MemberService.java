@@ -236,7 +236,8 @@ public class MemberService implements UserDetailsService {
         if (memberDTO.getTel() != null) {
             member.setTel(memberDTO.getTel());
         }
-        if (memberDTO.getPassword() != null) { // 비밀번호가 null이 아닌 경우에만 업데이트
+
+        if(memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()){
             member.setPassword(memberDTO.getPassword());
         }
 
@@ -328,6 +329,22 @@ public class MemberService implements UserDetailsService {
             }
 
         }
+
+
+     public Member findID(String name, String tel){
+
+        log.info("name: " + name + " tel: " + tel);
+
+        Member member = memberRepository.findID(name, tel);
+
+        if(member == null){
+            throw new EntityNotFoundException("일치하는 회원이 없습니다.");
+        }
+        log.info("member: " + member);
+
+        return member;
+     }
+
 
     public void passwordSend(MemberDTO memberDTO){
 

@@ -3,9 +3,11 @@ package com.lookatme.smartstay.controller;
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.service.BrandService;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -278,7 +280,19 @@ public class LoginController {
    }
 
    @PostMapping("/findID") //아이디찾기(유저)
-    public String findIDPost(MemberDTO memberDTO){
+    public String findIDPost(String name, String tel, Model model){
+       try {
+           Member member = memberService.findID(name, tel);
+           MemberDTO memberDTO = new MemberDTO();
+           memberDTO.setEmail(member.getEmail());
+           log.info("이메일 찾았니?" + memberDTO);
+
+           model.addAttribute("memberDTO", memberDTO);
+
+       }catch (EntityNotFoundException e) {
+           model.addAttribute("msg", e.getMessage());
+           model.addAttribute("memberDTO", new MemberDTO());
+       }
         return "member/findID";
    }
 
@@ -301,6 +315,7 @@ public class LoginController {
     public String findPWPost(@ModelAttribute MemberDTO memberDTO, Model model){
        try{
            memberService.passwordSend(memberDTO);
+           model.addAttribute("successMsg", "임시비밀번호가 전송되었습니다.");
            return "member/findPW";
        }catch (IllegalStateException e){
            model.addAttribute("msg", e.getMessage());

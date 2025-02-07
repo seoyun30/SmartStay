@@ -24,12 +24,14 @@
                     <th:block th:object="${memberDTO}">
                         <div class="mb-1">
                             <label for="email" class="form-label">Email</label>
-                            <input class="form-control" type="email" aria-label="Disabled input example" disabled readonly id="email" th:value="${memberDTO.email}">
+                            <input class="form-control" type="email" id="email" th:value="${memberDTO.email}" disabled readonly>
+                            <input type="hidden" name="email" th:value="${memberDTO.email}">
                         </div>
 
                         <div class="mb-1">
-                            <label for="name" class="form-label">name</label>
-                            <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="name" th:value="${memberDTO.name}">
+                            <label for="name" class="form-label">Name</label>
+                            <input class="form-control" type="text" id="name" th:value="${memberDTO.name}" disabled readonly>
+                            <input type="hidden" name="name" th:value="${memberDTO.name}">
                         </div>
 
                         <div class="mb-1">
@@ -46,7 +48,7 @@
 
                         <div class="mb-1">
                             <label for="reg_date" class="form-label">가입일자</label>
-                            <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="reg_date" th:value="${#temporals.format(memberDTO.reg_date, 'yyyy-MM-dd')}">
+                            <input class="form-control" type="text" id="reg_date" th:value="${#temporals.format(memberDTO.reg_date, 'yyyy-MM-dd')}" disabled readonly>
                         </div>
 
                         <div class="col text-center d-flex justify-content-center gap-3 mt-4">
