@@ -5,7 +5,6 @@ import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.RoomItem;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.RoomItemRepository;
-import com.lookatme.smartstay.repository.RoomRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +38,7 @@ public class RoomItemService {
         }
         roomItem.setIn_date(roomItemDTO.getIn_date());
         roomItem.setOut_date(roomItemDTO.getOut_date());
+        roomItem.setDay(roomItemDTO.getDay());
         roomItem.setReserve_request(roomItemDTO.getReserve_request());
 
         return roomItem.getRoomitem_num();

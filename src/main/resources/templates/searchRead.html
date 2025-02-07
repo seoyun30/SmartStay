@@ -61,7 +61,7 @@
                             <span class="text-dark" th:text="${room.room_price + '원'}">가격</span>
                         </li>
                     </ul>
-                    <button type="button" class="btn btn-primary" onclick="location.href='/roomreserve/roomReserveRegister'">예약하기</button>
+                    <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/roomreserve/roomReserveRegister(room_num=${room.room_num})}'|">예약하기</button>
                 </div>
             </div>
         </div>

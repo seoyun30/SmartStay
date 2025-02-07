@@ -20,7 +20,7 @@
             <div class="card-body">
                 <h3 class="card-title fw-bold" th:text="${roomDTO.hotelDTO.hotel_name}">호텔 매장 이름</h3>
                 <p class="card-text fs-4 fw-bold" th:text="${roomDTO.room_name}">룸 이름 / 룸 타입</p>
-                추후 숨길것 <input type="text" class="room_num" th:value="${roomDTO.room_num}" name="room_num">
+                <input type="hidden" class="room_num" th:value="${roomDTO.room_num}" name="room_num">
 
                 <div class="row mb-3">
                     <div class="col-4">
@@ -46,7 +46,7 @@
                 </div>
 
                 <div class="text-end mb-3">
-                    <span>숙박/1박당 </span> <input type="text" class="day" name="day">
+                    <span>숙박/1박당 </span> <input type="hidden" class="day" name="day">
                     <span class="fs-5 fw-bold price" th:text="${roomDTO.room_price}">10000</span>
                     <span>원</span>
                     <h3 class="fw-bold">총 금액 <span class="text-danger totalPrice" th:text="${roomDTO.room_price}">10000</span>원</h3>
