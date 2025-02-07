@@ -264,15 +264,7 @@ public class LoginController {
         return "redirect:/login";
    }*/
 
-   @GetMapping("/adFindID") // 아이디찾기(관리자)
-    public String adFindIDGet(){
-        return "member/adFindID";
-   }
 
-    @PostMapping("/adFindID") //아이디찾기(관리자)
-    public String adFindIDPost(MemberDTO memberDTO){
-        return "member/adFindID";
-    }
 
    @GetMapping("/findID") //아이디찾기(유저)
     public String findIDGet(){
@@ -296,15 +288,7 @@ public class LoginController {
         return "member/findID";
    }
 
-   @GetMapping("/adFindPW") //비밀번호찾기(관리자)
-    public String adFindPWGet(){
-        return "member/adFindPW";
-   }
 
-   @PostMapping("/adFindPW") //회원정보 확인(관리자)
-    public String adFindPWPost(MemberDTO memberDTO){
-        return "member/adFindPW";
-   }
 
     @GetMapping("/findPW") //비밀번호찾기(유저)
     public String findPWGet(){
@@ -326,22 +310,13 @@ public class LoginController {
        }
     }
 
-    @GetMapping("/adChangePW") //비밀번호 재설정(관리자)
-    public String adChangePWGet(){
-        return "member/adChangePW";
-    }
 
-    @PostMapping("/adChangePW") //비밀번호 재설정(관리자)
-    public String adChangePW(MemberDTO memberDTO){
-        return "member/adChangePW";
-    }
-
-    @GetMapping("/changePW") //비밀번호 재설정(관리자)
+    @GetMapping("/changePW") //비밀번호 재설정(유저)
     public String changePWGet(){
         return "member/changePW";
     }
 
-    @PostMapping("/changePW") //비밀번호 재설정(관리자)
+    @PostMapping("/changePW") //비밀번호 재설정(유저)
     public String changePW(MemberDTO memberDTO){
         return "member/changePW";
     }

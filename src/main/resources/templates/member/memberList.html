@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/userlayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>회원리스트</title>
+
+</head>
+<body>
+
+<th:block layout:fragment="content">
+    <h1 class="text-center mt-3">전체 회원 목록</h1>
+
+    <form th:action="@{/member/searchMember}" method="get" class="d-flex justify-content-end mt-5">
+        <input type="text" name="keyword" class="form-control" placeholder="검색어 입력" th:value="${keyword}" style="width: 250px;">
+        <button type="submit" class="btn btn-primary btn-sm ml-2">검색</button>
+    </form>
+
+
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>Email</th>
+                    <th>이름</th>
+                    <th>연락처</th>
+                    <th>권한</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <th:block th:if="${memberList == null or #lists.isEmpty(memberList)}">
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <h5>회원 목록이 없습니다.</h5>
+                        </td>
+                    </tr>
+                </th:block>
+
+                <th:block th:each="memberDTO : ${memberList}">
+                    <tr class="align-middle">
+                        <td th:text="${memberDTO.member_num}"></td>
+                        <td th:text="${memberDTO.email}"></td>
+                        <td th:text="${memberDTO.name}"></td>
+                        <td th:text="${memberDTO.tel}"></td>
+                        <td th:text="${memberDTO.role}"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</th:block>
+
+</body>
+</html>
