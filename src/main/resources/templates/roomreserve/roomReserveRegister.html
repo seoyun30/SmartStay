@@ -20,7 +20,7 @@
             <div class="card-body">
                 <h3 class="card-title fw-bold" th:text="${roomDTO.hotelDTO.hotel_name}">호텔 매장 이름</h3>
                 <p class="card-text fs-4 fw-bold" th:text="${roomDTO.room_name}">룸 이름 / 룸 타입</p>
-                추후 숨길것 <input type="text" class="room_num" th:value="${roomDTO.room_num}" name="room_num">
+                <input type="hidden" class="room_num" th:value="${roomDTO.room_num}" name="room_num">
 
                 <div class="row mb-3">
                     <div class="col-4">

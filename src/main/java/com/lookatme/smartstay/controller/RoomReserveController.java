@@ -1,19 +1,14 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.RoomDTO;
 import com.lookatme.smartstay.dto.RoomItemDTO;
-import com.lookatme.smartstay.dto.RoomReserveDTO;
-import com.lookatme.smartstay.entity.Room;
 import com.lookatme.smartstay.repository.HotelRepository;
-import com.lookatme.smartstay.repository.RoomRepository;
 import com.lookatme.smartstay.service.RoomReserveService;
+import com.lookatme.smartstay.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,7 +16,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.security.Principal;
 import java.util.List;
@@ -31,20 +25,15 @@ import java.util.List;
 @Log4j2
 @RequestMapping("/roomreserve")
 public class RoomReserveController {
-    private final RoomRepository roomRepository;
+    private final RoomService roomService;
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
     private final RoomReserveService roomReserveService;
 
     @GetMapping("/roomReserveRegister")
-    public String roomReserveRegisterGet(Model model) {
+    public String roomReserveRegisterGet(Long room_num, Model model) {
 
-        Room room = roomRepository.findById(1L).orElseThrow();
-        log.info("룸 정보: " + room);
-
-        HotelDTO hotelDTO = modelMapper.map(room.getHotel(), HotelDTO.class);
-        RoomDTO roomDTO = modelMapper.map(room, RoomDTO.class);
-        roomDTO.setHotelDTO(hotelDTO);
+        RoomDTO roomDTO = roomService.roomRead(room_num);
         log.info("룸 정보: " + roomDTO);
 
         model.addAttribute("roomDTO", roomDTO);
