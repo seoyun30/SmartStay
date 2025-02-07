@@ -72,6 +72,8 @@
 
                         <div class="col-md-9 align-self-center">
                             <div class="card-body reserveinfo" >
+                                <input type="hidden" class="roomItemNumber" name="roomItem_num" th:value="${roomItem.roomitem_num}">
+                                <input type="hidden" class="roomNumber" name="room_num" th:value="${roomItem.roomDTO.room_num}">
                                 <span class="reserveDate">[[${#temporals.format(roomItem.in_date, 'yyyy-MM-dd HH:mm')}]]~[[${#temporals.format(roomItem.out_date,'yyyy-MM-dd HH:mm')}]] | [[${roomItem.day}]]박</span> <br>
                                 <span class="fs-6 reserveCount">최대 [[${roomItem.roomDTO.room_bed}]]명 / 예약인원 [[${roomItem.count}]]명</span> <br>
                                 <span>룸서비스 신청</span> <br>
@@ -182,6 +184,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="row mb-3">
+                        <input type="hidden" class="roomItem_num" name="roomItem_num">
+                        <input type="hidden" class="room_num" name="room_num">
                         <div class="col">
                             <span class="fs-6 text-secondary">체크인</span> <br>
                             <input class="in_date" type="datetime-local" name="in_date">
@@ -213,7 +217,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary">수정</button>
+                    <button type="button" class="btn btn-primary roomReserveModifyBtn">수정</button>
                 </div>
             </div>
         </div>
@@ -232,12 +236,10 @@
 
         //체크시 가격 반영 메소드
         function getOrderTotalPrice() {
-
             let orderTotalPrice  = 0;
             let checkedCount = 0;
 
-            $("input[name=cartChkBox]:checked").each(
-                function () {
+            $("input[name=cartChkBox]:checked").each(function () {
                     let roomitem_num = $(this).val()
                     let price = $("#price-" + roomitem_num).text()
                     price = parseInt(price.replace(/[^0-9]/g, ''));
@@ -282,13 +284,14 @@
         // 예약 정보 클릭 시 모달 창에 데이터 채우기
         $(".reserveinfo").on("click", function () {
             // 현재 클릭된 요소에서 필요한 데이터 가져오기
+            let roomItemNumber = $(this).find(".roomItemNumber").val();
+            let roomNumber = $(this).find(".roomNumber").val();
             let checkInOutText = $(this).find(".reserveDate").text().trim();
             let maxPeopleText = $(this).find(".reserveCount").text().trim();
             let requestText = $(this).find(".reserveRequest").text().trim();
             let roomPrice = $(this).closest(".col-md-9").find(".roomPrice").val();  // 가격
             let reserveDay = $(this).closest(".col-md-9").find(".reserveDay").val(); // 숙박일
             let hotelName = $(this).closest(".p-3").find(".hotelName").val(); // 호텔 매장 이름
-            console.log("호텔 이름: ", hotelName);
             let roomInfoText = $(this).closest(".p-3").find(".fs-5.fw-bold").text().trim(); // 룸 이름 / 룸 타입
 
             // 체크인, 체크아웃 날짜 파싱
@@ -311,6 +314,8 @@
             let totalPrice = roomPrice * reserveDay;
 
             // 모달 창에 데이터 삽입
+            $(".modal input.roomItem_num").val(roomItemNumber); //룸예약 번호
+            $(".modal input.room_num").val(roomNumber); //룸 번호
             $(".modal .modal-title").html(hotelName + ' <span class="fs-4 fw-bold">' + roomInfoText + '</span>');  // 호텔 매장 이름 + 룸 정보
             $(".modal input.in_date").val(checkInDate);  // 체크인 날짜
             $(".modal input.out_date").val(checkOutDate); // 체크아웃 날짜
@@ -327,7 +332,7 @@
             $("#exampleModal").modal("show");
 
             // 모달이 열린 후 setMinDateTime 실행
-            setTimeout(setMinDateTime, 300);
+            setMinDateTime()
         });
 
         function setMinDateTime() {
@@ -340,6 +345,7 @@
 
             let minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
             $(".modal .in_date").attr("min", minDateTime);
+            $(".modal .out_date").attr("min", minDateTime);
         }
 
         $(".in_date").on("change", function () {
@@ -395,6 +401,88 @@
             $(".modal .day").val(dayDifference);
             $(".modal .totalPrice").text(totalPrice);
         }
+
+        $(".modal .roomReserveModifyBtn").on("click", function () {
+            let today = new Date();
+            today.setHours(0, 0, 0, 0); // 현재 날짜 (시간 00:00:00으로 설정)
+
+            let roomitem_num = $(".modal .roomItem_num").val();
+            let room_num = $(".modal .room_num").val();
+            let in_date = $(".modal .in_date").val();
+            let out_date = $(".modal .out_date").val();
+            let day = $(".modal .day").val();
+            let reserve_request = $(".modal .reserve_request").val();
+            let maxPeople = parseInt($(".modal .maxCount").text().replace("최대 ", "").replace("명 예약 가능", "").trim()); // 최대 예약 가능 인원
+            let count = $(".modal .count").val();
+
+            //유효성 검사
+            if (!room_num) {
+                alert("잘못된 방 정보입니다.");
+                return;
+            }
+            if (!in_date) {
+                alert("체크인 날짜를 선택해주세요.");
+                return;
+            } else if (in_date < today) {
+                alert("체크인 날짜는 이미 지난 날짜로 선택할 수 없습니다.");
+                $(".modal .in_date").val(""); // 입력값 초기화
+                return;
+            }
+            if (!out_date) {
+                alert("체크아웃 날짜를 선택해주세요.");
+                return;
+            } else if (out_date < today) {
+                alert("체크아웃 날짜는 이미 지난 날짜로 선택할 수 없습니다.");
+                $(".modal .out_date").val(""); // 입력값 초기화
+                return;
+            }
+            if (in_date >= out_date) {
+                alert("체크아웃 날짜는 체크인 날짜보다 이후여야 합니다.");
+                $(".modal .out_date").val(""); // 입력값 초기화
+                return;
+            }
+
+            if (!count || count < 1) {
+                alert("예약 인원 수를 입력해주세요.");
+                return;
+            } else if (count > maxPeople) {
+                alert("최대 예약 가능 인원을 초과할 수 없습니다. (최대 예약 가능 인원: " + maxPeople + "명)");
+                $(".modal .count").val(maxPeople); // 최대 인원으로 값 변경
+                return; // 수정 요청 중단
+            }
+
+            // 요청 사항이 비어 있을 경우 기본값 설정
+            if (reserve_request === "") {
+                reserve_request = "요청 사항 없음";
+            }
+
+            let roomItemDTO = {
+                roomitem_num : roomitem_num,
+                room_num : room_num,
+                in_date : in_date,
+                out_date : out_date,
+                day : day,
+                count : count,
+                reserve_request : reserve_request
+            }
+
+            console.log(roomItemDTO)
+
+            $.ajax({
+                url : "/cart/cartRoomReserveModify",
+                type : "post",
+                data : roomItemDTO,
+                success : function (result) {
+                    $("#exampleModal").modal("hide");
+                    location.reload(); // 페이지 새로 고침
+                },
+                error : function (result) {
+                    console.log(result.responseText)
+                }
+            })
+        })
+
+
 
 
 
