@@ -137,10 +137,22 @@ public class CartService {
     //차후 룸서비스 관련 추가 필요
 
     //장바구니의 주문
-    public Long orderCartItem(List<CartOrderDTO> cartOrderDTOList, String email) {
+    public List<RoomItemDTO> findCartOrderRoomItem(List<CartOrderDTO> cartOrderDTOList) {
 
-        //수정 필요
-        return null;
+        //현재 룸예약만 진행중 차후 수정 필요
+        List<RoomItemDTO> roomItemDTOList = new ArrayList<>();
+
+        for (CartOrderDTO cartOrderDTO : cartOrderDTOList) {
+           RoomItem roomItem = roomItemRepository.findById(cartOrderDTO.getRoomitem_num())
+                   .orElseThrow(EntityNotFoundException::new);
+           roomItemDTOList.add(
+                   modelMapper.map(roomItem, RoomItemDTO.class)
+                           .setRoomDTO(modelMapper.map(roomItem.getRoom(), RoomDTO.class)
+                                   .setHotelDTO(modelMapper.map(roomItem.getRoom().getHotel(), HotelDTO.class)))
+           );
+        }
+
+        return roomItemDTOList;
     }
 
 }

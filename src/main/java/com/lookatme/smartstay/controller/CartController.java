@@ -22,7 +22,6 @@ import java.util.List;
 @Log4j2
 @RequestMapping("/cart")
 public class CartController {
-
     private final CartService cartService;
     private final RoomItemService roomItemService;
 

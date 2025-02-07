@@ -22,6 +22,8 @@
 
 <th:block layout:fragment="content">
 
+    <form id="cartForm" action="/pay" method="get">
+
     <div id="contain" class="card w-75 mt-5 mx-auto">
 
         <div class="card-title">
@@ -166,13 +168,15 @@
             </div>
 
             <div class="d-grid gap-2 text-center mt-2">
-                <button class="btn btn-primary btn-lg" type="button">구매하기</button>
+                <button class="btn btn-primary btn-lg buybtn" type="button">구매하기</button>
             </div>
         </div>
 
         <hr>
 
     </aside>
+
+    </form>
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -482,7 +486,40 @@
             })
         })
 
+        //결제 페이지로 이동
+        $(".buybtn").on("click", function (e) {
+            e.preventDefault(); // 기본 폼 제출 방지
+            let form = $("#cartForm");
 
+            // 기존 hidden input 삭제 (중복 방지)
+            $(".cartItemInput").remove();
+
+            let selectedItems = [];
+
+            // 체크된 roomItem_num 가져오기
+            $("input[name=cartChkBox]:checked").each(function () {
+                let roomitem_num = $(this).val();
+                selectedItems.push(roomitem_num);
+
+                // hidden input 생성하여 form에 추가
+                let hiddenInput = $("<input>")
+                    .attr("type", "hidden")
+                    .attr("name", "cartOrderDTOList") // 컨트롤러에서 받을 이름과 일치해야 함
+                    .attr("value", roomitem_num)
+                    .addClass("cartItemInput");
+                form.append(hiddenInput);
+            });
+
+            // 유효성 검사: 체크된 항목이 없으면 경고 후 중단
+            if (selectedItems.length === 0) {
+                alert("구매할 항목을 선택해주세요.");
+                return;
+            }
+
+            // 폼 제출 (POST 방식)
+            form.submit();
+
+        });
 
 
 
