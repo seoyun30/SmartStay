@@ -4,7 +4,6 @@ import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.MemberService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -85,20 +84,27 @@ public class MemberController {
         try {
             Member member = memberRepository.findByEmail(principal.getName());
 
+            if (member == null) {
+                model.addAttribute("msg", "해당회원이 존재하지 않습니다.");
+                return "member/mypageModify";
+            }
 
-            if(memberDTO.getPassword() != null && !memberDTO.getPassword().trim().isEmpty()){
+
+           if(memberDTO.getPassword() != null && !memberDTO.getPassword().trim().isEmpty()){
                 String encodedPassword = new BCryptPasswordEncoder().encode(memberDTO.getPassword());
                 memberDTO.setPassword(encodedPassword);
 
             } else {
-                Member existingMember = memberRepository.findByEmail(principal.getName());
-                memberDTO.setPassword(existingMember.getPassword());
+                memberDTO.setPassword(member.getPassword());
             }
+
 
             memberService.updateMember(principal.getName(), memberDTO);
 
-        }catch (EntityNotFoundException e) {
-            return "redirect:/member/mypage";
+        }catch (Exception e) {
+            log.error("회원정보 수정 중 오류발생", e);
+            model.addAttribute("msg", e.getMessage());
+            return "redirect:/member/mypageModify";
         }
         return "redirect:/member/mypage";
 
