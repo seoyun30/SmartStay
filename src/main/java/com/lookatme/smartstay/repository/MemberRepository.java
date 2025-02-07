@@ -1,7 +1,6 @@
 package com.lookatme.smartstay.repository;
 
 import com.lookatme.smartstay.entity.Member;
-import jakarta.validation.constraints.Email;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,5 +22,14 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("select m from Member m where m.name = :name and m.tel = :tel")
     Member findID(@Param("name") String name, @Param("tel") String tel);
 
-    List<Member> email(@Email String email);
+    List<Member> email(String email);
+
+    @Query("SELECT m FROM Member m " +
+            "WHERE m.email LIKE CONCAT('%', :keyword, '%') " +
+            "OR m.name LIKE CONCAT('%', :keyword, '%') " +
+            "OR m.tel LIKE CONCAT('%', :keyword, '%') " +
+            "OR m.role LIKE CONCAT('%', :keyword, '%')")
+    List<Member> searchMember(@Param("keyword") String keyword);
+
+
 }

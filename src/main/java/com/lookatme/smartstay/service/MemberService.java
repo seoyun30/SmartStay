@@ -116,7 +116,7 @@ public class MemberService implements UserDetailsService {
 
     }
 
-    public Member saveMember(MemberDTO memberDTO){
+    public Member saveMember(MemberDTO memberDTO){ //유저회원저장
 
         validateDuplicateMember(memberDTO.getEmail());
 
@@ -132,7 +132,7 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
-    public Member saveSuperAdminMember(MemberDTO memberDTO){
+    public Member saveSuperAdminMember(MemberDTO memberDTO){ //최초치프회원 저장
 
         validateDuplicateMember(memberDTO.getEmail());
 
@@ -147,7 +147,7 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
-    public Member saveChiefMember(MemberDTO memberDTO, BrandDTO brandDTO){
+    public Member saveChiefMember(MemberDTO memberDTO, BrandDTO brandDTO){ //치프회원 저장
 
         log.info(memberDTO);
         log.info(brandDTO);
@@ -169,7 +169,7 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
-    public Member saveManagerMember(MemberDTO memberDTO, BrandDTO brandDTO, HotelDTO hotelDTO){
+    public Member saveManagerMember(MemberDTO memberDTO, BrandDTO brandDTO, HotelDTO hotelDTO){ //매니져회원 저장
 
         validateDuplicateMember(memberDTO.getEmail());
 
@@ -204,8 +204,36 @@ public class MemberService implements UserDetailsService {
 
     }
 
+    public List<MemberDTO> memberList() { //회웍목록리스트
 
-    public MemberDTO readMember(String email){
+        List<Member> memberList = memberRepository.findAll();
+        if(memberList.isEmpty()) {
+            return new ArrayList<>();
+
+        }else {
+            List<MemberDTO> memberDTOList = memberList.stream()
+                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class))
+                            .collect(Collectors.toList());
+
+            memberDTOList.forEach(dto -> log.info(dto));
+
+            return memberDTOList;
+        }
+
+    }
+
+    public List<MemberDTO> searchMember(String keyword){
+       List<Member> members = memberRepository.searchMember(keyword);
+
+       return members.stream()
+               .map(member -> modelMapper.map(member, MemberDTO.class))
+               .collect(Collectors.toList());
+    }
+
+
+
+
+    public MemberDTO readMember(String email){ //회원마이페이지정보
         Member member = memberRepository.findByEmail(email);
 
         if (member == null) {
@@ -224,7 +252,7 @@ public class MemberService implements UserDetailsService {
 
 
 
-    public Member updateMember(String email, MemberDTO memberDTO){
+    public Member updateMember(String email, MemberDTO memberDTO){ //회원마이페이지 수정
 
             Member member = memberRepository.findByEmail(email);
 
@@ -246,7 +274,7 @@ public class MemberService implements UserDetailsService {
 
 
 
-    public List<MemberDTO> adPowerList(String email){
+    public List<MemberDTO> adPowerList(String email){ //슈퍼어드민이 승인하는 권한리스트
         List<Member> memberList = memberRepository.selectBySuperAdmin();
 
         if (email != null && !email.isEmpty()) {
@@ -272,7 +300,7 @@ public class MemberService implements UserDetailsService {
     }
 
 
-    public List<MemberDTO> cmPowerList(String email) {
+    public List<MemberDTO> cmPowerList(String email) { //치프가 승인하는 권한리스트
 
         Member member = memberRepository.findByEmail(email);
 
@@ -314,7 +342,7 @@ public class MemberService implements UserDetailsService {
     }*/
 
 
-    public void powerMember(String email) {
+    public void powerMember(String email) { // 권한승인 목록
 
         log.info("파워승인파워승인" + email);
         if (email != null && !email.isEmpty()) {
@@ -331,7 +359,7 @@ public class MemberService implements UserDetailsService {
         }
 
 
-     public Member findID(String name, String tel){
+     public Member findID(String name, String tel){ //회원Email찾기
 
         log.info("name: " + name + " tel: " + tel);
 
@@ -346,7 +374,7 @@ public class MemberService implements UserDetailsService {
      }
 
 
-    public void passwordSend(MemberDTO memberDTO){
+    public void passwordSend(MemberDTO memberDTO){ //pw 이메일로 임시비밀번호 받기
 
         try{
             Member member = memberRepository.findByEmail(memberDTO.getEmail() );

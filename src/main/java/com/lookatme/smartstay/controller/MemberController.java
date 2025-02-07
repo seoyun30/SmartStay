@@ -1,6 +1,7 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.MemberService;
@@ -110,10 +111,28 @@ public class MemberController {
 
     }
 
-    @GetMapping("/allMemberList") //전체 회원 목록
-    public String allMemberList(){
-        return "member/allMemberList";
+    @GetMapping("/memberList") //전체 회원 목록
+    public String memberList(Principal principal, PageRequestDTO pageRequestDTO, Model model){
+
+        List<MemberDTO> memberDTOList = memberService.memberList();
+        model.addAttribute("memberList", memberDTOList);
+
+        return "member/memberList";
     }
+
+    @GetMapping("/searchMember")
+    public String searchMember(@RequestParam("keyword") String keyword, Model model){
+
+        List<MemberDTO> memberDTOList = memberService.searchMember(keyword);
+
+        model.addAttribute("memberList", memberDTOList);
+        model.addAttribute("keyword", keyword);
+
+        return "member/memberList";
+    }
+
+
+
 
     @GetMapping("/adPowerList") // 권한승인(총판)
     public String adPowerList(Model model) {
