@@ -14,39 +14,40 @@
 <th:block layout:fragment="content">
 
     <th:block>
-        <div class="row">
-            <div class="col">
-                <div id="carouselExample" class="carousel slide">
-                    <div class="carousel-inner mt-3">
-                        <div class="carousel-item active">
-                            (이미지1)
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div id="carouselExample" class="carousel slide">
+                        <div class="carousel-inner mt-3">
+                            <div class="carousel-item active d-flex justify-content-center">
+                                <img src="/assets/img/main1.jpg" class="d-block mx-auto" style="max-width: 100%; height: auto;">
+                            </div>
+                            <div class="carousel-item">
+                                (이미지2)
+                            </div>
+                            <div class="carousel-item">
+                                (이미지3)
+                            </div>
+                            <div class="carousel-item">
+                                (이미지4)
+                            </div>
                         </div>
-                        <div class="carousel-item">
-                            (이미지2)
-                        </div>
-                        <div class="carousel-item">
-                            (이미지3)
-                        </div>
-                        <div class="carousel-item">
-                            (이미지4)
-                        </div>
-                    </div>
 
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
-                            data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
-                            data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                                data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                                data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </th:block>
-
 
     <div class="container mt-5">
         <div class="row g-4">
