@@ -44,6 +44,10 @@ public class RoomController {
     @GetMapping("/roomRegister")
     public String roomRegisterGet(Model model, Principal principal) {
 
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
        if (hotelDTO == null) {
          return "redirect:/adMain";
@@ -86,6 +90,10 @@ public class RoomController {
     public String roomList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                            @RequestParam(value = "query", required = false) String query) {
 
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
         HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
         if (hotelDTO == null) {
             return "redirect:/adMain";
@@ -109,7 +117,12 @@ public class RoomController {
     }
 
     @GetMapping("/roomRead")
-    public String roomRead(@RequestParam(required = false) Long room_num, Model model, RedirectAttributes redirectAttributes){
+    public String roomRead(@RequestParam(required = false) Long room_num, Principal principal,
+                           Model model, RedirectAttributes redirectAttributes){
+
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
 
         if (room_num == null) {
             redirectAttributes.addFlashAttribute("msg", "존재하지 않는 룸입니다.");
@@ -137,6 +150,10 @@ public class RoomController {
 
     @GetMapping("/roomModify")
     public String roomModifyGet(@RequestParam Long room_num, Model model, Principal principal){
+
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
 
         RoomDTO roomDTO = roomService.roomRead(room_num);
 

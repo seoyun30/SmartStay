@@ -42,6 +42,10 @@ public class MenuController {
     @GetMapping("/menuRegister")
     public String menuRegisterGet(Model model, Principal principal){
 
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
         HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
         if (hotelDTO == null){
             return "redirect:/adMain";
@@ -81,6 +85,10 @@ public class MenuController {
     public String menuList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                            @RequestParam(value = "query", required = false) String query) {
 
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
         HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
         if (hotelDTO == null){
             return "redirect:/adMain";
@@ -102,7 +110,12 @@ public class MenuController {
     }
 
     @GetMapping("/menuRead")
-    public String menuRead(@RequestParam(required = false) Long menu_num, Model model, RedirectAttributes redirectAttributes){
+    public String menuRead(@RequestParam(required = false) Long menu_num, Principal principal,
+                           Model model, RedirectAttributes redirectAttributes){
+
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
 
         if (menu_num == null){
             redirectAttributes.addFlashAttribute("msg", "존재하지 않는 메뉴입니다.");
@@ -128,6 +141,10 @@ public class MenuController {
 
     @GetMapping("/menuModify")
     public String menuModifyGet(@RequestParam Long menu_num, Model model, Principal principal){
+
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
 
         MenuDTO menuDTO = menuService.menuRead(menu_num);
 

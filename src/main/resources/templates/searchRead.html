@@ -13,26 +13,17 @@
 <th:block layout:fragment="content">
 
     <div class="container mt-5">
-        <div th:each="hotel : ${hotelDTO}" class="mb-4">
-            <div class="card shadow-lg border-0">
-                <div class="card-body">
-                    <h5 class="card-title text-primary font-weight-bold">
+
+        <div th:each="hotel : ${hotelDTO}" class="col mb-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    (호텔 대표 이미지)
+                    <h6 class="card-title fw-bold">
                         <h2 th:text="${hotel.hotel_name}">호텔 이름</h2>
-                    </h5>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            (호텔 대표 이미지)
-                        </li>
-                        <li class="list-group-item">
-                            <span class="text-dark" th:text="${hotel.address}">주소</span>
-                        </li>
-                        <li class="list-group-item">
-                            <span class="text-dark" th:text="${hotel.lowestPrice + '원~'}">최저가</span>
-                        </li>
-                        <li class="list-group-item">
-                            <span class="text-dark" th:text="${hotel.score}">별점</span>
-                        </li>
-                    </ul>
+                    </h6>
+                    <span class="text-dark" th:text="${hotel.address}">주소</span><br>
+                    <span class="text-dark" th:text="${hotel.lowestPrice + '원~'}">최저가</span><br>
+                    <span class="text-dark" th:text="${hotel.score}">별점</span>
                 </div>
             </div>
         </div>
@@ -42,31 +33,37 @@
         </div>
 
         <div th:each="room : ${roomList}" class="mb-4">
-            <div class="card shadow-lg border-0">
-                <div class="card-body">
-                    <h5 class="card-title text-primary font-weight-bold">
-                        <h4 th:text="${room.room_name}">룸 이름</h4>
-                    </h5>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            (룸 대표 이미지)
-                        </li>
-                        <li class="list-group-item">
-                            <span class="text-dark" th:text="${room.room_bed}">최대 인원</span>
-                        </li>
-                        <li class="list-group-item">
-                            <span class="text-dark" th:text="${room.room_type}">룸 타입</span>
-                        </li>
-                        <li class="list-group-item">
-                            <span class="text-dark" th:text="${room.room_price + '원'}">가격</span>
-                        </li>
-                    </ul>
-                    <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/roomreserve/roomReserveRegister(room_num=${room.room_num})}'|">예약하기</button>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card border-0">
+                        <div class="card-body">
+                            <img th:src="${room.mainImage.image_url}" height="100" width="150" alt="룸 대표 이미지"
+                            onerror="this.src='/assets/img/room.jpg'">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0">
+                        <div class="card-body">
+                            <h5 class="card-title font-weight-bold">
+                                <h5 th:text="${room.room_name}">룸 이름</h5>
+                            </h5>
+                            <h6 class="text-dark" th:text="${room.room_bed + '인'}">최대 인원</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0">
+                        <div class="card-body">
+                            <h5 class="text-dark mt-4" th:text="${room.room_price + '원'}">가격</h5>
+                            <button type="button" class="btn btn-primary mt-1" th:onclick="|location.href='@{/roomreserve/roomReserveRegister(room_num=${room.room_num})}'|">예약하기</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
+    </div>
 </th:block>
 </body>
 </html>

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -65,16 +66,10 @@ public class MainController {
     public String main(Model model) {
 
         List<HotelDTO> list = hotelService.hotelList();
-        model.addAttribute("list", list);
 
-        return "main";
-    }
+        List<HotelDTO> top12Hotels = list.stream().limit(12).collect(Collectors.toList());
 
-    @GetMapping("/mainHotel")
-    public String mainHotel(Model model) {
-
-        List<HotelDTO> list = hotelService.hotelList();
-        model.addAttribute("list", list);
+        model.addAttribute("list", top12Hotels);
 
         return "main";
     }
@@ -85,7 +80,7 @@ public class MainController {
         List<HotelDTO> results = hotelService.hotelList();
         model.addAttribute("results", results);
 
-        return "search";
+        return "main";
     }
 
     @GetMapping("/searchList")
@@ -113,6 +108,12 @@ public class MainController {
         model.addAttribute("hotelDTO", hotelDTO);
 
         List<RoomDTO> roomList = roomService.searchRead(hotel_num);
+
+        for (RoomDTO room : roomList) {
+            log.info("룸 번호:{}", room.getRoom_num());
+            log.info("대표 이미지 URL:{}", room.getMainImage() != null ? room.getMainImage().getImage_url() : "없음");
+        }
+
         model.addAttribute("roomList", roomList);
 
         return "searchRead";
