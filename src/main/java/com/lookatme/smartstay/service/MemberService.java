@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -252,24 +253,25 @@ public class MemberService implements UserDetailsService {
 
 
 
-    public Member updateMember(String email, MemberDTO memberDTO){ //회원마이페이지 수정
+    public void updateMember(MemberDTO memberDTO){ //회원마이페이지 수정
 
-            Member member = memberRepository.findByEmail(email);
+        //수정하려는 사람찾기
+        Member member = memberRepository.findByEmail(memberDTO.getEmail());
 
         if(member == null){
             throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
         }
+        member.setTel(memberDTO.getTel());
 
+        if(!memberDTO.getPassword().isEmpty()){
+            log.info("비밀번호가 안비어있다.");
+            String encodedPassword = new BCryptPasswordEncoder().encode(memberDTO.getPassword());
+            member.setPassword(encodedPassword);
 
-        if (memberDTO.getTel() != null) {
-            member.setTel(memberDTO.getTel());
+        } else {
+            log.info("비밀번호가 비어있다.");
         }
 
-        if(memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()){
-            member.setPassword(memberDTO.getPassword());
-        }
-
-        return memberRepository.save(member);
     }
 
 

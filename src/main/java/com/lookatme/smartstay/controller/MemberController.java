@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -43,6 +44,8 @@ public class MemberController {
         MemberDTO memberDTO = memberService.readMember(email);
         log.info(memberDTO);
         model.addAttribute("memberDTO", memberDTO);
+
+
         return "member/mypage";
 
     }
@@ -70,43 +73,48 @@ public class MemberController {
     }
 
     @PostMapping("/mypageModify") // 마이페이지 정보수정
-    public String mypageModifyPost(@Valid MemberDTO memberDTO, BindingResult bindingResult, Principal principal, Model model){
+    public String mypageModifyPost(MemberDTO memberDTO, Model model){
 
         log.info("정보업데이트" + memberDTO);
+        log.info("정보업데이트" + memberDTO.getPassword().length());
 
-        if(bindingResult.hasErrors()){
-            log.info("에러발생됨 " + bindingResult.getAllErrors());
+        if(memberDTO.getPassword().length() >= 1){
+            log.info("비밀번호 유효성검사");
 
-            model.addAttribute("memberDTO", memberDTO);
+            if(memberDTO.getPassword().length() < 8  || memberDTO.getPassword().length() > 20){
+                //리다이렉트
+//                     리다이렉트시 메시지를 전달해야 한다.
+//                     메시지는 : 비밀번호는 8자 이상이여야 합니다.
+                log.info("비밀번호 유효성검사");
 
-            return "member/mypageModify";
+                String  msg = "비밀번호는 8 ~ 20 글자로 입력해주세요.";
+//                redirectAttributes.addFlashAttribute("msg", msg);
+
+//                return "redirect:/member/mypage";
+
+                memberDTO = memberService.findbyEmail(memberDTO.getEmail());
+
+                log.info("memberDTO" + memberDTO);
+
+                if(memberDTO == null){
+                    return "redirect:/member/mypage";
+                }
+
+                model.addAttribute("memberDTO", memberDTO);
+                model.addAttribute("msg", msg);
+
+                return "member/mypageModify";
+            }
         }
 
         try {
-            Member member = memberRepository.findByEmail(principal.getName());
+            memberService.updateMember(memberDTO);
 
-            if (member == null) {
-                model.addAttribute("msg", "해당회원이 존재하지 않습니다.");
-                return "member/mypageModify";
-            }
+        }catch (Exception e){
 
-
-           if(memberDTO.getPassword() != null && !memberDTO.getPassword().trim().isEmpty()){
-                String encodedPassword = new BCryptPasswordEncoder().encode(memberDTO.getPassword());
-                memberDTO.setPassword(encodedPassword);
-
-            } else {
-                memberDTO.setPassword(member.getPassword());
-            }
-
-
-            memberService.updateMember(principal.getName(), memberDTO);
-
-        }catch (Exception e) {
-            log.error("회원정보 수정 중 오류발생", e);
-            model.addAttribute("msg", e.getMessage());
-            return "redirect:/member/mypageModify";
+            return "redirect:/member/mypage";
         }
+
         return "redirect:/member/mypage";
 
     }
