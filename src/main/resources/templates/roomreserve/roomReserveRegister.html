@@ -11,7 +11,7 @@
 
 <th:block layout:fragment="content">
 
-    <form action="/roomreserve/roomReserveRegister" method="post">
+    <form action="/pay" method="get">
 
         <div class="card w-75 mt-5 mx-auto">
             <div class="card-title">
@@ -54,7 +54,7 @@
 
                 <div class="text-center">
                     <button class="btn btn-outline-dark btn-lg cartBtn" type="button"><i class="bi bi-cart"></i></button>
-                    <button class="btn btn-primary btn-lg" type="submit">예약하기</button>
+                    <button class="btn btn-primary btn-lg payBtn" type="submit">예약하기</button>
                 </div>
 
             </div>
@@ -207,6 +207,39 @@
                 }
             })
         }
+        
+        $(".payBtn").on("click", function () {
+            e.preventDefault(); // 기본 제출 이벤트 방지
+
+            // 입력된 값 가져오기
+            let roomItemDTO = {
+                room_num: $(".room_num").val(),
+                in_date: $(".in_date").val(),
+                out_date: $(".out_date").val(),
+                count: $(".count").val(),
+                reserve_request: $(".reserve_request").val(),
+                day: $(".day").val(),
+                price: $(".price").text().replace(/[^0-9]/g, '') // 숫자만 추출
+            };
+
+            // 필수값 체크
+            if (!roomItemDTO.room_num || !roomItemDTO.in_date || !roomItemDTO.out_date || !roomItemDTO.count || roomItemDTO.count < 1) {
+                alert("모든 예약 정보를 입력해주세요.");
+                return;
+            }
+
+            // 요청사항이 없을 경우 기본값 설정
+            if (!roomItemDTO.reserve_request) {
+                roomItemDTO.reserve_request = "요청 사항 없음";
+            }
+
+            // `GET` 방식으로 `/pay` 페이지 이동 (URL 파라미터 추가)
+            let queryString = Object.keys(roomItemDTO)
+                .map(key => `${key}=${encodeURIComponent(roomItemDTO[key])}`)
+                .join("&");
+
+            window.location.href = `/pay?${queryString}`;
+        })
 
     })
 </script>
