@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/adminlayout}">
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -42,7 +42,7 @@
 
                     <div class="col-12">
                         <button type="submit" class="btn btn-dark" style="float:right">저장</button>
-                        <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
+                        <button type="button" class="btn btn-dark Listbtn" style="float:right; margin-right: 10px;">목록</button>
 
                         <script>
                             $(".Listbtn").on("click", function () {
