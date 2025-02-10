@@ -1,6 +1,7 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.service.ImageService;
 import com.lookatme.smartstay.service.NoticeServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,20 +23,28 @@ public class NoticeController {
 
     private final NoticeServiceImpl noticeService;
 
+    private final ImageService imageService;
+
 
     //목록 페이지
     @GetMapping("/noticeList")
     public String noticeListFrom(PageRequestDTO pageRequestDTO, Model model){
-        log.info("모든 데이터를 읽어온다...");
-        List<NoticeDTO> noticeDTOList = noticeService.noticeList();
 
-        model.addAttribute("noticeDTOList", noticeDTOList);
+        log.info("모든 데이터를 읽어온다..." + pageRequestDTO);
+
+        PageResponseDTO<NoticeDTO> pageResponseDTO =
+                noticeService.pageListsearchdsl(pageRequestDTO);
+
+//        List<NoticeDTO> noticeDTOList = noticeService.noticeList();
+
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
+
         return "notice/noticeList";
     }
 
     //등록 페이지 이동
     @GetMapping("/noticeRegister")
-    public String noticeRegisterFrom(){
+    public String noticeRegisterGet(){
         log.info("입력폼 페이지 이동...");
 
         return "notice/noticeRegister";
@@ -44,7 +53,9 @@ public class NoticeController {
     //등록 내용 저장
     @PostMapping("/noticeRegister")
     public String noticeRegisterPost(NoticeDTO noticeDTO, MemberDTO memberDTO, List<MultipartFile> multipartFileList){
-        log.info("입력폼 내용을 저장...");
+
+        log.info("입력폼 내용을 저장..." + noticeDTO);
+        log.info("들어온값 : " + multipartFileList.get(0).getOriginalFilename());
         noticeService.noticeRegister(noticeDTO);
 
         return "redirect:/notice/noticeList";

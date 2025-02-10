@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class NoticeSearchImpl extends QuerydslRepositorySupport implements NoticeSearch {
@@ -21,18 +22,21 @@ public class NoticeSearchImpl extends QuerydslRepositorySupport implements Notic
     }
 
     @Override
-    public Page<Notice> searchAll(String[] types, String keyword , String searchDateType, Pageable pageable) {
+    public Page<Notice> searchAll(String[] types, String keyword , Pageable pageable) {
 
         QNotice notice = QNotice.notice; // Q도메인 객체 entity를 QNotice로 바꾼것
 
         JPQLQuery<Notice> query = from(notice); // select * from notice
 
+        System.out.println(query); //select * from notice
+        System.out.println("--------------");
+
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         if (types != null && types.length > 0 && keyword != null) {
-            for (String type : types) {
-                if (type.equals("t"))
-                    switch (type){
+            for (String str : types) {
+                if (str.equals("t"))
+                    switch (str){
                     case "t":
                         booleanBuilder.or(notice.title.contains(keyword));
                         break;
@@ -52,11 +56,12 @@ public class NoticeSearchImpl extends QuerydslRepositorySupport implements Notic
         System.out.println("-----------------");
 
         query.where(notice.notice_num.gt(0L));  //select * from notice // notice.nnotice_num > 0
+
         System.out.println(query);
         System.out.println("-----------------");
 
         //페이징
-        this.getQuerydsl().applyPagination(pageable, query);
+        Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, query);
         //데이터 List<T>
         List<Notice> noticeList = query.fetch();
 
@@ -69,7 +74,8 @@ public class NoticeSearchImpl extends QuerydslRepositorySupport implements Notic
 
     }
 
-    public Page<NoticeDTO> searchAll1(String[] types, String keyword , String searchDateType, Pageable pageable) {
+    @Override
+    public Page<NoticeDTO> searchAll1(String[] types, String keyword , Pageable pageable) {
 
         QNotice notice = QNotice.notice;  // Q 도메인 객체 entity를 Qnotice로 바꿈
 
@@ -81,9 +87,9 @@ public class NoticeSearchImpl extends QuerydslRepositorySupport implements Notic
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         if (types != null && types.length > 0 && keyword != null) {
-            for (String type : types) {
-                if (type.equals("t"))
-                    switch (type){
+            for (String str : types) {
+                if (str.equals("t"))
+                    switch (str){
                     case "t":
                         booleanBuilder.or(notice.title.contains(keyword));
                         break;
