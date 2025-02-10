@@ -60,4 +60,14 @@ public class RoomDTO {
         this.hotelDTO = hotelDTO;
         return this;
     }
+
+    private ImageDTO mainImage;
+
+    public ImageDTO getMainImage() {
+        return mainImage;
+    }
+
+    public void setMainImage(ImageDTO mainImage) {
+        this.mainImage = mainImage;
+    }
 }

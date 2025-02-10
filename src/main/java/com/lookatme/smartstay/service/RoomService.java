@@ -200,7 +200,28 @@ public class RoomService {
         List<Room> rooms = roomRepository.findByHotel(hotel);
 
         List<RoomDTO> roomDTOS = rooms.stream()
-                .map(room -> modelMapper.map(room, RoomDTO.class))
+                .map(room -> {
+                    RoomDTO roomDTO = modelMapper.map(room, RoomDTO.class);
+
+                    List<Image> imageList = imageRepository.findByTarget("room", room.getRoom_num());
+                    log.info("룸번호:{}, 조회된 이미지 개수:{}", room.getRoom_num(), imageList.size());
+                    if (imageList != null && !imageList.isEmpty()) {
+                        List<ImageDTO> imageDTOList = imageList.stream()
+                                .map(image -> modelMapper.map(image, ImageDTO.class))
+                                .collect(Collectors.toList());
+                        roomDTO.setImageDTOList(imageDTOList);
+
+                        ImageDTO mainImage = imageDTOList.stream()
+                                .filter(image -> "Y".equalsIgnoreCase(image.getRepimg_yn()))
+                                .findFirst()
+                                .orElse(imageDTOList.get(0));
+                        roomDTO.setMainImage(mainImage);
+                    }else {
+                        log.warn("룸번호:{}에 이미지가 없습니다.", room.getRoom_num());
+                    }
+
+                    return roomDTO;
+                })
                 .collect(Collectors.toList());
 
         return roomDTOS;

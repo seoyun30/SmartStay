@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/userlayout}"
 >
@@ -49,22 +48,24 @@
         </div>
     </th:block>
 
-    <div class="container mt-5">
-        <div class="row g-4">
-            <div th:each="hotel : ${list}" class="col-md-3 col-sm-6">
-                <div class="card border-0 shadow-sm h-100">
-                    (호텔 대표 이미지)
-                     <div class="card-body text-center">
-                         <h6 class="card-title fw-bold">
-                            <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none"></a>
-                        </h6>
-                        <span class="text-dark" th:text="${hotel.lowestPrice + '원~'}"></span>
-                        <span class="text-dark" th:text="${hotel.score}"></span>
-                     </div>
-                 </div>
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                <div th:each="hotel : ${list}" class="col mb-5">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center">
+                            (호텔 대표 이미지)
+                            <h6 class="card-title fw-bold">
+                                <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none"></a>
+                            </h6>
+                            <span class="text-dark" th:text="${hotel.lowestPrice + '원~'}"></span>
+                            <span class="text-dark" th:text="${hotel.score}"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 </th:block>
 </body>
 </html>

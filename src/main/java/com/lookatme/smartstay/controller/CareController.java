@@ -42,6 +42,10 @@ public class CareController {
     @GetMapping("/careRegister")
     public String careRegisterGet(Model model, Principal principal){
 
+        if (principal == null){
+            return "redirect:/member/login";
+        }
+
         HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
         if (hotelDTO == null) {
             return "redirect:/adMain";
@@ -81,6 +85,10 @@ public class CareController {
     public String careList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                            @RequestParam(value = "query", required = false) String query) {
 
+        if (principal == null){
+            return "redirect:/member/login";
+        }
+
         HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
         if (hotelDTO == null) {
             return "redirect:/adMain";
@@ -102,7 +110,12 @@ public class CareController {
     }
 
     @GetMapping("/careRead")
-    public String careRead(@RequestParam(required = false) Long care_num, Model model, RedirectAttributes redirectAttributes) {
+    public String careRead(@RequestParam(required = false) Long care_num, Principal principal,
+                           Model model, RedirectAttributes redirectAttributes) {
+
+        if (principal == null){
+            return "redirect:/member/login";
+        }
 
         if (care_num == null) {
             redirectAttributes.addFlashAttribute("msg", "존재하지 않는 케어입니다.");
@@ -128,6 +141,10 @@ public class CareController {
 
     @GetMapping("/careModify")
     public String careModifyGet(@RequestParam Long care_num, Model model, Principal principal) {
+
+        if (principal == null){
+            return "redirect:/member/login";
+        }
 
         CareDTO careDTO = careService.careRead(care_num);
 

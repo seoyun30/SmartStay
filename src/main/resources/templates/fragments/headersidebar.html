@@ -14,20 +14,23 @@
     <header id="header" class="header fixed-top d-flex align-items-center">
 
         <div class="d-flex align-items-center justify-content-between">
+            <i class="bi bi-list toggle-sidebar-btn"></i>
             <a href="/adMain" class="logo d-flex align-items-center">
                 <img src="/assets/img/logo2.png" alt="">
                 <span class="d-none d-lg-block"></span>
             </a>
-            <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
 
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
                 <li class="nav-item dropdown pe-3">
-                    <a sec:authorize="isAuthenticated()" class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                        <span class="d-none d-md-block dropdown-toggle ps-2" th:text="${#authentication.principal.username}" style="font-size: 1.25rem;">로그인 아이디</span>
+                    <a sec:authorize="isAuthenticated()" class="nav-link nav-profile d-flex align-items-center pe-0"
+                       href="#" data-bs-toggle="dropdown">
+                        <span class="d-none d-md-block dropdown-toggle ps-2"
+                              th:text="${#authentication.principal.username}" style="font-size: 1.25rem;">로그인 아이디</span>
                     </a>
-                    <a sec:authorize="isAnonymous()" class="nav-link nav-profile d-flex align-items-center pe-0" href="/member/login" >
+                    <a sec:authorize="isAnonymous()" class="nav-link nav-profile d-flex align-items-center pe-0"
+                       href="/member/login">
                         <span class="d-none d-md-block ps-2">로그인</span>
                     </a>
 
@@ -35,7 +38,7 @@
                         <li sec:authorize="isAuthenticated()">
                             <a class="dropdown-item d-flex align-items-center" href="/member/adMpage">
                                 <i class="bi bi-person"></i>
-                                <span>내 정보</span>
+                                <span>마이 페이지</span>
                             </a>
                         </li>
                         <li>
@@ -102,7 +105,8 @@
 
                 <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#power-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-layout-text-window-reverse"></i><span>권한 승인 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                        <i class="bi bi-layout-text-window-reverse"></i><span>권한 승인 관리</span><i
+                            class="bi bi-chevron-down ms-auto"></i>
                     </a>
                     <ul id="power-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')">
@@ -231,7 +235,8 @@
 
                 <li sec:authorize="hasAnyAuthority('CHIEF', 'MANAGER')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#qna-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-question-circle"></i><span>문의사항 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                        <i class="bi bi-question-circle"></i><span>문의사항 관리</span><i
+                            class="bi bi-chevron-down ms-auto"></i>
                     </a>
                     <ul id="qna-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li>
@@ -244,15 +249,22 @@
 
                 <li sec:authorize="hasAuthority('MANAGER')" class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#review-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-menu-button-wide"></i><span>리뷰 관리</span><i class="bi bi-chevron-down ms-auto"></i>
+                        <i class="bi bi-menu-button-wide"></i><span>리뷰 관리</span><i
+                            class="bi bi-chevron-down ms-auto"></i>
                     </a>
                     <ul id="review-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li>
-                            <a href="#" class="nav-link">
+                            <a href="/review/reviewList" class="nav-link">
                                 <i class="bi bi-menu-button-wide"></i> 리뷰 목록
                             </a>
                         </li>
                     </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/member/logout" class="nav-link">
+                        <i class="bi bi-box-arrow-right"></i> 로그아웃
+                    </a>
                 </li>
             </ul>
         </th:block>

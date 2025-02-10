@@ -31,15 +31,14 @@
                                     <span class="text-dark" th:text="${hotel.address}">주소</span>
                                 </li>
                                 <li class="list-group-item">
-                                    <span class="font-weight-bold text-secondary">연락처 : </span>
-                                    <span class="text-dark" th:text="${hotel.tel}">연락처</span>
+                                    <span class="font-weight-bold text-secondary">가격 : </span>
+                                    <span class="text-dark" th:text="${hotel.lowestPrice + '원~'}">가격</span>
                                 </li>
                                 <li class="list-group-item  mb-3">
                                     <span class="font-weight-bold text-secondary">별점 : </span>
                                     <span class="text-dark" th:text="${hotel.score}">별점</span>
                                 </li>
                             </ul>
-                            <button type="button" class="btn btn-primary" onclick="location.href='/roomreserve/roomReserveRegister'">예약하기</button>
                         </div>
                     </div>
                 </div>
