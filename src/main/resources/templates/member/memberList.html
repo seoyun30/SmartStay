@@ -33,28 +33,47 @@
                 </thead>
                 <tbody>
 
-                <th:block th:if="${memberList == null or #lists.isEmpty(memberList)}">
+            <th:block th:if="${pageResponseDTO != null}">
+                <th:block th:if="${pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}">
                     <tr>
                         <td colspan="6" class="text-center">
                             <h5>회원 목록이 없습니다.</h5>
                         </td>
                     </tr>
                 </th:block>
-
-                <th:block th:each="memberDTO : ${memberList}">
-                    <tr class="align-middle">
-                        <td th:text="${memberDTO.member_num}"></td>
-                        <td th:text="${memberDTO.email}"></td>
-                        <td th:text="${memberDTO.name}"></td>
-                        <td th:text="${memberDTO.tel}"></td>
-                        <td th:text="${memberDTO.role}"></td>
-                    </tr>
+                <th:block th:each="memberDTO:${pageResponseDTO.dtoList}">
+                        <tr class="align-middle">
+                            <td th:text="${memberDTO.member_num}"></td>
+                            <td th:text="${memberDTO.email}"></td>
+                            <td th:text="${memberDTO.name}"></td>
+                            <td th:text="${memberDTO.tel}"></td>
+                            <td th:text="${memberDTO.role}"></td>
+                        </tr>
                 </th:block>
+            </th:block>
+
                 </tbody>
             </table>
         </div>
     </div>
 
+    <div class="pagination mt-3">
+    <th:block th:if="${pageResponseDTO.prev}">
+        <a class="pagingbtn" th:href="@{member/memberList(page=${pageResponseDTO.start -1})}">이전</a>
+    </th:block>
+
+    <div th:with="a=${pageRequestDTO}">
+        <th:block th:each="i: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+            <a class="pagingbtn" th:href="@{member/memberList(page=${i})}">
+                [[${i}]]
+            </a>
+        </th:block>
+    </div>
+
+    <th:block th:if="${pageResponseDTO.next}">
+        <a class="pagingbtn" th:href="@{member/memberList.html(page=${pageResponseDTO.end + 1})}">다음</a>
+    </th:block>
+    </div>
 
 </th:block>
 

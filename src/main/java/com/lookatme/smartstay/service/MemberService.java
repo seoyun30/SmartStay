@@ -2,9 +2,7 @@ package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
-import com.lookatme.smartstay.dto.BrandDTO;
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Member;
@@ -16,13 +14,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -205,22 +204,49 @@ public class MemberService implements UserDetailsService {
 
     }
 
-    public List<MemberDTO> memberList() { //회웍목록리스트
+//    public List<MemberDTO> memberList() { //회웍목록리스트
+//
+//        List<Member> memberList = memberRepository.findAll();
+//        if(memberList.isEmpty()) {
+//            return new ArrayList<>();
+//
+//        }else {
+//            List<MemberDTO> memberDTOList = memberList.stream()
+//                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class))
+//                            .collect(Collectors.toList());
+//
+//            memberDTOList.forEach(dto -> log.info(dto));
+//
+//            return memberDTOList;
+//        }
+//
+//    }
 
-        List<Member> memberList = memberRepository.findAll();
-        if(memberList.isEmpty()) {
-            return new ArrayList<>();
+    public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO){
+        Pageable pageable = pageRequestDTO.getPageable("member_num");
+        log.info(pageable);
+        log.info("서비스 진입");
+        Page<Member> memberPage = memberRepository.selectAll(pageable);
 
-        }else {
-            List<MemberDTO> memberDTOList = memberList.stream()
-                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class))
-                            .collect(Collectors.toList());
 
-            memberDTOList.forEach(dto -> log.info(dto));
+        List<Member> memberList = memberPage.getContent();
+        log.info("결과 받아");
+        memberList.forEach(member -> log.info(member));
 
-            return memberDTOList;
-        }
+//        if(memberList.isEmpty()) {
+//            memberList = new ArrayList<>();
+//        }
 
+        List<MemberDTO> memberDTOList = memberList.stream().map(member -> modelMapper.map(member, MemberDTO.class) ).collect(Collectors.toList());
+
+        PageResponseDTO<MemberDTO> memberDTOPageResponseDTO= PageResponseDTO.<MemberDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(memberDTOList)
+                .total((int)memberPage.getTotalElements())
+                .build();
+
+
+        return memberDTOPageResponseDTO;
     }
 
     public List<MemberDTO> searchMember(String keyword){
@@ -264,9 +290,18 @@ public class MemberService implements UserDetailsService {
         member.setTel(memberDTO.getTel());
 
         if(!memberDTO.getPassword().isEmpty()){
-            log.info("비밀번호가 안비어있다.");
-            String encodedPassword = new BCryptPasswordEncoder().encode(memberDTO.getPassword());
+            log.info("비밀번호가 안비어있다. 비밀번호 변경예정");
+
+//            if(!passwordEncoder.matches(memberDTO.getPassword(), member.getPassword())){
+//                throw new IllegalStateException("현재 비밀번호가 일치하지 않습니다.");
+//            }
+//
+//            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+
+            String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
             member.setPassword(encodedPassword);
+            log.info("비밀번호 변경했음");
 
         } else {
             log.info("비밀번호가 비어있다.");
@@ -394,7 +429,7 @@ public class MemberService implements UserDetailsService {
             memberRepository.save(member);
 
             String emailSubject = "임시비밀번호 발급";
-            String emailText = "안녕하세요 " +member.getName()+ " 님.\n"+"요청하신 임시 비밀번호는 다음과 같습니다.\n" +
+            String emailText = "안녕하세요 " + member.getName()+ " 님.\n"+"요청하신 임시 비밀번호는 다음과 같습니다.\n" +
                     tempPassword+"\n"+"로그인 후 반드시 비밀번호를 변경해 주세요.";
 
             emailService.sendEmail(member.getEmail(), emailSubject, emailText);

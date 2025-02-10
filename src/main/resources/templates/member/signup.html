@@ -18,7 +18,7 @@
                 <h1>회원가입</h1>
             </div>
 
-                <form class="row g-3" action="/member/signup" method="post" th:object="${memberDTO}">
+                <form class="row g-3" action="/member/signup" method="post" th:object="${memberDTO}" onsubmit="return test()">
 
                     <div class="mb-1">
                         <label for="email" class="form-label">Email</label>
@@ -30,6 +30,12 @@
                         <label for="password" class="form-label">Password</label>
                         <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="비밀번호는 8 ~ 20 글자로 입력해주세요." required>
                         <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError"></p>
+                    </div>
+
+                    <div class="mb-1">
+                        <label for="repassword" class="form-label">Password확인</label>
+                        <input type="password" name="repassword" class="form-control" id="repassword" placeholder="비밀번호를 한번 더 입력해주세요." required>
+                        <p id="password-error" style="color: red; display: none;">비밀번호가 일치하지 않습니다.</p>
                     </div>
 
                     <div class="mb-1">
@@ -76,6 +82,24 @@
     this.value = pasteData.replace(/\D/g, ""); // 숫자가 아닌 문자 제거 후 붙여넣기
     });
     });
+
+    function test(){
+        var password = document.getElementById('password').value;
+        var repassword = document.getElementById('repassword').value;
+        var errorMessage = document.getElementById('password-error');
+        var repasswordInput = document.getElementById('repassword');
+
+        if(password != repassword) {
+            errorMessage.style.display = "block"; // 오류 메시지 표시
+            alert("비밀번호가 일치하지 않습니다.");
+            repasswordInput.focus();
+            return false; // 회원가입 진행 막기
+        } else {
+            errorMessage.style.display = "none"; // 오류 메시지 숨김
+            return true; // 회원가입 진행 가능
+        }
+    }
+
 
 </script>
 </body>

@@ -36,9 +36,15 @@
 
                         <div class="mb-1">
                             <label for="tel" class="form-label">tel update</label>
-                            <input class="form-control" type="text" aria-label="With text" id="tel" th:field="*{tel}">
+                            <input class="form-control" type="text" aria-label="With text" id="tel" th:field="*{tel}" placeholder="숫자만 입력하세요.">
                             <span th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}">전화번호 입력 오류</span>
                         </div>
+
+
+<!--                        <div class="mb-1">-->
+<!--                            <label for="currentPassword" class="form-label">현재 비밀번호</label>-->
+<!--                            <input class="form-control" type="password" id="currentPassword" name="currentPassword" required>-->
+<!--                        </div>-->
 
                         <div class="mb-1">
                             <label for="password" class="form-label">Password update</label>
@@ -53,6 +59,7 @@
 
                         <div class="col text-center d-flex justify-content-center gap-3 mt-4">
                             <button type="submit" class="btn btn-primary">저장</button>
+                            <button type="button" class="btn btn-primary" onclick="location.href='/'">홈</button>
                         </div>
 
                     </th:block>
@@ -73,6 +80,33 @@
             }
 
         })
+
+        $(document).ready(function () {
+            let msg = [[${msg}]];
+            let currentPassword = $("#currentPassword");
+            console.log(msg);
+
+            if(msg != null){
+                alert(msg);
+                currentPassword.focus(); // 오류 발생 시 현재 비밀번호 입력 필드에 포커스
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const telInput = document.getElementById("tel");
+
+            // 숫자만 입력 가능하도록 설정
+            telInput.addEventListener("input", function () {
+                this.value = this.value.replace(/\D/g, ""); // 숫자가 아닌 모든 문자 제거
+            });
+
+            // 붙여넣기 방지 및 숫자만 허용
+            telInput.addEventListener("paste", function (e) {
+                e.preventDefault();
+                let pasteData = (e.clipboardData || window.clipboardData).getData("text");
+                this.value = pasteData.replace(/\D/g, ""); // 숫자가 아닌 문자 제거 후 붙여넣기
+            });
+        });
 
     </script>
 </th:block>

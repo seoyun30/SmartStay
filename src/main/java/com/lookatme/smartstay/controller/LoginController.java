@@ -199,6 +199,7 @@ public class LoginController {
 
            model.addAttribute("msg", e.getMessage());
 
+
            return "member/signup";
        }
 
