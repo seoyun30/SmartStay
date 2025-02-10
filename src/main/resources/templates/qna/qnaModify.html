@@ -10,18 +10,20 @@
 <body>
 <th:block layout:fragment="content">
     <h1 class="text-center">문의사항 수정</h1>
+    <!--수정 폼-->
     <form action="/qna/qnaModify" method="post" th:object="${qnaDTO}">
-
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="row">
+
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="qna_num" class="form-label">번호</label>
-                            <input type="text" class="form-control" th:field="*{qna_num}" required id="qna_num" >
+                            <input type="text" class="form-control" th:field="*{qna_num}" required id="qna_num" readonly >
                             <p th:if="${#fields.hasErrors('qna_num')}" th:errors="*{qna_num}" class="fieldError"></p>
                         </div>
                     </div>
+
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="title" class="form-label">제목</label>
@@ -29,6 +31,7 @@
                             <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></p>
                         </div>
                     </div>
+
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="content" class="form-label">내용</label>
@@ -38,11 +41,19 @@
                     </div>
 
                     <div class="col-12">
-                        <button type="submit" class="btn btn-dark" style="float:right">수정</button>
+                        <button type="submit" class="btn btn-dark" style="float:right">저장</button>
                         <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
+
                         <script>
                             $(".Listbtn").on("click", function () {
                                 location.href = "/qna/qnaList";
+                            })
+
+                            // 등록 버튼 클릭 시 확인창 띄우기
+                            $("form").on("submit", function(event) {
+                                if (!confirm("수정하시겠습니까?")) {
+                                    event.preventDefault();  // 사용자가 '취소'를 클릭하면 폼 제출을 취소합니다.
+                                }
                             })
                         </script>
                     </div>

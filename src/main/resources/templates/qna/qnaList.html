@@ -32,7 +32,7 @@
                     <tr class="align-middle">
                         <td th:text="${qna.qna_num}"></td>
                         <td>
-                            <a th:href="@{/qna/qnaRead(title=${qna.title})}">
+                            <a th:href="@{/qna/qnaRead(id=${qna.qna_num})}">
                                 [[${qna.title}]]
                             </a>
                         </td>
