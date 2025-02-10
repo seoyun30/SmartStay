@@ -124,11 +124,11 @@
         <div class="p-3 mb-3">
             <div class="row">
                 <div class="col-md-6 align-self-center">
-                    <span class="card-text fs-5 fw-bold">총 n건</span>
+                    <span class="card-text fs-5 fw-bold totalCount">총 n건</span>
                 </div>
                 <div class="col-md-6 align-self-center text-end">
                     <span class="card-text fs-5 fw-bold">총 결제 금액</span>
-                    <h3 class="fw-bold"><span class="text-danger">0</span>원</h3>
+                    <h3 class="fw-bold"><span class="text-danger" id="totalPrice">0</span>원</h3>
                 </div>
             </div>
 
@@ -146,23 +146,22 @@
 <script th:inline="javascript" layout:fragment="script">
 
     $(document).ready(function () {
+        calculateTotal()
 
-        //총 가격 표시 메소드
-        function getOrderTotalPrice() {
-            let orderTotalPrice  = 0;
-            let checkedCount = 0;
+        //총 가격 및 결제 상품 수 계산 메소드
+        function calculateTotal() {
+            let totalPrice = 0;
+            let totalCount = 0;
 
-            $("input[name=cartChkBox]:checked").each(function () {
-                    let roomitem_num = $(this).val()
-                    let price = $("#price-" + roomitem_num).text()
-                    price = parseInt(price.replace(/[^0-9]/g, ''));
-                    orderTotalPrice += price;
-                    checkedCount++;
-                }
-            )
+            $(".reserveinfo").each(function () {
+                let price = parseInt($(this).find(".roomPrice").val());
+                let days = parseInt($(this).find(".reserveDay").val());
+                totalPrice += price * days;
+                totalCount++;
+            });
 
-            $("#orderTotalPrice").text(orderTotalPrice)
-            $(".checkedCount").text("총 " + checkedCount + "건");
+            $("#totalPrice").text(totalPrice)
+            $(".totalCount").text("총 " + totalCount + "건");
 
         }
 
