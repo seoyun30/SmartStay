@@ -18,6 +18,8 @@ public class RoomItemDTO {
 
     private Long roomitem_num; //룸 아이템 기록 번호
 
+    private Long[] roomitem_nums;
+
     @NotNull
     private LocalDateTime in_date; //체크인 날짜
 
