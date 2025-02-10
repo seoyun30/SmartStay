@@ -149,19 +149,36 @@ public class CartService {
     //차후 룸서비스 관련 추가 필요
 
     //장바구니의 주문
-    public List<RoomItemDTO> findCartOrderRoomItem(List<CartOrderDTO> cartOrderDTOList) {
+    public List<RoomItemDTO> findCartOrderRoomItem(Long[] roomitem_nums) {
 
         //현재 룸예약만 진행중 차후 수정 필요
         List<RoomItemDTO> roomItemDTOList = new ArrayList<>();
 
-        for (CartOrderDTO cartOrderDTO : cartOrderDTOList) {
-           RoomItem roomItem = roomItemRepository.findById(cartOrderDTO.getRoomitem_num())
+        for (Long roomitem_num : roomitem_nums) {
+           RoomItem roomItem = roomItemRepository.findById(roomitem_num)
                    .orElseThrow(EntityNotFoundException::new);
            roomItemDTOList.add(
                    modelMapper.map(roomItem, RoomItemDTO.class)
                            .setRoomDTO(modelMapper.map(roomItem.getRoom(), RoomDTO.class)
                                    .setHotelDTO(modelMapper.map(roomItem.getRoom().getHotel(), HotelDTO.class)))
            );
+        }
+
+        for (RoomItemDTO roomItemDTO : roomItemDTOList) {
+            List<Image> imageList = imageRepository.findByTarget("room", roomItemDTO.getRoomDTO().getRoom_num());
+
+            if (imageList != null && !imageList.isEmpty()) {
+                List<ImageDTO> imageDTOList = imageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class))
+                        .collect(Collectors.toList());
+
+                List<Long> imageIdList = imageDTOList.stream()
+                        .map(ImageDTO::getImage_id)
+                        .collect(Collectors.toList());
+
+                roomItemDTO.setImageDTOList(imageDTOList);
+                roomItemDTO.setImageIdList(imageIdList);
+            }
         }
 
         return roomItemDTOList;
