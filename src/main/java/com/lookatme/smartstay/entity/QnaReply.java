@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
 public class QnaReply extends BaseEntity{
 
     @Id
@@ -17,6 +16,8 @@ public class QnaReply extends BaseEntity{
     private Long qnaReply_num;
 
     private String comment;
+
+    private String writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_num")
