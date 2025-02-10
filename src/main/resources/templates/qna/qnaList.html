@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/adminlayout}">
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -40,7 +40,7 @@
 
 
                         <!--post 방식의 삭제버튼-->
-                        <td class="col text-end">
+                        <td sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="col text-end">
                             <form action="/qna/qnaDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
                                 <input type="hidden" name="qna_num" th:value="${qna.qna_num}"> <!-- 삭제할 qna의 ID를 hidden 필드로 전달 -->
                                 <button type="submit" class="btn btn-dark" style="background-color: red;">삭제</button>
