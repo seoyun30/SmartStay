@@ -18,7 +18,7 @@
                     <h1>총판 회원가입</h1>
                 </div>
 
-                <form class="row g-3" action="/member/adSignup" method="post" >
+                <form class="row g-3" action="/member/adSignup" method="post" onsubmit="return test()">
 
                     <th:block th:object="${memberDTO}">
                         <div class="mb-1">
@@ -34,6 +34,12 @@
                         </div>
 
                         <div class="mb-1">
+                            <label for="repassword" class="form-label">Password확인</label>
+                            <input type="password" name="repassword" class="form-control" id="repassword" placeholder="비밀번호를 한번 더 입력해주세요." required>
+                            <p id="password-error" style="color: red; display: none;">비밀번호가 일치하지 않습니다.</p>
+                        </div>
+
+                        <div class="mb-1">
                             <label for="name" class="form-label">name</label>
                             <input type="text" th:field="*{name}" class="form-control name" id="name">
                             <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
@@ -42,7 +48,7 @@
 
                         <div class="mb-1">
                             <label for="tel" class="form-label">tel</label>
-                            <input type="text" th:field="*{tel}" class="form-control" id="tel">
+                            <input type="text" th:field="*{tel}" class="form-control" id="tel" placeholder="숫자만 입력하세요.">
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
                     </th:block>
@@ -70,7 +76,41 @@
 </th:block>
 
 
-<script layout:fragment="script">
+<script th:inline="javascript" layout:fragment="script" >
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const telInput = document.getElementById("tel");
+
+        // 숫자만 입력 가능하도록 설정
+        telInput.addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, ""); // 숫자가 아닌 모든 문자 제거
+        });
+
+        // 붙여넣기 방지 및 숫자만 허용
+        telInput.addEventListener("paste", function (e) {
+            e.preventDefault();
+            let pasteData = (e.clipboardData || window.clipboardData).getData("text");
+            this.value = pasteData.replace(/\D/g, ""); // 숫자가 아닌 문자 제거 후 붙여넣기
+        });
+    });
+
+    function test(){
+        var password = document.getElementById('password').value;
+        var repassword = document.getElementById('repassword').value;
+        var errorMessage = document.getElementById('password-error');
+        var repasswordInput = document.getElementById('repassword');
+
+        if(password != repassword) {
+            errorMessage.style.display = "block"; // 오류 메시지 표시
+            alert("비밀번호가 일치하지 않습니다.");
+            repasswordInput.focus();
+            return false; // 회원가입 진행 막기
+
+        } else {
+            errorMessage.style.display = "none"; // 오류 메시지 숨김
+            return true; // 회원가입 진행 가능
+        }
+    }
 
 
 </script>
