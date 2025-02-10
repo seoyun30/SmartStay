@@ -1,13 +1,7 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.dto.CartOrderDTO;
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.RoomDTO;
-import com.lookatme.smartstay.dto.RoomItemDTO;
-import com.lookatme.smartstay.entity.Cart;
-import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.entity.Room;
-import com.lookatme.smartstay.entity.RoomItem;
+import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -33,6 +27,7 @@ public class CartService {
     private final PayRepository payRepository;
     private final RoomItemRepository roomItemRepository;
     private final RoomRepository roomRepository;
+    private final ImageRepository imageRepository;
     private final ModelMapper modelMapper;
 
     //룸예약 장바구니 등록
@@ -101,6 +96,23 @@ public class CartService {
                         .setRoomDTO(modelMapper.map(roomItem.getRoom(), RoomDTO.class)
                                 .setHotelDTO(modelMapper.map(roomItem.getRoom().getHotel(), HotelDTO.class))))
                 .collect(Collectors.toList());
+
+        for (RoomItemDTO roomItemDTO : roomItemDTOList) {
+            List<Image> imageList = imageRepository.findByTarget("room", roomItemDTO.getRoomDTO().getRoom_num());
+
+            if (imageList != null && !imageList.isEmpty()) {
+                List<ImageDTO> imageDTOList = imageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class))
+                        .collect(Collectors.toList());
+
+                List<Long> imageIdList = imageDTOList.stream()
+                        .map(ImageDTO::getImage_id)
+                        .collect(Collectors.toList());
+
+                roomItemDTO.setImageDTOList(imageDTOList);
+                roomItemDTO.setImageIdList(imageIdList);
+            }
+        }
 
         roomItemDTOList.forEach(roomItemDTO -> {log.info("서비스 roomItemDTO : " + roomItemDTO);});
 
