@@ -18,6 +18,8 @@ public class QnaDTO {
 
     private String content; //문의 내용
 
+    private String writer; //문의 작성자
+
     private LocalDateTime reg_date;
 
     private LocalDateTime modi_date;

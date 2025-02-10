@@ -26,6 +26,14 @@
 
                     <div class="col-12">
                         <div class="mb-3">
+                            <label for="writer" class="form-label">작성자</label>
+                            <input type="text" class="form-control" th:field="*{writer}" required id="writer" >
+                            <p th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}" class="fieldError"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3">
                             <label for="title" class="form-label">제목</label>
                             <input type="text" class="form-control" th:field="*{title}" required id="title" >
                             <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></p>

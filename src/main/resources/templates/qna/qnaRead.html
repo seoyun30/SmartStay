@@ -82,6 +82,14 @@
                                     </div>
                                 </div>
 
+                                <div class="row form-row">
+                                    <label for="writer" class="col-sm-2 col-form-label form-label">작성자</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" readonly class="form-control" id="writer" th:value="${qnaDTO.writer}">
+                                    </div>
+                                </div>
+
+
                                 <!-- 버튼 영역 -->
                                 <div class="button-container">
                                     <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
