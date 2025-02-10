@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
+
 public class OrderReserve extends BaseEntity {
 
     @Id

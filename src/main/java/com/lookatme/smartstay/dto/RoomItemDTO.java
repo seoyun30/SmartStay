@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
+
 public class RoomItemDTO {
 
     private Long roomitem_num; //룸 아이템 기록 번호

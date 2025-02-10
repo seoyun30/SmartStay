@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
+
 public class RoomReserveDTO {
 
     private Long reserve_num; //룸 예약 번호

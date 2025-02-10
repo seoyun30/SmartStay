@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
+
 public class CareDTO {
 
     private Long care_num; //케어 번호
