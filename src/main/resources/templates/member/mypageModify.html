@@ -60,6 +60,21 @@
             </div>
         </div>
     </div>
+    <script th:inline="javascript">
+
+
+        $(document).ready(function () {
+            let msg = [[${msg}]]
+            let password = $("#password")
+            console.log(msg)
+            if(msg != null){
+                alert(msg)
+                password.focus();
+            }
+
+        })
+
+    </script>
 </th:block>
 
 
