@@ -16,8 +16,10 @@ public class Notice extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notice_num; //공지 번호
 
+    @Column(nullable = false)
     private String title; //제목
 
+    @Column(nullable = false)
     private String content; //내용
 
     @ManyToOne(fetch = FetchType.LAZY)

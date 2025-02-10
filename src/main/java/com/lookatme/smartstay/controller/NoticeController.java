@@ -77,9 +77,9 @@ public class NoticeController {
     @PostMapping("/noticeModify")
     public String noticeModifyPost(NoticeDTO noticeDTO, MemberDTO memberDTO,
                                    List<MultipartFile> multipartFileList,
-                                   PageRequestDTO pageRequestDTO, ImageDTO imageDTO){
+                                   PageRequestDTO pageRequestDTO, ImageDTO imageDTO, List<Long> delnumList) {
         log.info("수정된 데이터 저장...");
-        noticeService.noticeModify(noticeDTO, multipartFileList);
+        noticeService.noticeModify(noticeDTO, multipartFileList, delnumList);
 
         return "redirect:/notice/noticeList";
     }
