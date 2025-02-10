@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -41,6 +43,10 @@ public class RoomItemDTO {
     private String create_by;
 
     private String modified_by;
+
+    public List<ImageDTO> imageDTOList = new ArrayList<>();
+
+    private List<Long> imageIdList = new ArrayList<>();
 
     public RoomItemDTO setRoomDTO(RoomDTO roomDTO) {
         this.roomDTO = roomDTO;
