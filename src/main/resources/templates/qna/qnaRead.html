@@ -6,77 +6,110 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+    <!-- 스타일 추가 부분 -->
+    <style>
+        .form-control {
+            background-color: #ffffff; /* 배경색을 흰색으로 */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        textarea.form-control {
+            height: 150px;
+            resize: vertical;
+        }
+
+        .form-container {
+            background-color: #ffffff;  /* 배경색을 흰색으로 설정 */
+            border: 1px solid #ccc;    /* 테두리 설정 */
+            border-radius: 12px;       /* 둥근 모서리 */
+            padding: 20px;             /* 내부 여백 추가 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 미세한 그림자 효과 */
+        }
+
+        .form-row {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .button-container {
+            text-align: right;
+        }
+
+        .btn-dark {
+            border-radius: 4px; /* 버튼에도 라운드 처리 */
+        }
+
+        .Listbtn{
+            margin-right: 10px;
+        }
+    </style>
 </head>
+
 <body>
 <th:block layout:fragment="content">
     <h1 class="text-center">상세보기</h1>
-    <div class="d=flex vh-100">
-        <div class="container my-auto">
-            <div class=" row justify-content-center">
+    <div class="d-flex vh-100">
+        <div class="container bg-body-tertiary rounded">
+            <div class="row justify-content-center">
 
                 <form action="/qna/qnaRead" method="post" th:object="${qnaDTO}">
-                    <div class="row mt-5">
-                        <div class="col text-center">
-                            <div class="row">
-                                <!--사진 들어갈 예정
-                                <div class="col">
-                                    <img th:src="${itemDTO.itemImgDTOList.get(0).imgUrl}" class="card-img-top" th:alt="${itemDTO.getItemImgDTOList().get(0).oriImgName}">
-                                </div> -->
-                                <div class="mb-3 row">
-                                    <label for="qna_num" class="col-sm-2 col-form-label">NO.</label>
+                    <!-- 큰 박스를 감싸는 컨테이너 div -->
+                    <div class="form-container mt-5">
+                        <div class="row">
+                            <div class="col text-center">
+                                <div class="row form-row">
+                                    <label for="qna_num" class="col-sm-2 col-form-label form-label">번호</label>
                                     <div class="col-sm-10">
-                                        <input type="text" readonly class="form-control-plaintext" id="qna_num" th:value="*{qna_num}">
+                                        <input type="text" readonly class="form-control" id="qna_num" th:value="*{qna_num}">
                                     </div>
                                 </div>
-
-                                <div class="mb-3 row">
-                                    <label for="title" class="col-sm-2 col-form-label">제목</label>
+                                <div class="row form-row">
+                                    <label for="title" class="col-sm-2 col-form-label form-label">제목</label>
                                     <div class="col-sm-10">
-                                        <input type="text" readonly class="form-control-plaintext" id="title" th:value="${qnaDTO.title}">
+                                        <input type="text" readonly class="form-control" id="title" th:value="${qnaDTO.title}">
                                     </div>
                                 </div>
-
-                                <div class="mb-3 row">
-                                    <label for="content" class="col-sm-2 col-form-label">글내용</label>
+                                <div class="row form-row">
+                                    <label for="content" class="col-sm-2 col-form-label form-label">내용</label>
                                     <div class="col-sm-10">
-                                        <input type="text" readonly class="form-control-plaintext" id="content" th:value="${qnaDTO.content}">
+                                        <textarea readonly class="form-control" id="content" th:text="${qnaDTO.content}"></textarea>
                                     </div>
                                 </div>
-                                <!--추후 이미지
-                                <div class="row mb-3">
-                                    <th:block th:unless="${#lists.isEmpty(qnaImgDTOList)}" th:each="imgdto: ${qnaImgDTOList}">
-                                        <div class="col">
-                                            <img class="img-fluid" th:src="${'/images/' + imgdto.newImgName}">
-                                        </div>
-                                    </th:block>
 
-                                    <th:block th:if="${#lists.isEmpty(boardImgDTOList)}">
-                                        <div class="col">
-                                            이미지가 없습니다.
-                                        </div>
-                                    </th:block>
-                                </div> -->
-
-                                <div class="col-12">
-                                        <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
-                                        <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
-                                        <script>
-                                            let qna_num = document.getElementById("qna_num").value;
-
-                                            $(".Listbtn").on("click", function () {
-                                                location.href = "/qna/qnaList";
-                                            })
-
-                                            $(".Modbtn").on("click", function () {
-                                                location.href = "/qna/qnaModify?qna_num="+qna_num;
-                                            })
-                                        </script>
-                                    </div>
+                                <!-- 버튼 영역 -->
+                                <div class="button-container">
+                                    <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
+                                    <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
                                 </div>
+
+                                <script>
+                                    let qna_num = document.getElementById("qna_num").value;
+
+                                    console.log(qna_num);  // qna_num 값이 제대로 출력되는지 확인
+
+                                    $(".Listbtn").on("click", function () {
+                                        location.href = "/qna/qnaList";
+                                    });
+
+                                    $(".Modbtn").on("click", function () {
+                                        if(qna_num){
+                                            location.href = "/qna/qnaModify?qna_num="+qna_num;
+                                        } else {
+                                            console.log("qna_num 값이 없습니다.");
+                                        }
+
+                                    });
+                                </script>
                             </div>
                         </div>
+                    </div>
                 </form>
-            </div>
             </div>
         </div>
     </div>

@@ -75,7 +75,7 @@ public class QnaController {
         log.info("컨트롤러 읽기로 들어온 게시글 번호:" + id);
         //log.info("컨트롤러 읽기로 들어온 게시글 번호:" + id);
 
-        if (id == null || id<= 0) {
+        if (id == null || id.equals("")) {
             log.info("들어온 id 가 이상함");
             return "redirect:/qna/qnaList";
         }
@@ -93,18 +93,30 @@ public class QnaController {
 
     //수정
     @GetMapping("/qnaModify")
-    public String qnaModifyGet(Long id, Model model) { //PageRequestDTO pageRequestDTO
-        /*
-        if(id == null || id.equals("")) {
+    public String qnaModifyGet(Long qna_num, Model model) { //PageRequestDTO pageRequestDTO
+
+        if(qna_num == null || qna_num.equals("")) {
             log.info("들어온 qna_num이 이상함");
             return "redirect:/qna/qnaList"; //+pageRequestDTO.getLink();
-        }*/
+        }
         //try~chach문으로 이미지 넣을것
+
+        // QnaDTO를 가져와서 model에 추가
+        try {
+            QnaDTO qnaDTO = qnaService.read(qna_num);
+            model.addAttribute("qnaDTO", qnaDTO);
+        } catch (EntityNotFoundException e) {
+            log.info("해당 id로 게시글을 찾을 수 없음");
+            return "redirect:/qna/qnaList";
+        }
+
         return "/qna/qnaModify";
     }
 
     @PostMapping("/qnaModify")
     public String qnaModifyPost(QnaDTO qnaDTO, BindingResult bindingResult, Long[] delino, Model model) {
+        qnaService.modify(qnaDTO);
+
         log.info("업데이트포스"+qnaDTO);
         //log.info("업데이트포스"+pageRequestDTO);
         if (bindingResult.hasErrors()) {
@@ -113,7 +125,7 @@ public class QnaController {
             return "/qna/qnaList";
         }
 
-        return "/qna/qnaModify"; //+pageRequestDTO.getLink()
+        return "redirect:/qna/qnaList"; //+pageRequestDTO.getLink()
     }
 
     //삭제
