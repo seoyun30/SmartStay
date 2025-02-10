@@ -20,4 +20,6 @@ public class Qna extends BaseEntity{
 
     private String content; //문의 내용
 
+    private String writer; //문의 작성자
+
 }

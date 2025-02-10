@@ -24,6 +24,7 @@
                     <th>번호</th>
                     <th>제목</th>
                     <th>내용</th>
+                    <th>작성자</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -37,6 +38,7 @@
                             </a>
                         </td>
                         <td th:text="${qna.content}"></td>
+                        <td th:text="${qna.writer}"></td>
 
 
                         <!--post 방식의 삭제버튼-->

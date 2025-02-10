@@ -44,6 +44,7 @@ public class QnaServcieImpl implements QnaService {
         Qna qna = Qna.builder()
                 .title(qnaDTO.getTitle())
                 .content(qnaDTO.getContent())
+                .writer(qnaDTO.getWriter())
                 .build();
         qnaRepository.save(qna);
     }
@@ -126,6 +127,7 @@ public class QnaServcieImpl implements QnaService {
 
         qna.setTitle(qnaDTO.getTitle());
         qna.setContent(qnaDTO.getContent());
+        qna.setWriter(qnaDTO.getWriter());
 /*---------------------------------------------------
         // 파일 삭제
         if (delino != null && !delino[0].equals("")) {
