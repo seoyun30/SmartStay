@@ -94,6 +94,16 @@
         });
     });
 
+
+    $(document).ready(function () {
+
+        let msg = [[${msg}]]
+        if (msg) {
+            alert(msg)
+        }
+    })
+
+
     function test(){
         var password = document.getElementById('password').value;
         var repassword = document.getElementById('repassword').value;
@@ -111,6 +121,8 @@
             return true; // 회원가입 진행 가능
         }
     }
+
+
 
 
 </script>
