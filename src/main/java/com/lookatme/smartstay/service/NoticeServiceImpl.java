@@ -4,7 +4,6 @@ import com.lookatme.smartstay.dto.NoticeDTO;
 
 import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.dto.PageResponseDTO;
-import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.entity.Notice;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.NoticeRepository;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,8 +59,7 @@ public class NoticeServiceImpl implements NoticeService {
             for (MultipartFile file : multipartFileList) {
                 if ( !multipartFileList.isEmpty()) {
                     log.info("사진이 등록되었습니다.");
-                    log.info("사진이 등록되었습니다.");
-                    log.info("사진이 등록되었습니다.");
+
                     // 이미지 등록
                     imageService.saveImage(multipartFileList,"notice", notice.getNotice_num());
                 }
@@ -75,6 +72,7 @@ public class NoticeServiceImpl implements NoticeService {
     //공지 사항 상세보기
     @Override
     public NoticeDTO noticeRead(Long id){
+        log.info("읽기로 들어온 값 : " + id);
         Optional<Notice> notice = noticeRepository.findById(id);
 
         NoticeDTO noticeDTO = modelMapper.map(notice, NoticeDTO.class);
@@ -90,7 +88,8 @@ public class NoticeServiceImpl implements NoticeService {
         List<NoticeDTO> NoticeDTOList =
                 noticeList.stream().map(notice -> modelMapper.map(notice, NoticeDTO.class))
                         .collect(Collectors.toList());
-        NoticeDTOList.forEach(noticeDTO -> log.info(noticeDTO.toString()));
+
+        NoticeDTOList.forEach(noticeDTO -> log.info(noticeDTO));
 
 //        List<NoticeDTO> noticeDTOS = Arrays.asList(modelMapper.map(notices, NoticeDTO[].class));
 
@@ -110,24 +109,26 @@ public class NoticeServiceImpl implements NoticeService {
             noticePage = noticeRepository.findAll(pageable);
 
         }else if (pageRequestDTO.getKeyword().equals("t")) {
-            log.info("제목으로 검색 검색키워드는" ,pageRequestDTO.getKeyword());
-            List<Notice> noticePage1 = noticeRepository.searchByTitle(pageRequestDTO.getKeyword());
+            log.info("제목으로 검색 검색키워드는" + pageRequestDTO.getKeyword());
+            noticePage = noticeRepository.findByTitleContaining(pageRequestDTO.getKeyword(), pageable);
 
         }else if (pageRequestDTO.getKeyword().equals("h")) {
-            log.info("호텔명으로 검색 검색키워드는" , pageRequestDTO.getKeyword());
-            List<Notice> noticePage1 = noticeRepository.searchByHotel(pageRequestDTO.getKeyword());
+            log.info("호텔명으로 검색 검색키워드는" + pageRequestDTO.getKeyword());
+            noticePage = noticeRepository.findByHotelContaining(pageRequestDTO.getKeyword(), pageable);
 
         }else if (pageRequestDTO.getKeyword().equals("w")) {
-            log.info("작성자로 검색 검색키워드는" , pageRequestDTO.getKeyword());
-            List<Notice> noticePage1 = noticeRepository.searchByWriter(pageRequestDTO.getKeyword());
+            log.info("작성자로 검색 검색키워드는" + pageRequestDTO.getKeyword());
+            noticePage = noticeRepository.findByWriter(pageRequestDTO.getKeyword(),pageable);
 
         }else if (pageRequestDTO.getType().equals("thw")){
-            log.info("제목 또는 호텔명 또는 작성자 작성일로 검색 검색키워드는" , pageRequestDTO.getKeyword());
-            List<Notice> noticePage1 = noticeRepository.searchByHotelOrWriter(pageRequestDTO.getKeyword());
+            log.info("제목 또는 호텔명 또는 작성자 작성일로 검색 검색키워드는" + pageRequestDTO.getKeyword());
+            noticePage = noticeRepository.findByTitleContainingOrOrHotelOrWriter(pageRequestDTO.getKeyword(), pageable);
         }
 
+        List<Notice> noticeList = noticePage.getContent();
+
         List<NoticeDTO> noticeDTOList =
-                noticeList().stream().map(notice -> modelMapper.map(notice, NoticeDTO.class))
+                noticeList.stream().map(notice -> modelMapper.map(notice, NoticeDTO.class))
                         .collect(Collectors.toList());
 
         PageResponseDTO<NoticeDTO> noticeDTOPageResponseDTO
@@ -148,9 +149,9 @@ public class NoticeServiceImpl implements NoticeService {
         Pageable pageable = pageRequestDTO.getPageable("notice_num");
         String[] types = pageRequestDTO.getTypes();
         String keyword = pageRequestDTO.getKeyword();
-        String searchDateType = pageRequestDTO.getSearchDateType();
+//        String searchDateType = pageRequestDTO.getSearchDateType();
 
-        Page<Notice> noticePage = noticeRepository.searchAll(types, keyword, searchDateType, pageable);
+        Page<Notice> noticePage = noticeRepository.searchAll(types, keyword, pageable);
 
         //변환
         List<Notice> noticeList = noticePage.getContent();

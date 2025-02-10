@@ -47,6 +47,7 @@
                     <div class="d-flex justify-content-end">
                         <a th:href="@{/notice/noticeRegister}" class="btn btn-dark">등록</a>
                     </div>
+
                     <h3>공지 사항</h3>
                     <table class="table table-bordered">
                         <thead>
@@ -61,16 +62,15 @@
                         </thead>
                         <tbody>
                         <tr><!--최대값으로 더미값을 입력-->
-                        <tr th:each="data:${noticeDTOList}"><!--더미값으로 채우기(가장 긴값)-->
-                            <td th:text="${data.notice_num}" class="text-center"></td>
-                            <td th:href="@{/}" class="text-center"></td>
+                        <tr th:each="noticeDTO: ${pageResponseDTO.getDtoList()}"><!--더미값으로 채우기(가장 긴값)-->
+
+                            <td th:text="${noticeDTO.notice_num}" class="text-center"></td>
                             <td>
-                                <a th:href="@{/notice/noticeRead(id=${data.notice_num})}" th:text="${data.title}" class="text-center">
-                                    이것은 제목입니다.
+                                <a th:href="@{/notice/noticeRead(id=${noticeDTO.getNotice_num()})}" th:text="${noticeDTO.getTitle()}" class="text-center">
                                 </a>
                             </td>
-                            <td th:text="${data.create_by}" class="text-center"></td>
-                            <td th:text="${#temporals.format(data.reg_date, 'yyyy-MM-dd')}" class="text-center"></td>
+                            <td th:text="${noticeDTO.create_by}" class="text-center"></td>
+                            <td th:text="${#temporals.format(noticeDTO.reg_date, 'yyyy-MM-dd')}" class="text-center"></td>
                             <td class="last-column"></td> <!-- 조회수 셀의 오른쪽 테두리 제거 -->
                         </tr>
                         </tr>
