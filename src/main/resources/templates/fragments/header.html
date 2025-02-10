@@ -71,6 +71,18 @@
                         <span class="d-none d-md-block ps-2 text-nowrap" style="font-size: 1.25rem;">회원가입</span>
                     </a>
                 </li>
+
+                <li class="nav-item pe-3">
+                    <a sec:authorize="isAnonymous()" class="nav-link nav-profile d-flex align-items-center pe-0" href="/member/adSignup">
+                        <span class="d-none d-md-block ps-2 text-nowrap" style="font-size: 1.25rem;">ad회원가입</span>
+                    </a>
+                </li>
+
+                <li class="nav-item pe-3">
+                    <a sec:authorize="isAnonymous()" class="nav-link nav-profile d-flex align-items-center pe-0" href="/member/cmSignup">
+                        <span class="d-none d-md-block ps-2 text-nowrap" style="font-size: 1.25rem;">cm회원가입</span>
+                    </a>
+                </li>
             </ul>
         </nav>
 
