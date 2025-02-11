@@ -3,6 +3,7 @@ package com.lookatme.smartstay.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,11 +21,13 @@ public class Pay extends BaseEntity {
     private Long pay_num; //결제 번호
 
     @Column(nullable = false)
-    private String pay_id; //결제 기록 번호
+    private String merchant_uid; //주문 고유 번호
 
-    private String card_id; //결제 카드 번호
+    private String imp_uid; //실결제 번호
 
-    private Long total_price; //총 결제 금액
+    private String pay_method; //결제 방법
+
+    private BigDecimal amount; //총 결제 금액
 
     @OneToMany(mappedBy = "pay", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)
