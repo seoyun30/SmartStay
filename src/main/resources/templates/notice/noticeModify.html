@@ -9,9 +9,10 @@
 <body>
 <div layout:fragment="content">
     <div id="row" class="row justify-content-center">
+
         <form th:action="@{/notice/noticeModify}" method="post">
             <!-- Notice 번호 (숨겨진 필드) -->
-            <input type="hidden" th:value="${notice.notice_num}" name="notice_num">
+            <input type="hidden" th:each="data: ${notice.getNotice_num()}" name="notice_num">
             <div class="card" style="width: 100%; height: 90%;">
                 <!--제목-->
                 <div class="card-header bg-white">

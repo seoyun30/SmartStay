@@ -117,11 +117,11 @@ public class NoticeServiceImpl  {
         Notice notice = modelMapper.map(noticeDTO, Notice.class);
 
         //유효성 검사 id값으로 테이블에서 조회 페이지수를 읽어온다.(있으면 페이지, 없으면 null)
-        Optional<Notice> read = noticeRepository.findById(noticeDTO.getNotice_num());
+        Optional<Notice> noticeRead = noticeRepository.findById(noticeDTO.getNotice_num());
 
 
 
-        if (read.isPresent()) { //전달받은 레코드에 내용(수정사항)이 있으면
+        if (noticeRead.isPresent()) { //전달받은 레코드에 내용(수정사항)이 있으면
             //저장
             noticeRepository.save(notice);
         }

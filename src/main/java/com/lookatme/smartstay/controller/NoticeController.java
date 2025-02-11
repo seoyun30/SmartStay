@@ -81,9 +81,9 @@ public class NoticeController {
 
     //
     @GetMapping("/noticeModify")
-    public String noticeModifyGet(Long id, Principal principal, PageRequestDTO pageRequestDTO, Model model){
+    public String noticeModifyGet(Long notice_num, Principal principal, PageRequestDTO pageRequestDTO, Model model){
 
-        NoticeDTO noticeDTO = noticeService.noticeRead(id);
+        NoticeDTO noticeDTO = noticeService.noticeRead(notice_num);
         model.addAttribute("notice", noticeDTO);
         return "notice/noticeModify";
     }
@@ -92,7 +92,8 @@ public class NoticeController {
     public String noticeModifyPost(NoticeDTO noticeDTO, MemberDTO memberDTO,
                                    List<MultipartFile> multipartFileList,
                                    PageRequestDTO pageRequestDTO, ImageDTO imageDTO, List<Long> delnumList) {
-        log.info("수정된 데이터 저장...");
+
+        log.info("수정된 데이터 저장..." + noticeDTO);
         noticeService.noticeModify(noticeDTO, multipartFileList, delnumList);
 
         return "redirect:/notice/noticeList";
