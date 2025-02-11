@@ -15,6 +15,14 @@ public interface QnaReplyService {
     //목록
     public List<QnaReplyDTO> list(Long qnaReply_num);
 
+    //public Page<ReplyDTO> listPage(Long qnaReply_num, Pageable pageable);
+
+    //목록 페이징처리, 일반 컨트롤러 일때
+    //public int totalEl();
+
+    //목록 페이징 처리 restController일때
+    //public PageResponseDTO<QnaReplyDTO> pageList(PageRequestDTO pageRequestDTO, Long bno);
+
     //수정
     public QnaReplyDTO modify(QnaReplyDTO qnaReplyDTO);
 
