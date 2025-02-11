@@ -2,13 +2,64 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/mainlayout}">
+      layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>관리자 마이페이지</title>
 
 </head>
 <body>
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mt-5 justify-content-center">
+            <div class="col-4">
+                <div class="text-center">
+                    <h1>내정보</h1>
+                </div>
 
+
+                <div class="row g-3">
+
+                    <th:block th:object="${memberDTO}">
+                        <div class="mb-1">
+                            <label for="email" class="form-label">Email</label>
+                            <input class="form-control" type="email" aria-label="Disabled input example" disabled readonly id="email" th:value="${memberDTO.email}">
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="name" class="form-label">name</label>
+                            <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="name" th:value="${memberDTO.name}">
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="tel" class="form-label">tel</label>
+                            <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="tel" th:value="${memberDTO.tel}">
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="reg_date" class="form-label">가입일자</label>
+                            <input class="form-control" type="text" aria-label="Disabled input example" disabled readonly id="reg_date" th:value="${#temporals.format(memberDTO.reg_date, 'yyyy-MM-dd')}">
+                        </div>
+
+                        <div class="col text-center d-flex justify-content-center gap-3 mt-4">
+                            <button type="button" class="btn btn-primary" onclick="location.href='/member/adMypagePasswordCheck'">수정</button>
+                            <button type="button" class="btn btn-primary" onclick="location.href='/adMain'">홈</button>
+
+                        </div>
+
+
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+<script layout:fragment="script">
+
+
+</script>
 </body>
+
 </html>

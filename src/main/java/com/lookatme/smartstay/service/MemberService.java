@@ -226,7 +226,13 @@ public class MemberService implements UserDetailsService {
         Pageable pageable = pageRequestDTO.getPageable("member_num");
         log.info(pageable);
         log.info("서비스 진입");
-        Page<Member> memberPage = memberRepository.selectAll(pageable);
+        Page<Member> memberPage = null;
+        if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().equals("")) {
+             memberPage = memberRepository.searchMember(pageRequestDTO.getKeyword(), pageable);
+        }else {
+             memberPage = memberRepository.selectAll(pageable);
+
+        }
 
 
         List<Member> memberList = memberPage.getContent();
@@ -249,13 +255,6 @@ public class MemberService implements UserDetailsService {
         return memberDTOPageResponseDTO;
     }
 
-    public List<MemberDTO> searchMember(String keyword){
-       List<Member> members = memberRepository.searchMember(keyword);
-
-       return members.stream()
-               .map(member -> modelMapper.map(member, MemberDTO.class))
-               .collect(Collectors.toList());
-    }
 
 
 
@@ -274,6 +273,21 @@ public class MemberService implements UserDetailsService {
               .role(member.getRole())
               .reg_date(member.getReg_date())
               .build();
+    }
+
+    public boolean checkPassword(String email, String password) {
+
+        if(email == null || email.isEmpty()){
+            return false;
+        }
+
+        MemberDTO member = findbyEmail(email);
+
+        if(member == null){
+            return false;
+        }
+
+        return passwordEncoder.matches(password, member.getPassword());
     }
 
 

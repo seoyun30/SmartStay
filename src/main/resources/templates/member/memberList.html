@@ -13,7 +13,7 @@
 <th:block layout:fragment="content">
     <h1 class="text-center mt-3">전체 회원 목록</h1>
 
-    <form th:action="@{/member/searchMember}" method="get" class="d-flex justify-content-end mt-5">
+    <form th:action="@{/member/memberList}" method="get" class="d-flex justify-content-end mt-5">
         <input type="text" name="keyword" class="form-control" placeholder="검색어 입력" th:value="${keyword}" style="width: 250px;">
         <button type="submit" class="btn btn-primary btn-sm ml-2">검색</button>
     </form>
@@ -41,6 +41,7 @@
                         </td>
                     </tr>
                 </th:block>
+
                 <th:block th:each="memberDTO:${pageResponseDTO.dtoList}">
                         <tr class="align-middle">
                             <td th:text="${memberDTO.member_num}"></td>
@@ -57,21 +58,21 @@
         </div>
     </div>
 
-    <div class="pagination mt-3">
+    <div class="pagination mt-3" th:if="${pageResponseDTO != null and not #lists.isEmpty(pageResponseDTO.dtoList)}">
     <th:block th:if="${pageResponseDTO.prev}">
-        <a class="pagingbtn" th:href="@{member/memberList(page=${pageResponseDTO.start -1})}">이전</a>
+        <a class="pagingbtn" th:href="@{/member/memberList(page=${pageResponseDTO.start -1})}">이전</a>
     </th:block>
 
     <div th:with="a=${pageRequestDTO}">
         <th:block th:each="i: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
-            <a class="pagingbtn" th:href="@{member/memberList(page=${i})}">
+            <a class="pagingbtn" th:href="@{/member/memberList(page=${i})}">
                 [[${i}]]
             </a>
         </th:block>
     </div>
 
     <th:block th:if="${pageResponseDTO.next}">
-        <a class="pagingbtn" th:href="@{member/memberList.html(page=${pageResponseDTO.end + 1})}">다음</a>
+        <a class="pagingbtn" th:href="@{/member/memberList.html(page=${pageResponseDTO.end + 1})}">다음</a>
     </th:block>
     </div>
 
