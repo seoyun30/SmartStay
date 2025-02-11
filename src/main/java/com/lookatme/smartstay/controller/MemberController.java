@@ -128,22 +128,12 @@ public class MemberController {
     public String memberList(Principal principal, PageRequestDTO pageRequestDTO, Model model){
 
         log.info("진입" );
+        log.info("진입" + pageRequestDTO);
 
         PageResponseDTO<MemberDTO> pageResponseDTO =
                 memberService.memberList(pageRequestDTO);
 
         model.addAttribute("pageResponseDTO", pageResponseDTO);
-
-        return "member/memberList";
-    }
-
-    @GetMapping("/searchMember")
-    public String searchMember(@RequestParam("keyword") String keyword, Model model){
-
-        List<MemberDTO> memberDTOList = memberService.searchMember(keyword);
-
-        model.addAttribute("memberList", memberDTOList);
-        model.addAttribute("keyword", keyword);
 
         return "member/memberList";
     }
