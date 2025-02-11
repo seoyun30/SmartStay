@@ -58,7 +58,7 @@
         </div>
     </div>
 
-    <div class="pagination mt-3">
+    <div class="pagination mt-3" th:if="${pageResponseDTO != null and not #lists.isEmpty(pageResponseDTO.dtoList)}">
     <th:block th:if="${pageResponseDTO.prev}">
         <a class="pagingbtn" th:href="@{/member/memberList(page=${pageResponseDTO.start -1})}">이전</a>
     </th:block>

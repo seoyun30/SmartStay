@@ -6,6 +6,7 @@ import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.MemberService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -29,8 +31,109 @@ public class MemberController {
     private final MemberRepository memberRepository;
 
     @GetMapping("/adMypage") // 마이페이지 정보보기(관리자)
-    public String adMypage(Principal principal){
+    public String adMypage(Principal principal, Model model, Authentication authentication){
+
+        String email = authentication.getName();
+        MemberDTO memberDTO = memberService.readMember(email);
+        log.info(memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
         return "member/adMypage";
+    }
+
+
+    @GetMapping("/adMypagePasswordCheck")
+    public String adMypagePasswordCheck(MemberDTO memberDTO, Principal principal, RedirectAttributes RedirectAttributes){
+
+        if(principal == null){
+            RedirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
+            return "redirect:/login";
+
+        }
+        return "member/adMypagePasswordCheck";
+    }
+
+    @PostMapping("/adMypagePasswordCheck")
+    public String adMypagePasswordCheckPost(@RequestParam("password") String password, Principal principal, RedirectAttributes redirectAttributes) {
+
+        if(principal == null){
+            redirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
+            return "redirect:/login";
+        }
+        String email = principal.getName();
+
+        if(memberService.checkPassword(email, password)) {
+            return "redirect:/member/adMypageModify";
+        }else {
+            redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
+            return "redirect:/member/adMypagePasswordCheck";
+        }
+
+    }
+
+
+
+    @GetMapping("/adMypageModify") // 마이페이지 정보수정(관리자)
+    public String adMypageModifyGet(Principal principal, HttpSession session, Model model){
+
+        MemberDTO memberDTO = memberService.findbyEmail(principal.getName());
+
+        log.info("memberDTO" + memberDTO);
+
+        if(memberDTO == null){
+            return "redirect:/member/adMypage";
+        }
+
+        model.addAttribute("memberDTO", memberDTO);
+
+        return "member/adMypageModify";
+    }
+
+
+
+    @PostMapping("/adMypageModify") // 마이페이지 정보수정
+    public String adMypageModifyPost(MemberDTO memberDTO, Model model){
+
+        log.info("정보업데이트" + memberDTO);
+        log.info("정보업데이트" + memberDTO.getPassword().length());
+
+        if(memberDTO.getPassword().length() >= 1){
+            log.info("비밀번호 유효성검사");
+
+            if(memberDTO.getPassword().length() < 8  || memberDTO.getPassword().length() > 20){
+
+                log.info("비밀번호 유효성검사");
+
+                String  msg = "비밀번호는 8 ~ 20 글자로 입력해주세요.";
+
+
+                memberDTO = memberService.findbyEmail(memberDTO.getEmail());
+
+                log.info("memberDTO" + memberDTO);
+
+                if(memberDTO == null){
+                    return "redirect:/member/adMypage";
+                }
+
+
+                model.addAttribute("memberDTO", memberDTO);
+                model.addAttribute("msg", msg);
+
+                return "member/adMypageModify";
+            }
+
+        }
+
+        try {
+            memberService.updateMember(memberDTO);
+
+        }catch (Exception e){
+
+            return "redirect:/member/adMypage";
+        }
+
+        return "redirect:/member/adMypage";
+
     }
 
     @GetMapping("/mypage") // 마이페이지 정보보기(유저)
@@ -46,10 +149,33 @@ public class MemberController {
 
     }
 
-    @GetMapping("/adMypageModify") // 마이페이지 정보수정(관리자)
-    public String adMypageModifyGet(Principal principal, HttpSession session, Model model){
+    @GetMapping("/mypagePasswordCheck")
+    public String mypagePasswordCheck(MemberDTO memberDTO, Principal principal, RedirectAttributes RedirectAttributes){
 
-        return "member/adMypageModify";
+        if(principal == null){
+            RedirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
+            return "redirect:/login";
+
+        }
+        return "member/mypagePasswordCheck";
+    }
+
+    @PostMapping("/mypagePasswordCheck")
+    public String mypagePasswordCheckPost(@RequestParam("password") String password, Principal principal, RedirectAttributes redirectAttributes) {
+
+        if(principal == null){
+            redirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
+            return "redirect:/login";
+        }
+        String email = principal.getName();
+
+        if(memberService.checkPassword(email, password)) {
+            return "redirect:/member/mypageModify";
+        }else {
+            redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
+            return "redirect:/member/mypagePasswordCheck";
+        }
+
     }
 
     @GetMapping("/mypageModify") // 마이페이지 정보수정(유저)
@@ -67,6 +193,7 @@ public class MemberController {
 
         return "member/mypageModify";
     }
+
 
     @PostMapping("/mypageModify") // 마이페이지 정보수정
     public String mypageModifyPost(MemberDTO memberDTO, Model model){

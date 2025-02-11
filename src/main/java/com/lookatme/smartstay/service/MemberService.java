@@ -275,6 +275,21 @@ public class MemberService implements UserDetailsService {
               .build();
     }
 
+    public boolean checkPassword(String email, String password) {
+
+        if(email == null || email.isEmpty()){
+            return false;
+        }
+
+        MemberDTO member = findbyEmail(email);
+
+        if(member == null){
+            return false;
+        }
+
+        return passwordEncoder.matches(password, member.getPassword());
+    }
+
 
 
 
