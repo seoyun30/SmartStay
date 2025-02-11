@@ -2,28 +2,28 @@ package com.lookatme.smartstay.repository;
 
 import com.lookatme.smartstay.entity.Notice;
 
-import com.lookatme.smartstay.repository.search.NoticeSearch;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-public interface NoticeRepository extends JpaRepository<Notice, Long>  , NoticeSearch {
+public interface NoticeRepository extends JpaRepository<Notice, Long>  {
 
 
-    //제목
-    public Page<Notice> findByTitleContaining(String keyword, Pageable pageable);
 
-    //호텔
-    @Query("select n from Notice n where n.hotel.hotel_name like concat('%', :keyword, '%') ")
-    public Page<Notice> findByHotelContaining(String keyword, Pageable pageable);
+//    //제목
+//    public Page<Notice> findByTitleContaining(String keyword, Pageable pageable);
+//
+//    //호텔
+//    @Query("select n from Notice n where n.hotel.hotel_name like concat('%', :keyword, '%') ")
+//    public Page<Notice> findByHotelContaining(String keyword, Pageable pageable);
+//
+//    //작성자
+//    @Query("select n from Notice n where n.member.name like concat('%', :keyword, '%') ")
+//    public Page<Notice> findByWriter(String keyword, Pageable pageable);
+//
+//    @Query("select n from Notice n where n.title like concat('%', :keyword, '%')or n.hotel.hotel_name like concat('%', :str, '%')or n.member.name like concat('%', :str, '%') ")
+//    public Page<Notice> findByTitleContainingOrOrHotelOrWriter(String keyword, Pageable pageable);
 
-    //작성자
-    @Query("select n from Notice n where n.member.name like concat('%', :keyword, '%') ")
-    public Page<Notice> findByWriter(String keyword, Pageable pageable);
 
-    @Query("select n from Notice n where n.title like concat('%', :keyword, '%')or n.hotel.hotel_name like concat('%', :str, '%')or n.member.name like concat('%', :str, '%') ")
-    public Page<Notice> findByTitleContainingOrOrHotelOrWriter(String keyword, Pageable pageable);
+
 
 
 //    //호텔명으로 검색

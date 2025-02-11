@@ -1,10 +1,16 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.Util.PagenationUtil;
 import com.lookatme.smartstay.dto.*;
+
 import com.lookatme.smartstay.service.ImageService;
 import com.lookatme.smartstay.service.NoticeServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,22 +29,20 @@ import java.util.List;
 public class NoticeController {
 
     private final NoticeServiceImpl noticeService;
-
+    private final PagenationUtil pagenationUtil; //페이지번호 처리 클래스
     private final ImageService imageService;
 
 
     //목록 페이지
     @GetMapping("/noticeList")
-    public String noticeListFrom(PageRequestDTO pageRequestDTO, Model model){
-
+    public String noticeList(PageRequestDTO pageRequestDTO, @PageableDefault(page = 1) Pageable pageable, Model model){
         log.info("모든 데이터를 읽어온다..." + pageRequestDTO);
 
-        PageResponseDTO<NoticeDTO> pageResponseDTO =
-                noticeService.pageListsearchdsl(pageRequestDTO);
-
-//        List<NoticeDTO> noticeDTOList = noticeService.noticeList();
-
-        model.addAttribute("pageResponseDTO", pageResponseDTO);
+        Page<NoticeDTO> noticeDTOS = noticeService.noticeList(pageable);
+        Map<String, Integer> pageInfo = pagenationUtil.pagination(noticeDTOS);
+        model.addAttribute("noticeList", noticeDTOS);
+        System.out.println("노티스노티스" + noticeDTOS);
+        model.addAttribute("pageInfo", pageInfo);
 
         return "notice/noticeList";
     }
@@ -45,7 +50,7 @@ public class NoticeController {
     //등록 페이지 이동
     @GetMapping("/noticeRegister")
     public String noticeRegisterGet(){
-        log.info("입력폼 페이지 이동...");
+        log.info("입력폼 페이지 이동..." );
 
         return "notice/noticeRegister";
     }
@@ -55,7 +60,7 @@ public class NoticeController {
     public String noticeRegisterPost(NoticeDTO noticeDTO, MemberDTO memberDTO, List<MultipartFile> multipartFileList){
 
         log.info("입력폼 내용을 저장..." + noticeDTO);
-        log.info("들어온값 : " + multipartFileList.get(0).getOriginalFilename());
+//        log.info("들어온값 : " + multipartFileList.get(0).getOriginalFilename());
         noticeService.noticeRegister(noticeDTO);
 
         return "redirect:/notice/noticeList";
@@ -66,6 +71,7 @@ public class NoticeController {
     public String noticeRead(Long id, PageRequestDTO pageRequestDTO, Model model){
         log.info("개별읽기...");
         NoticeDTO noticeDTO = noticeService.noticeRead(id);
+        System.out.println("sss");
 
         log.info("개별정보를 페이지에 전달...");
         model.addAttribute("notice", noticeDTO);
@@ -75,13 +81,10 @@ public class NoticeController {
 
     //
     @GetMapping("/noticeModify")
-    public String noticeModifyGet(Long notice_num, Principal principal, PageRequestDTO pageRequestDTO, Model model){
-        log.info("수정할 데이터 읽기...");
-        NoticeDTO noticeDTO = noticeService.noticeRead(notice_num);
+    public String noticeModifyGet(Long id, Principal principal, PageRequestDTO pageRequestDTO, Model model){
 
-        log.info("개별정보를 페이지에 전달...");
+        NoticeDTO noticeDTO = noticeService.noticeRead(id);
         model.addAttribute("notice", noticeDTO);
-
         return "notice/noticeModify";
     }
 

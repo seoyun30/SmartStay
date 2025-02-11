@@ -10,60 +10,63 @@
 
 <div layout:fragment="content">
     <div id="row" class="row justify-content-center">
+            <div class="col">
+                <h2 class="text-center">공지사항</h2>
+                <div class="card">
+                    <!-- 제목 -->
+                    <div class="card-header bg-white">
+                        <div>
+                            <th:block th:each="data : ${notice.getNotice_num()}">
+                                <div class="input-group my-3">
+                                    <span class="input-group-text bg-white border border-0 fw-bold" id="basic-addon1">제목ㅤ</span>
+                                    <input type="text" class="form-control" th:value="${notice.title}" placeholder="제목" disabled>
+                                </div>
 
-        <div class="col">
-            <h2 class="text-center">공지사항</h2>
-            <div class="card">
-                <!-- 제목 -->
-                <div class="card-header bg-white">
-                    <div>
-                        <div class="input-group my-3">
-                            <span class="input-group-text bg-white border border-0 fw-bold" id="basic-addon1">제목ㅤ</span>
-                            <input type="text" class="form-control" th:value="${notice.title}" placeholder="제목" disabled>
+                                <div class="input-group my-3">
+                                    <span class="input-group-text bg-white border border-0 fw-bold" id="basic-addon2">작성자</span>
+                                    <input type="text" class="form-control" th:value="${notice.create_by}" placeholder="작성자" disabled>
+                                </div>
+
+                                <div class="input-group my-3">
+                                    <span class="input-group-text bg-white border border-0 fw-bold" id="basic-addon3">작성일</span>
+                                    <input type="text" class="form-control" th:value="${#temporals.format(notice.reg_date, 'yyyy-MM-dd')}" placeholder="작성일" disabled>
+                                </div>
+                            </th:block>
+
                         </div>
+                    </div>  <!-- 제목 -->
 
-                        <div class="input-group my-3">
-                            <span class="input-group-text bg-white border border-0 fw-bold" id="basic-addon2">작성자</span>
-                            <input type="text" class="form-control" th:value="${notice.create_by}" placeholder="작성자" disabled>
-                        </div>
-
-                        <div class="input-group my-3">
-                            <span class="input-group-text bg-white border border-0 fw-bold" id="basic-addon3">작성일</span>
-                            <input type="text" class="form-control" th:value="${#temporals.format(notice.reg_date, 'yyyy-MM-dd')}" placeholder="작성일" disabled>
+                    <div class="card-body mt-4">
+                        <div style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; width: 100%; text-align: left; min-height: 150px; box-sizing: border-box; white-space: pre-wrap;">
+                            <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+                                <span th:text="${notice.content}"></span>
+                            </div>
                         </div>
                     </div>
-                </div>  <!-- 제목 -->
 
-                <div class="card-body mt-4">
-                    <div style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; width: 100%; text-align: left; min-height: 150px; box-sizing: border-box; white-space: pre-wrap;">
-                        <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
-                            <span th:text="${notice.content}"></span>
+                    <div class="card-footer bg-white">
+                        <div>
+                            <p class="text-end">수정자: <span th:text="${notice.modified_by}"></span></p>
+                            <p class="text-end">수정일:
+                                <span th:text="${#temporals.format(notice.modi_date, 'yyyy-MM-dd')}"></span>
+                            </p>
                         </div>
-                    </div>
-                </div>
 
-                <div class="card-footer bg-white">
-                    <div>
-                        <p class="text-end">수정자: <span th:text="${notice.modified_by}"></span></p>
-                        <p class="text-end">수정일:
-                            <span th:text="${#temporals.format(notice.modi_date, 'yyyy-MM-dd')}"></span>
-                        </p>
-                    </div>
+                        <div class="text-center d-flex justify-content-center" id="table_search">
+                            <button type="button" class="btn btn-info fw-bold"
+                                    th:onclick="|location.href='@{/notice/noticeModify(notice_num=${notice.notice_num})}'|">수정</button>
+                            <form class="delform" th:action="@{/notice/noticeDelete(notice_num=${notice.notice_num})}" method="post">
+                                <input type="hidden" class="num" th:value="${notice.notice_num}">
+                                <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>
+                            </form>
+                            <button type="button" class="btn btn-outline-success fw-bold"
+                                    th:onclick="|location.href='@{/notice/noticeList}'|">목록</button>
+                            <!--@{주소}, 문자열+주소 |문자열@{주소}|-->
+                        </div>
 
-                    <div class="text-center d-flex justify-content-center" id="table_search">
-                        <button type="button" class="btn btn-info fw-bold"
-                                th:onclick="|location.href='@{/notice/noticeModify(notice_num=${notice.notice_num})}'|">수정</button>
-                        <form class="delform" th:action="@{/notice/noticeDelete(notice_num=${notice.notice_num})}" method="post">
-                            <input type="hidden" class="num" th:value="${notice.notice_num}">
-                            <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>
-                        </form>
-                        <button type="button" class="btn btn-outline-success fw-bold"
-                                th:onclick="|location.href='@{/notice/noticeList}'|">목록</button>
-                        <!--@{주소}, 문자열+주소 |문자열@{주소}|-->
                     </div>
+                </div><!--card 끝-->
 
-                </div>
-            </div><!--card 끝-->
         </div>
 
     </div>
