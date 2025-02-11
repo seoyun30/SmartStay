@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-
 public class MenuDTO {
 
     private Long menu_num; //메뉴 번호

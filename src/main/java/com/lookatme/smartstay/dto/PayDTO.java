@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-
 public class PayDTO {
 
     private Long pay_num; //결제 번호

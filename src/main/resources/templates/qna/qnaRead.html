@@ -89,38 +89,179 @@
                                     </div>
                                 </div>
 
-
                                 <!-- 버튼 영역 -->
                                 <div class="button-container">
                                     <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
                                     <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
                                 </div>
 
-                                <script>
-                                    let qna_num = document.getElementById("qna_num").value;
-
-                                    console.log(qna_num);  // qna_num 값이 제대로 출력되는지 확인
-
-                                    $(".Listbtn").on("click", function () {
-                                        location.href = "/qna/qnaList";
-                                    });
-
-                                    $(".Modbtn").on("click", function () {
-                                        if(qna_num){
-                                            location.href = "/qna/qnaModify?qna_num="+qna_num;
-                                        } else {
-                                            console.log("qna_num 값이 없습니다.");
-                                        }
-
-                                    });
-                                </script>
                             </div>
                         </div>
                     </div>
                 </form>
+
+                <!--댓글-->
+                <div class="card mt-5">
+                    <h5 class="card-header">답변</h5>
+                    <div class="card-body bg-body-tertiary rounded-lg">
+                        <div id="commentContainer">
+                            <p class="card-text">답변 내용</p>
+                            <a href="#" class="btn btn-primary float-end registerBtn" data-bs-toggle="modal" data-bs-target="#replyModal">등록</a>
+                            <a href="#" class="btn btn-primary float-end modiBtn" data-bs-toggle="modal" data-bs-target="#replyModal" style="display:none">수정</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="replyModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control regDate" id="regDate" placeholder="작성일">
+                    <input type="text" class="form-control modDate" id="modDate" placeholder="수정일">
+                    <textarea class="form-control contentModal replyText" id="contentModal" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary saveBtn cbtn">저장</button>
+                    <button type="button" class="btn btn-primary delBtn cbtn" style="display:none">삭제</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                </div>
             </div>
         </div>
     </div>
 </th:block>
+
+<script th:inline="javascript" layout:fragment="script">
+    let qna_num = document.getElementById("qna_num").value;
+
+    // 댓글 관련 버튼들
+    let registerBtn = $(".registerBtn");  // 댓글 등록 버튼
+    let replyText = $(".replyText"); // 댓글 내용
+    let saveBtn = $(".saveBtn"); // 저장 버튼
+    let delBtn = $(".delBtn"); // 삭제 버튼
+    let modBtn = $(".modBtn"); // 수정 버튼
+    let cbtn = $(".cbtn");
+    let regDate = $("#regDate");
+    let modDate = $("#modDate");
+
+    let qnaReplyDTO = {
+        qna_num: qna_num, // qna_num을 전달
+        qnaReply_num: "", // 댓글 번호
+        qnaReply_text: "" // 댓글 내용
+    };
+
+    // 목록 버튼 클릭시
+    $(".Listbtn").on("click", function () {
+        location.href = "/qna/qnaList";
+    });
+
+    // 수정 버튼 클릭시
+    $(".Modbtn").on("click", function () {
+        location.href = "/qna/qnaModify?qna_num=" + qna_num;
+    });
+
+    // 댓글 등록 버튼 클릭 시
+    registerBtn.on("click", function () {
+        cbtn.hide();
+        saveBtn.show();
+        regDate.hide();
+        modDate.hide();
+        replyText.val(""); // 댓글 내용 초기화
+    });
+
+    // 댓글 저장 버튼 클릭 시
+    saveBtn.on("click", function () {
+        qnaReplyDTO.qnaReply_num = ""; // 새 댓글 등록 시 번호는 비어 있음
+        qnaReplyDTO.qnaReply_text = replyText.val(); // 댓글 내용
+
+        if (!qnaReplyDTO.qnaReply_text.trim()) {
+            alert("댓글 내용을 입력하세요.");
+            return;
+        }
+
+        // 댓글 등록
+        qnaReplysave(qnaReplyDTO);
+        $(".modal").modal('hide');
+    });
+
+    // 댓글 수정 버튼 클릭 시
+    modBtn.on("click", function () {
+        qnaReplyDTO.qnaReply_num = $(".qnaReplymodal").val();  // 수정할 댓글 번호
+        qnaReplyDTO.qnaReply_text = replyText.val();  // 수정된 댓글 내용
+
+        if (!qnaReplyDTO.qnaReply_text.trim()) {
+            alert("댓글 내용을 입력하세요.");
+            return;
+        }
+
+        // 댓글 수정
+        modify(qnaReplyDTO);
+        $(".modal").modal("hide");
+    });
+
+    // 댓글 삭제 버튼 클릭 시
+    delBtn.on("click", function () {
+        let qnaReply_num = $(".qnaReplymodal").val();  // 삭제할 댓글 번호
+        del(qnaReply_num);
+        $(".modal").modal("hide");
+    });
+
+    // 댓글 등록 함수
+    function qnaReplysave(qnaReplyDTO) {
+        $.ajax({
+            url: "/qnaReply/qnaReplyRegister",
+            data: JSON.stringify(qnaReplyDTO),
+            contentType: "application/json",
+            type: "POST",
+            success: function(result) {
+                alert(result); // 성공 메시지
+            },
+            error: function(error) {
+                console.log(error);
+                alert("댓글 등록에 실패했습니다.");
+            }
+        });
+    }
+
+    // 댓글 수정 함수
+    function modify(qnaReplyDTO) {
+        $.ajax({
+            url: "/qnaReply/modify",
+            data: JSON.stringify(qnaReplyDTO),
+            contentType: "application/json",
+            type: "POST",
+            success: function(result) {
+                alert(result); // 수정 성공 메시지
+            },
+            error: function(error) {
+                console.log(error);
+                alert("댓글 수정에 실패했습니다.");
+            }
+        });
+    }
+
+    // 댓글 삭제 함수
+    function del(qnaReply_num) {
+        $.ajax({
+            url: "/qnaReply/del/" + qnaReply_num,
+            type: "POST",
+            success: function(result) {
+                alert(result); // 삭제 성공 메시지
+            },
+            error: function(error) {
+                console.log(error);
+                alert("댓글 삭제에 실패했습니다.");
+            }
+        });
+    }
+</script>
 </body>
 </html>

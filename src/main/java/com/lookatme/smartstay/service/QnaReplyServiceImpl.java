@@ -42,7 +42,11 @@ public class QnaReplyServiceImpl implements QnaReplyService {
 
     @Override
     public QnaReplyDTO read(Long qnaReply_num) {
-        return null;
+
+        QnaReply qnaReply = qnaReplyRepository.findById(qnaReply_num).orElseThrow(EntityNotFoundException::new);
+        QnaReplyDTO qnaReplyDTO = modelMapper.map(qnaReply, QnaReplyDTO.class);
+
+        return qnaReplyDTO;
     }
 
     @Override

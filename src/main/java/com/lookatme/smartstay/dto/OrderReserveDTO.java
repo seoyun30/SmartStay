@@ -16,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-
 public class OrderReserveDTO {
 
     private Long order_num; //주문 기록 번호
