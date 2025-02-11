@@ -8,8 +8,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface NoticeSearch {
 
-    Page<Notice> searchAll(String[] types, String keyword , Pageable pageable);
+    //Page<Notice> searchAll(String[] types, String keyword , Pageable pageable);
 
-    Page<NoticeDTO> searchAll1(String[] types, String keyword , Pageable pageable);
+    //Page<NoticeDTO> searchAll1(String[] types, String keyword , Pageable pageable);
 
 }

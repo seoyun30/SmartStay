@@ -1,14 +1,11 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.dto.NoticeDTO;
-import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.dto.PageResponseDTO;
-import com.lookatme.smartstay.entity.Notice;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public interface NoticeService {
 
@@ -19,16 +16,17 @@ public interface NoticeService {
     public void register(NoticeDTO noticeDTO,List<MultipartFile> multipartFileList) throws Exception;
 
     //상세보기
-    public NoticeDTO noticeRead(Long id);
+    public NoticeDTO noticeRead(Long notice_num);
 
     //목록
-    public List<NoticeDTO> noticeList();
+   // public List<NoticeDTO> noticeList();
 
-    //페이징처리된 목록
-    public PageResponseDTO<NoticeDTO> pagelist(PageRequestDTO pageRequestDTO);
+    //목록 , 페이징(전체 조회)
+    public Page<NoticeDTO> noticeList(Pageable pageable);
+//    public PageResponseDTO<NoticeDTO> pagelist(PageRequestDTO pageRequestDTO);
 
     //페이징처리 검색 동적처리
-    public PageResponseDTO<NoticeDTO> pageListsearchdsl(PageRequestDTO pageRequestDTO);
+//    public PageResponseDTO<NoticeDTO> pageListsearchdsl(PageRequestDTO pageRequestDTO);
 
     //수정
     public void noticeModify(NoticeDTO noticeDTO, List<MultipartFile> multipartFileList, List<Long> delnumList);

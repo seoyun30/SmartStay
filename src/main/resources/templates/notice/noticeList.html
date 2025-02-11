@@ -62,15 +62,16 @@
                         </thead>
                         <tbody>
                         <tr><!--최대값으로 더미값을 입력-->
-                        <tr th:each="noticeDTO: ${pageResponseDTO.getDtoList()}"><!--더미값으로 채우기(가장 긴값)-->
+                        <tr th:each="data: ${noticeList}"><!--더미값으로 채우기(가장 긴값)-->
 
-                            <td th:text="${noticeDTO.notice_num}" class="text-center"></td>
+                            <td th:text="${data.notice_num}" class="text-center"></td>
+                            <td th:text="${data.notice_num}" class="text-center"></td>
                             <td>
-                                <a th:href="@{/notice/noticeRead(id=${noticeDTO.getNotice_num()})}" th:text="${noticeDTO.getTitle()}" class="text-center">
+                                <a th:href="@{/notice/noticeRead(id=${data.getNotice_num()})}" th:text="${data.getTitle()}" class="text-center">
                                 </a>
                             </td>
-                            <td th:text="${noticeDTO.create_by}" class="text-center"></td>
-                            <td th:text="${#temporals.format(noticeDTO.reg_date, 'yyyy-MM-dd')}" class="text-center"></td>
+                            <td th:text="${data.create_by}" class="text-center"></td>
+                            <td th:text="${#temporals.format(data.reg_date, 'yyyy-MM-dd')}" class="text-center"></td>
                             <td class="last-column"></td> <!-- 조회수 셀의 오른쪽 테두리 제거 -->
                         </tr>
                         </tr>
@@ -78,13 +79,12 @@
                     </table>
                     <!--페이지번호-->
                     <div class="d-flex justify-content-center">
-                        <ul class="pagination custom-pagination">
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
+                        <ul class="pagination">
+                            <li class="page-item" th:unless="${startPage==1}">
+                                <a class="page-link" th:href="@{/list(page=1)}">시작</a>
                             </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item" th:unless="${currentPage==1}">
+                                <a class="page-link" th:href="@{list(page=${prevPage})}">1</a></li>
                             <li class="page-item"><a class="page-link" href="#">2</a></li>
                             <li class="page-item"><a class="page-link" href="#">3</a></li>
                             <li class="page-item">
@@ -105,3 +105,7 @@
 </script>
 </body>
 </html>
+
+
+
+
