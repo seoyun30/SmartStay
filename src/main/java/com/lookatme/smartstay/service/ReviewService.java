@@ -1,16 +1,21 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.dto.ReviewDTO;
-import com.lookatme.smartstay.entity.Review;
-import com.lookatme.smartstay.repository.ReviewRepository;
+import com.lookatme.smartstay.entity.*;
+import com.lookatme.smartstay.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -19,42 +24,122 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ModelMapper modelMapper;
+    private final MemberRepository memberRepository;
+    private final HotelRepository hotelRepository;
+    //이미지 사용 시 필요
+    private final ImageRepository imageRepository;
+    private final ImageService imageService;
+    private final RoomReserveRepository roomReserveRepository; // 호텔예약정보 필요
 
-    //관리자 리뷰 전체 목록 (본점, 지점)
-    public List<ReviewDTO> adMyReviewList() {
-        List<Review> reviews = reviewRepository.findAll(); // 모두 조회
 
-        List<ReviewDTO> reviewDTOS = Arrays.asList(modelMapper.map(reviews, ReviewDTO[].class));
+    //관리자 리뷰 전체 목록 (관리자 리뷰 페이지 본점, 지점)
+    public List<ReviewDTO> adMyReviewList(ReviewDTO reviewDTO, Long hotel_num, Long member_num, List<MultipartFile> multipartFiles) {
+
+//        // 로그인한 사용자 정보 확인 (예: Spring Security 사용) // 사용가능한지 확인 필요
+//        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+//         Member currentUser = memberRepository.findById(member_num)
+//                .orElseThrow(() -> new IllegalArgumentException("사용자 정보를 찾을 수 없습니다."));
+
+        // 호텔 정보 조회
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(() -> new IllegalArgumentException("해당 호텔을 찾을 수 없습니다."));
+        //브랜드 관리자 또는 호텔 관리자 권한 확인
+
+        List<Review> reviews;
+        // if문
+        if (member_num.equals("CHIEF")) {
+            // 관리자(브랜드): 브랜드에 속한 모든 호텔 리뷰 조회
+            reviews = reviewRepository.findByHotelorBrand(hotel.getBrand()); // 해당 브랜드에 속한 모든 호텔의 리뷰 조회
+        } else if (member_num.equals("MANAGER")) {
+            // 매니저(호텔): 해당 호텔에 대한 리뷰만 조회
+            //필요한지 모름
+//            if (!member_num.equals("CHIEF") || !member_num.equals("MANAGER")) {
+//                throw new AccessDeniedException("관리자가 아니므로 리뷰를 조회할 수 없습니다.");
+//            }
+            reviews = reviewRepository.findByHotel(hotel.getHotel_num()); //해당 호텔에 대한 리뷰 조회
+        } else {
+            throw new AccessDeniedException("리뷰를 조회할 권한이 없습니다.");
+        }
+
+        // 리뷰(entity) 목록을 ReviewDTO 목록으로 변환
+        List<ReviewDTO> reviewDTOS = reviews.stream()
+                .map(review -> modelMapper.map(review, ReviewDTO.class))
+                .collect(Collectors.toList());
+
+        // 변환된 DTO 리스트 반환
+
+//        List<Review> reviews = reviewRepository.findAll(); // 모두 조회
+//
+//        List<ReviewDTO> reviewDTOS = Arrays.asList(modelMapper.map(reviews, ReviewDTO[].class));
+//
+//        return reviewDTOS;
+        return reviewDTOS;
+    }
+
+    //호텔 리뷰 목록(호텔 리뷰 페이지)
+    public List<ReviewDTO> hotelReviewList(ReviewDTO reviewDTO, Long hotel_num, List<MultipartFile> multipartFiles) {
+
+        // 호텔 정보 조회
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(() -> new IllegalArgumentException("해당 호텔을 찾을 수 없습니다.")); //해당하는 호텔이 없으면 리뷰를 볼수 없음
+
+        //해당 호텔에 대한 리뷰 조회
+        List<Review> hotelReview = reviewRepository.findByHotel(hotel_num);  //해당 호텔 리뷰 조회
+
+        //리뷰 리스트를 DTO로 변환
+        List<ReviewDTO> reviewDTOS = hotelReview.stream()
+                .map(review -> modelMapper.map(review, ReviewDTO.class))
+                .collect(Collectors.toList());
+
+        return reviewDTOS;
+
+
+//        if (hotel.getHotel_num() != null) {
+//            reviewHotel = reviewRepository.findByHotel(hotel.getHotel_num());  // 해당 호텔에 대한 리뷰 조회
+//        }
+
+
+//       List<Review> reviews = reviewRepository.findAll(); //모두 조회
+
+    }
+
+
+    //유저 리뷰 전체 목록 (유저 my 페이지)
+    public List<ReviewDTO> getuserMyReviewList(ReviewDTO reviewDTO, Long reserve_num, Long member_num, String email, List<MultipartFile> multipartFiles) {
+
+        // 룸 예약정보
+        RoomReserve roomReserve = roomReserveRepository.findById(reserve_num)
+                .orElseThrow(()-> new IllegalArgumentException("해당 룸 예약정보를 찾을 수 없습니다."));
+
+        List<Review> userMyReviews = reviewRepository.findByUser(email);
+
+        // 유저 리뷰목록을 DTO로 변환
+        List<ReviewDTO> reviewDTOS = userMyReviews.stream()
+                .map(review -> modelMapper.map(review, ReviewDTO.class))
+                .collect(Collectors.toList());
 
         return reviewDTOS;
     }
 
-    //해당 호텔 리뷰 목록
-    public List<ReviewDTO> hotelReviewList() {
-        List<Review> reviews = reviewRepository.findAll(); //모두 조회
-
-        return null;
-    }
 
 
-    //유저 리뷰 전체 목록 (my 페이지)
-    public List<ReviewDTO> myReviewList() {
+    //리뷰 등록<작성>(룸 예약을 한 유저만 등록 가능)
+    public void reviewRegister(ReviewDTO reviewDTO, Long member_num, Long hotel_num, Long reserve_num, List<MultipartFile> multipartFiles) {
 
-        return null;
-    }
+        //예약정보가 있어야 리뷰 작성 가능
+        RoomReserve roomReserve = roomReserveRepository.findById(reserve_num)
+                .orElseThrow(() -> new IllegalArgumentException("룸 예약정보" + reserve_num + "에 대한 정보를 찾을 수 없습니다."));
 
+        Review review = modelMapper.map(reviewDTO, Review.class);   //DTO -> entity로 변환
+        review.setRoomReserve(roomReserve);  // 예약 정보를 새팅
 
-
-    //리뷰 등록(룸 예약을 한 유저만 등록 가능)
-    public void reviewRegister(ReviewDTO reviewDTO) {
-        Review review = modelMapper.map(reviewDTO, Review.class);
-
+        // review 저장
         reviewRepository.save(review);
     }
 
 
 
-    //리뷰 상세보기
+    //리뷰 상세보기(일단 보류)
     public ReviewDTO reviewRead(Long rev_num) {
         Optional<Review> review = reviewRepository.findById(rev_num);
 
@@ -63,30 +148,51 @@ public class ReviewService {
     }
 
 
-    //리뷰 수정(User)
+    //리뷰 수정(리뷰를 등록한 유저만 가능)
     public void reviewModify(ReviewDTO reviewDTO) {
 
-        Optional<Review> review = reviewRepository.findById(reviewDTO.getRev_num());
+        //리뷰 조회 , 없으면 예외발생
+        Review existingReview = reviewRepository.findById(reviewDTO.getRev_num())
+                .orElseThrow(() -> new EntityNotFoundException("등록된 리뷰를 찾을 수 없습니다."));
 
-        if (review.isPresent()) {
-            Review review1 = modelMapper.map(reviewDTO, Review.class);
+        ReviewDTO newReviewDTO = modelMapper.map(reviewDTO, ReviewDTO.class);
 
-            reviewRepository.save(review1);
-        }
+        //리뷰 업데이트
+        existingReview.setScore(newReviewDTO.getScore());    //별점 업데이트
+        existingReview.setContent(newReviewDTO.getContent()); //내용 업데이트
+//        existingReview.setCreate_by(reviewDTO.getCreate_by()); // 작성자 본인만 수정가능으로 필요없음
+        existingReview.setModified_by(reviewDTO.getModified_by());
+
+        reviewRepository.save(existingReview);
+
+//        Optional<Review> review = reviewRepository.findById(reviewDTO.getRev_num());  //findById 가 Optional<Review> 반환해서 필요없음
+//
+//        if (review.isPresent()) {
+//            Review review1 = modelMapper.map(reviewDTO, Review.class);
+//
+//            reviewRepository.save(review1);
+//        }
     }
 
 
-    //리뷰 삭제(User)
+    //리뷰 삭제(작성한 본인 리뷰만 가능) // 일단 기본 상태 보류 //  (데이터베이스에서 삭제되어 리스트에 보이는 사항은 신경 안써두 됨)
     public void reviewDelete(Long rev_num) {
         reviewRepository.deleteById(rev_num);
     }
 
-    //검색
+
+    //페이지네이션
 
 
-    //
 
 
-    //리뷰 별점(User)
+    //리뷰 별점(등록 = 유저만 가능 )
+
+
+    //등록
+
+    //변경
+
+
 
 }
