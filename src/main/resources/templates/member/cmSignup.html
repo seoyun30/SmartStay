@@ -18,6 +18,10 @@
                 <h1>회원가입</h1>
             </div>
 
+                <div th:if="${cmSignupMsg != null}" class="alert alert-success">
+                    <span th:text="${cmSignupMsg}"></span>
+                </div>
+
                         <form class="row g-3" action="/member/cmSignup" method="post" onsubmit="return test()">
 
                             <th:block th:object="${memberDTO}">
@@ -165,9 +169,19 @@
     $(document).ready(function () {
 
         let msg = [[${msg}]]
-        if(msg){
+        if (msg){
             alert(msg)
         }
+    });
+
+    $(document).ready(function () {
+        let cmSignupMsg = [[${cmSignupMsg}]]
+        if (cmSignupMsg) {
+            alert(cmSignupMsg);
+        }
+    });
+
+
 
 
 //     브랜드 선택시 호텔 리스트 매칭
@@ -198,8 +212,8 @@
             console.log(str)
             hotelselect.html(str)
 
-        })
-    })
+        });
+
 
     document.addEventListener("DOMContentLoaded", function () {
         const telInput = document.getElementById("tel");
