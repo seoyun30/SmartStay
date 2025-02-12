@@ -2,13 +2,128 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/mainlayout}">
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>마이페이지 수정</title>
 
 </head>
 <body>
+
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mt-5 justify-content-center">
+            <div class="col-4">
+                <div class="text-center">
+                    <h1>내정보 수정</h1>
+                </div>
+
+
+                <form class="row g-3" action="/member/adMypageModify" method="post" onsubmit="return test()">
+
+                    <th:block th:object="${memberDTO}">
+                        <div class="mb-1">
+                            <label for="email" class="form-label">Email</label>
+                            <input class="form-control" type="email" id="email" th:value="${memberDTO.email}" disabled readonly>
+                            <input type="hidden" name="email" th:value="${memberDTO.email}">
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="name" class="form-label">Name</label>
+                            <input class="form-control" type="text" id="name" th:value="${memberDTO.name}" disabled readonly>
+                            <input type="hidden" name="name" th:value="${memberDTO.name}">
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="tel" class="form-label">tel update</label>
+                            <input class="form-control" type="text" aria-label="With text" id="tel" th:field="*{tel}" placeholder="숫자만 입력하세요.">
+                            <span th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}">전화번호 입력 오류</span>
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="password" class="form-label">Password update</label>
+                            <input class="form-control" type="password" id="password" name="password" th:field="*{password}">
+                            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">비밀번호 입력 오류</span>
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="repassword" class="form-label">비밀번호 확인</label>
+                            <input class="form-control" type="password" id="repassword" name="repassword">
+                            <div id="password-error" style="color: red; display: none;">
+                                비밀번호가 일치하지 않습니다.
+                            </div>
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="reg_date" class="form-label">가입일자</label>
+                            <input class="form-control" type="text" id="reg_date" th:value="${#temporals.format(memberDTO.reg_date, 'yyyy-MM-dd')}" disabled readonly>
+                        </div>
+
+                        <div class="col text-center d-flex justify-content-center gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary">저장</button>
+                            <button type="button" class="btn btn-primary" onclick="location.href='/adMain'">홈</button>
+                        </div>
+
+                    </th:block>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+
+
+        $(document).ready(function () {
+            let msg = [[${msg}]]
+            let password = $("#password")
+            console.log(msg)
+            if(msg != null){
+                alert(msg)
+                password.focus();
+            }
+
+        })
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const telInput = document.getElementById("tel");
+
+            // 숫자만 입력 가능하도록 설정
+            telInput.addEventListener("input", function () {
+                this.value = this.value.replace(/\D/g, ""); // 숫자가 아닌 모든 문자 제거
+            });
+
+            // 붙여넣기 방지 및 숫자만 허용
+            telInput.addEventListener("paste", function (e) {
+                e.preventDefault();
+                let pasteData = (e.clipboardData || window.clipboardData).getData("text");
+                this.value = pasteData.replace(/\D/g, ""); // 숫자가 아닌 문자 제거 후 붙여넣기
+            });
+        });
+
+        function test(){
+            var password = document.getElementById('password').value;
+            var repassword = document.getElementById('repassword').value;
+            var errorMessage = document.getElementById('password-error');
+            var repasswordInput = document.getElementById('repassword');
+
+            if (!password) {
+                repasswordInput.value = ''; //비밀번호 비어있으면 re비밀번호도 비우기.
+            }
+
+            if(password != repassword) {
+                errorMessage.style.display = "block"; // 오류 메시지 표시
+                alert("비밀번호가 일치하지 않습니다.");
+                repasswordInput.focus();
+                return false; // 회원가입 진행 막기
+            } else {
+                errorMessage.style.display = "none"; // 오류 메시지 숨김
+                return true; // 회원가입 진행 가능
+            }
+        }
+
+    </script>
+</th:block>
+
 
 </body>
 </html>
