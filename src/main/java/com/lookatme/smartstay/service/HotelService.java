@@ -73,6 +73,10 @@ public class HotelService {
     public HotelDTO read(Long id) {
         Hotel hotel = hotelRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+
+        Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
+        hotelDTO.setLowestPrice(lowestPrice);
+
         //.setItemImgDTOList(item.getItemImgList());
         return hotelDTO;
     }
