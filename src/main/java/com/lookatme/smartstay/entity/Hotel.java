@@ -37,4 +37,6 @@ public class Hotel extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_num")
     private Member member;
+
+    private Long lowestPrice;
 }
