@@ -26,7 +26,11 @@ public class PayDTO {
 
     private List<RoomItemDTO> roomItemDTOList = new ArrayList<>();
 
+    private List<RoomReserveItemDTO> roomReserveItemDTOList = new ArrayList<>();
+
     private List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
+
+    private List<OrderReserveItemDTO> orderReserveItemDTOList = new ArrayList<>();
 
     private MemberDTO memberDTO; //회원 조인
 

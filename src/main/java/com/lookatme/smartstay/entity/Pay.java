@@ -34,7 +34,15 @@ public class Pay extends BaseEntity {
 
     @OneToMany(mappedBy = "pay", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<RoomReserveItem> roomReserveItemList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pay", cascade = CascadeType.ALL,
+            orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItemList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pay", cascade = CascadeType.ALL,
+            orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<OrderReserveItem> orderReserveItemList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_num")
