@@ -36,26 +36,26 @@
                     <ul class="d-flex align-items-center">
                         <li class="dropdown user-menu">
                             <a sec:authorize="isAuthenticated()" class="dropdown-toggle nav-link" href="#" data-bs-toggle="dropdown">
-                                <span class="d-none d-lg-inline-block" th:text="${#authentication.principal.username}">로그인 아이디</span>
+                                <span class="text-primary" th:text="${#authentication.principal.username}">로그인 아이디</span>
                             </a>
 
                             <ul class="dropdown-menu dropdown-menu-right">
 
-                                <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF', 'MANAGER')">
+                                <li class="mt-2" sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF', 'MANAGER')">
                                     <a class="dropdown-link-item" href="/adMain">
-                                        <i class="bi bi-house"></i>
-                                        <span class="nav-text">관리자 홈</span>
+                                        <i class="bi bi-house btn-outline-dark"></i>
+                                        <span class="nav-text text-dark">관리자 홈</span>
                                     </a>
                                 </li>
 
-                                <li sec:authorize="isAuthenticated()">
+                                <li class="mb-2" sec:authorize="isAuthenticated()">
                                     <a class="dropdown-link-item" href="/member/userAllMyPage">
-                                        <i class="mdi mdi-account-outline"></i>
-                                        <span class="nav-text">마이 페이지</span>
+                                        <i class="mdi mdi-account-outline btn-outline-dark"></i>
+                                        <span class="nav-text text-dark">마이 페이지</span>
                                     </a>
                                 </li>
 
-                                <li class="dropdown-footer" sec:authorize="isAuthenticated()">
+                                <li class="dropdown-footer mb-2" sec:authorize="isAuthenticated()">
                                     <a class="dropdown-link-item" href="/member/logout">
                                         <i class="mdi mdi-logout btn-outline-danger"></i>
                                         <span class="nav-text text-danger">로그아웃</span>
