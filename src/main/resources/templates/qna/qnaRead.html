@@ -106,7 +106,7 @@
                     <div class="card-body bg-body-tertiary rounded-lg">
                         <div id="commentContainer">
                             <p class="card-text">답변 내용</p>
-                            <a href="#" class="btn btn-primary float-end registerBtn" data-bs-toggle="modal" data-bs-target="#replyModal">등록</a>
+                            <a href="#" class="btn btn-primary float-end registerBtn" sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" data-bs-toggle="modal" data-bs-target="#replyModal">등록</a>
                             <a href="#" class="btn btn-primary float-end modiBtn" data-bs-toggle="modal" data-bs-target="#replyModal" style="display:none">수정</a>
                         </div>
                     </div>

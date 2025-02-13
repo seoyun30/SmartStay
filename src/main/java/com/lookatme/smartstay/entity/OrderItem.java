@@ -24,23 +24,23 @@ public class OrderItem extends BaseEntity {
     @Size(max=255)
     private String menu_request; //요청사항
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "roomreserveitem_num")
     private RoomReserveItem roomReserveItem; //예약 정보 및 룸 정보 가져오기
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "menu_num")
     private Menu menu; //메뉴 조인
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "care_num")
     private Care care; //룸 케어 조인
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_num")
     private Cart cart; //장바구니
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "pay_num")
     private Pay pay;
 }

@@ -36,11 +36,11 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Role role; //회원 권한
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "brand_num")
     private Brand brand; //브랜드
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_num")
     private Hotel hotel; //호텔
 }
