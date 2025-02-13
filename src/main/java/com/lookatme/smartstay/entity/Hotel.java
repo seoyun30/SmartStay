@@ -30,11 +30,11 @@ public class Hotel extends BaseEntity{
 
     private String score; //별점
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "brand_num")
     private Brand brand; //브랜드
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_num")
     private Member member;
 

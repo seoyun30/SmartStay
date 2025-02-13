@@ -1,7 +1,9 @@
 package com.lookatme.smartstay.repository;
 
 import com.lookatme.smartstay.entity.Hotel;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -18,4 +20,10 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
 
     @Query("select h from Hotel h where h.member.email = :email")
     Optional<Hotel> findHotelByMemberEmail(@Param("email") String email);
+
+    //브랜드는 남겨두고 호텔을 삭제하기 위한 메서드
+    @Modifying
+    @Transactional
+    @Query("update Hotel h set h.brand = null where h.hotel_num = :hotel_num")
+    void updateHotelBrandToNull(@Param("hotel_num") Long hotel_num);
 }

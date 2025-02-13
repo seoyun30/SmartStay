@@ -20,15 +20,15 @@ public class Review extends BaseEntity{
 
     private String score; //별점
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "reserve_num")
     private RoomReserve roomReserve; //룸 예약 조인
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_num")
     private Member member; //회원 조인
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_num")
     private Hotel hotel; //호텔
 }

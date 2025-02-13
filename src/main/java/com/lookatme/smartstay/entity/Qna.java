@@ -22,4 +22,8 @@ public class Qna extends BaseEntity{
 
     private String writer; //문의 작성자
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "hotel_num")
+    private Hotel hotel; //호텔
+
 }

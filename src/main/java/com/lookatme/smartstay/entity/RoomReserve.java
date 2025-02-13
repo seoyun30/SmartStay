@@ -30,7 +30,7 @@ public class RoomReserve extends BaseEntity{
             orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RoomReserveItem> roomReserveItemList = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_num")
     private Member member; //회원
 

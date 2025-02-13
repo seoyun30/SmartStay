@@ -22,11 +22,11 @@ public class Notice extends BaseEntity {
     @Column(nullable = false)
     private String content; //내용
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_num")
     private Hotel hotel; //호텔
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_num")
     private Member member; //회원 조인
 

@@ -31,7 +31,7 @@ public class OrderReserve extends BaseEntity {
             orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderReserveItem> orderReserveItemList = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_num")
     private Member member; //회원 조인
 

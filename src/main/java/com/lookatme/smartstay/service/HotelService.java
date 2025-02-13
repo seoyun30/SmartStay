@@ -120,7 +120,8 @@ public class HotelService {
     //chief 삭제
     public void delete(Long id) {
         log.info("서비스로 들어온 삭제할 번호 :" + id);
-
+        memberRepository.deleteByHotelHotel_num(id);
+        hotelRepository.updateHotelBrandToNull(id); //호텔이 참조하는 브랜드번호를 null로 설정
         hotelRepository.deleteById(id);
     }
 
