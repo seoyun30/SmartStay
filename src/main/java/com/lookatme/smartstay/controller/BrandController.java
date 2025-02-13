@@ -49,7 +49,7 @@ public class BrandController {
     public String brandList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
         log.info("목록진입");
 
-        List<BrandDTO> brandDTOList =  brandService.brandList();
+        List<BrandDTO> brandDTOList =  brandService.myBrand(principal.getName());
        model.addAttribute("brandDTOList", brandDTOList);
         return "brand/brandList";
     }

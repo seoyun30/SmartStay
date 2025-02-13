@@ -16,12 +16,11 @@
       <button type="button" onclick="location.href='/hotel/hotelRegister'" class="btn btn-dark">호텔 등록</button>
     </div>
   </div>
-
   <div class="row mt-3">
     <div class="col">
       <table class="table table-striped table-hover">
         <thead>
-        <tr>
+        <tr class="text-center">
           <th>번호</th>
           <th>호텔명</th>
           <th>사업자번호</th>
@@ -29,12 +28,13 @@
           <th>주소</th>
           <th>전화번호</th>
           <th>별점</th>
+          <th>삭제</th>
         </tr>
         </thead>
-        <tbody>
 
+        <tbody>
         <th:block th:each="hotel : ${hotelDTOList}">
-          <tr class="align-middle">
+          <tr class="text-center">
             <td th:text="${hotel.hotel_num}"></td>
             <td>
               <a th:href="@{/hotel/hotelRead(hotel_num=${hotel.hotel_num})}">
@@ -48,13 +48,12 @@
             <td th:text="${hotel.score}"></td>
 
             <!--post 방식의 삭제버튼-->
-            <td class="col text-end">
+            <td>
               <form action="/hotel/hotelDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
                 <input type="hidden" name="id" th:value="${hotel.hotel_num}"> <!-- 삭제할 hotel의 ID를 hidden 필드로 전달 -->
-                <button type="submit" class="btn btn-dark" style="background-color: red;">삭제</button>
+                <button type="submit" class="btn btn-dark" style="background-color: red;  padding: 5px 15px; width: auto; font-size: inherit; text-align: center;">삭제</button>
               </form>
             </td>
-
           </tr>
         </th:block>
         </tbody>

@@ -1,9 +1,12 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.dto.BrandDTO;
+import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.entity.Brand;
+import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.BrandRepository;
+import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -26,6 +29,7 @@ public class BrandService {
     private final ModelMapper modelMapper;
     private final ImageService imageService;
     private final MemberRepository memberRepository; //추가
+    private final HotelRepository hotelRepository;
 
     //brand 등록
     public void insert(BrandDTO brandDTO, String email,
@@ -52,6 +56,13 @@ public class BrandService {
         return brandDTOS;
     }
 
+    public List<BrandDTO> myBrand(String email){
+        List<Brand> brands = BrandRepository.findByEmail(email);
+        List<BrandDTO> brandDTOS = brands.stream()
+                .map(brand -> modelMapper.map(brand, BrandDTO.class)).collect(Collectors.toList());
+        return brandDTOS;
+    }
+
     //brand 상세보기
     public BrandDTO read(Long id) {
         Brand brand = BrandRepository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -63,6 +74,7 @@ public class BrandService {
         //Optional<Brand> brand = brandRepository.findById(id);
         //BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
         //return brandDTO;
+
 
     //brand 수정
     public void update(BrandDTO brandDTO,
