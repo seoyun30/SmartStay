@@ -12,6 +12,7 @@ import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,21 +57,29 @@ public class PayController {
     }
 
     @PostMapping("/pay/prepare")
-    public void preparePay(@RequestBody PrePayDTO prePayDTO)
+    @ResponseBody
+    public ResponseEntity<String> preparePay(@RequestBody PrePayDTO prePayDTO)
             throws IamportResponseException, IOException {
+        log.info("prePayDTO : " + prePayDTO);
         payService.postPrepare(prePayDTO);
+        return ResponseEntity.ok("결제 사전 준비 완료");
     }
 
     @PostMapping("/pay/validate")
-    public Payment validatePay(@RequestBody PayDTO payDTO)
+    @ResponseBody
+    public ResponseEntity<Payment> validatePay(@RequestBody PayDTO payDTO)
             throws IamportResponseException, IOException {
-        return payService.validatePay(payDTO);
+        log.info("결제 검증 payDTO : " + payDTO);
+        Payment payment = payService.validatePay(payDTO);
+        return ResponseEntity.ok(payment);
     }
 
     @PostMapping("/pay/order")
     @ResponseBody
-    public void payOrder(@RequestBody PayDTO payDTO){
+    public ResponseEntity<String> payOrder(@RequestBody PayDTO payDTO){
+        log.info("주문 정보 payDTO : " + payDTO);
         payService.savePayInfo(payDTO);
+        return ResponseEntity.ok("예약 주문 완료");
     }
 
 }

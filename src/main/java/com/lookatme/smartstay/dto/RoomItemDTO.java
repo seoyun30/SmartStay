@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -19,9 +20,11 @@ public class RoomItemDTO {
 
     private Long[] roomitem_nums;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @NotNull
     private LocalDateTime in_date; //체크인 날짜
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @NotNull
     private LocalDateTime out_date; //체크아웃 날짜
 

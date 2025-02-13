@@ -3,7 +3,7 @@ package com.lookatme.smartstay.service;
 import com.lookatme.smartstay.constant.CheckState;
 import com.lookatme.smartstay.dto.PayDTO;
 import com.lookatme.smartstay.dto.PrePayDTO;
-import com.lookatme.smartstay.dto.RoomReserveItemDTO;
+import com.lookatme.smartstay.dto.RoomItemDTO;
 import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.*;
 import com.siot.IamportRestClient.IamportClient;
@@ -50,6 +50,9 @@ public class PayService {
     private RoomReserveRepository roomReserveRepository;
 
     @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     private IamportClient api;
@@ -88,26 +91,30 @@ public class PayService {
         return new CancelData(response.getResponse().getImpUid(), true);
     }
 
+    @Transactional
     public void savePayInfo(PayDTO payDTO) {
 
         // 1. 결제 정보를 Pay 엔티티로 변환
-        Member member = modelMapper.map(payDTO.getMemberDTO(), Member.class);
+        Member member = memberRepository.findByEmail(payDTO.getMemberDTO().getEmail());
         Pay pay = modelMapper.map(payDTO, Pay.class);
         pay.setMember(member);
 
         // 2. 예약 정보 생성
         List<RoomReserveItem> roomReserveItems = new ArrayList<>();
 
-        for (RoomReserveItemDTO roomReserveItemDTO : payDTO.getRoomReserveItemDTOList()) {
+        log.info("for문 진행");
+        for (RoomItemDTO roomItemDTO : payDTO.getRoomItemDTOList()) {
 
             // 예약할 방 찾기
-            Room room = roomRepository.findById(roomReserveItemDTO.getRoom_num())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 방이 존재하지 않습니다. room_num: " + roomReserveItemDTO.getRoom_num()));
+            Room room = roomRepository.findById(roomItemDTO.getRoom_num())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 방이 존재하지 않습니다. room_num: " + roomItemDTO.getRoom_num()));
 
             // 해당 방이 장바구니(RoomItem)에 있는지 확인하고 삭제 준비
-            RoomItem roomItem = roomItemRepository.findByRoomRoom_num(roomReserveItemDTO.getRoom_num());
+            RoomItem roomItem = roomItemRepository.findByRoomRoom_num(roomItemDTO.getRoom_num());
+            log.info(roomItem);
             if (roomItem != null) {
                 roomItemRepository.delete(roomItem);
+                roomItemRepository.flush();  //즉시 반영
             }
 
             // RoomReserve(예약) 생성 및 설정
@@ -115,25 +122,25 @@ public class PayService {
             roomReserve.setMember(pay.getMember()); // 결제한 회원 정보와 연결
             roomReserve.setCheck_state(CheckState.RESERVE); // 예약 상태 설정
             roomReserve.setReg_date(LocalDateTime.now());
+            roomReserve.setReserve_id(UUID.randomUUID().toString()); // 예약 ID 생성 (UUID 사용 36자 고정)
 
-            // 예약 ID 생성 (UUID 사용 36자 고정)
-            String reserveId = UUID.randomUUID().toString();
-            roomReserve.setReserve_id(reserveId);
-
+            log.info(roomReserve);
             // RoomReserve 저장
             roomReserve = roomReserveRepository.save(roomReserve);
 
             // RoomReserveItem 생성 및 설정
             RoomReserveItem roomReserveItem = RoomReserveItem.createRoomItem(
                     room,
-                    roomReserveItemDTO.getIn_date(),
-                    roomReserveItemDTO.getOut_date(),
-                    roomReserveItemDTO.getDay(),
-                    roomReserveItemDTO.getReserve_request(),
-                    roomReserveItemDTO.getCount()
+                    roomItemDTO.getIn_date(),
+                    roomItemDTO.getOut_date(),
+                    roomItemDTO.getDay(),
+                    roomItemDTO.getReserve_request(),
+                    roomItemDTO.getCount()
             );
             roomReserveItem.setRoomReserve(roomReserve); // 예약 정보 연결
             roomReserveItem.setPay(pay); // 결제 정보 연결
+
+            log.info(roomReserveItem);
 
             // 리스트에 추가 후 저장
             roomReserveItems.add(roomReserveItem);
