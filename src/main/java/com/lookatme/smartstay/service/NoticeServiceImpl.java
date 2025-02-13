@@ -90,11 +90,11 @@ public class NoticeServiceImpl  {
 
         //화면페이지번호 1,2,3,4 .. 데이터베이스에서 페이지번호 0,1,2,3...
         int currentPage = page.getPageNumber()-1; // 화면에 출력할 페이지번호를 데이터베이스 페이지번호
-        int pageLimit = 10; //한페이지를 구성하는 레코드의 수(페이지 번호의 수)
+        int blockLimit = 10; //한페이지를 구성하는 레코드의 수(페이지 번호의 수)
 
         //지정된 내용으로 페이지정보를 재생산(정렬 생략시 기본키로 오름차순(ASC), 내림차순(DESC))
         //해당페이지에서 10개의 레코드를 기본키로 내림차순해서 페이지 구성(최신순)
-        Pageable pageable = PageRequest.of(currentPage, pageLimit,
+        Pageable pageable = PageRequest.of(currentPage, blockLimit,
                Sort.by(Sort.Direction.DESC, "title"));
 
         //페이지 정보에 해당하는 모든 데이터를 읽어온다
@@ -117,11 +117,11 @@ public class NoticeServiceImpl  {
         Notice notice = modelMapper.map(noticeDTO, Notice.class);
 
         //유효성 검사 id값으로 테이블에서 조회 페이지수를 읽어온다.(있으면 페이지, 없으면 null)
-        Optional<Notice> read = noticeRepository.findById(noticeDTO.getNotice_num());
+        Optional<Notice> noticeRead = noticeRepository.findById(noticeDTO.getNotice_num());
 
 
 
-        if (read.isPresent()) { //전달받은 레코드에 내용(수정사항)이 있으면
+        if (noticeRead.isPresent()) { //전달받은 레코드에 내용(수정사항)이 있으면
             //저장
             noticeRepository.save(notice);
         }
