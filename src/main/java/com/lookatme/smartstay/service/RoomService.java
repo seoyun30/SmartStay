@@ -3,9 +3,11 @@ package com.lookatme.smartstay.service;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Image;
+import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.Room;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.ImageRepository;
+import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.RoomRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -33,6 +35,7 @@ public class RoomService {
     private final ImageService imageService;
     private final ImageRepository imageRepository;
     private final HotelRepository hotelRepository;
+    private final MemberRepository memberRepository;
 
     public void roomRegister(RoomDTO roomDTO, Long hotel_num, List<MultipartFile> multipartFiles, Long mainImageIndex) throws Exception {
 
@@ -225,5 +228,17 @@ public class RoomService {
                 .collect(Collectors.toList());
 
         return roomDTOS;
+    }
+
+    public List<RoomDTO> findmyRoom(String email) {
+        Member member = memberRepository.findByEmail(email);
+
+        List<Room> roomList = roomRepository.findByHotel(member.getHotel());
+        List<RoomDTO> roomDTOList = roomList.stream().
+                map(room -> modelMapper.map(room, RoomDTO.class)
+                        .setHotelDTO(modelMapper.map(room.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        return roomDTOList;
     }
 }

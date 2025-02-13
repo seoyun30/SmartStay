@@ -42,4 +42,8 @@ public class RoomReserveItemDTO extends BaseEntity {
 
     private List<Long> imageIdList = new ArrayList<>();
 
+    public RoomReserveItemDTO setRoomDTO(RoomDTO roomDTO) {
+        this.roomDTO = roomDTO;
+        return this;
+    }
 }
