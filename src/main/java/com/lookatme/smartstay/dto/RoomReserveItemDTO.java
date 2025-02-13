@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lookatme.smartstay.entity.BaseEntity;
 import lombok.*;
 
@@ -17,8 +18,10 @@ public class RoomReserveItemDTO extends BaseEntity {
 
     private Long roomreserveitem_num; //룸 아이템 기록 번호
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime in_date; //체크인 날짜
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime out_date; //체크아웃 날짜
 
     private Long day; //n박
