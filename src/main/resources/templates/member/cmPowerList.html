@@ -66,7 +66,7 @@
 
                         <td>
                             <span th:text="${memberDTO.power}"></span>
-                            <button class="btn btn-primary togglebtn" th:value="${memberDTO.email}"
+                            <button class="btn btn-danger togglebtn" th:value="${memberDTO.email}"
                                     data-email="${memberDTO.email}">
                                 <th:block th:if="${memberDTO.power.name() == 'NO'}">승인</th:block>
                                 <th:block th:if="${memberDTO.power.name() == 'YES'}">취소</th:block>
