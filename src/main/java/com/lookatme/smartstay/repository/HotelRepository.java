@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.repository;
 
+import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Hotel;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,9 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     @Transactional
     @Query("update Hotel h set h.brand = null where h.hotel_num = :hotel_num")
     void updateHotelBrandToNull(@Param("hotel_num") Long hotel_num);
+
+    //브랜드에 속한 호텔 목록 조회
+    @Query("select h from Hotel h where h.brand= :brand")
+    List<Hotel> findByMyBrand(Brand brand);
+
 }

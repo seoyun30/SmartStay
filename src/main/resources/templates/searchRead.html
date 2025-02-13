@@ -12,15 +12,15 @@
 
 <th:block layout:fragment="content">
 
-    <div class="container mt-5">
+    <div class="container mt-5 text-center">
 
         <div th:each="hotel : ${hotelDTO}" class="col mb-5">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     (호텔 대표 이미지)
-                    <h6 class="card-title fw-bold">
+                    <h2 class="card-title fw-bold">
                         <h2 th:text="${hotel.hotel_name}">호텔 이름</h2>
-                    </h6>
+                    </h2>
                     <span class="text-dark" th:text="${hotel.address}">주소</span><br>
                     <span class="text-dark" th:text="${hotel.lowestPrice + '원~'}">최저가</span><br>
                     <span class="text-dark" th:text="${hotel.score}">별점</span>
@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <div>
+        <div class="mb-5">
             (리뷰)
         </div>
 
@@ -40,11 +40,8 @@
                 </div>
 
                 <div class="col-md-4">
-                    <h5 class="card-title font-weight-bold">
-                        <h5 th:text="${room.room_name}">룸 이름</h5>
-                    </h5>
-                    <h6 class="text-dark" th:text="${room.room_bed + '인'}">최대 인원</h6>
-
+                    <a th:href="@{/searchRoomRead(room_num=${room.room_num})}" th:text="${room.room_name}" class="text-decoration-none card-title">룸 이름</a>
+                    <h5 class="text-dark mt-2" th:text="${room.room_bed + '인'}">최대 인원</h5>
                 </div>
                 <div class="col-md-4">
                     <h5 class="text-dark mt-2" th:text="${room.room_price + '원'}">가격</h5>

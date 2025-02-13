@@ -119,4 +119,12 @@ public class MainController {
         return "searchRead";
     }
 
+    @GetMapping("/searchRoomRead")
+    public String searchRoomRead(@RequestParam Long room_num, Model model) {
+
+        RoomDTO roomDTO = roomService.roomRead(room_num);
+        model.addAttribute("roomDTO", roomDTO);
+
+        return "searchRoomRead";
+    }
 }

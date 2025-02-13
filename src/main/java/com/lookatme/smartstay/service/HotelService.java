@@ -69,6 +69,29 @@ public class HotelService {
         return hotelDTOS;
     }
 
+    //목록에서 내가 속한 호텔만 보기
+    public List<HotelDTO> myHotelList(String email){
+        Member member = memberRepository.findByEmail(email);
+        if (member == null || member.getBrand() == null) {
+            throw new IllegalArgumentException("브랜드 정보를 찾을 수 없습니다.");
+        }
+        Brand brand = member.getBrand();
+
+        List<Hotel> hotels = hotelRepository.findByMyBrand(brand);
+        return hotels.stream()
+                .map(hotel -> {
+                    HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+                    Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
+                    hotelDTO.setLowestPrice(lowestPrice);
+                    return hotelDTO;
+                })
+                .collect(Collectors.toList());
+       /* List<Hotel> hotels = hotelRepository.findByMyBrand(brand);
+        List<HotelDTO> hotelDTOS = hotels.stream()
+                .map(brand -> modelMapper.map(hotels, HotelDTO.class)).collect(Collectors.toList());
+        return hotelDTOS;*/
+    }
+
     //chief 상세보기
     public HotelDTO read(Long id) {
         Hotel hotel = hotelRepository.findById(id).orElseThrow(EntityNotFoundException::new);
