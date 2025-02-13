@@ -47,6 +47,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 //            response.sendRedirect("/");
 //        }
 
+        System.out.println(user.toString());
+        System.out.println(user.toString());
+        System.out.println(user.toString());
+        System.out.println(user.toString());
+
         String role = null;
         if(authentication != null){
             role = authentication.getAuthorities().iterator().next().getAuthority();
@@ -71,6 +76,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         } else if (role != null && role.equals("USER")) {
             url = "/";
+            System.out.println(url);
+        }  else if (role != null && role.equals("대기")) {
+            url = "/member/login?error=approval";
             System.out.println(url);
         }
 

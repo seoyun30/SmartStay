@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
@@ -57,6 +58,7 @@ public class LoginController {
         try{
             memberService.saveSuperAdminMember(memberDTO);
 
+
         }catch (IllegalStateException e){
 
             model.addAttribute("msg", e.getMessage());
@@ -65,8 +67,11 @@ public class LoginController {
         }
 
 
+        redirectAttributes.addFlashAttribute("adSignupMsg", "회원가입 승인요청되었습니다.");
+
         redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
-        return "member/adSignup";
+
+        return "redirect:/member/adSignup";
     }
 
     @GetMapping("/cmSignup") //회원가입페이지(savChiefMember-치프가 승인해주는 치프,매니져)
@@ -166,9 +171,11 @@ public class LoginController {
 
         }
 
+        redirectAttributes.addFlashAttribute("cmSignupMsg", "회원가입 승인요청되었습니다.");
+        log.info("Redirected cmSignupMsg: " + redirectAttributes.getFlashAttributes().get("cmSignupMsg"));
 
         redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
-        return "redirect:/member/login";
+        return "redirect:/member/cmSignup";
     }
 
 

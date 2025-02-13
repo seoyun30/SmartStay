@@ -10,11 +10,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @Builder
-public class OrderItemDTO {
+public class OrderReserveItemDTO {
 
-    private Long service_num; //서비스 주문 번호
-
-    private Long[] service_nums;
+    private Long serviceitem_num; //서비스 주문 번호
 
     private Long menu_count; //메뉴 수량
 

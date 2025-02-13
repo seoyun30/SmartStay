@@ -24,22 +24,22 @@ public class RoomReserve extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CheckState check_state; //체크인 여부
+    private CheckState check_state; //예약 상태 여부
 
     @OneToMany(mappedBy = "roomReserve", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<RoomItem> roomItemList = new ArrayList<>();
+    private List<RoomReserveItem> roomReserveItemList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_num")
     private Member member; //회원
 
-    public void setRoomItemList(RoomItem roomItem) {
-        this.roomItemList.add(roomItem);
+    public void setRoomItemList(RoomReserveItem roomReserveItem) {
+        this.roomReserveItemList.add(roomReserveItem);
     }
 
-    public void setRoomItemList(List<RoomItem> roomItemList) {
-        this.roomItemList = roomItemList;
+    public void setRoomItemList(List<RoomReserveItem> roomReserveItemList) {
+        this.roomReserveItemList = roomReserveItemList;
     }
 
 }

@@ -29,7 +29,7 @@ public class OrderReserve extends BaseEntity {
 
     @OneToMany(mappedBy = "orderReserve", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<OrderItem> orderItemList = new ArrayList<>();
+    private List<OrderReserveItem> orderReserveItemList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_num")

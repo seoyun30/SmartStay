@@ -11,11 +11,11 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class OrderItem extends BaseEntity {
+public class OrderReserveItem extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long service_num; //서비스 주문 번호
+    private Long serviceitem_num; //서비스 주문 번호
 
     private Long menu_count; //메뉴 수량
 
@@ -36,9 +36,9 @@ public class OrderItem extends BaseEntity {
     @JoinColumn(name = "care_num")
     private Care care; //룸 케어 조인
 
-    @ManyToOne
-    @JoinColumn(name = "cart_num")
-    private Cart cart; //장바구니
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_num")
+    private OrderReserve orderReserve;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pay_num")

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/adminlayout}">
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -84,13 +84,26 @@
                                 <a class="page-link" th:href="@{/list(page=1)}">시작</a>
                             </li>
                             <li class="page-item" th:unless="${currentPage==1}">
-                                <a class="page-link" th:href="@{list(page=${prevPage})}">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
+                                <a class="page-link" th:href="@{list(page=${prevPage})}">이전</a>
+                            </li>
+                            <spen th:each="num:${#numbers.sequence(startPage, endPage, 1)}">
+                                <li class="page-item" th:unless="${num==currentPage}">
+                                    <a class="page-link" th:href="@{list(page=${num})}" th:text="${num}">1</a>
+                                </li>
+
+                                <li class="page-item" th:unless="${num==currentPage}">
+                                    <a class="page-link" th:href="@{list(page=${num})}" th:text="${num}">2</a>
+                                </li>
+
+                                <li class="page-item" th:unless="${num==currentPage}">
+                                    <a class="page-link" th:href="@{list(page=${num})}" th:text="${num}">3</a>
+                                </li>
+                            </spen>
+                            <li class="page-item" th:unless="${currentPage>=lastpage}">
+                                <a class="page-link" th:href="@{list(page=${nextpage})}">다음</a>
+                            </li>
+                            <li class="page-item" th:unless="${endPage==lastPage}">
+                                <a class="page-link" th:href="@{list(page=${lastPage})}">끝</a>
                             </li>
                         </ul>
                     </div>

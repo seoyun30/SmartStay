@@ -26,11 +26,15 @@
             </div>-->
 
             <script th:inline="javascript">
-                let errorMsg = [[${param.error}]]
-                if(errorMsg) {
-                    alert("아이디 또는 비밀번호를 확인해주세요")
+                let errorMsg = [[${param.error}]];
+                if (errorMsg) {
+                    alert(errorMsg)
+                    if (errorMsg == 'approval') {
+                        alert("가입 승인중입니다.");
+                    } else {
+                        alert("아이디 또는 비밀번호를 확인해주세요.");
+                    }
                 }
-
             </script>
 
 

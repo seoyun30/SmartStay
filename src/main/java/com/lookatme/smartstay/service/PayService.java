@@ -3,15 +3,9 @@ package com.lookatme.smartstay.service;
 import com.lookatme.smartstay.constant.CheckState;
 import com.lookatme.smartstay.dto.PayDTO;
 import com.lookatme.smartstay.dto.PrePayDTO;
-import com.lookatme.smartstay.dto.RoomItemDTO;
-import com.lookatme.smartstay.entity.Pay;
-import com.lookatme.smartstay.entity.PrePay;
-import com.lookatme.smartstay.entity.RoomItem;
-import com.lookatme.smartstay.entity.RoomReserve;
-import com.lookatme.smartstay.repository.PayRepository;
-import com.lookatme.smartstay.repository.PrePayRepository;
-import com.lookatme.smartstay.repository.RoomItemRepository;
-import com.lookatme.smartstay.repository.RoomReserveRepository;
+import com.lookatme.smartstay.dto.RoomReserveItemDTO;
+import com.lookatme.smartstay.entity.*;
+import com.lookatme.smartstay.repository.*;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
@@ -27,10 +21,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Service
 @Log4j2
@@ -44,7 +38,13 @@ public class PayService {
     private PrePayRepository prePayRepository;
 
     @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
     private RoomItemRepository roomItemRepository;
+
+    @Autowired
+    private RoomReserveItemRepository roomReserveItemRepository;
 
     @Autowired
     private RoomReserveRepository roomReserveRepository;
@@ -90,36 +90,63 @@ public class PayService {
 
     public void savePayInfo(PayDTO payDTO) {
 
-        List<RoomItemDTO> roomItemDTOList = payDTO.getRoomItemDTOList();
-        List<RoomItem> roomItemList = roomItemDTOList.stream()
-                .map(roomItemDTO -> modelMapper.map(roomItemDTO, RoomItem.class))
-                .collect(Collectors.toList());
+        // 1. 결제 정보를 Pay 엔티티로 변환
+        Member member = modelMapper.map(payDTO.getMemberDTO(), Member.class);
         Pay pay = modelMapper.map(payDTO, Pay.class);
-        pay.setRoomItemList(roomItemList);
+        pay.setMember(member);
 
-        //결제 완료시 장바구니의 룸예약 삭제
-        for (RoomItemDTO roomItemDTO : roomItemDTOList) {
-            RoomItem roomItem = roomItemRepository.findByRoomRoom_num(roomItemDTO.getRoom_num());
-            //예약 방식 수정 필요
+        // 2. 예약 정보 생성
+        List<RoomReserveItem> roomReserveItems = new ArrayList<>();
+
+        for (RoomReserveItemDTO roomReserveItemDTO : payDTO.getRoomReserveItemDTOList()) {
+
+            // 예약할 방 찾기
+            Room room = roomRepository.findById(roomReserveItemDTO.getRoom_num())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 방이 존재하지 않습니다. room_num: " + roomReserveItemDTO.getRoom_num()));
+
+            // 해당 방이 장바구니(RoomItem)에 있는지 확인하고 삭제 준비
+            RoomItem roomItem = roomItemRepository.findByRoomRoom_num(roomReserveItemDTO.getRoom_num());
+            if (roomItem != null) {
+                roomItemRepository.delete(roomItem);
+            }
+
+            // RoomReserve(예약) 생성 및 설정
             RoomReserve roomReserve = new RoomReserve();
-            roomReserve.setMember(pay.getMember());
-
-            String date = LocalDate.now().toString().replace("-","");
-            String num = roomItem.getRoom().getRoom_num().toString();
-            String reserveId = date + "-" + num + "-" + pay.getMember().getMember_num().toString();
-            roomReserve.setReserve_id(reserveId); //오늘날짜-방번호-회원번호
-
-            roomReserve.setRoomItemList(roomItem);
-            roomReserve.setCheck_state(CheckState.RESERVE);
+            roomReserve.setMember(pay.getMember()); // 결제한 회원 정보와 연결
+            roomReserve.setCheck_state(CheckState.RESERVE); // 예약 상태 설정
             roomReserve.setReg_date(LocalDateTime.now());
 
+            // 예약 ID 생성 (UUID 사용 36자 고정)
+            String reserveId = UUID.randomUUID().toString();
+            roomReserve.setReserve_id(reserveId);
 
-            roomItemRepository.delete(roomItem);
+            // RoomReserve 저장
+            roomReserve = roomReserveRepository.save(roomReserve);
+
+            // RoomReserveItem 생성 및 설정
+            RoomReserveItem roomReserveItem = RoomReserveItem.createRoomItem(
+                    room,
+                    roomReserveItemDTO.getIn_date(),
+                    roomReserveItemDTO.getOut_date(),
+                    roomReserveItemDTO.getDay(),
+                    roomReserveItemDTO.getReserve_request(),
+                    roomReserveItemDTO.getCount()
+            );
+            roomReserveItem.setRoomReserve(roomReserve); // 예약 정보 연결
+            roomReserveItem.setPay(pay); // 결제 정보 연결
+
+            // 리스트에 추가 후 저장
+            roomReserveItems.add(roomReserveItem);
         }
 
-        //차후 장바구니의 룸서비스 예약도 삭제
+        // 예약 항목을 RoomReserve에 추가 : roomReserveItems.forEach(roomReserveItemRepository::save);
+        //roomReserveItemRepository::save = item -> roomReserveItemRepository.save(item)
+        roomReserveItemRepository.saveAll(roomReserveItems);
 
+        // 결제 정보에 예약 정보 추가 후 저장
+        pay.setRoomReserveItemList(roomReserveItems);
         payRepository.save(pay);
 
     }
+
 }

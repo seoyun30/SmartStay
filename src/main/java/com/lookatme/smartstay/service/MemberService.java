@@ -16,6 +16,8 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -48,7 +50,7 @@ public class MemberService implements UserDetailsService {
 
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException, AuthenticationException {
 
         Member member =
                 this.memberRepository.findByEmail(email);
@@ -59,6 +61,20 @@ public class MemberService implements UserDetailsService {
             throw new UsernameNotFoundException("가입된 회원이 아닙니다.");
 
         }
+
+
+        if (member.getRole() == Role.CHIEF || member.getRole() == Role.MANAGER) {
+            Power power = member.getPower();
+
+            if (power != null && power == Power.NO) {
+                log.info("승인되지 않은 회원 로그인 시도 차단: " + member.getEmail());
+                throw new AuthenticationException("승인 요청 중입니다.") {
+                }; // 로그인 차단
+            }
+
+
+        }
+
         String role = "";
 
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -67,12 +83,12 @@ public class MemberService implements UserDetailsService {
             log.info("슈퍼어드민");
             role = Role.SUPERADMIN.name();
             authorities.add(new SimpleGrantedAuthority(Role.SUPERADMIN.name()));
-        }else if("CHIEF".equals(member.getRole().name())){ // && member.getPower() == Power.YES
+        }else if("CHIEF".equals(member.getRole().name()) && member.getPower() == Power.YES){
                                                     //나중에 승인기능 개발후 적용예정
             log.info("치프");
             role = Role.CHIEF.name();
             authorities.add(new SimpleGrantedAuthority(Role.CHIEF.name()));
-        }else if("MANAGER".equals(member.getRole().name()) ){ //&& member.getPower() == Power.YES
+        }else if("MANAGER".equals(member.getRole().name()) && member.getPower() == Power.YES){
             log.info("매니져");
             role = Role.MANAGER.name();
             authorities.add(new SimpleGrantedAuthority(Role.MANAGER.name()));
@@ -139,10 +155,15 @@ public class MemberService implements UserDetailsService {
         Member member =
                 MemberDTO.dtoEntity(memberDTO);
 
-        member.setRole(Role.CHIEF);
+
+            member.setRole(Role.CHIEF);
+            member.setPower(Power.NO);
+
 
         member =
                 memberRepository.save(member);
+
+
 
         return member;
     }
@@ -160,6 +181,8 @@ public class MemberService implements UserDetailsService {
                 brandRepository.findById(brandDTO.getBrand_num()).get();
 
         member.setRole(Role.CHIEF);
+        member.setPower(Power.NO);
+
         member.setBrand(brand);
 
 
@@ -180,6 +203,8 @@ public class MemberService implements UserDetailsService {
                 hotelRepository.findById(hotelDTO.getHotel_num()).get();
 
         member.setRole(Role.MANAGER);
+        member.setPower(Power.NO);
+
         member.setHotel(hotel);
 
         member.setBrand(hotel.getBrand());
