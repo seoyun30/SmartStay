@@ -56,6 +56,7 @@ public class BrandService {
         return brandDTOS;
     }
 
+    //목록에서 내가 속한 브랜드만 보기
     public List<BrandDTO> myBrand(String email){
         List<Brand> brands = BrandRepository.findByEmail(email);
         List<BrandDTO> brandDTOS = brands.stream()
