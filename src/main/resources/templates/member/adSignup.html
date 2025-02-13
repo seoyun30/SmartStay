@@ -18,6 +18,10 @@
                     <h1>총판 회원가입</h1>
                 </div>
 
+                <div th:if="${adSignupMsg != null}" class="alert alert-success">
+                    <span th:text="${adSignupMsg}"></span>
+                </div>
+
                 <form class="row g-3" action="/member/adSignup" method="post" onsubmit="return test()">
 
                     <th:block th:object="${memberDTO}">
@@ -101,7 +105,14 @@
         if (msg) {
             alert(msg)
         }
-    })
+    });
+
+    $(document).ready(function () {
+        let adSignupMsg = [[${adSignupMsg}]]
+        if (adSignupMsg) {
+            alert(adSignupMsg);
+        }
+    });
 
 
     function test(){

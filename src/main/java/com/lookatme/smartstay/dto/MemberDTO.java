@@ -58,10 +58,14 @@ public class MemberDTO {
     public static Member dtoEntity(MemberDTO memberDTO) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Member member = new Member();
+
         member.setName(memberDTO.name);
         member.setEmail(memberDTO.email);
         member.setTel(memberDTO.tel);
         member.setPassword(passwordEncoder.encode(memberDTO.password));
+
+        member.setPower(Power.NO);
+        member.setPower(Power.YES);
         member.setRole(Role.SUPERADMIN);
         member.setRole(Role.CHIEF);
         member.setRole(Role.MANAGER);

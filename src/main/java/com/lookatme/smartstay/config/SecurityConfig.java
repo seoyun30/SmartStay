@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
@@ -68,6 +69,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/member/login")
                 .usernameParameter("email") //userid를 username으로 사용
                 .permitAll() //모든 사용자가 로그인폼 사용
+                .failureHandler(new CustomAuthenticationFailureHandler()) //로그인 실패시 처리할 클래스
                 .successHandler(new CustomAuthenticationSuccessHandler())); //로그인 성공시처리할 클래스
 
         //csrf 변조방지
