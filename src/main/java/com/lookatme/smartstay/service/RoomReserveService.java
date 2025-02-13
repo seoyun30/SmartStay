@@ -1,13 +1,13 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.CheckState;
+import com.lookatme.smartstay.dto.RoomDTO;
 import com.lookatme.smartstay.dto.RoomItemDTO;
-import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.entity.Room;
-import com.lookatme.smartstay.entity.RoomItem;
-import com.lookatme.smartstay.entity.RoomReserve;
+import com.lookatme.smartstay.dto.RoomReserveItemDTO;
+import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.RoomRepository;
+import com.lookatme.smartstay.repository.RoomReserveItemRepository;
 import com.lookatme.smartstay.repository.RoomReserveRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -19,6 +19,8 @@ import org.thymeleaf.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ import java.time.LocalDateTime;
 public class RoomReserveService {
 
     private final RoomReserveRepository roomReserveRepository;
+    private final RoomReserveItemRepository roomReserveItemRepository;
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
@@ -48,6 +51,16 @@ public class RoomReserveService {
 
     }
 
+    public  List<RoomReserveItemDTO> findRoomReserve(Long room_num) {
+
+        List<RoomReserveItem> roomReserveItemList = roomReserveItemRepository.findByRoomRoom_num(room_num);
+        List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveItemList.stream()
+                .map(roomReserveItem -> modelMapper.map(roomReserveItem, RoomReserveItemDTO.class)
+                        .setRoomDTO(modelMapper.map(roomReserveItem.getRoom(), RoomDTO.class)))
+                .collect(Collectors.toList());
+
+        return roomReserveItemDTOList;
+    }
 
     //주문 진행
     public Long order (RoomItemDTO roomItemDTO, String email) {
