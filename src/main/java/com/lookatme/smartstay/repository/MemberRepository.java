@@ -31,7 +31,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "WHERE m.email LIKE CONCAT('%', :keyword, '%') " +
             "OR m.name LIKE CONCAT('%', :keyword, '%') " +
             "OR m.tel LIKE CONCAT('%', :keyword, '%') " +
-            "OR m.role LIKE CONCAT('%', :keyword, '%')")
+            "OR (m.role IS NOT NULL AND CAST(m.role AS string) LIKE CONCAT('%', :keyword, '%'))")
     Page<Member> searchMember(@Param("keyword") String keyword, Pageable pageable);
 
     @Query("select m from  Member  m")

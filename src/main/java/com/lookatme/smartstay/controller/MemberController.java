@@ -136,6 +136,11 @@ public class MemberController {
 
     }
 
+    @GetMapping("/userAllMyPage") //user의 첫 마이페이지
+    public String userAllMyPage(Model model, Principal principal){
+        return "member/userAllMyPage";
+    }
+
     @GetMapping("/mypage") // 마이페이지 정보보기(유저)
     public String mypage(Model model, Authentication authentication) {
 
@@ -148,6 +153,8 @@ public class MemberController {
         return "member/mypage";
 
     }
+
+
 
     @GetMapping("/mypagePasswordCheck")
     public String mypagePasswordCheck(MemberDTO memberDTO, Principal principal, RedirectAttributes RedirectAttributes){
