@@ -16,7 +16,7 @@
         <div sec:authorize="hasAuthority('CHIEF')">
             <th:block th:if="${brandDTO != null}">
                 <div class="mb-4">
-                    <div class="card">
+                    <div class="card p-4">
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a th:href="@{/brand/brandRead(brand_num=${brandDTO.brand_num})}" th:text="${brandDTO.brand_name}">브랜드 이름</a>
@@ -39,7 +39,7 @@
         <div sec:authorize="hasAuthority('MANAGER')">
             <th:block th:if="${hotelDTO != null}">
                 <div class="mb-4">
-                    <div class="card">
+                    <div class="card p-4">
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a th:href="@{/hotel/hotelRead(hotel_num=${hotelDTO.hotel_num})}" th:text="${hotelDTO.hotel_name}">호텔 이름</a>
