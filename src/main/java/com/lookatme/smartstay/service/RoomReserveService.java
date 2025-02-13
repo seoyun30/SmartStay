@@ -78,7 +78,7 @@ public class RoomReserveService {
             String reserveId = date + "-" + num + "-" + member.getMember_num().toString();
             roomReserve.setReserve_id(reserveId); //오늘날짜-방번호-회원번호
 
-            roomReserve.setRoomItemList(roomItem);
+            //roomReserve.setRoomItemList(roomItem);
             roomReserve.setCheck_state(CheckState.RESERVE);
             roomReserve.setReg_date(LocalDateTime.now());
 

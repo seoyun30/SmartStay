@@ -1,10 +1,6 @@
 package com.lookatme.smartstay.dto;
 
 import com.lookatme.smartstay.constant.OrderState;
-import com.lookatme.smartstay.entity.BaseEntity;
-import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.entity.OrderItem;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -26,7 +22,7 @@ public class OrderReserveDTO {
 
     private OrderState order_state; //진행 상태
 
-    private List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
+    private List<OrderReserveItemDTO> orderReserveItemDTOList = new ArrayList<>();
 
     private MemberDTO memberDTO; //회원 조인
 

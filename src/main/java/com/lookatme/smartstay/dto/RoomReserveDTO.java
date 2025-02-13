@@ -18,9 +18,9 @@ public class RoomReserveDTO {
 
     private String reserve_id; //예약 기록 번호
 
-    private CheckState check_state; //체크인 여부
+    private CheckState check_state; //예약 상태 여부
 
-    private List<RoomItemDTO> roomItemDTOList = new ArrayList<>();
+    private List<RoomReserveItemDTO> roomReserveItemDTOList = new ArrayList<>();
 
     private MemberDTO memberDTO; //회원
 
