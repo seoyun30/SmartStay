@@ -68,6 +68,7 @@
     $(document).ready(function () {
 
         let price = [[${roomDTO.room_price}]];
+        let maxPeople = [[${roomDTO.room_bed}]]
 
         //현재 이전 날짜 설정 불가 함수
         function setMinDateTime() {
@@ -80,6 +81,7 @@
 
             let minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
             $(".in_date").attr("min", minDateTime);
+            $(".out_date").attr("min", minDateTime);
         }
         // 페이지 로드 시 실행
         setMinDateTime();
@@ -98,6 +100,35 @@
                     alert("현재 시간 이전은 선택할 수 없습니다.");
                     $(this).val(""); // 잘못된 값 초기화
                 }
+            }
+        });
+
+        $(".out_date").on("change", function () {
+            let selectedDate = new Date($(this).val());
+            let today = new Date();
+
+            // 사용자가 오늘 날짜를 선택한 경우, 현재 시간 이전을 선택 못 하게 변경
+            if (selectedDate.toDateString() === today.toDateString()) {
+                let minTime = today.getHours().toString().padStart(2, '0') + ":" + today.getMinutes().toString().padStart(2, '0');
+                let selectedTime = selectedDate.getHours().toString().padStart(2, '0') + ":" + selectedDate.getMinutes().toString().padStart(2, '0');
+
+                if (selectedTime < minTime) {
+                    alert("현재 시간 이전은 선택할 수 없습니다.");
+                    $(this).val(""); // 잘못된 값 초기화
+                }
+            }
+        });
+
+        $(".count").on("change", function () {
+            let count = $(".count").val()
+
+            if (!count || count < 1) {
+                alert("예약 인원 수를 입력해주세요.");
+                return;
+            } else if (count > maxPeople) {
+                alert("최대 예약 가능 인원을 초과할 수 없습니다. (최대 예약 가능 인원: " + maxPeople + "명)");
+                $(".count").val(maxPeople); // 최대 인원으로 값 변경
+                return; // 수정 요청 중단
             }
         });
 
