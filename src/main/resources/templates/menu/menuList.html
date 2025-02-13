@@ -23,20 +23,20 @@
         </div>
     </div>
 
-    <div class="row d-flex justify-content-center">
-        <div class="col-5">
-            <div class="input-group">
-                <div class="container-fluid d-flex flex-wrap justify-content-center align-items-center">
-                    <div class="search-bar mx-2">
-                        <form class="search-form d-flex align-items-center w-100" method="get" action="/menu/menuList">
-                            <input type="text" class="form-control" name="query" placeholder="Search" title="Enter search keyword">
+    <nav class="navbar" id="navbar">
+        <div class="navbar-right">
+            <div class="search-form">
+                <form method="get" action="/menu/menuList">
+                    <div class="input-group input-group-sm" id="input-group-search">
+                        <input type="text" autocomplete="off" class="form-control" name="query" placeholder="Search" id="search-input">
+                        <div class="input-group-append">
                             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
-    </div>
+    </nav>
 
     <div th:if="${isSearch}">
         <h5>검색 결과</h5>
