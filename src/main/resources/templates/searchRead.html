@@ -32,33 +32,23 @@
             (리뷰)
         </div>
 
-        <div th:each="room : ${roomList}" class="mb-4">
+        <div th:each="room : ${roomList}" class="mb-5">
             <div class="row">
-                <div class="col-md-3">
-                    <div class="card border-0">
-                        <div class="card-body">
-                            <img th:src="${room.mainImage.image_url}" height="100" width="150" alt="룸 대표 이미지"
-                            onerror="this.src='/assets/img/room.jpg'">
-                        </div>
-                    </div>
+                <div class="col-md-4">
+                    <img th:src="${room.mainImage.image_url}" height="100" width="150" alt="룸 대표 이미지"
+                         onerror="this.src='/assets/img/room.jpg'">
                 </div>
-                <div class="col-md-3">
-                    <div class="card border-0">
-                        <div class="card-body">
-                            <h5 class="card-title font-weight-bold">
-                                <h5 th:text="${room.room_name}">룸 이름</h5>
-                            </h5>
-                            <h6 class="text-dark" th:text="${room.room_bed + '인'}">최대 인원</h6>
-                        </div>
-                    </div>
+
+                <div class="col-md-4">
+                    <h5 class="card-title font-weight-bold">
+                        <h5 th:text="${room.room_name}">룸 이름</h5>
+                    </h5>
+                    <h6 class="text-dark" th:text="${room.room_bed + '인'}">최대 인원</h6>
+
                 </div>
-                <div class="col-md-6">
-                    <div class="card border-0">
-                        <div class="card-body">
-                            <h5 class="text-dark mt-4" th:text="${room.room_price + '원'}">가격</h5>
-                            <button type="button" class="btn btn-primary mt-1" th:onclick="|location.href='@{/roomreserve/roomReserveRegister(room_num=${room.room_num})}'|">예약하기</button>
-                        </div>
-                    </div>
+                <div class="col-md-4">
+                    <h5 class="text-dark mt-2" th:text="${room.room_price + '원'}">가격</h5>
+                    <button type="button" class="btn btn-primary mt-1" th:onclick="|location.href='@{/roomreserve/roomReserveRegister(room_num=${room.room_num})}'|">예약하기</button>
                 </div>
             </div>
         </div>
