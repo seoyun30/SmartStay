@@ -28,7 +28,6 @@
             <script th:inline="javascript">
                 let errorMsg = [[${param.error}]];
                 if (errorMsg) {
-                    alert(errorMsg)
                     if (errorMsg == 'approval') {
                         alert("가입 승인중입니다.");
                     } else {
