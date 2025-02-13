@@ -44,7 +44,7 @@ public class Pay extends BaseEntity {
             orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderReserveItem> orderReserveItemList = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "member_num")
     private Member member; //회원 조인
 
