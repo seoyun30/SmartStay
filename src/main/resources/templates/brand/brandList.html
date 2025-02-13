@@ -16,48 +16,49 @@
       <button type="button" onclick="location.href='/brand/brandRegister'" class="btn btn-dark">브랜드 등록</button>
     </div>
   </div>
-
   <div class="row mt-3">
     <div class="col">
-      <table class="table table-striped table-hover">
-        <thead>
-        <tr>
-          <th>번호</th>
-          <th>브랜드명</th>
-          <th>법인사업자번호</th>
-          <th>대표자</th>
-          <th>전화번호</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        <th:block th:each="brand : ${brandDTOList}">
-          <tr class="align-middle">
-            <td th:text="${brand.brand_num}"></td>
-            <td>
-              <a th:href="@{/brand/brandRead(brand_num=${brand.brand_num})}">
-                [[${brand.brand_name}]]
-              </a>
-            </td>
-            <td th:text="${brand.business_num}"></td>
-            <td th:text="${brand.owner}"></td>
-            <td th:text="${brand.tel}"></td>
-
-            <!--post 방식의 삭제버튼-->
-            <td class="col text-end">
-              <form action="/brand/brandDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                <input type="hidden" name="id" th:value="${brand.brand_num}"> <!-- 삭제할 brand의 ID를 hidden 필드로 전달 -->
-                <button type="submit" class="btn btn-dark" style="background-color: red;">삭제</button>
-              </form>
-            </td>
-
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+          <tr class="text-center">
+            <th>번호</th>
+            <th>브랜드명</th>
+            <th>법인사업자번호</th>
+            <th>대표자</th>
+            <th>전화번호</th>
+            <th>삭제</th>
           </tr>
-        </th:block>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+          <th:block th:each="brand : ${brandDTOList}">
+            <tr class="text-center">
+              <td th:text="${brand.brand_num}"></td>
+              <td>
+                <a th:href="@{/brand/brandRead(brand_num=${brand.brand_num})}">
+                  [[${brand.brand_name}]]
+                </a>
+              </td>
+              <td th:text="${brand.business_num}"></td>
+              <td th:text="${brand.owner}"></td>
+              <td th:text="${brand.tel}"></td>
+              <td>
+                <form action="/brand/brandDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                  <input type="hidden" name="id" th:value="${brand.brand_num}">
+                  <button type="submit" class="btn btn-danger" style="background-color: red;  padding: 5px 15px; width: auto; font-size: inherit; text-align: center;">삭제</button>
+                </form>
+              </td>
+            </tr>
+          </th:block>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </th:block>
+
+
+
 <script th:inline="javascript" layout:fragment="script">
   let messages = [[${msg}]];
   if (messages != null && messages.trim() !== "") {
