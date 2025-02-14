@@ -9,13 +9,12 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -276,21 +275,35 @@ public class MemberController {
 
 
     @GetMapping("/adPowerList") // 권한승인(총판)
-    public String adPowerList(Model model) {
+    public String adPowerList(Principal principal, PageRequestDTO pageRequestDTO, Model model, String email) {
 
-        List<MemberDTO> adPowerList = memberService.adPowerList(null);
-        model.addAttribute("adPowerList", adPowerList);
+        PageResponseDTO<MemberDTO> adPowerList = memberService.adPowerList(pageRequestDTO, email);
+
+        log.info("전달되는 pageResponseDTO" + adPowerList);
+        log.info("전달되는 pageResponseDTO DTO리스트" + adPowerList.getDtoList());
+
+        model.addAttribute("pageResponseDTO", adPowerList);
+
+
 
         return "member/adPowerList";
 
+    }
 
+    @PostMapping("/powerAdmit")
+    @ResponseBody
+    public ResponseEntity<MemberDTO> powerAdmitPost(@RequestParam("email") String email){
+
+        MemberDTO memberDTO = memberService.powerAdmit(email);
+
+        return ResponseEntity.ok(memberDTO);
     }
 
     @PostMapping("/adPowerMember") //권한 승인
-    public String adePowerMember(@RequestParam("email") String email, Model model){
+    public String adePowerMember(@RequestParam("email") PageRequestDTO pageRequestDTO, String email, Model model){
 
         try {
-            List<MemberDTO> adPowerList = memberService.adPowerList(email);
+            List<MemberDTO> adPowerList = memberService.adPowerList(pageRequestDTO, email).getDtoList();
             model.addAttribute("adPowerList", adPowerList);
             model.addAttribute("message", "변경완료");
 
