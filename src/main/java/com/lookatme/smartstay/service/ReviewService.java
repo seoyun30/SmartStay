@@ -1,10 +1,7 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.Role;
-import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.dto.PageResponseDTO;
-import com.lookatme.smartstay.dto.ReviewDTO;
-import com.lookatme.smartstay.dto.RoomReserveDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -31,6 +28,7 @@ public class ReviewService {
     private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
     private final HotelRepository hotelRepository;
+
     //이미지 사용 시 필요
     private final ImageRepository imageRepository;
     private final ImageService imageService;
@@ -49,16 +47,16 @@ public class ReviewService {
         // 호텔 정보 조회
         Hotel hotel = hotelRepository.findById(hotel_num)
                 .orElseThrow(() -> new IllegalArgumentException("해당 호텔을 찾을 수 없습니다."));
-        //브랜드 관리자 또는 호텔 관리자 권한 확인
 
-        Member member = memberRepository.findByEmail(email); //회원정보 확인
+        //회원정보 확인
+        Member member = memberRepository.findByEmail(email);
         if (member == null) {
             throw new IllegalArgumentException("해당 이메일의 회원 정보를 찾을 수 없습니다.");
         }
 
         List<Review> reviews;
 
-        // if문
+        // 브랜드 관리자 또는 호텔 관리자 권한 확인
         if (member.getRole().name().equals("CHIEF") ) {
             // 관리자(브랜드): 브랜드에 속한 모든 호텔 리뷰 조회
             reviews = reviewRepository.findByHotelorBrand(member.getBrand().getBrand_num()); // 해당 브랜드에 속한 모든 호텔의 리뷰 조회
@@ -172,18 +170,29 @@ public class ReviewService {
         review.setReg_date(LocalDateTime.now()); // 작성일을 현재 시간으로 설정
 
         //4. 별점 유효성 체크(1~5)
-        int score = Integer.parseInt(reviewDTO.getScore());
-        if (score < 1 || score > 5) {
-            throw new IllegalArgumentException("별점은 1~5점 사이여야 합니다.");
+        String scoreStr = reviewDTO.getScore();
+        if (scoreStr == null || scoreStr.trim().isEmpty()) {
+            throw new IllegalArgumentException("별점은 필수 입력값입니다.");
         }
 
-        // review 저장
-        reviewRepository.save(review);
+        int score;
+        try {
+            score = Integer.parseInt(scoreStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("별점은 숫자여야 합니다.");
+        }
+
+        if (score < 0.5 || score > 5.0 || score * 10 % 5 !=0) {
+            throw new IllegalArgumentException("별점은 1~5점 사이여야 합니다.");
+        }
 
         // 이미지가 없다면 저장
         if (multipartFiles != null && multipartFiles.isEmpty()) {
             imageService.saveImage(multipartFiles, "review", review.getRev_num());
         }
+
+        // review 저장
+        reviewRepository.save(review);
     }
 
 
@@ -192,18 +201,42 @@ public class ReviewService {
 
         Review review = reviewRepository.findById(rev_num)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 리뷰입니다."));  //작성회원이 리뷰를 삭제했을 시
-
 //        Optional<Review> review = reviewRepository.findById(rev_num); // findById가 Optional<>을 반환하여 필요없음
 
         ReviewDTO reviewDTO = modelMapper.map(review, ReviewDTO.class);
+
+        //호텔 정보연결용
+        Hotel hotel = review.getHotel();
+        if (hotel != null) { //호텔이 null이 아니라면 호텔 정보 set
+            HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+
+            reviewDTO.setHotelDTO(hotelDTO);
+        }
+
+        List<Image> imageList = imageRepository.findByTarget("review", rev_num);
+
+        if (imageList != null && !imageList.isEmpty()) {
+            List<ImageDTO> imageDTOList = imageList.stream()
+                    .map(image -> modelMapper.map(image, ImageDTO.class))
+                    .collect(Collectors.toList());
+
+            List<Long> imageIdList = imageDTOList.stream()
+                    .map(ImageDTO::getImage_id)
+                    .collect(Collectors.toList());
+
+            reviewDTO.setImageDTOList(imageDTOList);
+            reviewDTO.setImageIdList(imageIdList);
+
+        }
+
         return reviewDTO;
     }
 
 
     //리뷰 수정(리뷰를 등록한 유저만 가능)
-    public void reviewModify(ReviewDTO reviewDTO, String email) {
+    public void reviewModify(ReviewDTO reviewDTO, String email, List<MultipartFile> multipartFiles, List<Long> delnumList) {
 
-        log.info(" 수정 :{}", reviewDTO);
+        log.info(" 가져온 리뷰 :  " + reviewDTO);
 
         //리뷰 조회 , 없으면 예외발생
         Review review = reviewRepository.findById(reviewDTO.getRev_num())
@@ -219,39 +252,45 @@ public class ReviewService {
         }
 
         //권한 확인: 리뷰작성자와 수정하려는 회원이 일치하는지
-        if (!review.getMember().getEmail().equals(review.getCreate_by())) {
+        if (!review.getMember().getEmail().equals(email)) {
             throw new SecurityException("리뷰를 수정할 권한이 없습니다.");
         }
 
-        // 이미지 관련(추가 예정)
-
         //리뷰 업데이트
-        review.setRev_num(reviewDTO.getRev_num()); // 리뷰 번호 등록 그대로 사용
+//        review.setRev_num(reviewDTO.getRev_num()); // 리뷰 번호 등록 그대로 사용
         review.setScore(reviewDTO.getScore());    //별점
         review.setContent(reviewDTO.getContent()); //리뷰 내용
-                                                    // 이미지
-
-
         review.setModi_date(LocalDateTime.now()); // 지금 시간으로 수정한 시간 설정
         review.setModified_by(member.getEmail()); //// 수정자 정보 설정(로그인한 사용자의 이메일로 설정)
 //        review.setCreate_by(reviewDTO.getCreate_by()); // 작성자 정보가 변경 불가로 주석 처리
 
-
-
         reviewRepository.save(review);
 
-        //기존에 있던 ..
-//        Optional<Review> review = reviewRepository.findById(reviewDTO.getRev_num());  //findById 가 Optional<Review> 반환해서 필요없음
-//
-//        if (review.isPresent()) {
-//            Review review1 = modelMapper.map(reviewDTO, Review.class);
-//
-//            reviewRepository.save(review1);
-//        }
+        boolean hasNewImages = multipartFiles != null && multipartFiles.stream().anyMatch(file -> !file.isEmpty());
+        boolean hasDeletedImages = delnumList != null && delnumList.isEmpty();
+
+        if (hasNewImages || hasDeletedImages) {
+            log.info("이미지 업데이트");
+            try {
+                imageService.updateImage(
+                        hasNewImages ? multipartFiles : null,
+                        hasDeletedImages ? delnumList : null,
+                        "review",
+                        review.getRev_num()
+                );
+            } catch (IndexOutOfBoundsException e) {
+                log.error("이미지 업데이트 중 인덱스 오류 발생: {}", e.getMessage());
+                throw new IllegalArgumentException("업로드된 파일이나 삭제 요청이 잘못되었습니다.");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            log.info("이미지 업데이트 없이 수정");
+        }
     }
 
 
-    //리뷰 삭제(작성한 본인 리뷰만 가능) // 일단 기본 상태 보류 //  (데이터베이스에서 삭제되어 리스트에 보이는 사항은 신경 안써두 됨)
+    //리뷰 삭제(작성한 본인 리뷰만 가능)
     public void reviewDelete(Long id, String email) {
         log.info("서비스로 들어온 삭제할 번호 :" + id);
 
@@ -269,8 +308,10 @@ public class ReviewService {
     }
 
 
-    //페이지네이션
-    public PageResponseDTO<ReviewDTO> reviewList(PageRequestDTO pageRequestDTO) {
+    //페이지네이션 (리스트가 3개여서 나눠서 작성)
+    //관리자 리뷰 페이지네이션
+    public PageResponseDTO<ReviewDTO> adMyReviewList(PageRequestDTO pageRequestDTO) {
+
 
 
         return null;
