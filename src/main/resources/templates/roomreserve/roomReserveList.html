@@ -22,11 +22,14 @@
                 </th:block>
                 <th:block th:unless="${roomDTOList.isEmpty()}" th:each="room : ${roomDTOList}">
                     <div class="col">
-                        <div class="card" id="toggleReadWindow" style="box-shadow: none">
+                        <div class="card toggleReadWindow" style="box-shadow: none" th:data-room-num="${room.room_num}">
                             <div class="card-body">
-                                <input type="text" th:value="${room.room_num}">
-                                <span class="h5 card-title fw-bold" th:text="${room.room_name}">룸 이름</span> <br>
-                                <small class="text-body-secondary text-center"
+                                <input type="hidden" class="room_num" th:value="${room.room_num}">
+                                <span class="h5 card-title text-black fw-bold" th:text="${room.room_name}">룸 이름</span> <br>
+                                <span class="card-text text-black" th:text="${room.room_type + ' / 최대 ' + room.room_bed + '인'}">룸 타입 / 최대 n인</span> <br>
+                                <span class="card-text text-black" th:text="${'숙박당 ' + room.room_price + '원'}">가격</span> <br>
+
+                                <small class="text-body-secondary fw-bold text-center"
                                        th:text="${room.room_state.name().equals('YES')  ? '예약 가능' : '예약 불가'}">룸 상태</small>
                             </div>
                         </div>
@@ -38,16 +41,12 @@
 
         <div class="readWindow col-3 border-start">
             <div class="mt-5" style="box-shadow: none">
-                <div class="card-header">룸 번호</div>
+                <div class="card-header reserveId">예약 번호</div>
                 <div class="card-body">
-                    <span class="h5 card-title fw-bold">룸 이름</span> <br>
-                    <span>룸 정보</span> <br>
-                    <span>룸 타입</span> <br>
-                    <span>룸 인원수</span> <br>
-                    <span>룸 가격</span>
-                </div>
-                <div class="card-footer">
-                    <small class="text-body-secondary text-center">룸 상태</small>
+                    <span class="h5 card-title fw-bold reserveDay">예약일</span> <br>
+                    <span class="card-text reserveName">예약자 이름</span> <br>
+                    <span class="card-text reserveRequest">요청사항</span> <br>
+                    <span class="card-text fw-bold check_state">체크인 상태</span> <br>
                 </div>
             </div>
         </div>
@@ -60,20 +59,84 @@
 
         let roomRead = $(".roomRead");
         let readWindow = $(".readWindow");
+        let currentRoomNum = null; //현재 표시된 roomNum을 저장
 
         // 초기 상태에서 readWindow를 숨기고 roomRead의 클래스를 col-12로 변경
         readWindow.hide();
         roomRead.removeClass('col-9').addClass('col-12');
 
         // readWindow가 표시되거나 숨겨질 때 클래스를 동적으로 업데이트
-        $("#toggleReadWindow").on("click", function () {
-            if (readWindow.is(":visible")) {
+        $(".toggleReadWindow").on("click", function () {
+            let roomNum = $(this).data("room-num");
+            console.log(roomNum)
+
+            if (readWindow.is(":visible") && currentRoomNum === roomNum) {
                 readWindow.hide();
                 roomRead.removeClass('col-9').addClass('col-12');
-            } else {
-                readWindow.show();
-                roomRead.removeClass('col-12').addClass('col-9');
+                currentRoomNum = null; // 현재 열린 roomNum 초기화
+                return; // 함수 종료 (새로운 AJAX 요청 X)
             }
+
+                $.ajax({
+                    url: "/roomreserve/findRoomReserve",
+                    type: "GET",
+                    data: { room_num: roomNum },
+                    success: function (data) {
+                        currentRoomNum = roomNum
+                        console.log(data)
+                        // readWindow 보이도록 설정
+                        readWindow.show();
+                        roomRead.removeClass('col-12').addClass('col-9');
+
+                        // 기존 내용을 지우고 새로운 예약 정보 추가
+                        let readWindowBody = $(".readWindow");
+                        readWindowBody.empty(); // 기존 내용 제거
+
+                        if (data.length === 0) {
+                            let noReserveHtml = `
+                            <div class="mt-3 p-3 border rounded bg-white text-center">
+                                <span class="h5 fw-bold text-danger">등록된 예약이 없습니다.</span>
+                            </div>
+                        `;
+                            readWindowBody.append(noReserveHtml);
+                            return;
+                        }
+
+
+                        // 예약 정보를 동적으로 추가
+                        data.forEach(roomReserve => {
+                            let reserveHtml = `
+                            <div class="mt-3 p-3 border rounded bg-white">
+                                <div class="card-header">
+                                    <p class="h5 fw-bold">예약 번호</p>
+                                    <p>${roomReserve.roomReserveDTO.reserve_id}</p>
+                                </div>
+                                <div class="card-body">
+                                    <p class="h5 text-black fw-bold">예약일</p>
+                                    <p class="text-black fw-bold">${roomReserve.in_date} ~ ${roomReserve.out_date}</p>
+                                    <p class="card-text text-black fw-bold">예약자</p>
+                                    <p class="text-black">${roomReserve.roomReserveDTO.memberDTO.name}</p>
+                                    <p class="card-text text-black fw-bold">요청 사항</p>
+                                    <p class="text-black">${roomReserve.reserve_request ? roomReserve.reserve_request : "없음"}</p>
+                                    <p class="text-black fw-bold">체크인 상태</p>
+                                    <p class="text-black">${roomReserve.roomReserveDTO.check_state}</p>
+                                </div>
+                            </div>
+                        `;
+                            readWindowBody.append(reserveHtml);
+                        });
+
+                    },
+                    error: function () {
+                        if (xhr.status === 404) {
+                            alert("해당 룸 예약 정보를 찾을 수 없습니다.");
+                        } else {
+                            alert("룸 예약 정보를 가져오는 데 실패했습니다.");
+                        }
+                    }
+                });
+
+
         });
 
 

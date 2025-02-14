@@ -46,4 +46,9 @@ public class RoomReserveItemDTO extends BaseEntity {
         this.roomDTO = roomDTO;
         return this;
     }
+
+    public RoomReserveItemDTO setRoomReserveDTO(RoomReserveDTO roomReserveDTO) {
+        this.roomReserveDTO = roomReserveDTO;
+        return this;
+    }
 }
