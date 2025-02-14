@@ -18,33 +18,44 @@
                     <div class="row mt-5">
                         <div class="col text-center">
                             <div class="row">
-                                <!--사진 들어갈 예정
-                                <div class="col">
-                                    <img th:src="${itemDTO.itemImgDTOList.get(0).imgUrl}" class="card-img-top" th:alt="${itemDTO.getItemImgDTOList().get(0).oriImgName}">
-                                </div> -->
-                                    <div class="col text-center">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <input id="brand_num" type="hidden" th:value="${brandDTO.brand_num}"></input>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text">브랜드명</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.brand_name}">
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text">법인사업자번호</span>
-                                                    <input type="number" class="form-control" th:value="${brandDTO.business_num}">
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text">대표자</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.owner}">
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text">전화번호</span>
-                                                    <input type="number" class="form-control" th:value="${brandDTO.tel}">
-                                                </div>
+
+                                <div class="row mb-3">
+                                    <th:block th:unless="${brandDTO.imageDTOList.isEmpty()}" th:each="imgdto: ${brandDTO.imageDTOList}">
+                                        <div class="col">
+                                            <img class="img-fluid" th:src="${imgdto.image_url}">
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${brandDTO.imageDTOList.isEmpty()}">
+                                        <div class="col">
+                                            이미지가 없습니다.
+                                        </div>
+                                    </th:block>
+                                </div>
+
+                                <div class="col text-center">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <input id="brand_num" type="hidden" th:value="${brandDTO.brand_num}"></input>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">브랜드명</span>
+                                                <input type="text" class="form-control" th:value="${brandDTO.brand_name}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">법인사업자번호</span>
+                                                <input type="number" class="form-control" th:value="${brandDTO.business_num}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">대표자</span>
+                                                <input type="text" class="form-control" th:value="${brandDTO.owner}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">전화번호</span>
+                                                <input type="number" class="form-control" th:value="${brandDTO.tel}">
                                             </div>
                                         </div>
                                     </div>
+                                </div>
                                 <div class="col-12">
                                     <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
                                     <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>

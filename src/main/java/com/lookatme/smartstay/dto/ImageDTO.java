@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
 public class ImageDTO {
 
     private Long image_id; //이미지 번호

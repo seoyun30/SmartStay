@@ -3,13 +3,14 @@ package com.lookatme.smartstay.dto;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
 public class HotelDTO {
 
     private Long hotel_num; //키
@@ -42,4 +43,8 @@ public class HotelDTO {
     private String modified_by;
 
     public Long lowestPrice;
+
+    public List<ImageDTO> imageDTOList = new ArrayList<>();
+
+    private List<Long> imageIdList = new ArrayList<>();
 }

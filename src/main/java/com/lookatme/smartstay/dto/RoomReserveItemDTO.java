@@ -12,8 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "roomReserve")
-@Builder
+@ToString
 public class RoomReserveItemDTO extends BaseEntity {
 
     private Long roomreserveitem_num; //룸 아이템 기록 번호

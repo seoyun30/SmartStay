@@ -10,7 +10,7 @@
 <body>
 <th:block layout:fragment="content">
     <h1 class="text-center">매장 등록</h1>
-    <form action="/hotel/hotelRegister" method="post" th:object="${hotelDTO}">
+    <form action="/hotel/hotelRegister" method="post" th:object="${hotelDTO}" enctype="multipart/form-data">
 
         <div class="row">
             <div class="col-8 offset-2">
@@ -49,6 +49,17 @@
                             <input type="number" min="0" class="form-control" th:field="*{tel}" id="tel">
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
+                    </div>
+
+                    <!--이미지-->
+                    <div class="row imgDiv row-cols-md-3 ">
+                        <div class="col " style="border: 1px solid black;">
+                            <input type="file" id="imgFile" name="multi" class="imgFile">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 fileinput">
+                        <input type="file" class="imgpreviewinput"><br>
                     </div>
 
                     <div class="col-12">
