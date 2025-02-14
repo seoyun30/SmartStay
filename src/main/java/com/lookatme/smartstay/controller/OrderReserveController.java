@@ -1,9 +1,11 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.OrderItemDTO;
 import com.lookatme.smartstay.entity.Care;
 import com.lookatme.smartstay.entity.Menu;
 import com.lookatme.smartstay.entity.OrderReserve;
+import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.OrderReserveService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import java.util.List;
 @RequestMapping("/orderreserve")
 public class OrderReserveController {
     private final OrderReserveService orderReserveService;
+    private final HotelService hotelService;
 
     @GetMapping("/orderReserveRegister")
     public String orderReserveRegisterGet(Model model) {
@@ -62,11 +65,14 @@ public class OrderReserveController {
     @GetMapping("/orderReserveList")
     public String orderReserveList(Principal principal, Model model) {
 
-       String email = principal.getName();
+        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+        model.addAttribute("hotel_name", hotelDTO.getHotel_name());
 
-       List<OrderReserve> orders = orderReserveService.getOrdersByMemberEmail(email);
+        String email = principal.getName();
 
-       model.addAttribute("orders", orders);
+        List<OrderReserve> orders = orderReserveService.getOrdersByMemberEmail(email);
+
+        model.addAttribute("orders", orders);
 
         return "orderreserve/orderReserveList";
     }

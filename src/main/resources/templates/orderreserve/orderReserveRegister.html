@@ -11,23 +11,33 @@
 
 <th:block layout:fragment="content">
 
-    <form action="/pay" method="get">
+    <form action="/orderreserve/orderReserveRegister" method="get">
 
-        <h1>룸 서비스 주문하기</h1>
+        <div class="card w-75 mt-5 mx-auto">
+            <div class="card-title">
+                <h2 class="mt-3 text-center fw-bold">룸 서비스 주문하기</h2>
+            </div>
+            <div class="card-body">
+                <label for="menu">음식 서비스 선택 : </label>
+                <select id="menu" name="menu_num">
+                    <option value="" disabled selected>메뉴를 선택하세요</option>
+                    <option th:each="menu : ${menus}" th:value="${menu.menu_num}" th:text="${menu.menu_name}"></option>
+                </select>
 
-        <h2>음식 목록</h2>
-        <ul>
-            <li th:each="menu : ${menus}" th:text="${menu.menu_name}"></li>
-        </ul>
+                <label for="care">케어 서비스 선택 : </label>
+                <select id="care" name="care_num">
+                    <option value="" disabled selected>케어를 선택하세요</option>
+                    <option th:each="care : ${cares}" th:value="${care.care_num}" th:text="${care.care_name}"></option>
+                </select>
 
-        <h2>케어 서비스 목록</h2>
-        <ul>
-            <li th:each="care : ${cares}" th:text="${care.care_name}"></li>
-        </ul>
-
+                <div class="mb-3">
+                    <textarea>요청사항</textarea>
+                    <button type="submit" class="btn-primary">예약하기</button>
+                </div>
+            </div>
+        </div>
 
     </form>
-
 
 </th:block>
 
