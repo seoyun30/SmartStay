@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/adminlayout}">
 <head>
@@ -11,11 +12,12 @@
 
 <th:block layout:fragment="content">
   <h1 class="text-center">호텔 목록</h1>
- <!--  <div class="row mt-3">
-    <div class="col text-end">
+
+  <div class="row mt-3">
+    <div sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="col text-end">
       <button type="button" onclick="location.href='/hotel/hotelRegister'" class="btn btn-dark">호텔 등록</button>
     </div>
-  </div>-->
+  </div>
 
   <div class="row mt-3">
     <div class="col">
