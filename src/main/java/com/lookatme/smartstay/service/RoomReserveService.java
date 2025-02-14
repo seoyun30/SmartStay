@@ -33,7 +33,7 @@ public class RoomReserveService {
     private final ModelMapper modelMapper;
 
     //내 주문이 맞는지 확인
-    public boolean validateOrder(Long reserve_num, String email) {
+    public boolean validateroomResereve(Long reserve_num, String email) {
 
         Member member = memberRepository.findByEmail(email);
         RoomReserve roomReserve =
@@ -49,7 +49,8 @@ public class RoomReserveService {
 
     }
 
-    public  List<RoomReserveItemDTO> findRoomReserve(Long room_num) {
+    //룸에 있는 룸예약 조회
+    public List<RoomReserveItemDTO> findRoomReserve(Long room_num) {
 
         List<RoomReserveItem> roomReserveItemList = roomReserveItemRepository.findByRoomRoom_num(room_num);
         List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveItemList.stream()
@@ -62,6 +63,36 @@ public class RoomReserveService {
 
         return roomReserveItemDTOList;
     }
+
+    //회원의 룸예약 조회
+    public List<RoomReserveItemDTO> findMyRoomReserve(String email) {
+
+        List<RoomReserveItem> roomReserveItemList = roomReserveItemRepository.findByEmail(email);
+        List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveItemList.stream()
+                .map(roomReserveItem -> modelMapper.map(roomReserveItem, RoomReserveItemDTO.class)
+                        .setRoomDTO(modelMapper.map(roomReserveItem.getRoom(), RoomDTO.class)
+                                .setHotelDTO(modelMapper.map(roomReserveItem.getRoom().getHotel(),HotelDTO.class)))
+                        .setRoomReserveDTO(modelMapper.map(roomReserveItem.getRoomReserve(), RoomReserveDTO.class)
+                                .setMemberDTO(modelMapper.map(roomReserveItem.getRoomReserve().getMember(), MemberDTO.class)))
+                )
+                .collect(Collectors.toList());
+
+        return roomReserveItemDTOList;
+    }
+
+    //회원 룸예약 상세보기
+    public RoomReserveItemDTO findRoomReserveItem(Long roomreserveitem_num, String email) {
+        RoomReserveItem roomReserveItem = roomReserveItemRepository.findByReserveItemNumAndEmail(roomreserveitem_num, email);
+        RoomReserveItemDTO roomReserveItemDTO = modelMapper.map(roomReserveItem, RoomReserveItemDTO.class)
+                .setRoomDTO(modelMapper.map(roomReserveItem.getRoom(), RoomDTO.class)
+                        .setHotelDTO(modelMapper.map(roomReserveItem.getRoom().getHotel(),HotelDTO.class)))
+                .setRoomReserveDTO(modelMapper.map(roomReserveItem.getRoomReserve(), RoomReserveDTO.class)
+                        .setMemberDTO(modelMapper.map(roomReserveItem.getRoomReserve().getMember(), MemberDTO.class)))
+                .setPayDTO(modelMapper.map(roomReserveItem.getPay(), PayDTO.class));
+        return roomReserveItemDTO;
+    }
+
+
 
     //주문 진행
     public Long order (RoomItemDTO roomItemDTO, String email) {

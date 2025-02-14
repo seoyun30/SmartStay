@@ -15,8 +15,14 @@ public interface RoomReserveItemRepository extends JpaRepository<RoomReserveItem
    // @Query("select r from RoomItem r where r.cart.cart_num = :cart_num")
     //public List<RoomItem> findByCart_Cart_num (Long cart_num);
 
+    @Query("select r from RoomReserveItem r where r.roomReserve.member.email = :email")
+    List<RoomReserveItem> findByEmail(String email);
+
     @Query("select r from RoomReserveItem r where r.room.room_num = :room_num")
-    public List<RoomReserveItem> findByRoomRoom_num(Long room_num);
+    List<RoomReserveItem> findByRoomRoom_num(Long room_num);
+
+    @Query("select r from RoomReserveItem r where r.roomreserveitem_num = :roomreserveitem_num and r.roomReserve.member.email = :email")
+    public RoomReserveItem findByReserveItemNumAndEmail(Long roomreserveitem_num, String email);
 
     //추후 룸서비스 버전도 생성 예정
 
