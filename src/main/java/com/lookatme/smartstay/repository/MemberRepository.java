@@ -17,7 +17,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 
     @Query("select m from Member m " + "where m.role = 'CHIEF' and m.brand.brand_num is null")
-    public List<Member> selectBySuperAdmin();
+    Page<Member> selectBySuperAdmin(Pageable pageable);
+
+    @Query("select m from Member m " + "where m.role = 'CHIEF' and m.brand.brand_num is null " +
+            "AND (m.email LIKE CONCAT('%', :keyword, '%') " +
+            "OR m.name LIKE CONCAT('%', :keyword, '%') " +
+            "OR m.tel LIKE CONCAT('%', :keyword, '%'))")
+    Page<Member> searchSelectBySuperAdmin(@Param("keyword") String keyword, Pageable pageable);
 
 
     @Query("select m from Member  m " + "where (m.role = 'CHIEF' or m.role = 'MANAGER') and m.brand.brand_num = :brand_num")
