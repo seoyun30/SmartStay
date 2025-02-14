@@ -17,4 +17,7 @@ public interface CareRepository extends JpaRepository<Care, Long> {
 
     @Query("select c from Care c where c.care_name like %:query%")
     List<Care> findByCare_nameContaining(@Param("query") String query);
+
+    @Query("select c from Care c")
+    List<Care> findAllCares();
 }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/userlayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>룸 서비스 주문</title>
+</head>
+<body>
+
+<th:block layout:fragment="content">
+
+    <form action="/pay" method="get">
+
+        <h1>룸 서비스 주문하기</h1>
+
+        <h2>음식 목록</h2>
+        <ul>
+            <li th:each="menu : ${menus}" th:text="${menu.menu_name}"></li>
+        </ul>
+
+        <h2>케어 서비스 목록</h2>
+        <ul>
+            <li th:each="care : ${cares}" th:text="${care.care_name}"></li>
+        </ul>
+
+
+    </form>
+
+
+</th:block>
+
+</body>
+</html>

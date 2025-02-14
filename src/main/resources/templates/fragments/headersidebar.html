@@ -86,7 +86,7 @@
                                         </a>
                                         <ul id="brand-nav" class="collapse" data-bs-parent="#sidebar-menu">
                                             <div class="sub-menu">
-                                                <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')">
+                                                <li sec:authorize="hasAuthority('SUPERADMIN')">
                                                     <a href="/brand/brandList" class="sidenav-item-link">
                                                         <i class="bi bi-circle"></i>
                                                         <span class="nav-text">브랜드 목록</span>
@@ -102,7 +102,7 @@
                                         </ul>
                                     </li>
 
-                                    <li sec:authorize="hasAnyAuthority('CHIEF', 'MANAGER')" class="has-sub">
+                                    <li sec:authorize="hasAnyAuthority('CHIEF','MANAGER')" class="has-sub">
                                         <a class="sidenav-item-link" data-bs-target="#hotel-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
                                             <i class="bi bi-circle"></i>
                                             <span class="nav-text">호텔 관리</span>

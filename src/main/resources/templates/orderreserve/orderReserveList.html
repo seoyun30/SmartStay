@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/userlayout}">
+      layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -10,6 +10,24 @@
 <body>
 
 <th:block layout:fragment="content">
+    <table>
+        <thead>
+        <tr>
+            <td>예약 번호</td>
+            <td>주문자</td>
+            <td>메뉴 이름</td>
+            <td>케어 이름</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.order_num}"></td>
+            <td th:text="${order.member.email}"></td>
+            <td th:text="${order.menu.menu_name}"></td>
+            <td th:text="${order.care.care_name}"></td>
+        </tr>
+        </tbody>
+    </table>
 
 </th:block>
 
