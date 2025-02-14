@@ -1,5 +1,8 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.constant.Role;
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.dto.ReviewDTO;
 import com.lookatme.smartstay.dto.RoomReserveDTO;
 import com.lookatme.smartstay.entity.*;
@@ -15,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -37,6 +37,7 @@ public class ReviewService {
     private final RoomReserveRepository roomReserveRepository; // 호텔예약정보 필요
 
 
+    // 관리자 , 유저 , 호텔에서 보이는 리뷰가 다르기에 3개로 나누어 서비스 작성
     //관리자 리뷰 전체 목록 (관리자 리뷰 페이지 치프, 매니저)
     public List<ReviewDTO> adMyReviewList(Long hotel_num, String email) {
 
@@ -51,6 +52,9 @@ public class ReviewService {
         //브랜드 관리자 또는 호텔 관리자 권한 확인
 
         Member member = memberRepository.findByEmail(email); //회원정보 확인
+        if (member == null) {
+            throw new IllegalArgumentException("해당 이메일의 회원 정보를 찾을 수 없습니다.");
+        }
 
         List<Review> reviews;
 
@@ -65,18 +69,16 @@ public class ReviewService {
             throw new AccessDeniedException("리뷰를 조회할 권한이 없습니다.");
         }
 
+        // 리뷰가 없는 경우 빈 리스트 반환
+        if (reviews.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         // 리뷰(entity) 목록을 ReviewDTO 목록으로 변환
         List<ReviewDTO> reviewDTOS = reviews.stream()
                 .map(review -> modelMapper.map(review, ReviewDTO.class))
                 .collect(Collectors.toList());
 
-        // 변환된 DTO 리스트 반환
-
-//        List<Review> reviews = reviewRepository.findAll(); // 모두 조회
-//
-//        List<ReviewDTO> reviewDTOS = Arrays.asList(modelMapper.map(reviews, ReviewDTO[].class));
-//
-//        return reviewDTOS;
         return reviewDTOS;
     }
 
@@ -90,28 +92,46 @@ public class ReviewService {
         //해당 호텔에 대한 리뷰 조회
         List<Review> hotelReview = reviewRepository.findByHotel(hotel_num);  //해당 호텔 리뷰 조회
 
+        // 리뷰가 없는 경우 빈 리스트 반환
+        if (hotelReview.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         //리뷰 리스트를 DTO로 변환
         List<ReviewDTO> reviewDTOS = hotelReview.stream()
                 .map(review -> modelMapper.map(review, ReviewDTO.class))
                 .collect(Collectors.toList());
 
         return reviewDTOS;
-
-
-//        if (hotel.getHotel_num() != null) {
-//            reviewHotel = reviewRepository.findByHotel(hotel.getHotel_num());  // 해당 호텔에 대한 리뷰 조회
-//        }
-
-
-//       List<Review> reviews = reviewRepository.findAll(); //모두 조회
-
     }
 
 
     //유저 리뷰 전체 목록 (유저 my 페이지)
     public List<ReviewDTO> getuserMyReviewList(String email) {
 
-        List<Review> userMyReviews = reviewRepository.findByUser(email);
+        //1. 유저 정보 확인
+        Member member = memberRepository.findByEmail(email); //회원정보 확인
+        if (member ==null) {
+            throw new IllegalArgumentException("해당 이메일의 회원 정보를 찾을 수 없습니다..");
+        }
+
+        // 권한 확인: 유저만 가능
+        List<Review> userMyReviews;
+
+        if (member.getRole() == Role.USER) {
+            userMyReviews = reviewRepository.findByUser(email);
+            // userMyReviews = reviewRepository.findByMember(member);
+        } else {
+            throw new AccessDeniedException("리뷰를 조회할 권한이 없습니다.");
+        }
+
+        //이전 거
+//        if (member.getRole().name().equals("USER")) {
+//            throw new AccessDeniedException("리뷰를 조회할 권한이 없습니다.");
+//        }
+
+//        List<Review> userMyReviews = reviewRepository.findByMember(member); // member 객체로 조회하는것이 정확하다고 함..
+//        List<Review> userMyReviews = reviewRepository.findByUser(email);
 
         // 유저 리뷰목록을 DTO로 변환
         List<ReviewDTO> reviewDTOS = userMyReviews.stream()
@@ -122,7 +142,6 @@ public class ReviewService {
     }
 
 
-
     //리뷰 등록<작성>(룸 예약을 한 유저만 등록 가능)
     public void reviewRegister(ReviewDTO reviewDTO, String email, Long hotel_num, Long reserve_num, List<MultipartFile> multipartFiles) throws Exception {
 
@@ -130,24 +149,33 @@ public class ReviewService {
         RoomReserve roomReserve = roomReserveRepository.findById(reserve_num)
                 .orElseThrow(() -> new IllegalArgumentException("룸 예약정보" + reserve_num + "에 대한 정보를 찾을 수 없습니다."));
 
+//        // 이메일이 없을 경우 방어 로직
+//        if (email == null || email.trim().isEmpty()) {
+//            throw new IllegalArgumentException("이메일이 유효하지 않습니다.");
+//        }
         //2. 작성자 정보확인
         Member member = memberRepository.findByEmail(email);
         if (member == null) {
-            throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다.");
+            throw new IllegalArgumentException("이메일에 해당하는 작성자 정보를 찾을 수 없습니다.");
         }
 
-        //3. 리뷰 생성
+        //3. 예약자와 작성자 일치 여부 확인( 만약 룸 예약자가 일치하지 않더라도 리뷰 작성이 가능하면 필요없음)
+        if (!roomReserve.getMember().equals(member)) { // 룸 예약을한 회원이 리뷰를 작성하려는 회원과 다른경우
+            throw new SecurityException("룸 예약을 한 회원과 리뷰 작성자가 일치하지 않습니다.");
+        }
+
+        //3. 리뷰 생성 및 정보 세팅
         Review review = modelMapper.map(reviewDTO, Review.class);   //DTO -> entity로 변환
         review.setRoomReserve(roomReserve);  // 예약 정보를 세팅
-        review.setMember(member);  // 리뷰 작성자로 세팅
+        review.setMember(member);  // Member 객체 설정
+        review.setCreate_by(member.getEmail()); // 작성자 설정(로그인한 사용자의 이메일로 설정)
+        review.setReg_date(LocalDateTime.now()); // 작성일을 현재 시간으로 설정
 
         //4. 별점 유효성 체크(1~5)
         int score = Integer.parseInt(reviewDTO.getScore());
         if (score < 1 || score > 5) {
             throw new IllegalArgumentException("별점은 1~5점 사이여야 합니다.");
         }
-
-
 
         // review 저장
         reviewRepository.save(review);
@@ -159,12 +187,11 @@ public class ReviewService {
     }
 
 
-
-    //리뷰 상세보기(일단 보류)
+    //리뷰 상세보기(보이는 리뷰가 있으면 모두 가능)
     public ReviewDTO reviewRead(Long rev_num) {
 
         Review review = reviewRepository.findById(rev_num)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 리뷰입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 리뷰입니다."));  //작성회원이 리뷰를 삭제했을 시
 
 //        Optional<Review> review = reviewRepository.findById(rev_num); // findById가 Optional<>을 반환하여 필요없음
 
@@ -174,32 +201,46 @@ public class ReviewService {
 
 
     //리뷰 수정(리뷰를 등록한 유저만 가능)
-    public void reviewModify(ReviewDTO reviewDTO) {
+    public void reviewModify(ReviewDTO reviewDTO, String email) {
 
-        log.info("리뷰 수정 : {}", reviewDTO);
+        log.info(" 수정 :{}", reviewDTO);
 
         //리뷰 조회 , 없으면 예외발생
         Review review = reviewRepository.findById(reviewDTO.getRev_num())
                 .orElseThrow(() -> new EntityNotFoundException("해당 리뷰를 찾을 수 없습니다."));
 
-        // 리뷰를 수정하려는 유저email이 리뷰를 작성한
+        //수정자 정보확인
+        Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            throw new IllegalArgumentException("이메일에 해당하는 작성자 정보를 찾을 수 없습니다.");
+        }
+        if (review.getMember() == null || review.getCreate_by() == null) {
+            throw new IllegalArgumentException("리뷰 작성자 정보가 올바르지 않습니다.");
+        }
+
+        //권한 확인: 리뷰작성자와 수정하려는 회원이 일치하는지
         if (!review.getMember().getEmail().equals(review.getCreate_by())) {
             throw new SecurityException("리뷰를 수정할 권한이 없습니다.");
         }
 
-//        ReviewDTO newReviewDTO = modelMapper.map(reviewDTO, ReviewDTO.class); //???
+        // 이미지 관련(추가 예정)
 
         //리뷰 업데이트
+        review.setRev_num(reviewDTO.getRev_num()); // 리뷰 번호 등록 그대로 사용
         review.setScore(reviewDTO.getScore());    //별점
         review.setContent(reviewDTO.getContent()); //리뷰 내용
-        // 이미지
+                                                    // 이미지
 
-        review.setModi_date(LocalDateTime.now()); // 수정한 시간
-        review.setModified_by(reviewDTO.getModified_by()); // 작성자 본인만 수정가능.
-//        review.setCreate_by(reviewDTO.getCreate_by()); //
+
+        review.setModi_date(LocalDateTime.now()); // 지금 시간으로 수정한 시간 설정
+        review.setModified_by(member.getEmail()); //// 수정자 정보 설정(로그인한 사용자의 이메일로 설정)
+//        review.setCreate_by(reviewDTO.getCreate_by()); // 작성자 정보가 변경 불가로 주석 처리
+
+
 
         reviewRepository.save(review);
 
+        //기존에 있던 ..
 //        Optional<Review> review = reviewRepository.findById(reviewDTO.getRev_num());  //findById 가 Optional<Review> 반환해서 필요없음
 //
 //        if (review.isPresent()) {
@@ -211,23 +252,33 @@ public class ReviewService {
 
 
     //리뷰 삭제(작성한 본인 리뷰만 가능) // 일단 기본 상태 보류 //  (데이터베이스에서 삭제되어 리스트에 보이는 사항은 신경 안써두 됨)
-    public void reviewDelete(Long id) {
+    public void reviewDelete(Long id, String email) {
         log.info("서비스로 들어온 삭제할 번호 :" + id);
+
+        // 리뷰를 작성한 사용자만 삭제 가능으로 추가
+        // 1. 리뷰 조회
+        Review review = reviewRepository.findById(id)
+                        .orElseThrow(()-> new EntityNotFoundException("해당 리뷰를 찾을 수 없습니다."));
+
+        //2. 권한 확인 : 작성자와 삭제 요청자를 이메일로 비교
+        if (!review.getMember().getEmail().equals(email)) {
+            throw new SecurityException("리뷰를 삭제할 권한이 없습니다.");
+        }
+
         reviewRepository.deleteById(id);
     }
 
 
     //페이지네이션
+    public PageResponseDTO<ReviewDTO> reviewList(PageRequestDTO pageRequestDTO) {
+
+
+        return null;
+    }
 
 
 
 
-    //리뷰 별점(등록 = 유저만 가능 )
-
-
-    //등록
-
-    //변경
 
 
 
