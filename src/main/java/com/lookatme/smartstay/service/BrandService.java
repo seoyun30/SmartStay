@@ -2,8 +2,11 @@ package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.ImageDTO;
+import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Hotel;
+import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.BrandRepository;
 import com.lookatme.smartstay.repository.HotelRepository;
@@ -48,7 +51,37 @@ public class BrandService {
 
     }
 
-    //brand 목록
+    // 모든 브랜드 목록을 가져오는 메소드
+    public List<BrandDTO> brandList() {
+        List<Brand> brands = BrandRepository.findAll();  // 모든 브랜드를 가져옴
+        List<BrandDTO> brandDTOS = brands.stream()
+                .map(brand -> modelMapper.map(brand, BrandDTO.class))
+                .collect(Collectors.toList());
+        return brandDTOS;
+    }
+
+    // 로그인한 사용자의 브랜드만 조회 (슈퍼어드민은 모든 브랜드 조회)
+    public List<BrandDTO> myBrand(String email, Member member) {
+        List<Brand> brands;
+
+        // member에서 role을 확인하여 슈퍼어드민 여부를 체크
+        if (member != null && member.getRole().name().equals("SUPERADMIN")) {
+            // 슈퍼어드민일 경우 모든 브랜드를 조회
+            brands = BrandRepository.findAll();
+        } else {
+            // 슈퍼어드민이 아니라면, 이메일에 해당하는 브랜드만 조회
+            brands = BrandRepository.findByEmail(email);
+        }
+
+        // 브랜드 리스트를 BrandDTO로 변환
+        List<BrandDTO> brandDTOS = brands.stream()
+                .map(brand -> modelMapper.map(brand, BrandDTO.class))
+                .collect(Collectors.toList());
+
+        return brandDTOS;
+    }
+
+    /*//brand 목록
     public List<BrandDTO> brandList(){
         List<Brand> brands = BrandRepository.findAll();
         List<BrandDTO> brandDTOS = brands.stream()
@@ -57,18 +90,36 @@ public class BrandService {
     }
 
     //목록에서 내가 속한 브랜드만 보기
-    public List<BrandDTO> myBrand(String email){
-        List<Brand> brands = BrandRepository.findByEmail(email);
+    public List<BrandDTO> myBrand(String email, Member member) {
+        List<Brand> brands;
+
+        // member에서 role을 확인하여 슈퍼어드민 여부를 체크
+        if (member != null && "SUPERADMIN".equals(member.getRole())) {
+            // 슈퍼어드민일 경우 모든 브랜드를 조회
+            brands = BrandRepository.findAll();
+        } else {
+            // 슈퍼어드민이 아니라면, 이메일에 해당하는 브랜드만 조회
+            brands = BrandRepository.findByEmail(email);
+        }
+
+        // 브랜드 리스트를 BrandDTO로 변환
         List<BrandDTO> brandDTOS = brands.stream()
-                .map(brand -> modelMapper.map(brand, BrandDTO.class)).collect(Collectors.toList());
+                .map(brand -> modelMapper.map(brand, BrandDTO.class))
+                .collect(Collectors.toList());
+
         return brandDTOS;
-    }
+    }*/
+
 
     //brand 상세보기
     public BrandDTO read(Long id) {
         Brand brand = BrandRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
-                    //.setItemImgDTOList(item.getItemImgList());
+
+        List<Image> imageList = imageService.findImagesByTarget("brand", brand.getBrand_num());
+        List<ImageDTO> imageDTOList = imageList.stream().map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+        brandDTO.setImageDTOList(imageDTOList);
+
         return brandDTO;}
 
 
@@ -90,6 +141,12 @@ public class BrandService {
         brand.setTel(brandDTO.getTel());
 
         BrandRepository.save(brand);
+
+        // 이미지 업로드 처리
+        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+            // 기존 이미지를 업데이트 또는 새로운 이미지를 업로드
+            imageService.saveImage(multipartFiles, "brand", brand.getBrand_num());
+        }
 
        /* Optional<Brand> brand = brandRepository.findById(brandDTOList.getBrand_num());
         if(brand.isPresent()){

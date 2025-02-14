@@ -7,13 +7,14 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
 public class BrandDTO {
 
     private Long brand_num; //키
@@ -34,4 +35,7 @@ public class BrandDTO {
 
     private String modified_by;
 
+    public List<ImageDTO> imageDTOList = new ArrayList<>();
+
+    private List<Long> imageIdList = new ArrayList<>();
 }
