@@ -66,7 +66,7 @@
             <div class="col">
                 <table class="table table-striped table-hover">
                     <thead>
-                    <tr>
+                    <tr class="text-center">
                         <td>룸 케어 번호</td>
                         <td>룸 케어 명</td>
                         <td>룸 케어 상세</td>
@@ -80,7 +80,7 @@
                     <tbody>
 
                     <th:block th:if="${pageResponseDTO != null}" th:each="careDTO : ${pageResponseDTO.dtoList}">
-                        <tr class="align-middle">
+                        <tr class="text-center">
                             <td th:text="${careDTO.care_num}"></td>
                             <td>
                                 <a th:href="@{/care/careRead(care_num=${careDTO.care_num})}">

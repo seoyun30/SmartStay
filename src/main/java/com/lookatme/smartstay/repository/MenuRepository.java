@@ -17,4 +17,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     @Query("select m from Menu m where m.menu_name like %:query%")
     List<Menu> findByMenu_nameContaining(@Param("query") String query);
+
+    @Query("select m from Menu m")
+    List<Menu> findAllMenus();
 }

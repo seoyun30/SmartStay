@@ -63,6 +63,7 @@ public class RoomReserveController {
         return "/pay";
     }
 
+    //관리자 룸예약 목록
     @GetMapping("/roomReserveList")
     public String roomReserveList(Principal principal, Model model) {
 
@@ -72,6 +73,7 @@ public class RoomReserveController {
         return "roomreserve/roomReserveList";
     }
 
+    //관리자 룸예약 정보 불러오기
     @GetMapping("/findRoomReserve")
     @ResponseBody
     public ResponseEntity<List<RoomReserveItemDTO>> findRoomReserve(@RequestParam("room_num") Long room_num) {
