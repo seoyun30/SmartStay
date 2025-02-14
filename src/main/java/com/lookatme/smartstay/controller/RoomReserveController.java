@@ -8,13 +8,12 @@ import com.lookatme.smartstay.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -74,9 +73,10 @@ public class RoomReserveController {
     }
 
     @GetMapping("/findRoomReserve")
-    public String findRoomReserve(Long room_num) {
+    @ResponseBody
+    public ResponseEntity<List<RoomReserveItemDTO>> findRoomReserve(@RequestParam("room_num") Long room_num) {
         List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveService.findRoomReserve(room_num);
-        return null;
+        return ResponseEntity.ok(roomReserveItemDTOList);
     }
 
     @GetMapping("/roomReserveRead")

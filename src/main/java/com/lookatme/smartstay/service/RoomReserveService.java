@@ -1,9 +1,7 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.CheckState;
-import com.lookatme.smartstay.dto.RoomDTO;
-import com.lookatme.smartstay.dto.RoomItemDTO;
-import com.lookatme.smartstay.dto.RoomReserveItemDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.RoomRepository;
@@ -56,7 +54,10 @@ public class RoomReserveService {
         List<RoomReserveItem> roomReserveItemList = roomReserveItemRepository.findByRoomRoom_num(room_num);
         List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveItemList.stream()
                 .map(roomReserveItem -> modelMapper.map(roomReserveItem, RoomReserveItemDTO.class)
-                        .setRoomDTO(modelMapper.map(roomReserveItem.getRoom(), RoomDTO.class)))
+                        .setRoomDTO(modelMapper.map(roomReserveItem.getRoom(), RoomDTO.class))
+                        .setRoomReserveDTO(modelMapper.map(roomReserveItem.getRoomReserve(), RoomReserveDTO.class)
+                                .setMemberDTO(modelMapper.map(roomReserveItem.getRoomReserve().getMember(), MemberDTO.class)))
+                )
                 .collect(Collectors.toList());
 
         return roomReserveItemDTOList;

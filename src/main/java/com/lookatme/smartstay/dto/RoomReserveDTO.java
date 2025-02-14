@@ -32,4 +32,9 @@ public class RoomReserveDTO {
 
     private String modified_by;
 
+    public RoomReserveDTO setMemberDTO(MemberDTO memberDTO) {
+        this.memberDTO = memberDTO;
+        return this;
+    }
+
 }
