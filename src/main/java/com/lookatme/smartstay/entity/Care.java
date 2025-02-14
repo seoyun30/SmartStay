@@ -22,7 +22,7 @@ public class Care extends BaseEntity {
 
     private Long care_price; //케어 가격
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_num")
     private Hotel hotel; //호텔
 }
