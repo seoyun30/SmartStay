@@ -10,24 +10,42 @@
 <body>
 
 <th:block layout:fragment="content">
-    <table>
-        <thead>
-        <tr>
-            <td>예약 번호</td>
-            <td>주문자</td>
-            <td>메뉴 이름</td>
-            <td>케어 이름</td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="order : ${orders}">
-            <td th:text="${order.order_num}"></td>
-            <td th:text="${order.member.email}"></td>
-            <td th:text="${order.menu.menu_name}"></td>
-            <td th:text="${order.care.care_name}"></td>
-        </tr>
-        </tbody>
-    </table>
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="mb-3 text-center">
+                <h2 th:text="${hotel_name}">호텔 이름</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr class="text-center">
+                    <td>주문 번호</td>
+                    <td>주문자</td>
+                    <td>주문한 메뉴서비스</td>
+                    <td>주문한 케어서비스</td>
+                    <td>주문 시간</td>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="order : ${orders}">
+                    <td th:text="${order.order_num}"></td>
+                    <td th:text="${order.member.email}"></td>
+                    <td th:text="${order.menu.menu_name}"></td>
+                    <td th:text="${order.care.care_name}"></td>
+                    <td th:text="${#temporals.format(order.reg_date, 'yyyy-MM-dd')}"></td>
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
 
 </th:block>
 
