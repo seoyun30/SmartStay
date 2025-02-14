@@ -19,11 +19,9 @@
                     <div class="card p-4">
                         <div class="card-body">
                             <h5 class="card-title">
+                                (브랜드 대표 이미지)
                                 <a th:href="@{/brand/brandRead(brand_num=${brandDTO.brand_num})}" th:text="${brandDTO.brand_name}">브랜드 이름</a>
                             </h5>
-                            <ul class="list-group list-group-flush">
-
-                            </ul>
                         </div>
                     </div>
                 </div>
@@ -42,26 +40,9 @@
                     <div class="card p-4">
                         <div class="card-body">
                             <h5 class="card-title">
+                                (호텔 대표 이미지)
                                 <a th:href="@{/hotel/hotelRead(hotel_num=${hotelDTO.hotel_num})}" th:text="${hotelDTO.hotel_name}">호텔 이름</a>
                             </h5>
-                            <ul class="list-group list-group-flush">
-
-                                <li class="list-group-item">
-                                    <strong>호텔 주소 : </strong> <span th:text="${hotelDTO.address}">호텔 주소</span>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>연락처 : </strong> <span th:text="${hotelDTO.tel}">연락처</span>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>대표자 이름 : </strong> <span th:text="${hotelDTO.owner}">호텔 주소</span>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>사업자 번호 : </strong> <span th:text="${hotelDTO.business_num}">사업자 번호</span>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>별점 : </strong> <span th:text="${hotelDTO.score}">별점</span>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>

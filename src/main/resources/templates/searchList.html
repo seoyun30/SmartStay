@@ -16,29 +16,29 @@
 
         <table class="table" th:if="${results != null && results.size() > 0}">
             <div class="container mt-5">
-                <div th:each="hotel : ${results}" class="mb-4">
-                    <div class="card shadow-lg border-0">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary font-weight-bold">
-                                <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none">호텔 이름</a>
-                            </h5>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">
+                <div class="row">
+                    <div th:each="hotel : ${results}" class="col-md-6 mb-4">
+                        <div class="card shadow-lg border-0">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary font-weight-bold">
+                                    <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none">호텔 이름</a>
+                                </h5>
+                                <div>
                                     (호텔 대표 이미지)
-                                </li>
-                                <li class="list-group-item">
-                                    <span class="font-weight-bold text-secondary">주소 : </span>
-                                    <span class="text-dark" th:text="${hotel.address}">주소</span>
-                                </li>
-                                <li class="list-group-item">
-                                    <span class="font-weight-bold text-secondary">가격 : </span>
-                                    <span class="text-dark" th:text="${hotel.lowestPrice + '원~'}">가격</span>
-                                </li>
-                                <li class="list-group-item  mb-3">
-                                    <span class="font-weight-bold text-secondary">별점 : </span>
-                                    <span class="text-dark" th:text="${hotel.score}">별점</span>
-                                </li>
-                            </ul>
+                                    <div class="mt-1">
+                                        <span class="font-weight-bold text-secondary">주소 </span>
+                                        <span class="text-dark" th:text="${hotel.address}">주소</span><br>
+                                    </div>
+                                    <div class="mt-1">
+                                        <span class="font-weight-bold text-secondary">가격 </span>
+                                        <span class="text-dark" th:text="${hotel.lowestPrice + '원~'}">최저가</span><br>
+                                    </div>
+                                    <div class="mt-1">
+                                        <span class="font-weight-bold text-secondary">별점 </span>
+                                        <span class="text-dark" th:text="${hotel.score}">별점</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -36,7 +36,7 @@ public class Room extends BaseEntity{
     @Column(nullable = false)
     private RoomState room_state; //룸 상태
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_num")
     private Hotel hotel; //호텔
 }

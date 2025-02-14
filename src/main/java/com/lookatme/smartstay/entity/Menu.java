@@ -24,7 +24,7 @@ public class Menu extends BaseEntity {
 
     private Long menu_price; //메뉴 가격
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_num")
     private Hotel hotel; //호텔
 }
