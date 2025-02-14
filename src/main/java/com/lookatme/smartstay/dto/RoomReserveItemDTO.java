@@ -51,4 +51,9 @@ public class RoomReserveItemDTO extends BaseEntity {
         this.roomReserveDTO = roomReserveDTO;
         return this;
     }
+
+    public RoomReserveItemDTO setPayDTO(PayDTO payDTO) {
+        this.payDTO = payDTO;
+        return this;
+    }
 }

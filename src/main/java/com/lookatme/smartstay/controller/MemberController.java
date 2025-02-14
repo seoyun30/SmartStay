@@ -3,13 +3,13 @@ package com.lookatme.smartstay.controller;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.dto.PageResponseDTO;
+import com.lookatme.smartstay.dto.RoomReserveItemDTO;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.MemberService;
+import com.lookatme.smartstay.service.RoomReserveService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -28,6 +28,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final RoomReserveService roomReserveService;
 
     @GetMapping("/adMypage") // 마이페이지 정보보기(관리자)
     public String adMypage(Principal principal, Model model, Authentication authentication){
@@ -137,6 +138,11 @@ public class MemberController {
 
     @GetMapping("/userAllMyPage") //user의 첫 마이페이지
     public String userAllMyPage(Model model, Principal principal){
+
+        //내 룸예약 조회
+        List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveService.findMyRoomReserve(principal.getName());
+        model.addAttribute("roomReserveItemDTOList", roomReserveItemDTOList);
+
         return "member/userAllMyPage";
     }
 
@@ -343,6 +349,25 @@ public class MemberController {
         }
         return "redirect:/member/cmPowerList";
 
+    }
+
+    //회원용 룸 예약 목록
+    @GetMapping("/myRoomReserveList")
+    public String myRoomReserveList(Principal principal, Model model){
+        //내 룸예약 조회
+        List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveService.findMyRoomReserve(principal.getName());
+        model.addAttribute("roomReserveItemDTOList", roomReserveItemDTOList);
+
+        return "member/myRoomReserveList";
+    }
+
+    @GetMapping("/myRoomReserveRead")
+    public String myRoomReserveRead(Long roomreserveitem_num, Principal principal, Model model){
+        //내 룸예약 조회
+        RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(roomreserveitem_num, principal.getName());
+        model.addAttribute("roomReserveItemDTO", roomReserveItemDTO);
+
+        return "member/myRoomReserveRead";
     }
 
 

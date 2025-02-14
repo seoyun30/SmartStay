@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/mainlayout}">
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -11,7 +11,65 @@
 <body>
 
 <th:block layout:fragment="content">
+    <div class="row">
+        <div class="col-8 offset-2">
+            <div class="row">
 
+                <div class="col-12">
+                    <div class="mb-3 text-center">
+                        <h2 th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}"></h2>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="room_name" class="form-label">룸 이름</label>
+                        <input type="text" class="form-control" th:value="${roomReserveItemDTO.roomDTO.room_name}" required id="room_name" readonly>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="in_date" class="form-label">체크인</label>
+                        <input type="text" class="form-control" th:value="${roomReserveItemDTO.in_date}" required id="in_date" readonly>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="out_date" class="form-label">체크아웃</label>
+                        <input type="text" class="form-control" th:value="${roomReserveItemDTO.out_date}" required id="out_date" readonly>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="room_info" class="form-label">룸 정보</label>
+                        <input type="text" min="0" class="form-control" th:value="${roomReserveItemDTO.roomDTO.room_info}" id="room_info" readonly>
+                        <p th:if="${#fields.hasErrors('roomReserveItemDTO.roomDTO.room_info')}" th:errors="${roomReserveItemDTO.roomDTO.room_info}" class="fieldError"></p>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="room_type"  class="form-label">룸 타입</label>
+                        <input type="text" min="0" class="form-control" th:value="${roomReserveItemDTO.roomDTO.room_type}" id="room_type" readonly>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="room_bed" class="form-label">룸 인원수</label>
+                        <input type="number" min="0" class="form-control" th:value="${roomReserveItemDTO.roomDTO.room_bed}" id="room_bed" readonly>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="room_price" class="form-label">예약 가격</label>
+                        <input type="number" min="0" class="form-control" th:value="${roomReserveItemDTO.payDTO.amount}" id="room_price" readonly>
+                    </div>
+                </div>
+
+                <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-dark">내 정보 메인</button>
+                <button type="button" onclick="location.href='/orderreserve/orderReserveRegister'"class="mt-3 btn btn-dark">룸서비스 주문</button>
+
+            </div>
+        </div>
+    </div>
 </th:block>
 
 </body>
