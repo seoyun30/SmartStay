@@ -18,50 +18,82 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="brand_name" class="form-label">브랜드명</label>
-                            <input type="text" class="form-control" th:field="*{brand_name}" required id="brand_name" >
+                            <input type="text" class="form-control" th:field="*{brand_name}" id="brand_name" placeholder="브랜드명을 입력하세요." required >
                             <p th:if="${#fields.hasErrors('brand_name')}" th:errors="*{brand_name}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="business_num" class="form-label">법인사업자번호</label>
-                            <input type="number" min="0" class="form-control" th:field="*{business_num}" id="business_num">
+                            <input type="number" min="0" class="form-control" th:field="*{business_num}" id="business_num" placeholder="번호만 입력하세요." required>
                             <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="owner" class="form-label">대표자</label>
-                            <input type="text" min="0" class="form-control" th:field="*{owner}" id="owner">
+                            <input type="text" min="0" class="form-control" th:field="*{owner}" id="owner" placeholder="이름을 입력하세요." required>
                             <p th:if="${#fields.hasErrors('owner')}" th:errors="*{owner}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="tel" class="form-label">연락처</label>
-                            <input type="number" min="0" class="form-control" th:field="*{tel}" id="tel">
+                            <input type="number" min="0" class="form-control" th:field="*{tel}" id="tel" placeholder="숫자만 입력하세요.">
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
                     </div>
 
                     <!--이미지-->
-                    <div class="row imgDiv row-cols-md-3 ">
-                        <div class="col " style="border: 1px solid black;">
-                            <input type="file" id="imgFile" name="multi" class="imgFile">
+                    <div class="col-12">
+                        <div class="mb-3 imgA">
+                            <label for="imgFile" class="form-label">대표 이미지</label>
+                            <input class="form-control imgInput mainimg" id="imgFile" accept="image/*" name="multi" type="file" required>
+                            <div class="row main imgpreview"></div>
+                            <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">사진지우기</button>
                         </div>
                     </div>
 
-                    <div class="row mb-3 fileinput">
-                        <input type="file" class="imgpreviewinput"><br>
-                    </div>
-
                     <div class="col-12">
-                        <button type="submit" class="btn btn-dark" style="float:right">등록</button>
+                        <button type="submit" class="btn btn-primary" style="float:right; margin-left: 10px;">등록</button>
                         <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
                         <script>
                             $(".Listbtn").on("click", function () {
                                 location.href = "/brand/brandList";
-                            })
+                            });
+
+                            document.addEventListener("DOMContentLoaded", function() {
+                                const formFile = document.getElementById('imgFile');
+                                const imgPreview = document.querySelector('.imgpreview');
+                                const removeMainImage = document.getElementById('removeMainImage');
+
+                                formFile.addEventListener('change', function(event) {
+                                    const file = event.target.files[0];
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = function(e) {
+                                            const img = document.createElement('img');
+                                            img.src = e.target.result;
+                                            img.alt = file.name;
+                                            img.style.width = '350px';
+                                            img.style.height = 'auto';
+                                            img.style.objectFit = 'cover';
+
+                                            imgPreview.innerHTML = '';
+                                            imgPreview.appendChild(img);
+
+                                            removeMainImage.style.display = 'block';
+                                        };
+                                        reader.readAsDataURL(file);
+                                    }
+                                });
+
+                                removeMainImage.addEventListener('click', function() {
+                                    formFile.value = '';
+                                    imgPreview.innerHTML = '';
+                                    removeMainImage.style.display = 'none';
+                                });
+                            });
                         </script>
                     </div>
                 </div>
