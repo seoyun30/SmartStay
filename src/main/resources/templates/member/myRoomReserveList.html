@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/mainlayout}">
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -11,6 +11,91 @@
 <body>
 
 <th:block layout:fragment="content">
+
+    <div class="row">
+        <h1 class="text-center fw-bold mb-3">내 룸예약 이력</h1>
+        <div class="col-12 mb-3">
+            <div class="card">
+                <form action="#" method="get">
+                    <h3 class="text-center fw-bold mt-3">검색 조건</h3>
+                    <div class="input-group p-3">
+                        <span class="input-group-text">호텔 이름</span>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="input-group p-3">
+                        <span class="input-group-text">방 이름</span>
+                        <input type="text" class="form-control">
+                    </div>
+
+                    <div class="input-group p-3">
+                        <span class="input-group-text">시작일</span>
+                        <input type="date" class="form-control" name="sdate"
+                              > <!--예약시작일-->
+
+                        <span class="input-group-text">종료일</span>
+                        <input type="date" class="form-control" name="edate"
+                               > <!--예약종료일-->
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
+                        <button type="submit" class="btn btn-primary">검색</button>
+                        <button type="reset" class="btn btn-secondary">초기화</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <table class="table table-hover table-fixed">
+                        <thead>
+                        <tr class="text-center">
+                            <th scope="col" class="w-10 text-nowrap">예약 번호</th>
+                            <th scope="col" class="w-15 text-nowrap">예약 호텔</th>
+                            <th scope="col" class="w-15 text-nowrap">예약 방</th>
+                            <th scope="col" class="w-12 text-nowrap">체크인 날짜</th>
+                            <th scope="col" class="w-12 text-nowrap">체크아웃 날짜</th>
+                            <th scope="col" class="w-8 text-nowrap">예약 인원</th>
+                            <th scope="col" class="w-12 text-nowrap">요청 사항</th>
+                            <th scope="col" class="w-12 text-nowrap">결제 금액</th>
+                            <th scope="col" class="w-12 text-nowrap">예약 상태</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:if="${roomReserveItemDTOList.isEmpty()}">
+                            <tr>
+                                <td colspan="9" class="text-center align-middle">
+                                    <span class="h5 fw-bold">최근 예약 내역이 없습니다.</span>
+                                </td>
+                            </tr>
+                        </th:block>
+                        <th:block th:unless="${roomReserveItemDTOList.isEmpty()}" th:each="roomReserveItem : ${roomReserveItemDTOList}">
+                            <tr class="text-center align-middle">
+                                <td th:text="${roomReserveItem.roomReserveDTO.reserve_id}" class="w-10">예약 번호</td>
+                                <td th:text="${roomReserveItem.roomDTO.hotelDTO.hotel_name}" class="w-15">예약 호텔</td>
+                                <td class="w-15">
+                                    <a th:href="@{/searchRoomRead(room_num=${roomReserveItem.roomDTO.room_num})}"
+                                       th:text="${roomReserveItem.roomDTO.room_name}">예약 방</a>
+                                </td>
+                                <td th:text="${#temporals.format(roomReserveItem.in_date, 'yyyy.MM.dd HH:mm')}" class="w-12">체크인 날짜</td>
+                                <td th:text="${#temporals.format(roomReserveItem.out_date, 'yyyy.MM.dd HH:mm')}" class="w-12">체크아웃 날짜</td>
+                                <td th:text="${roomReserveItem.count}" class="w-8">예약 인원</td>
+                                <td th:text="${roomReserveItem.reserve_request}" class="w-12 text-truncate">요청 사항</td>
+                                <td th:text="${roomReserveItem.day * roomReserveItem.roomDTO.room_price}" class="w-12">결제 금액</td>
+                                <td th:text="${roomReserveItem.roomReserveDTO.check_state}" class="w-12">예약 상태</td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-primary">마이페이지 메인</button>
+            </div>
+        </div>
+    </div>
 
 </th:block>
 
