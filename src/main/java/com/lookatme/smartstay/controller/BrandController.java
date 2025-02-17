@@ -44,8 +44,9 @@ public class BrandController {
         return "brand/brandRegister";
     }
     @PostMapping("/brandRegister")
-    public String brandRegisterPost(Model model, BrandDTO brandDTO, Principal principal,
-                                    List<MultipartFile> multi, RedirectAttributes redirectAttributes) throws Exception {
+    public String brandRegisterPost(BrandDTO brandDTO, RedirectAttributes redirectAttributes,
+                                    @RequestParam(value = "multipartFiles", required = false)  List<MultipartFile> multi,
+                                    Principal principal) throws Exception {
 
         log.info("brandRegister : " + brandDTO);
         multi.forEach(multipartFile -> {log.info("multipartFile : " + multipartFile);});
@@ -70,7 +71,8 @@ public class BrandController {
 
     //상세보기
     @GetMapping("/brandRead")
-    public String brandRead(Long brand_num, Model model) {
+    public String brandRead(@RequestParam(required = false) Long brand_num, Principal principal,
+                            Model model, RedirectAttributes redirectAttributes) {
         BrandDTO brandDTO = brandService.read(brand_num);
         model.addAttribute("brandDTO", brandDTO);
         return "brand/brandRead";
@@ -86,7 +88,7 @@ public class BrandController {
     @PostMapping("/brandModify")
     public String brandModifyPost(BrandDTO brandDTO, BindingResult bindingResult,
                                   @RequestParam("delnumList") List<Long> delnumList,
-                                  @RequestParam("multipartFiles") List<MultipartFile> multipartFiles,
+                                  @RequestParam("multipartFiles") List<MultipartFile> multi,
                                   ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
 
         if (bindingResult.hasErrors()) {
@@ -94,7 +96,7 @@ public class BrandController {
             return "brand/brandModify";
         }
         log.info("유효성 통과");
-        brandService.update(brandDTO, multipartFiles );
+        brandService.update(brandDTO, multi);
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
         log.info("수정 완료");
