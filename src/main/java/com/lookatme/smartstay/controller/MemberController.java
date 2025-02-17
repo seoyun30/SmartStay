@@ -286,12 +286,12 @@ public class MemberController {
     @GetMapping("/adPowerList") // 권한승인(총판)
     public String adPowerList(Principal principal, PageRequestDTO pageRequestDTO, Model model, String email) {
 
-        PageResponseDTO<MemberDTO> adPowerList = memberService.adPowerList(pageRequestDTO, email);
+        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.adPowerList(pageRequestDTO, email);
 
-        log.info("전달되는 pageResponseDTO" + adPowerList);
-        log.info("전달되는 pageResponseDTO DTO리스트" + adPowerList.getDtoList());
+        log.info("전달되는 pageResponseDTO" + pageResponseDTO);
+        log.info("전달되는 pageResponseDTO DTO리스트" + pageResponseDTO.getDtoList());
 
-        model.addAttribute("pageResponseDTO", adPowerList);
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
 
 
 
@@ -331,8 +331,8 @@ public class MemberController {
         log.info(principal.getName());
         String email = principal.getName();
 
-        PageResponseDTO<MemberDTO> cmPowerList = memberService.cmPowerList(pageRequestDTO, email);
-        model.addAttribute("pageResponseDTO", cmPowerList);
+        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.cmPowerList(pageRequestDTO, email);
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
 
 
         return "member/cmPowerList";

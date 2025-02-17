@@ -93,19 +93,17 @@
     <!--페이징처리-->
     <div class="pagination mt-3" th:if="${pageResponseDTO != null and not #lists.isEmpty(pageResponseDTO.dtoList)}">
         <th:block th:if="${pageResponseDTO.prev}">
-            <a class="pagingbtn" th:href="@{/member/adPowerList(page=${pageResponseDTO.start -1})}">이전</a>
+            <a class="pagingbtn" th:href="@{/member/adPowerList(page=${pageResponseDTO.start -1} , keyword=${pageRequestDTO.keyword})}">이전</a>
         </th:block>
 
-        <div th:with="a=${pageRequestDTO}">
-            <th:block th:each="i: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
-                <a class="pagingbtn" th:href="@{/member/adPowerList(page=${i})}">
-                    [[${i}]]
-                </a>
-            </th:block>
-        </div>
+        <th:block th:each="i: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+            <a class="pagingbtn" th:href="@{/member/adPowerList(page=${i}, keyword=${pageRequestDTO.keyword})}">
+                [[${i}]]
+            </a>
+        </th:block>
 
         <th:block th:if="${pageResponseDTO.next}">
-            <a class="pagingbtn" th:href="@{/member/adPowerList.html(page=${pageResponseDTO.end + 1})}">다음</a>
+            <a class="pagingbtn" th:href="@{/member/adPowerList.html(page=${pageResponseDTO.end + 1} , keyword=${pageRequestDTO.keyword})}">다음</a>
         </th:block>
     </div>
 
