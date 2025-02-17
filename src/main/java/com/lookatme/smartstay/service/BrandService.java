@@ -81,36 +81,6 @@ public class BrandService {
         return brandDTOS;
     }
 
-    /*//brand 목록
-    public List<BrandDTO> brandList(){
-        List<Brand> brands = BrandRepository.findAll();
-        List<BrandDTO> brandDTOS = brands.stream()
-                .map(brand -> modelMapper.map(brand, BrandDTO.class)).collect(Collectors.toList());
-        return brandDTOS;
-    }
-
-    //목록에서 내가 속한 브랜드만 보기
-    public List<BrandDTO> myBrand(String email, Member member) {
-        List<Brand> brands;
-
-        // member에서 role을 확인하여 슈퍼어드민 여부를 체크
-        if (member != null && "SUPERADMIN".equals(member.getRole())) {
-            // 슈퍼어드민일 경우 모든 브랜드를 조회
-            brands = BrandRepository.findAll();
-        } else {
-            // 슈퍼어드민이 아니라면, 이메일에 해당하는 브랜드만 조회
-            brands = BrandRepository.findByEmail(email);
-        }
-
-        // 브랜드 리스트를 BrandDTO로 변환
-        List<BrandDTO> brandDTOS = brands.stream()
-                .map(brand -> modelMapper.map(brand, BrandDTO.class))
-                .collect(Collectors.toList());
-
-        return brandDTOS;
-    }*/
-
-
     //brand 상세보기
     public BrandDTO read(Long id) {
         Brand brand = BrandRepository.findById(id).orElseThrow(EntityNotFoundException::new);

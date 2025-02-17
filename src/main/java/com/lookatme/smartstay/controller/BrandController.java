@@ -4,19 +4,19 @@ import com.lookatme.smartstay.Util.PagenationUtil;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.BrandService;
 import com.lookatme.smartstay.service.ImageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -33,6 +33,7 @@ public class BrandController {
     private final BrandService brandService;
     private final ImageService imageService;
     private final MemberRepository memberRepository;
+    private final ImageRepository imageRepository;
     private PagenationUtil pagenation;
     private final PagenationUtil pagenationUtil;
 
@@ -83,7 +84,7 @@ public class BrandController {
         return "brand/brandModify";
     }
     @PostMapping("/brandModify")
-    public String brandModifyPost(@Valid BrandDTO brandDTO, BindingResult bindingResult,
+    public String brandModifyPost(BrandDTO brandDTO, BindingResult bindingResult,
                                   @RequestParam("delnumList") List<Long> delnumList,
                                   @RequestParam("multipartFiles") List<MultipartFile> multipartFiles,
                                   ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
@@ -105,5 +106,16 @@ public class BrandController {
         log.info("삭제할 번호 :"+id);
         brandService.delete(id);
         return "redirect:/brand/brandList";
+    }
+
+    @DeleteMapping("/deleteImage/{imageId}")
+    public ResponseEntity<String> deleteImage(@PathVariable Long imageId) {
+        try {
+            imageService.deleteImage(imageId);
+            return ResponseEntity.ok("이미지가 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            log.error("이미지 삭제 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
+        }
     }
 }
