@@ -18,41 +18,52 @@
                     <div class="row mt-5">
                         <div class="col text-center">
                             <div class="row">
-                                <!--사진 들어갈 예정
-                                <div class="col">
-                                    <img th:src="${itemDTO.itemImgDTOList.get(0).imgUrl}" class="card-img-top" th:alt="${itemDTO.getItemImgDTOList().get(0).oriImgName}">
-                                </div> -->
-                                    <div class="col text-center">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <input id="hotel_num" type="hidden" th:value="${hotelDTO.hotel_num}"></input>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text">호텔명</span>
-                                                    <input type="text" class="form-control" th:value="${hotelDTO.hotel_name}">
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text">사업자번호</span>
-                                                    <input type="number" class="form-control" th:value="${hotelDTO.business_num}">
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text">대표자</span>
-                                                    <input type="text" class="form-control" th:value="${hotelDTO.owner}">
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text">주소</span>
-                                                    <input type="text" class="form-control" th:value="${hotelDTO.address}">
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text">전화번호</span>
-                                                    <input type="number" class="form-control" th:value="${hotelDTO.tel}">
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text">별점</span>
-                                                    <input type="text" class="form-control" th:value="${hotelDTO.score}">
-                                                </div>
+
+                                <div class="row mb-3">
+                                    <th:block th:unless="${hotelDTO.imageDTOList.isEmpty()}" th:each="imgdto: ${hotelDTO.imageDTOList}">
+                                        <div class="col">
+                                            <img class="img-fluid" th:src="${imgdto.image_url}">
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${hotelDTO.imageDTOList.isEmpty()}">
+                                        <div class="col">
+                                            이미지가 없습니다.
+                                        </div>
+                                    </th:block>
+                                </div>
+
+                                <div class="col text-center">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <input id="hotel_num" type="hidden" th:value="${hotelDTO.hotel_num}"></input>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">호텔명</span>
+                                                <input type="text" class="form-control" th:value="${hotelDTO.hotel_name}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">사업자번호</span>
+                                                <input type="number" class="form-control" th:value="${hotelDTO.business_num}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">대표자</span>
+                                                <input type="text" class="form-control" th:value="${hotelDTO.owner}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">주소</span>
+                                                <input type="text" class="form-control" th:value="${hotelDTO.address}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">전화번호</span>
+                                                <input type="number" class="form-control" th:value="${hotelDTO.tel}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">별점</span>
+                                                <input type="text" class="form-control" th:value="${hotelDTO.score}">
                                             </div>
                                         </div>
                                     </div>
+                                </div>
                                 <div class="col-12">
                                     <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
                                     <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>

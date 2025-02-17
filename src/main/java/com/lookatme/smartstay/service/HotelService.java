@@ -2,9 +2,11 @@ package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Hotel;
+import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.BrandRepository;
 import com.lookatme.smartstay.repository.HotelRepository;
@@ -100,7 +102,10 @@ public class HotelService {
         Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
         hotelDTO.setLowestPrice(lowestPrice);
 
-        //.setItemImgDTOList(item.getItemImgList());
+        List<Image> imageList = imageService.findImagesByTarget("hotel", hotel.getHotel_num());
+        List<ImageDTO> imageDTOList = imageList.stream().map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+        hotelDTO.setImageDTOList(imageDTOList);
+
         return hotelDTO;
     }
 

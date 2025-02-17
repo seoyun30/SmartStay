@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/review")
 public class ReviewController {
 
-//    private final ReviewService reviewService;
+    private final ReviewService reviewService;
 //
 //    //관리자 리뷰 목록 페이지
 //
@@ -33,12 +33,12 @@ public class ReviewController {
 //
 //
 //    //등록 페이지 이동
-//    @GetMapping("/reviewRegister")
-//    public String reviewRegisterFrom(Principal principal){
-//        log.info("입력폼 페이지 이동...");
-//
-//        return "review/reviewRegister";
-//    }
+    @GetMapping("/reviewRegister")
+    public String reviewRegisterFrom(Principal principal){
+        log.info("입력폼 페이지 이동...");
+
+        return "review/reviewRegister";
+    }
 //
 //    //등록 내용 저장
 //    @PostMapping("/reviewRegister")

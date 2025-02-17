@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.dto.PageResponseDTO;
@@ -10,6 +11,8 @@ import com.lookatme.smartstay.service.RoomReserveService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -283,12 +286,12 @@ public class MemberController {
     @GetMapping("/adPowerList") // 권한승인(총판)
     public String adPowerList(Principal principal, PageRequestDTO pageRequestDTO, Model model, String email) {
 
-        PageResponseDTO<MemberDTO> adPowerList = memberService.adPowerList(pageRequestDTO, email);
+        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.adPowerList(pageRequestDTO, email);
 
-        log.info("전달되는 pageResponseDTO" + adPowerList);
-        log.info("전달되는 pageResponseDTO DTO리스트" + adPowerList.getDtoList());
+        log.info("전달되는 pageResponseDTO" + pageResponseDTO);
+        log.info("전달되는 pageResponseDTO DTO리스트" + pageResponseDTO.getDtoList());
 
-        model.addAttribute("pageResponseDTO", adPowerList);
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
 
 
 
@@ -322,12 +325,14 @@ public class MemberController {
     }
 
     @GetMapping("/cmPowerList") // 권한승인(치프, 매니져)
-    public String cmPowerList(Principal principal, Model model){
+    public String cmPowerList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
 
         log.info(principal);
         log.info(principal.getName());
-        List<MemberDTO> cmPowerList = memberService.cmPowerList(principal.getName());
-        model.addAttribute("cmPowerList", cmPowerList);
+        String email = principal.getName();
+
+        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.cmPowerList(pageRequestDTO, email);
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
 
 
         return "member/cmPowerList";
@@ -336,17 +341,17 @@ public class MemberController {
 
     @PostMapping("/powerMember") //권한 승인
     public String powerMember(@RequestParam("email") String email, Model model){
-
-
-        try {
-            memberService.powerMember(email);
-            List<MemberDTO> cmPowerList = memberService.cmPowerList(email);
-            model.addAttribute("cmPowerList", cmPowerList);
-            model.addAttribute("message", "변경완료");
-
-        } catch (Exception e) {
-            model.addAttribute("message", "변경오류");
-        }
+//
+//
+//        try {
+//            memberService.powerMember(email);
+//            List<MemberDTO> cmPowerList = memberService.cmPowerList(email);
+//            model.addAttribute("cmPowerList", cmPowerList);
+//            model.addAttribute("message", "변경완료");
+//
+//        } catch (Exception e) {
+//            model.addAttribute("message", "변경오류");
+//        }
         return "redirect:/member/cmPowerList";
 
     }

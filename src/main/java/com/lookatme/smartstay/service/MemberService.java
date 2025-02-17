@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -364,9 +365,10 @@ public class MemberService implements UserDetailsService {
 
 
 
-    public PageResponseDTO<MemberDTO> adPowerList(PageRequestDTO pageRequestDTO, String email){ //슈퍼어드민이 승인하는 권한리스트
+    public PageResponseDTO<MemberDTO> adPowerList(PageRequestDTO pageRequestDTO, String email) { //슈퍼어드민이 승인하는 권한리스트
 
         Pageable pageable = pageRequestDTO.getPageable("member_num");
+
         log.info(pageable);
         log.info("서비스진입");
 
@@ -383,76 +385,82 @@ public class MemberService implements UserDetailsService {
         List<Member> memberList = memberPage.getContent();
 
 
-
-        if (memberList.isEmpty()) {
+        if (memberList == null) {
+            return null;
         } else {
-            memberList.forEach(member -> log.info("📄 {}", member));
-        }
-
-
-        //특정 이메일의 권한 변경
-        if (email != null && !email.isEmpty()) {
-            Member member = memberRepository.findByEmail(email);
-
-
-            if (member != null) {
-                member.setPower(member.getPower() == Power.YES ? Power.NO : Power.YES);
-                memberRepository.save(member);
-
-                memberPage = memberRepository.selectBySuperAdmin(pageable);
-                memberList = memberPage.getContent();
-            }
-        }
-
-
-        List<MemberDTO> memberDTOList = new ArrayList<>();
-        try {
-            memberDTOList = memberList.stream()
+            List<MemberDTO> memberDTOList = memberList.stream()
                     .map(member -> modelMapper.map(member, MemberDTO.class))
                     .collect(Collectors.toList());
-            log.info("📌 DTO 변환 완료 - 변환된 DTO 개수: {}", memberDTOList.size());
-        } catch (Exception e) {
-            log.error("❌ DTO 변환 중 오류 발생: ", e);
-        }
 
             log.info("dto변환");
 
+            memberDTOList.forEach(dto -> log.info(dto));
+
+
             return PageResponseDTO.<MemberDTO>withAll()
                     .pageRequestDTO(pageRequestDTO)
-                    .dtoList(memberDTOList.isEmpty() ? Collections.emptyList() : memberDTOList)  // ✅ null 대신 빈 리스트 반환
+                    .dtoList(memberDTOList)
                     .total((int) memberPage.getTotalElements())
                     .build();
 
+        }
     }
 
 
-    public List<MemberDTO> cmPowerList(String email) { //치프가 승인하는 권한리스트
+    public PageResponseDTO<MemberDTO> cmPowerList(PageRequestDTO pageRequestDTO, String email) { //치프가 승인하는 권한리스트
+//로그인한 권한을 승인해줄 치프의 이메일과 페이징처리를 위한 내용을 받아서
+        Member member  = memberRepository.findByEmail(email);
 
-        Member member = memberRepository.findByEmail(email);
-
-        log.info(member);
-        List<Member> memberList = null;
-        if(member != null && member.getBrand() != null) {
-            memberList = memberRepository.selectByChief(member.getBrand().getBrand_num());
-
-            log.info("권한리스트");
-            memberList.forEach(role -> log.info(role));
+        if (member == null || member.getBrand() == null) {      //내이메일로 찾아온 정보가 없거나 소속이 없다면
+            return null; // 또는 예외 처리
         }
+
+        Long brandNum = member.getBrand().getBrand_num();
+
+        Pageable pageable = pageRequestDTO.getPageable("member_num");
+
+        log.info(pageable);
+        log.info("서비스진입");
+
+        Page<Member> memberPage;
+        if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
+            log.info("검색어 적용: " + pageRequestDTO.getKeyword());
+            memberPage = memberRepository.searchSelectByChief(brandNum, pageRequestDTO.getKeyword(), pageable);
+        } else {
+            log.info("치프 매니저 리스트 적용");
+            memberPage = memberRepository.selectByChief(brandNum, pageable);
+        }
+        List<Member> memberList = memberPage.getContent();
+
+        log.info("권한리스트");
+        memberList.forEach(role -> log.info(role));
+
 
         if(memberList == null) {
             return null;
         }else {
             List<MemberDTO> memberDTOList = memberList.stream()
-                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class)
-                            .setBrandDTO( modelMapper.map(memberA.getBrand() , BrandDTO.class) )
-                            .setHotelDTO(modelMapper.map(memberA.getHotel(), HotelDTO.class)))
-                            .collect(Collectors.toList());
+                    .map(memberA -> {
+                        MemberDTO dto = modelMapper.map(memberA, MemberDTO.class);
+                        if (memberA.getBrand() != null) {
+                            dto.setBrandDTO(modelMapper.map(memberA.getBrand(), BrandDTO.class));
+                        }
+                        if (memberA.getHotel() != null) {
+                            dto.setHotelDTO(modelMapper.map(memberA.getHotel(), HotelDTO.class));
+                        }
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
 
             log.info("dto변환");
             memberDTOList.forEach(dto -> log.info(dto));
 
 
-            return memberDTOList;
+            return PageResponseDTO.<MemberDTO>withAll()
+                    .pageRequestDTO(pageRequestDTO)
+                    .dtoList(memberDTOList)
+                    .total((int) memberPage.getTotalElements())
+                    .build();
         }
     }
 
