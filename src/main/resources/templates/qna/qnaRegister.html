@@ -25,20 +25,30 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="title" class="form-label">제목</label>
-                            <input type="text" class="form-control" th:field="*{title}" required id="title" >
+                            <input type="text" class="form-control" th:field="*{title}" id="title" required>
                             <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="content" class="form-label">내용</label>
-                            <textarea th:field="*{content}" min="0" name="content" class="form-control" id="content" rows="3"></textarea>
+                            <textarea th:field="*{content}" min="0" name="content" class="form-control" id="content" rows="3" required></textarea>
                             <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
                         </div>
                     </div>
 
+                    <!--이미지-->
                     <div class="col-12">
-                        <button type="submit" class="btn btn-dark" style="float:right">등록</button>
+                        <div class="mb-3 imgA">
+                            <label for="imgFile" class="form-label">이미지 파일 첨부</label>
+                            <input class="form-control imgInput mainimg" id="imgFile" accept="image/*" name="multi" type="file">
+                            <div class="row main imgpreview"></div>
+                            <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">사진지우기</button>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary" style="float:right; margin-left: 10px;">등록</button>
                         <button type="button" class="btn btn-dark Listbtn" style="float:right; margin-right: 10px;">목록</button>
                         <script>
                             $(".Listbtn").on("click", function () {
@@ -51,6 +61,40 @@
                                     event.preventDefault();  // 사용자가 '취소'를 클릭하면 폼 제출을 취소합니다.
                                 }
                             })
+
+                            //이미지 업로드
+                            document.addEventListener("DOMContentLoaded", function() {
+                                const formFile = document.getElementById('imgFile');
+                                const imgPreview = document.querySelector('.imgpreview');
+                                const removeMainImage = document.getElementById('removeMainImage');
+
+                                formFile.addEventListener('change', function(event) {
+                                    const file = event.target.files[0];
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = function(e) {
+                                            const img = document.createElement('img');
+                                            img.src = e.target.result;
+                                            img.alt = file.name;
+                                            img.style.width = '350px';
+                                            img.style.height = 'auto';
+                                            img.style.objectFit = 'cover';
+
+                                            imgPreview.innerHTML = '';
+                                            imgPreview.appendChild(img);
+
+                                            removeMainImage.style.display = 'block';
+                                        };
+                                        reader.readAsDataURL(file);
+                                    }
+                                });
+
+                                removeMainImage.addEventListener('click', function() {
+                                    formFile.value = '';
+                                    imgPreview.innerHTML = '';
+                                    removeMainImage.style.display = 'none';
+                                });
+                            });
                         </script>
                     </div>
                 </div>

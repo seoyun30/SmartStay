@@ -18,35 +18,35 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="hotel_name" class="form-label">호텔명</label>
-                            <input type="text" class="form-control" th:field="*{hotel_name}" required id="hotel_name" >
+                            <input type="text" class="form-control" th:field="*{hotel_name}" id="hotel_name" placeholder="브랜드명을 입력하세요." required>
                             <p th:if="${#fields.hasErrors('hotel_name')}" th:errors="*{hotel_name}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="business_num" class="form-label">사업자번호</label>
-                            <input type="number" min="0" class="form-control" th:field="*{business_num}" id="business_num">
+                            <input type="number" min="0" class="form-control" th:field="*{business_num}" id="business_num" placeholder="번호만 입력하세요." required>
                             <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="owner" class="form-label">대표자</label>
-                            <input type="text" min="0" class="form-control" th:field="*{owner}" id="owner">
+                            <input type="text" min="0" class="form-control" th:field="*{owner}" id="owner" placeholder="이름을 입력하세요." required>
                             <p th:if="${#fields.hasErrors('owner')}" th:errors="*{owner}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="address"  class="form-label">주소</label>
-                            <input type="text" min="0" class="form-control" th:field="*{address}" id="address">
+                            <input type="text" min="0" class="form-control" th:field="*{address}" id="address" placeholder="주소을 입력하세요." required>
                             <p th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="tel" class="form-label">연락처</label>
-                            <input type="number" min="0" class="form-control" th:field="*{tel}" id="tel">
+                            <input type="number" min="0" class="form-control" th:field="*{tel}" id="tel" placeholder="숫자만 입력하세요." required>
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
                     </div>

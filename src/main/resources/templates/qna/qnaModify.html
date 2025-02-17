@@ -11,9 +11,10 @@
 <th:block layout:fragment="content">
     <h1 class="text-center">문의사항 수정</h1>
     <!--수정 폼-->
-    <form action="/qna/qnaModify" method="post" th:object="${qnaDTO}">
+    <form action="/qna/qnaModify" method="post" th:object="${qnaDTO}" enctype="multipart/form-data">
         <div class="row">
             <div class="col-8 offset-2">
+                <input type="hidden" name="qna_num" th:value="${qnaDTO.qna_num}">
                 <div class="row">
 
                     <div class="col-12">
@@ -49,25 +50,111 @@
                     </div>
 
                     <div class="col-12">
-                        <button type="submit" class="btn btn-dark" style="float:right">저장</button>
-                        <button type="button" class="btn btn-dark Listbtn" style="float:right; margin-right: 10px;">목록</button>
+                        <input type="hidden" name="delnumList" id="delnumList">
+                        <div class="mb-3">
+                            <div id="image-list">
+                                <div id="image-main">
+                                    첨부 이미지
+                                    <th:block th:each="img : ${qnaDTO.imageDTOList}">
+                                        <th:block th:if="${img.repimg_yn == 'Y'}">
+                                            <img th:src="${img.image_url}" alt="Main Image" width="300px">
+                                            <button type="button" th:data-image-id="${img.image_id}" class="delete-image-btn"></button>
+                                            <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
+                                        </th:block>
+                                    </th:block>
+                                </div>
+                                <div class="mb-3 imgA">
+                                    <label for="formFile" class="form-label">이미지 변경</label>
+                                    <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="mult" type="file">
+                                    <div class="row main imgpreview"></div>
+                                    <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">사진 지우기</button>
+                                </div>
+                            </div>
 
-                        <script>
-                            $(".Listbtn").on("click", function () {
-                                location.href = "/qna/qnaList";
-                            })
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary" style="float:right; margin-left: 10px;">저장</button>
+                                <button type="button" class="btn btn-dark Listbtn" style="float:right; margin-right: 10px;">목록</button>
 
-                            // 등록 버튼 클릭 시 확인창 띄우기
-                            $("form").on("submit", function(event) {
-                                if (!confirm("수정하시겠습니까?")) {
-                                    event.preventDefault();  // 사용자가 '취소'를 클릭하면 폼 제출을 취소합니다.
-                                }
-                            })
-                        </script>
+                                <script>
+                                    $(".Listbtn").on("click", function () {
+                                        location.href = "/qna/qnaList";
+                                    })
+
+                                    // 등록 버튼 클릭 시 확인창 띄우기
+                                    $("form").on("submit", function(event) {
+                                        if (!confirm("수정하시겠습니까?")) {
+                                            event.preventDefault();  // 사용자가 '취소'를 클릭하면 폼 제출을 취소합니다.
+                                        }
+                                    })
+
+                                    // 이미지를 선택하면 미리보기와 삭제 버튼이 표시됩니다.
+                                    document.addEventListener("DOMContentLoaded", function() {
+                                        const formFile = document.getElementById('formFile');
+                                        const removeMainImage = document.getElementById('removeMainImage');
+                                        const imgPreview = document.querySelector('.imgpreview');
+
+                                        formFile.addEventListener('change', function(event) {
+                                            const file = event.target.files[0];
+                                            if (file) {
+                                                const reader = new FileReader();
+                                                reader.onload = function(e) {
+                                                    const img = document.createElement('img');
+                                                    img.src = e.target.result;
+                                                    img.alt = file.name;
+                                                    img.style.width = '350px';
+                                                    img.style.height = 'auto';
+                                                    img.style.objectFit = 'cover';
+
+                                                    imgPreview.innerHTML = '';
+                                                    imgPreview.appendChild(img);
+
+                                                    removeMainImage.style.display = 'block';
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        });
+
+                                        // 사진 지우기 버튼 클릭 시 이미지 제거
+                                        removeMainImage.addEventListener('click', function() {
+                                            formFile.value = '';
+                                            imgPreview.innerHTML = '';
+                                            removeMainImage.style.display = 'none';
+                                        });
+
+                                        // 이미지 삭제 버튼 클릭 시 확인 후 이미지 삭제 폼 제출
+                                        document.querySelectorAll('.delete-image-btn').forEach(button => {
+                                            button.addEventListener('click', function () {
+                                                const imageId = this.getAttribute('data-image-id');
+                                                if (confirm('정말 삭제하시겠습니까?')) {
+                                                    alert(`이미지 ID: ${imageId} 삭제됩니다.`);
+                                                    // 서버로 삭제 요청
+                                                    const data = new FormData();
+                                                    data.append("imageId", imageId);
+                                                    fetch(`/brand/deleteImage/${imageId}`, {
+                                                        method: 'POST',
+                                                        body: data
+                                                    }).then(response => {
+                                                        if (response.ok) {
+                                                            alert('이미지가 삭제되었습니다.');
+                                                            location.reload(); // 페이지 새로고침
+                                                        } else {
+                                                            alert('이미지 삭제에 실패했습니다.');
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        });
+                                    });
+                                </script>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </form>
+    <form id="deleteForm" action="/qna/qnaDelete" method="post" style="display:none;">
+        <input type="hidden" name="id" th:value="${qnaDTO.qna_num}">
     </form>
 </th:block>
 </body>

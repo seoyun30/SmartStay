@@ -17,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
 public class ReviewDTO {
 
     private Long rev_num; //리뷰 번호
