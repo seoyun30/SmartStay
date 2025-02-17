@@ -135,7 +135,7 @@ public class MemberService implements UserDetailsService {
 
     public Member saveMember(MemberDTO memberDTO){ //유저회원저장
 
-        validateDuplicateMember(memberDTO.getEmail());
+        validateDuplicateMember(memberDTO);
 
         Member member =
                 MemberDTO.dtoEntity(memberDTO);
@@ -151,7 +151,7 @@ public class MemberService implements UserDetailsService {
 
     public Member saveSuperAdminMember(MemberDTO memberDTO){ //최초치프회원 저장
 
-        validateDuplicateMember(memberDTO.getEmail());
+        validateDuplicateMember(memberDTO);
 
         Member member =
                 MemberDTO.dtoEntity(memberDTO);
@@ -173,7 +173,7 @@ public class MemberService implements UserDetailsService {
 
         log.info(memberDTO);
         log.info(brandDTO);
-        validateDuplicateMember(memberDTO.getEmail());
+        validateDuplicateMember(memberDTO);
 
         Member member =
                 MemberDTO.dtoEntity(memberDTO);
@@ -195,7 +195,7 @@ public class MemberService implements UserDetailsService {
 
     public Member saveManagerMember(MemberDTO memberDTO, BrandDTO brandDTO, HotelDTO hotelDTO){ //매니져회원 저장
 
-        validateDuplicateMember(memberDTO.getEmail());
+        validateDuplicateMember(memberDTO);
 
         Member member =
                 MemberDTO.dtoEntity(memberDTO);
@@ -219,14 +219,21 @@ public class MemberService implements UserDetailsService {
 
 
 
-    private void validateDuplicateMember(String memberDTO){
+    private void validateDuplicateMember(MemberDTO memberDTO){
 
         Member member =
-                memberRepository.findByEmail(memberDTO);
+                memberRepository.findByEmail(memberDTO.getEmail());
 
         if(member != null){
             throw new IllegalStateException("이미 가입된 회원입니다.");
         }
+
+        boolean existsByTel = memberRepository.existsByTel((memberDTO.getTel()));
+        if (existsByTel) {
+            throw new IllegalStateException("이미 사용중인 연락처입니다.");
+        }
+
+
 
     }
 

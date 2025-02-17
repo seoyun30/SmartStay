@@ -54,5 +54,25 @@
 
 </th:block>
 
+<script th:inline="javascript" layout:fragment="script" >
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const telInput = document.getElementById("tel");
+
+        // 숫자만 입력 가능하도록 설정
+        telInput.addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, ""); // 숫자가 아닌 모든 문자 제거
+        });
+
+        // 붙여넣기 방지 및 숫자만 허용
+        telInput.addEventListener("paste", function (e) {
+            e.preventDefault();
+            let pasteData = (e.clipboardData || window.clipboardData).getData("text");
+            this.value = pasteData.replace(/\D/g, ""); // 숫자가 아닌 문자 제거 후 붙여넣기
+        });
+    });
+
+</script>
+
 </body>
 </html>

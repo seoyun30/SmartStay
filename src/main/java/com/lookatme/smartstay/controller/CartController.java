@@ -63,6 +63,11 @@ public class CartController {
     @GetMapping("/cartList")
     public String cartList(Principal principal, Model model) {
 
+        if(principal == null) {
+            return "redirect:/member/login";
+        }
+
+
         //룸 예약 장바구니 목록
         List<RoomItemDTO> roomItemDTOList = cartService.getCartRoomItemList(principal.getName());
 

@@ -58,7 +58,8 @@ public class SecurityConfig {
             //인증된 사용자만 접근 가능
             auth.requestMatchers("/modify", "/member/logout").permitAll(); //수정,로그아웃
             //매핑명을 작업이름/매핑명
-            //auth.requestMatchers("/modify/**").authenticated(); modify로 시작하는 모든 맵핑에 제한
+            auth.requestMatchers("/cart/**").authenticated(); //cart로 시작하는 모든 맵핑에 제한
+            auth.requestMatchers("/pay/**").authenticated(); //pay로 시작하는 모든 맵핑에 제한
             auth.anyRequest().authenticated();
         });
 
@@ -70,7 +71,8 @@ public class SecurityConfig {
                 .usernameParameter("email") //userid를 username으로 사용
                 .permitAll() //모든 사용자가 로그인폼 사용
                 .failureHandler(new CustomAuthenticationFailureHandler()) //로그인 실패시 처리할 클래스
-                .successHandler(new CustomAuthenticationSuccessHandler())); //로그인 성공시처리할 클래스
+                .successHandler(new CustomAuthenticationSuccessHandler())
+                );
 
         //csrf 변조방지
         http.csrf(AbstractHttpConfigurer::disable);
@@ -86,6 +88,7 @@ public class SecurityConfig {
                                 .accessDeniedHandler(new AccessDeniedHandlerImpl())
 
                 );
+
 
        /* http.logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/member/adLogout"))

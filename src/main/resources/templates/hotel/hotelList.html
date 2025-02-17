@@ -31,7 +31,7 @@
           <th>주소</th>
           <th>전화번호</th>
           <th>별점</th>
-          <th>삭제</th>
+          <th sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')">삭제</th>
         </tr>
         </thead>
 
@@ -52,7 +52,7 @@
 
             <!--post 방식의 삭제버튼-->
             <td>
-              <form action="/hotel/hotelDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+              <form sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" action="/hotel/hotelDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
                 <input type="hidden" name="id" th:value="${hotel.hotel_num}"> <!-- 삭제할 hotel의 ID를 hidden 필드로 전달 -->
                 <button type="submit" class="btn btn-danger" style="padding: 5px 15px; width: auto; font-size: inherit; text-align: center;">삭제</button>
               </form>

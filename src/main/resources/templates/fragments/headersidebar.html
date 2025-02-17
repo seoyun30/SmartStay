@@ -86,7 +86,7 @@
                                         </a>
                                         <ul id="brand-nav" class="collapse" data-bs-parent="#sidebar-menu">
                                             <div class="sub-menu">
-                                                <li sec:authorize="hasAuthority('SUPERADMIN')">
+                                                <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" >
                                                     <a href="/brand/brandList" class="sidenav-item-link">
                                                         <i class="bi bi-circle"></i>
                                                         <span class="nav-text">브랜드 목록</span>

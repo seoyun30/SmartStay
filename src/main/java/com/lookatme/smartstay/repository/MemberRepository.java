@@ -70,4 +70,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     void deleteByHotelHotel_num(Long hotel_num);
 
 
+    boolean existsByTel(String tel);
 }

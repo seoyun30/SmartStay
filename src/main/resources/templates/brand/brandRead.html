@@ -34,47 +34,48 @@
                                 </div>
 
                                 <div class="col text-center">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <input id="brand_num" type="hidden" th:value="${brandDTO.brand_num}"></input>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">브랜드명</span>
-                                                <input type="text" class="form-control" th:value="${brandDTO.brand_name}">
-                                            </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">법인사업자번호</span>
-                                                <input type="number" class="form-control" th:value="${brandDTO.business_num}">
-                                            </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">대표자</span>
-                                                <input type="text" class="form-control" th:value="${brandDTO.owner}">
-                                            </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">전화번호</span>
-                                                <input type="number" class="form-control" th:value="${brandDTO.tel}">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <input id="brand_num" type="hidden" th:value="${brandDTO.brand_num}"></input>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text">브랜드명</span>
+                                                    <input type="text" class="form-control" th:value="${brandDTO.brand_name}">
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text">법인사업자번호</span>
+                                                    <input type="number" class="form-control" th:value="${brandDTO.business_num}">
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text">대표자</span>
+                                                    <input type="text" class="form-control" th:value="${brandDTO.owner}">
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text">전화번호</span>
+                                                    <input type="number" class="form-control" th:value="${brandDTO.tel}">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="col-12 mt-3">
+                                        <button type="button" class="btn btn-primary Modbtn" style="float:right; margin-left: 10px;">수정</button>
+                                        <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
+                                        <script>
+                                            let brand_num = document.getElementById("brand_num").value;
+
+                                            $(".Listbtn").on("click", function () {
+                                                location.href = "/brand/brandList";
+                                            })
+
+                                            $(".Modbtn").on("click", function () {
+                                                location.href = "/brand/brandModify?brand_num="+brand_num;
+                                            })
+                                        </script>
+                                    </div>
+
                                 </div>
-                                <div class="col-12">
-                                    <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
-                                    <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
-                                    <script>
-                                        let brand_num = document.getElementById("brand_num").value;
-
-                                        $(".Listbtn").on("click", function () {
-                                            location.href = "/brand/brandList";
-                                        })
-
-                                        $(".Modbtn").on("click", function () {
-                                            location.href = "/brand/brandModify?brand_num="+brand_num;
-                                        })
-                                    </script>
-                                </div>
-
                             </div>
                         </div>
-                    </div>
                 </form>
 
             </div>

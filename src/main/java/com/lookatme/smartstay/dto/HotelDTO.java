@@ -47,4 +47,14 @@ public class HotelDTO {
     public List<ImageDTO> imageDTOList = new ArrayList<>();
 
     private List<Long> imageIdList = new ArrayList<>();
+
+    private ImageDTO mainImage;
+
+    public ImageDTO getMainImage() {
+        return mainImage;
+    }
+
+    public void setMainImage(ImageDTO mainImage) {
+        this.mainImage = mainImage;
+    }
 }
