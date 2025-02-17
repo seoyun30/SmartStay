@@ -18,11 +18,16 @@
                     <h1>마이페이지</h1>
 
 
-                    <div class="container mt-5">
+                    <div class="text-end" style="padding-right: 25px; margin-top: 20px;">
+                        <span th:text="${#strings.concat(memberDTO.name, ' 님')}">이름</span>
+                    </div>
+
+                    <div class="container mt-1">
                         <div class="card">
                             <div class="card-body">
                                 <!-- 큰 카드 안에 또 다른 네모 카드들 배치 -->
                                 <div class="card mt-3 border" style="box-shadow: none;">
+
                                     <div class="card-body">
                                         <div class="row text-center">
                                             <!-- 내 정보 관리 -->
@@ -80,11 +85,7 @@
                                             </div>
                                         </th:block>
                                     </div>
-
-
                                 </div>
-
-
                             </div> <!-- card-body 끝 -->
                         </div> <!-- 큰 카드 끝 -->
                     </div>

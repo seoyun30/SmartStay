@@ -61,6 +61,11 @@ public class LoginController {
 
         }catch (IllegalStateException e){
 
+            if (e.getMessage().contains("연락처 중복")) { // 예외 메시지 확인 후 처리
+                bindingResult.rejectValue("phone", "error.memberDTO", "이미 사용중인 연락처입니다.");
+                return "member/adSignup"; // 다시 회원가입 폼으로 이동
+            }
+
             model.addAttribute("msg", e.getMessage());
 
             return "member/adSignup";
