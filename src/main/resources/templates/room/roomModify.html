@@ -75,7 +75,7 @@
                                 <th:block th:each="img : ${roomDTO.imageDTOList}">
                                     <th:block th:if="${img.repimg_yn == 'Y'}">
                                         <img th:src="${img.image_url}" alt="Main Image" width="300px">
-                                        <button type="button" th:data-image-id="${img.image_id}" class="delete-image-btn">삭제</button>
+                                        <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
                                     </th:block>
                                 </th:block>
                             </div>
@@ -86,7 +86,7 @@
                                     <th:block th:unless="${img.repimg_yn == 'Y'}">
                                         <div class="col-12" th:id="'image-' + ${img.image_id}">
                                             <img th:src="${img.image_url}" alt="Detail Image" width="200px">
-                                            <button type="button" th:data-image-id="${img.image_id}" class="delete-image-btn">삭제</button>
+                                            <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
                                         </div>
                                     </th:block>
                                 </th:block>
@@ -147,7 +147,8 @@
                         })
                             .then(response => {
                                 if (response.ok) {
-                                    document.getElementById(`image-${imageId}`).remove();
+                                    document.getElementById(`image-${imageId}`);
+                                    //이미지 삭제 성공시, 페이지에 자동 반영 기능 필요
                                     alert('이미지가 성공적으로 삭제되었습니다.');
                                 } else {
                                     alert('이미지 삭제에 실패했습니다.');
@@ -155,7 +156,7 @@
                             })
                             .catch(error => {
                                 console.error('Error:', error);
-                                alert('오류가 발생했습니다.');
+                                alert(error);
                             });
                     }
                 });
