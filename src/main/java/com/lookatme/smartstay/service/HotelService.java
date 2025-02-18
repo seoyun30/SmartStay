@@ -63,6 +63,8 @@ public class HotelService {
                     hotelDTO.setBrandDTO(brandDTO);
                     Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
                     hotelDTO.setLowestPrice(lowestPrice);
+                    ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
+                    hotelDTO.setMainImage(mainImage);
                     return hotelDTO;
                 })
                 .collect(Collectors.toList());
@@ -193,5 +195,15 @@ public class HotelService {
 
     public Long getHotelLowestPrice(Long hotel_num) {
         return roomRepository.findLowestRoomPriceByHotelNum(hotel_num);
+    }
+
+    public ImageDTO getHotelMainImage(Long hotel_num) {
+
+        List<Image> imageList = imageService.findImagesByTarget("hotel", hotel_num);
+
+        if (imageList != null && !imageList.isEmpty()) {
+            return modelMapper.map(imageList.get(0), ImageDTO.class);
+        }
+        return null;
     }
 }
