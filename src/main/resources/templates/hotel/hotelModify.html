@@ -23,8 +23,7 @@
                             <p th:if="${#fields.hasErrors('hotel_name')}" th:errors="*{hotel_name}" class="fieldError"></p>
                         </div>
                     </div>
-                    삭제번호 <input name="delnumList" value="1">
-                    file <input type="file" name="multipartFiles">
+
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="business_num" class="form-label">사업자번호</label>
@@ -75,7 +74,7 @@
                                     <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">사진 지우기</button>
                                 </div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 mt-3">
                                 <button type="submit" class="btn btn-primary" style="float:right; margin-left: 10px;">수정</button>
                                 <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
                                 <script>
