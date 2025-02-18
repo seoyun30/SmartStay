@@ -28,8 +28,9 @@ public class Image extends BaseEntity {
     @Column(nullable = false)
     private String repimg_yn; //대표 이미지 여부
 
+    // 부모 테이블인 Brand와의 관계에서 자식 테이블인 Image에서 'ManyToOne'으로 관계 설정) 모두 삭제
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brand_num")
+    @JoinColumn(name = "brand_num") // Image 테이블에 brand_num 외래 키 추가
     private Brand brand; //브랜드 이미지
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -113,9 +113,9 @@ public class ImageService {
     public void deleteImage(Long imageId) {
         Image image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이미지를 찾을 수 없습니다."));
-
         fileUpload.FileDelete(image.getImage_name());
-        imageRepository.delete(image);
+        //imageRepository.delete(image);
+        imageRepository.deleteById(imageId); // 가지고있는 이미지 번호로 삭제시 부모테이블 건들일 필요가 없다
     } //이미지 삭제
 
     //이미지 수정
