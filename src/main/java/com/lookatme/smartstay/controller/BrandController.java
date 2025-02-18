@@ -44,8 +44,9 @@ public class BrandController {
         return "brand/brandRegister";
     }
     @PostMapping("/brandRegister")
-    public String brandRegisterPost(BrandDTO brandDTO, RedirectAttributes redirectAttributes,
-                                    @RequestParam(value = "multipartFiles", required = false)  List<MultipartFile> multi,
+    public String brandRegisterPost(Model model, BrandDTO brandDTO,  RedirectAttributes redirectAttributes,
+                                    @RequestParam(value = "multi", required = false) List<MultipartFile> multi,
+                                    @RequestParam(value = "mainImageIndex", required = false, defaultValue = "0") Long mainImageIndex,
                                     Principal principal) throws Exception {
 
         log.info("brandRegister : " + brandDTO);
@@ -57,7 +58,7 @@ public class BrandController {
 
 
 
-   //목록
+    //목록
     @GetMapping("/brandList") //슈퍼어드민만 사용
     public String brandList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
         log.info("목록진입");
@@ -71,8 +72,7 @@ public class BrandController {
 
     //상세보기
     @GetMapping("/brandRead")
-    public String brandRead(@RequestParam(required = false) Long brand_num, Principal principal,
-                            Model model, RedirectAttributes redirectAttributes) {
+    public String brandRead(Long brand_num, Model model) {
         BrandDTO brandDTO = brandService.read(brand_num);
         model.addAttribute("brandDTO", brandDTO);
         return "brand/brandRead";
@@ -88,7 +88,7 @@ public class BrandController {
     @PostMapping("/brandModify")
     public String brandModifyPost(BrandDTO brandDTO, BindingResult bindingResult,
                                   @RequestParam("delnumList") List<Long> delnumList,
-                                  @RequestParam("multipartFiles") List<MultipartFile> multi,
+                                  @RequestParam("multi") List<MultipartFile> multi,
                                   ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
 
         if (bindingResult.hasErrors()) {
@@ -96,7 +96,7 @@ public class BrandController {
             return "brand/brandModify";
         }
         log.info("유효성 통과");
-        brandService.update(brandDTO, multi);
+        brandService.update(brandDTO, multi );
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
         log.info("수정 완료");
@@ -110,7 +110,7 @@ public class BrandController {
         return "redirect:/brand/brandList";
     }
 
-    @DeleteMapping("/deleteImage/{imageId}")
+    @PostMapping("/deleteImage/{imageId}")
     public ResponseEntity<String> deleteImage(@PathVariable Long imageId) {
         try {
             imageService.deleteImage(imageId);

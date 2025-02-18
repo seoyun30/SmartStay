@@ -36,9 +36,10 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Role role; //회원 권한
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "brand_num")
-    private Brand brand; //브랜드
+    // Member가 Brand의 외래키를 소유하는 주인(owning side)임 - 부모테이블
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "brand_num") // Member 테이블에 brand_num 컬럼 생성
+    private Brand brand; // 회원이 소유한 브랜드
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_num")
