@@ -38,4 +38,7 @@ public interface QnaService {
     //삭제
     public void del(Long qna_num);
 
+    //조회수
+    public void incrementViewCount(Long qna_num);
+
 }

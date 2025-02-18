@@ -2,6 +2,7 @@ package com.lookatme.smartstay.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,15 @@ public class Qna extends BaseEntity{
 
     private String writer; //문의 작성자
 
-    private String category;//카테고리
+    //private String category;//카테고리
+
+    @ColumnDefault("0")
+    private int viewCount;
+
+    // 조회수 증가 메서드
+    public void incrementViewCount() {
+        this.viewCount += 1;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_num")
