@@ -10,7 +10,6 @@
 <body>
 <th:block layout:fragment="content">
 
-
     <form action="/room/roomModify" method="post" th:object="${roomDTO}" enctype="multipart/form-data">
         <div class="row">
             <div class="col-8 offset-2">
@@ -74,7 +73,7 @@
                                 대표 이미지
                                 <th:block th:each="img : ${roomDTO.imageDTOList}">
                                     <th:block th:if="${img.repimg_yn == 'Y'}">
-                                        <img th:src="${img.image_url}" alt="Main Image" width="300px">
+                                        <img th:src="${img.image_url}" alt="Main Image" width="250px">
                                         <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
                                     </th:block>
                                 </th:block>
@@ -122,7 +121,6 @@
 </th:block>
 
 <th:block layout:fragment="script">
-
     <script th:inline="javascript">
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -141,14 +139,22 @@
                         fetch(`/room/deleteImage/${imageId}`, {
                             method: 'DELETE',
                             headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': ''
+                                'Content-Type': 'application/json'
                             }
                         })
                             .then(response => {
                                 if (response.ok) {
-                                    document.getElementById(`image-${imageId}`);
-                                    //이미지 삭제 성공시, 페이지에 자동 반영 기능 필요
+                                    const isMainImage = this.closest('#image-main') !== null;
+
+                                    if (isMainImage) {
+                                        const mainImageContainer = document.getElementById('image-main');
+                                        mainImageContainer.innerHTML = '<p>대표 이미지가 없습니다. 대표 이미지를 추가해 주세요.</p>';
+                                    } else {
+                                        const imageElement = document.getElementById(`image-${imageId}`);
+                                        if (imageElement) {
+                                            imageElement.remove();
+                                        }
+                                    }
                                     alert('이미지가 성공적으로 삭제되었습니다.');
                                 } else {
                                     alert('이미지 삭제에 실패했습니다.');
@@ -156,7 +162,7 @@
                             })
                             .catch(error => {
                                 console.error('Error:', error);
-                                alert(error);
+                                alert('오류가 발생했습니다. 다시 시도해주세요.');
                             });
                     }
                 });

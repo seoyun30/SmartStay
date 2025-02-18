@@ -1,6 +1,9 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.ImageDTO;
+import com.lookatme.smartstay.dto.RoomDTO;
+import com.lookatme.smartstay.dto.RoomItemDTO;
 import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -178,6 +182,11 @@ public class CartService {
 
                 roomItemDTO.setImageDTOList(imageDTOList);
                 roomItemDTO.setImageIdList(imageIdList);
+            }
+
+            if (roomItemDTO.getIn_date() != null && roomItemDTO.getOut_date() != null) {
+                long dayDifference = ChronoUnit.DAYS.between(roomItemDTO.getIn_date(), roomItemDTO.getOut_date());
+                roomItemDTO.setDay((Long) dayDifference);
             }
         }
 

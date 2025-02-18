@@ -25,14 +25,13 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("/pay")
 public class PayController {
     private final MemberService memberService;
     private final CartService cartService;
     private final RoomItemService roomItemService;
     private final PayService payService;
 
-    @GetMapping("/")
+    @GetMapping("/pay")
     public String pay(RoomItemDTO roomItemDTO, Principal principal, Model model) {
 
         //차후 룸서비스 추가 필요
@@ -54,7 +53,7 @@ public class PayController {
         return "pay";
     }
 
-    @PostMapping("/prepare")
+    @PostMapping("/pay/prepare")
     @ResponseBody
     public ResponseEntity<String> preparePay(@RequestBody PrePayDTO prePayDTO)
             throws IamportResponseException, IOException {
@@ -63,7 +62,7 @@ public class PayController {
         return ResponseEntity.ok("결제 사전 준비 완료");
     }
 
-    @PostMapping("/validate")
+    @PostMapping("/pay/validate")
     @ResponseBody
     public ResponseEntity<Payment> validatePay(@RequestBody PayDTO payDTO)
             throws IamportResponseException, IOException {
@@ -72,7 +71,7 @@ public class PayController {
         return ResponseEntity.ok(payment);
     }
 
-    @PostMapping("/order")
+    @PostMapping("/pay/order")
     @ResponseBody
     public ResponseEntity<String> payOrder(@RequestBody PayDTO payDTO){
         log.info("주문 정보 payDTO : " + payDTO);
