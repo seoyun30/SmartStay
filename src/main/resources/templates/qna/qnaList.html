@@ -23,7 +23,6 @@
                 <tr>
                     <th>번호</th>
                     <th>제목</th>
-                    <th>내용</th>
                     <th>작성자</th>
                 </tr>
                 </thead>
@@ -37,13 +36,11 @@
                                 [[${qna.title}]]
                             </a>
                         </td>
-                        <td th:text="${qna.content}"></td>
                         <td th:text="${qna.writer}"></td>
 
-
                         <!--post 방식의 삭제버튼-->
-                        <td sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="col text-end">
-                            <form action="/qna/qnaDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                        <td>
+                            <form sec:authorize="hasAnyAuthority('USER')" action="/qna/qnaDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
                                 <input type="hidden" name="qna_num" th:value="${qna.qna_num}"> <!-- 삭제할 qna의 ID를 hidden 필드로 전달 -->
                                 <button type="submit" class="btn btn-dark" style="background-color: red;">삭제</button>
                             </form>

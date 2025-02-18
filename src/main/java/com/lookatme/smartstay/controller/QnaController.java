@@ -110,7 +110,7 @@ public class QnaController {
             return "redirect:/qna/qnaList";
         }
 
-        return "/qna/qnaModify";
+        return "qna/qnaModify";
     }
 
     @PostMapping("/qnaModify")
