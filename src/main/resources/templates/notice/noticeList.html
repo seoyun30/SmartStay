@@ -62,12 +62,13 @@
                         </thead>
                         <tbody>
                         <tr><!--최대값으로 더미값을 입력-->
-                        <tr th:each="data: ${noticeList}"><!--더미값으로 채우기(가장 긴값)-->
+                        <tr th:each=" data : ${noticeList}"><!--더미값으로 채우기(가장 긴값)-->
 
                             <td th:text="${data.notice_num}" class="text-center"></td>
                             <td th:text="${data.notice_num}" class="text-center"></td>
+<!--                            <td th:text="${data.getHotel_name()}" class="text-center"></td>-->
                             <td>
-                                <a th:href="@{/notice/noticeRead(id=${data.getNotice_num()})}" th:text="${data.getTitle()}" class="text-center">
+                                <a th:href="@{/notice/noticeRead(id=${data.notice_num})}" th:text="${data.getTitle()}" class="text-center">
                                 </a>
                             </td>
                             <td th:text="${data.create_by}" class="text-center"></td>
@@ -78,35 +79,35 @@
                         </tbody>
                     </table>
                     <!--페이지번호-->
-                    <div class="d-flex justify-content-center">
-                        <ul class="pagination">
-                            <li class="page-item" th:unless="${startPage==1}">
-                                <a class="page-link" th:href="@{/list(page=1)}">시작</a>
-                            </li>
-                            <li class="page-item" th:unless="${currentPage==1}">
-                                <a class="page-link" th:href="@{list(page=${prevPage})}">이전</a>
-                            </li>
-                            <spen th:each="num:${#numbers.sequence(startPage, endPage, 1)}">
-                                <li class="page-item" th:unless="${num==currentPage}">
-                                    <a class="page-link" th:href="@{list(page=${num})}" th:text="${num}">1</a>
-                                </li>
+<!--                    <div class="d-flex justify-content-center">-->
+<!--                        <ul class="pagination">-->
+<!--                            <li class="page-item" th:unless="${startPage==1}">-->
+<!--                                <a class="page-link" th:href="@{/list(page=1)}">시작</a>-->
+<!--                            </li>-->
+<!--                            <li class="page-item" th:unless="${currentPage==1}">-->
+<!--                                <a class="page-link" th:href="@{list(page=${prevPage})}">이전</a>-->
+<!--                            </li>-->
+<!--                            <spen th:each="num:${#numbers.sequence(startPage, endPage, 1)}">-->
+<!--                                <li class="page-item" th:unless="${num==currentPage}">-->
+<!--                                    <a class="page-link" th:href="@{list(page=${num})}" th:text="${num}">1</a>-->
+<!--                                </li>-->
 
-                                <li class="page-item" th:unless="${num==currentPage}">
-                                    <a class="page-link" th:href="@{list(page=${num})}" th:text="${num}">2</a>
-                                </li>
+<!--                                <li class="page-item" th:unless="${num==currentPage}">-->
+<!--                                    <a class="page-link" th:href="@{list(page=${num})}" th:text="${num}">2</a>-->
+<!--                                </li>-->
 
-                                <li class="page-item" th:unless="${num==currentPage}">
-                                    <a class="page-link" th:href="@{list(page=${num})}" th:text="${num}">3</a>
-                                </li>
-                            </spen>
-                            <li class="page-item" th:unless="${currentPage>=lastpage}">
-                                <a class="page-link" th:href="@{list(page=${nextpage})}">다음</a>
-                            </li>
-                            <li class="page-item" th:unless="${endPage==lastPage}">
-                                <a class="page-link" th:href="@{list(page=${lastPage})}">끝</a>
-                            </li>
-                        </ul>
-                    </div>
+<!--                                <li class="page-item" th:unless="${num==currentPage}">-->
+<!--                                    <a class="page-link" th:href="@{list(page=${num})}" th:text="${num}">3</a>-->
+<!--                                </li>-->
+<!--                            </spen>-->
+<!--                            <li class="page-item" th:unless="${currentPage>=lastpage}">-->
+<!--                                <a class="page-link" th:href="@{list(page=${nextpage})}">다음</a>-->
+<!--                            </li>-->
+<!--                            <li class="page-item" th:unless="${endPage==lastPage}">-->
+<!--                                <a class="page-link" th:href="@{list(page=${lastPage})}">끝</a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </div>-->
 
                 </div>
             </div>
