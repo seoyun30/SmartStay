@@ -218,7 +218,6 @@ public class RoomController {
     public ResponseEntity<String> deleteImage(@PathVariable Long imageId) {
         try {
             imageService.deleteImage(imageId);
-            imageRepository.deleteById(imageId);
             return ResponseEntity.ok("이미지가 성공적으로 삭제되었습니다.");
         } catch (Exception e) {
             log.error("이미지 삭제 실패: " + e.getMessage());

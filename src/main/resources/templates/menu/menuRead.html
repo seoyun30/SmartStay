@@ -62,19 +62,7 @@
                                 <th:block th:each="img: ${menuDTO.imageDTOList}">
                                     <th:block th:if="${img.repimg_yn == 'Y'}">
                                         <div class="col-12">
-                                            대표 이미지
-                                            <img width="100%" th:src="${img.image_url}" alt="대표 이미지">
-                                        </div>
-                                    </th:block>
-                                </th:block>
-                            </div>
-
-                            <div class="row row-cols-md-2 ">
-                                <th:block th:each="img: ${menuDTO.imageDTOList}">
-                                    <th:block th:unless="${img.repimg_yn == 'Y'}">
-                                        <div class="col-12">
-                                            상세 이미지
-                                            <img width="100%" th:src="${img.image_url}" alt="상세 이미지">
+                                            <img width="600px" height="auto" th:src="${img.image_url}" alt="이미지">
                                         </div>
                                     </th:block>
                                 </th:block>

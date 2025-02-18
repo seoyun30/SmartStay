@@ -9,6 +9,7 @@ import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.RoomReserveService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -141,6 +142,12 @@ public class MemberController {
 
     @GetMapping("/userAllMyPage") //user의 첫 마이페이지
     public String userAllMyPage(Model model, Principal principal){
+
+        String email = principal.getName();
+
+        MemberDTO memberDTO = memberService.findbyEmail(email);
+        model.addAttribute("memberDTO", memberDTO);
+
 
         //내 룸예약 조회
         List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveService.findMyRoomReserve(principal.getName());
