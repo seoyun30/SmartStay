@@ -10,39 +10,40 @@
 <div layout:fragment="content">
     <div id="row" class="row justify-content-center">
 
-        <form th:action="@{/notice/noticeModify}" method="post">
-            <!-- Notice 번호 (숨겨진 필드) -->
-            <input type="hidden" th:each="data: ${notice.getNotice_num()}" name="notice_num">
-            <div class="card" style="width: 100%; height: 90%;">
-                <!--제목-->
-                <div class="card-header bg-white">
-                    <div class="input-group mt-2 my-3">
-                        <span class="input-group-text bg-white border border-0 fw-bold"
-                              id="basic-addon1">제목: </span>
-                        <input type="text" class="form-control bg-white" id="title" name="title" th:value="${notice.title}">
+        <div class="col">
+            <form th:action="@{/notice/noticeModify}" method="post" class="position: 0;">
+                <h2 class="text-center">공지사항 수정</h2>
+                <div class="card" style="width: 100%; height: 90%;">
+                    <input type="hidden" name="notice_num" th:value="${notice.notice_num}">
+                    <!--제목-->
+                    <div class="card-header bg-white">
+                        <div class="input-group mt-2 my-3">
+                            <span class="input-group-text bg-white border border-0 fw-bold"
+                                  id="basic-addon1">제목: </span>
+                            <input type="text" class="form-control bg-white" id="title" th:value="${notice.title}" name="title" placeholder="제목을 입력하세요">
+                        </div>
                     </div>
-                </div>
-                <div class="card-body" style="height: 500px;"><!--공지사항글 제품-->
-                    <!--id와 name은 DTO에 변수명으로 작업-->
-                    <div class="input-group mt-1 my-3" style="height: 88%">
+                    <div class="card-body" style="height: 500px;"><!--공지사항글 제품-->
+                        <!--id와 name은 DTO에 변수명으로 작업-->
+                        <div class="input-group mt-1 my-3" style="height: 88%">
                             <span class="input-group-text bg-white border border-0 fw-bold"
                                   id="basic-addon2">내용: </span>
-                        <textarea type="text" class="form-control bg-white" id="content" name="content" th:text="${notice.content}"></textarea>
+                            <textarea type="text" class="form-control bg-white" id="content" th:text="${notice.content}" name="content" placeholder="내용을 입력하세요"></textarea>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary">확인</button>
+                        <button type="reset" class="btn btn-secondary">초기화</button>
+                        <button type="button" class="btn btn-danger"
+                                th:onclick="|location.href='@{/notice/noticeList}'|">취소</button>
+                        <!--@{주소}, 문자열+주소 |문자열@{주소}|-->
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary">확인</button>
-                    <button type="reset" class="btn btn-secondary">초기화</button>
-                    <button type="button" class="btn btn-danger"
-                            th:onclick="|location.href='@{/notice/noticeList}'|">취소</button>
-                    <!--@{주소}, 문자열+주소 |문자열@{주소}|-->
-                </div>
-            </div>
-
-
-
-        </form>
-    </div>
+            </form>
+        </div>
+        <div class="col-3"></div>
+    </div><!--row끝-->
+</div><!--container끝-->
 </div>
 </body>
 </html>
