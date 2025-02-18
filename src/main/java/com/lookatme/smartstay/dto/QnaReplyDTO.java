@@ -31,7 +31,7 @@ public class QnaReplyDTO {
 
     private QnaDTO qnaDTO;
 
-    private MemberDTO memberDTO;
+    private MemberDTO memberDTO; //작성자
 
     private LocalDateTime reg_date;
 

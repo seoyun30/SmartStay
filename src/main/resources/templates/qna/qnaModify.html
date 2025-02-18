@@ -14,7 +14,6 @@
     <form action="/qna/qnaModify" method="post" th:object="${qnaDTO}" enctype="multipart/form-data">
         <div class="row">
             <div class="col-8 offset-2">
-                <input type="hidden" name="qna_num" th:value="${qnaDTO.qna_num}">
                 <div class="row">
 
                     <div class="col-12">
@@ -55,20 +54,9 @@
                             <div id="image-list">
                                 <div id="image-main">
                                     첨부 이미지
-                                    <th:block th:each="img : ${qnaDTO.imageDTOList}">
-                                        <th:block th:if="${img.repimg_yn == 'Y'}">
-                                            <img th:src="${img.image_url}" alt="Main Image" width="300px">
-                                            <button type="button" th:data-image-id="${img.image_id}" class="delete-image-btn"></button>
-                                            <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
-                                        </th:block>
-                                    </th:block>
+
                                 </div>
-                                <div class="mb-3 imgA">
-                                    <label for="formFile" class="form-label">이미지 변경</label>
-                                    <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="mult" type="file">
-                                    <div class="row main imgpreview"></div>
-                                    <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">사진 지우기</button>
-                                </div>
+
                             </div>
 
                             <div class="col-12">
@@ -130,7 +118,7 @@
                                                     // 서버로 삭제 요청
                                                     const data = new FormData();
                                                     data.append("imageId", imageId);
-                                                    fetch(`/brand/deleteImage/${imageId}`, {
+                                                    fetch(`/qna/deleteImage/${imageId}`, {
                                                         method: 'POST',
                                                         body: data
                                                     }).then(response => {

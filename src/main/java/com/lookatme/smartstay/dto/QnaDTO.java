@@ -20,6 +20,8 @@ public class QnaDTO {
 
     private String writer; //문의 작성자
 
+    private String category; //카테고리
+
     private LocalDateTime reg_date;
 
     private LocalDateTime modi_date;
