@@ -20,7 +20,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,10 +37,10 @@ public class HotelService {
     private final RoomRepository roomRepository;
 
     //hotel 등록
-    public void insert(HotelDTO hotelDTO, Principal principal,
+    public void insert(HotelDTO hotelDTO, String email,
                        List<MultipartFile> multipartFiles) throws Exception {
         Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
-        Member member = memberRepository.findByEmail(principal.getName()); //추가
+        Member member = memberRepository.findByEmail(email); //추가
         Brand brand =  member.getBrand(); //추가
         hotel.setBrand(brand); //추가
         Hotel hotel1 = hotelRepository.save(hotel);

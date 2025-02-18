@@ -1,12 +1,13 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.Util.PagenationUtil;
-import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.ImageDTO;
+import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.ImageService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -42,11 +43,12 @@ public class HotelController {
     }
     @PostMapping("/hotelRegister")
     public String hotelRegisterPost(HotelDTO hotelDTO, RedirectAttributes redirectAttributes,
-                                    @RequestParam(value = "multipartFiles", required = false)  List<MultipartFile> multi,
+                                    @RequestParam(value = "multi", required = false)  List<MultipartFile> multi,
+                                    @RequestParam(value = "mainImageIndex", required = false, defaultValue = "0") Long mainImageIndex,
                                     Principal principal) throws Exception {
         log.info("hotelRegister : " + hotelDTO);
         multi.forEach(multipartFile -> {log.info("multipartFile : " + multipartFile);});
-        hotelService.insert(hotelDTO, principal, multi);
+        hotelService.insert(hotelDTO, principal.getName(), multi);
         redirectAttributes.addFlashAttribute("msg", "등록이 완료되었습니다.");
         return "redirect:/hotel/hotelList";
     }
