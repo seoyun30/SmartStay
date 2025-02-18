@@ -6,51 +6,50 @@
 <head>
     <meta charset="UTF-8">
     <title>룸 서비스 주문</title>
+
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            flex: 1 1 calc(30% - 20px);
+            max-width: calc(30% - 20px);
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .order-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+
 </head>
-
-<style>
-
-    .card {
-        display: flex;
-        flex-direction: column;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: white;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-
-    .details {
-        flex: 2;
-        margin-left: 20px;
-    }
-
-    .details p {
-        margin-bottom: 10px;
-        font-size: 16px;
-        color: #333;
-    }
-
-    .details strong {
-        font-weight: bold;
-    }
-
-
-</style>
 
 <body>
 
 <th:block layout:fragment="content">
 
     <form action="/orderreserve/pay" method="post">
+        <h2 class="text-center mb-4">룸 서비스 목록</h2>
         <div class="container">
-        <h2 class="title">룸 서비스 목록</h2>
-
-            <div class="card col-md-3" th:each="menu : ${menus}">
+            <div class="card" th:each="menu : ${menus}">
                 <ul th:each="image : ${menuImagesMap[menu.menu_num]}">
                     <li>
-                        <img th:src="@{${image.image_url}}" style="width: 200px; height: auto;" alt="Menu Image">
+                        <img th:src="@{${image.image_url}}" alt="Menu Image">
                     </li>
                 </ul>
                 <div class="details">
@@ -64,10 +63,10 @@
                        th:data-id="${menu.menu_num}" onchange="addToOrder(this)">
             </div>
 
-            <div class="card col-md-3" th:each="care : ${cares}">
+            <div class="card" th:each="care : ${cares}">
                 <ul th:each="image : ${careImagesMap[care.care_num]}">
                     <li>
-                        <img th:src="@{${image.image_url}}" style="width: 200px; height: auto;" alt="Care Image">
+                        <img th:src="@{${image.image_url}}" alt="Care Image">
                     </li>
                 </ul>
                 <div class="details">
@@ -79,18 +78,14 @@
                 <input type="checkbox" class="order-checkbox" th:data-name="${care.care_name}"
                        th:data-id="${care.care_num}" onchange="addToOrder(this)">
             </div>
-
-
-            <div class="order-section">
-                <h3>주문하기</h3>
-                <div class="order-list" id="orderList"></div>
-                <input type="text" name="request" placeholder="요청사항을 입력하세요">
-                <button type="submit" class="btn-primary">예약하기</button>
-            </div>
         </div>
-
+        <div class="order-section">
+            <h2 class="mb-3">주문하기</h2>
+            <div class="order-list" id="orderList"></div>
+            <input type="text" name="request" placeholder="요청사항을 입력하세요">
+            <button type="submit" class="btn-primary">주문하기</button>
+        </div>
     </form>
-
 
 </th:block>
 

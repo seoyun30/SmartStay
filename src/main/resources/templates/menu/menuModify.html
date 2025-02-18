@@ -55,37 +55,21 @@
                     <div class="mb-3">
                         <div id="image-list">
                             <div id="image-main">
-                                대표 이미지
+                                이미지<br>
                                 <th:block th:each="img : ${menuDTO.imageDTOList}">
                                     <th:block th:if="${img.repimg_yn == 'Y'}">
-                                        <img th:src="${img.image_url}" alt="Main Image" width="300px">
+                                        <img th:src="${img.image_url}" alt="Main Image" width="250px">
                                         <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
-                                    </th:block>
-                                </th:block>
-                            </div>
-
-                            <div id="detail-images">
-                                상세 이미지
-                                <th:block th:each="img : ${menuDTO.imageDTOList}">
-                                    <th:block th:unless="${img.repimg_yn == 'Y'}">
-                                        <div class="col-12" th:id="'image-' + ${img.image_id}">
-                                            <img th:src="${img.image_url}" alt="Detail Image" width="200px">
-                                            <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
-                                        </div>
                                     </th:block>
                                 </th:block>
                             </div>
                         </div>
 
-                        <div class="mb-3 imgA">
-                            <label for="formFile" class="form-label">대표 이미지 변경</label>
+                        <div class="mt-3 imgA">
+                            <label for="formFile" class="form-label">이미지 변경</label>
                             <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file">
                             <div class="row main imgpreview"></div>
                             <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
-
-                            <label for="formFilede" class="form-label">상세 이미지 추가</label>
-                            <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
-                            <div class="row imgpreviewinput"></div>
                         </div>
 
                         <div class="col-12">
@@ -133,7 +117,7 @@
 
                                     if (isMainImage) {
                                         const mainImageContainer = document.getElementById('image-main');
-                                        mainImageContainer.innerHTML = '<p>대표 이미지가 없습니다. 대표 이미지를 추가해 주세요.</p>';
+                                        mainImageContainer.innerHTML = '<p>이미지가 없습니다. 이미지를 추가해 주세요.</p>';
                                     } else {
                                         const imageElement = document.getElementById(`image-${imageId}`);
                                         if (imageElement) {
@@ -159,9 +143,6 @@
             const formFile = document.getElementById('formFile');
             const removeMainImage = document.getElementById('removeMainImage');
             const imgPreview = document.querySelector('.imgpreview');
-
-            const formFilede = document.getElementById('formFilede');
-            const imgPreviewInput = document.querySelector('.imgpreviewinput');
 
             formFile.addEventListener('change', function(event) {
                 const file = event.target.files[0];
@@ -190,55 +171,6 @@
                 removeMainImage.style.display = 'none';
             });
 
-            formFilede.addEventListener('change', function(event) {
-                const files = event.target.files;
-
-                Array.from(files).forEach((file, index) => {
-                    if (file) {
-                        const reader = new FileReader();
-
-                        reader.onload = function (e) {
-                            const imgWrapper = document.createElement('div');
-                            imgWrapper.classList.add('img-wrapper');
-                            imgWrapper.style.position = 'relative';
-                            imgWrapper.style.display = 'inline-block';
-                            imgWrapper.style.marginRight = '10px';
-
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.alt = file.name;
-                            img.style.width = '200px';
-                            img.style.height = 'auto';
-                            img.style.objectFit = 'cover';
-
-                            const removeButton = document.createElement('button');
-                            removeButton.type = 'button';
-                            removeButton.textContent = '올리지 않기';
-                            removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
-                            removeButton.style.top = '5px';
-                            removeButton.style.right = '5px';
-
-                            removeButton.addEventListener('click', function () {
-                                imgWrapper.remove();
-
-                                const dataTransfer = new DataTransfer();
-                                Array.from(formFilede.files).forEach((f, i) => {
-                                    if (i !== index) {
-                                        dataTransfer.items.add(f);
-                                    }
-                                });
-                                formFilede.files = dataTransfer.files;
-                            });
-
-                            imgWrapper.appendChild(img);
-                            imgWrapper.appendChild(removeButton);
-                            imgPreviewInput.appendChild(imgWrapper);
-                        };
-
-                        reader.readAsDataURL(file);
-                    }
-                });
-            });
             document.querySelectorAll('.removeImage').forEach(button => {
                 button.addEventListener('click', function () {
                     const imageId = this.getAttribute('data-id');

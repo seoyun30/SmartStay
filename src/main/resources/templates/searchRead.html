@@ -36,8 +36,10 @@
             <div class="card shadow-sm border-0">
                 <div class="row g-0">
                     <div class="col-md-4 position-relative">
-                        <img th:src="${room.mainImage.image_url}" class="img-fluid rounded-start" alt="룸 대표 이미지"
-                             onerror="this.src='/assets/img/room.jpg'" style="height: 100%; object-fit: cover;">
+                        <img th:src="${room.mainImage != null and room.mainImage.image_url != null ? room.mainImage.image_url : '/assets/img/room.jpg'}"
+                             class="img-fluid rounded-start"
+                             alt="룸 대표 이미지"
+                             style="height: 100%; object-fit: cover;">
                     </div>
                     <div class="col-md-8 rounded-start d-flex flex-column justify-content-between">
                         <div class="card-body">
