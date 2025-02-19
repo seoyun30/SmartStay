@@ -130,6 +130,11 @@ public class HotelService {
         List<ImageDTO> imageDTOList = imageList.stream().map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
         hotelDTO.setImageDTOList(imageDTOList);
 
+        ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
+        if (mainImage != null) {
+            hotelDTO.setMainImage(mainImage);
+        }
+
         return hotelDTO;
     }
 
@@ -141,6 +146,12 @@ public class HotelService {
             }
         Hotel hotel = hotelRepository.findById(member.getHotel().getHotel_num()).orElseThrow(EntityNotFoundException::new);
         HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+
+        ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
+        if (mainImage != null) {
+            hotelDTO.setMainImage(mainImage);
+        }
+
         return hotelDTO;
     }
 

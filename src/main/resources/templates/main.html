@@ -57,11 +57,10 @@
             <div class="row" id="hotel-list"></div> <!--추가-->
 
             <div class="row">
-                <!-- 호텔 카드 반복 -->
                 <div th:each="hotel : ${list}" class="col-md-3 mb-4">
                     <div class="card shadow-sm">
-                        <div class="image-container">
-                            <img th:src="${hotel.mainImage.image_url}" alt="호텔 이미지" class="img-fluid rounded-top" />
+                        <div>
+                            <img th:src="${hotel.mainImage.image_url}" style="height: 200px" alt="호텔 이미지" class="img-fluid rounded-top" />
                         </div>
                         <div class="card-body text-center">
                             <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none text-primary fw-bold"></a>

@@ -37,39 +37,36 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="room_info" class="form-label">룸 정보</label>
-                            <input type="text" min="0" class="form-control" th:field="*{room_info}" id="room_info" readonly>
+                            <input type="text" class="form-control" th:field="*{room_info}" id="room_info" readonly>
                             <p th:if="${#fields.hasErrors('room_info')}" th:errors="*{room_info}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="room_type"  class="form-label">룸 타입</label>
-                            <input type="text" min="0" class="form-control" th:field="*{room_type}" id="room_type" readonly>
+                            <input type="text" class="form-control" th:field="*{room_type}" id="room_type" readonly>
                             <p th:if="${#fields.hasErrors('room_type')}" th:errors="*{room_type}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="room_bed" class="form-label">룸 인원수</label>
-                            <input type="number" min="0" class="form-control" th:field="*{room_bed}" id="room_bed" readonly>
+                            <input type="number" class="form-control" th:field="*{room_bed}" id="room_bed" readonly>
                             <p th:if="${#fields.hasErrors('room_bed')}" th:errors="*{room_bed}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="room_price" class="form-label">룸 가격</label>
-                            <input type="number" min="0" class="form-control" th:field="*{room_price}" id="room_price" readonly>
+                            <input type="number" class="form-control" th:field="*{room_price}" id="room_price" readonly>
                             <p th:if="${#fields.hasErrors('room_price')}" th:errors="*{room_price}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="room_state" class="form-label">룸 상태</label>
-                            <select th:field="*{room_state}" id="room_state" class="form-select" aria-label="Default select example">
-                                <option value="YES">이용 가능</option>
-                                <option value="NO">사용 불가</option>
-                                <option value="PREPARE">준비 중</option>
-                            </select>
+                            <input type="text" class="form-control" th:field="*{room_state}" id="room_state" readonly>
+                            <p th:if="${#fields.hasErrors('room_state')}" th:errors="*{room_state}" class="fieldError"></p>
                         </div>
                     </div>
 

@@ -1,13 +1,9 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.ActiveState;
-import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.dto.BrandDTO;
-import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.ImageDTO;
-import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.entity.Brand;
-import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.BrandRepository;
@@ -93,6 +89,11 @@ public class BrandService {
         List<ImageDTO> imageDTOList = imageList.stream().map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
         brandDTO.setImageDTOList(imageDTOList);
 
+        ImageDTO mainImage = getBrandMainImage(brand.getBrand_num());
+        if (mainImage != null) {
+            brandDTO.setMainImage(mainImage);
+        }
+
         return brandDTO;
     }
 
@@ -141,6 +142,15 @@ public class BrandService {
         BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
 
         return brandDTO;
+    }
+
+    public ImageDTO getBrandMainImage (Long brand_num) {
+
+        List<Image> imageList = imageService.findImagesByTarget("brand", brand_num);
+        if (imageList != null && !imageList.isEmpty()) {
+            return modelMapper.map(imageList.get(0), ImageDTO.class);
+        }
+        return null;
     }
 
 }
