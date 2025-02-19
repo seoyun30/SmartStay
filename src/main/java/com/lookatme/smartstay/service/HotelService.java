@@ -41,6 +41,7 @@ public class HotelService {
     public void insert(HotelDTO hotelDTO, String email,
                        List<MultipartFile> multipartFiles) throws Exception {
         Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
+        hotel.setActive_state(ActiveState.ACTIVE);
         Member member = memberRepository.findByEmail(email); //추가
         Brand brand =  member.getBrand(); //추가
         hotel.setBrand(brand); //추가

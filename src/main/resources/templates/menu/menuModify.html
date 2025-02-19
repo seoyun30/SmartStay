@@ -24,8 +24,15 @@
                 <div class="col-12">
                     <div class="mb-3">
                         <label for="menu_sort" class="form-label">메뉴 분류</label>
-                        <input type="text" min="0" class="form-control" th:field="*{menu_sort}" id="menu_sort">
-                        <p th:if="${#fields.hasErrors('menu_sort')}" th:errors="*{menu_sort}" class="fieldError"></p>
+                        <select th:field="*{menu_sort}" id="menu_sort" class="form-select" aria-label="Default select example">
+                            <option value="KOREAN">한식</option>
+                            <option value="CHINESE">중식</option>
+                            <option value="JAPANESE">일식</option>
+                            <option value="WESTERN">양식</option>
+                            <option value="SNACK">분식</option>
+                            <option value="DRINK">음료</option>
+                            <option value="ETC">기타</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-12">
