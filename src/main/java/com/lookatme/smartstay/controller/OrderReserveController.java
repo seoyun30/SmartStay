@@ -1,16 +1,9 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.ImageDTO;
-import com.lookatme.smartstay.dto.OrderItemDTO;
-import com.lookatme.smartstay.entity.Care;
-import com.lookatme.smartstay.entity.Image;
-import com.lookatme.smartstay.entity.Menu;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.OrderReserve;
 import com.lookatme.smartstay.repository.ImageRepository;
-import com.lookatme.smartstay.service.HotelService;
-import com.lookatme.smartstay.service.OrderItemService;
-import com.lookatme.smartstay.service.OrderReserveService;
+import com.lookatme.smartstay.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,48 +17,39 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 @Log4j2
 @RequestMapping("/orderreserve")
 public class OrderReserveController {
+    private final RoomReserveService roomReserveService;
     private final OrderReserveService orderReserveService;
+    private final MenuService menuService;
+    private final CareService careService;
     private final HotelService hotelService;
     private final OrderItemService orderItemService;
     private final ImageRepository imageRepository;
     private final ModelMapper modelMapper;
 
     @GetMapping("/orderReserveRegister")
-    public String orderReserveRegisterGet(Model model) {
+    public String orderReserveRegisterGet(Principal principal, Long roomreserveitem_num,
+                                          PageRequestDTO pageRequestDTO, Model model) {
 
-        List<Menu> menus = orderReserveService.getAllMenus();
-        List<Care> cares = orderReserveService.getAllCares();
+        RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(roomreserveitem_num, principal.getName());
 
-        Map<Long, List<ImageDTO>> menuImagesMap = new HashMap<>();
-        for (Menu menu : menus) {
-            List<Image> menuImages = imageRepository.findByTarget("menu", menu.getMenu_num());
-            List<ImageDTO> menuImagesDTOs = menuImages.stream()
-                    .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
-            menuImagesMap.put(menu.getMenu_num(), menuImagesDTOs);
+        model.addAttribute("roomReserveItemDTO", roomReserveItemDTO);
+
+        if (roomReserveItemDTO != null) {
+
+            PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = menuService.menuList(roomReserveItemDTO.getRoomDTO().getHotelDTO(), pageRequestDTO);
+            model.addAttribute("menuDTOPageResponseDTO", menuDTOPageResponseDTO);
+
+            PageResponseDTO<CareDTO> careDTOPageResponseDTO = careService.careList(roomReserveItemDTO.getRoomDTO().getHotelDTO(), pageRequestDTO);
+            model.addAttribute("careDTOPageResponseDTO", careDTOPageResponseDTO);
+
         }
-
-        Map<Long, List<ImageDTO>> careImagesMap = new HashMap<>();
-        for (Care care : cares) {
-            List<Image> careImages = imageRepository.findByTarget("care", care.getCare_num());
-            List<ImageDTO> careImageDTOs = careImages.stream()
-                    .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
-            careImagesMap.put(care.getCare_num(), careImageDTOs);
-        }
-
-        model.addAttribute("menus", menus);
-        model.addAttribute("cares", cares);
-        model.addAttribute("menuImagesMap", menuImagesMap);
-        model.addAttribute("careImagesMap", careImagesMap);
 
         return "orderreserve/orderReserveRegister";
     }

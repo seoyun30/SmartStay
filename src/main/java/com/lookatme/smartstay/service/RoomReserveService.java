@@ -49,7 +49,7 @@ public class RoomReserveService {
 
     }
 
-    //룸에 있는 룸예약 조회
+    //룸에 있는 룸예약 전체 조회
     public List<RoomReserveItemDTO> findRoomReserve(Long room_num) {
 
         List<RoomReserveItem> roomReserveItemList = roomReserveItemRepository.findByRoomRoom_num(room_num);
@@ -64,7 +64,7 @@ public class RoomReserveService {
         return roomReserveItemDTOList;
     }
 
-    //회원의 룸예약 조회
+    //회원의 룸예약 전체 조회
     public List<RoomReserveItemDTO> findMyRoomReserve(String email) {
 
         List<RoomReserveItem> roomReserveItemList = roomReserveItemRepository.findByEmail(email);
@@ -94,7 +94,7 @@ public class RoomReserveService {
 
 
 
-    //주문 진행
+    //주문 진행 차후 삭제
     public Long order (RoomItemDTO roomItemDTO, String email) {
         Room room = roomRepository.findById(roomItemDTO.getRoom_num())
                 .orElseThrow(EntityNotFoundException::new);

@@ -85,7 +85,20 @@ public class MenuService {
         Page<Menu> result = menuRepository.findByHotel(hotel, pageable);
 
         List<MenuDTO> menuDTOList = result.stream()
-                .map(menu -> modelMapper.map(menu, MenuDTO.class)).collect(Collectors.toList());
+                .map(menu -> modelMapper.map(menu, MenuDTO.class)
+                        .setHotelDTO(modelMapper.map(menu.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        for (MenuDTO menuDTO : menuDTOList) {
+            List<Image> menuImageList = imageRepository.findByTarget("menu", menuDTO.getMenu_num());
+            if (!menuImageList.isEmpty()) {
+                List<ImageDTO> menuImageDTOList = menuImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                menuDTO.setImageDTOList(menuImageDTOList);
+            } else {
+                menuDTO.setImageDTOList(null);
+            }
+        }
 
         if (menuDTOList == null) {
             menuDTOList = Collections.emptyList();
@@ -170,4 +183,6 @@ public class MenuService {
 
         return menuDTOS;
     }
+
+
 }
