@@ -17,7 +17,7 @@
         <div th:each="hotel : ${hotelDTO}" class="col mb-5">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
-                    (호텔 대표 이미지)
+                    <img th:src="${hotel.mainImage.image_url}" alt="호텔 이미지" class="img-fluid rounded-top" />
                     <h2 class="card-title fw-bold">
                         <h2 th:text="${hotel.hotel_name}">호텔 이름</h2>
                     </h2>

@@ -1,6 +1,8 @@
 package com.lookatme.smartstay.dto;
 
 import com.lookatme.smartstay.constant.RoomState;
+import com.lookatme.smartstay.constant.RoomType;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -27,9 +29,10 @@ public class RoomDTO {
     private String room_info; //룸 정보
 
     @NotBlank(message = "룸 타입을 입력해주세요.")
-    private String room_type; //룸 타입
+    private RoomType room_type; //룸 타입
 
     @NotNull(message = "룸 인원을 입력해주세요.")
+    @Min(value = 2, message = "룸 최소 인원은 2인입니다.")
     private Long room_bed; //룸 인원수
 
     @NotNull(message = "룸 가격을 입력해주세요.")

@@ -1,7 +1,9 @@
 package com.lookatme.smartstay.entity;
 
 import com.lookatme.smartstay.constant.RoomState;
+import com.lookatme.smartstay.constant.RoomType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Entity
@@ -23,10 +25,12 @@ public class Room extends BaseEntity{
     @Column(nullable = false)
     private String room_info; //룸 정보
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String room_type; //룸 타입
+    private RoomType room_type; //룸 타입
 
     @Column(nullable = false)
+    @Min(value = 2, message = "룸 최소 인원은 2인입니다.")
     private Long room_bed; //룸 인원수
 
     @Column(nullable = false)
