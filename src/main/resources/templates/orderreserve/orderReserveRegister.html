@@ -8,14 +8,6 @@
     <title>룸 서비스 주문</title>
 
     <style layout:fragment="css">
-        #aside {
-            position: sticky;
-            background-color: white;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: auto;
-        }
 
         .order-section {
             position: sticky;
@@ -35,7 +27,7 @@
     <form action="/orderreserve/pay" method="post">
 
         <div class="container-fluid row">
-            <div class="col-9">
+            <div class="col-9 mt-3">
                 <div class="card p-3 mt-3 mx-auto">
 
                     <h2 class="text-center fw-bold my-3" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name} + ' 룸서비스 주문'">룸 서비스 목록</h2>
@@ -55,8 +47,10 @@
                                         <p><span th:text="${careDTO.care_price + '원'}"></span></p>
                                     </div>
 
-                                    <input type="checkbox" class="order-checkbox" th:data-name="${careDTO.care_name}"
+                                    <input type="checkbox" class="order-checkbox"
+                                           autocomplete="off" th:data-name="${careDTO.care_name}"
                                            th:data-id="${careDTO.care_num}" onchange="addToOrder(this)">
+
                                 </div>
                             </div>
                         </th:block>
@@ -92,23 +86,24 @@
                             </div>
                         </th:block>
                     </div>
-              </div>
+                </div>
+            </div>
 
-            <div class="col-3">
+            <div class="col-3 mt-3">
                 <div class="card p-3 mt-3 mx-auto order-section">
-                    <h2 class="mb-3">주문하기</h2>
+                    <h2 class="mb-3 text-center fw-bold">주문하기</h2>
                     <div class="order-list" id="orderList"></div>
                     <input type="text" name="request" placeholder="요청사항을 입력하세요">
                     <button type="submit" class="btn-primary">주문하기</button>
                 </div>
             </div>
+
         </div>
     </form>
 
 </th:block>
 
-<th:block layout:fragment="script">
-    <script th:inline="javascript">
+<script th:inline="javascript" layout:fragment="script">
 
         function addToOrder(element) {
             const orderList = document.getElementById('orderList');
@@ -137,7 +132,7 @@
         function removeFromOrder(button) {
             button.closest("div").remove();
         }
+
     </script>
-</th:block>
 </body>
 </html>
