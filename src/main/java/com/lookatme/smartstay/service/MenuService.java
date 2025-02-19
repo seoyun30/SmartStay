@@ -111,6 +111,7 @@ public class MenuService {
         return menuDTOPageResponseDTO;
     }
 
+    /*
     //한식 메뉴만
     public PageResponseDTO<MenuDTO> koreanMenuList(Long hotel_num, PageRequestDTO pageRequestDTO) {
 
@@ -361,7 +362,7 @@ public class MenuService {
                 .pageRequestDTO(pageRequestDTO).dtoList(menuDTOList).total((int) result.getTotalElements()).build();
 
         return menuDTOPageResponseDTO;
-    }
+    }*/
 
     public void menuModify(MenuDTO menuDTO, List<MultipartFile> multipartFiles, HotelDTO hotelDTO, List<Long> delnumList) throws Exception {
 
