@@ -60,6 +60,7 @@ public class NoticeServiceImpl  {
             throw new IllegalArgumentException("이메일이 비어 있습니다.");
         }
 
+        //데이터베이스에서 회원 일치여부 확인
         log.info("찾아온 email: " + email);
         if (member == null) {
             throw new AccessDeniedException("해당 이메일로 회원정보를 찾을 수 없습니다.");
@@ -185,51 +186,94 @@ public class NoticeServiceImpl  {
 
 
     //공지 사항 수정
-    public void noticeModify(NoticeDTO noticeDTO, List<MultipartFile> multipartFileList, List<Long> delnumList)   {
+    public void noticeModify(NoticeDTO noticeDTO, String email, List<MultipartFile> multipartFileList, List<Long> delnumList)   {
+
+        Member member = memberRepository.findByEmail(email);
+        //이메일 유효성 검증
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("이메일이 비어 있습니다.");
+        }
+
+        //데이터베이스에서 회원 일치여부 확인
+        log.info("찾아온 email: " + email);
+        if (member == null) {
+            throw new AccessDeniedException("해당 이메일로 회원정보를 찾을 수 없습니다.");
+        }
+
+        //권한 확인
+        if (!member.getRole().name().equals("CHIEF") && !member.getRole().name().equals("MANAGER")) {
+            throw new AccessDeniedException("공지사항을 작성할 권한이 없습니다.");
+        }
+
 
         //DTO->Entity변환
         Notice notice = modelMapper.map(noticeDTO, Notice.class);
 
-        //유효성 검사 id값으로 테이블에서 조회 페이지수를 읽어온다.(있으면 페이지, 없으면 null)
+        //데이터베이스에서 기존 공지사항을 조회
         Optional<Notice> noticeRead = noticeRepository.findById(noticeDTO.getNotice_num());
+        log.info("있니?");
 
         if (noticeRead.isPresent()) { //전달받은 레코드에 내용(수정사항)이 있으면
-            //저장
-            noticeRepository.save(notice);
+            Notice existingNotice = noticeRead.get();
+            boolean hasChanges = false;
+
+            // 제목 변경 여부 확인
+            if (!existingNotice.getTitle().equals(noticeDTO.getTitle())) {
+                existingNotice.setTitle(noticeDTO.getTitle());
+                hasChanges = true;
+            }
+
+            // 내용 변경 여부 확인
+            if (!existingNotice.getContent().equals(noticeDTO.getContent())) {
+                existingNotice.setContent(noticeDTO.getContent());
+                hasChanges = true;
+            }
+
+//            //이미지 변경 확인
+//            boolean hasNewImages = multipartFileList != null && multipartFileList.stream().anyMatch(file -> !file.isEmpty());
+//            boolean hasDeletedImages = delnumList != null && !delnumList.isEmpty();
+//
+//            if (hasNewImages || hasDeletedImages) {
+//                log.info("이미지 업데이트 실행");
+//                hasChanges = true;
+//                try {
+//                    // 이미지 업데이트
+//                    imageService.updateImage(
+//                            hasNewImages ? multipartFileList : null,
+//                            hasDeletedImages ? delnumList : null,
+//                            "notice",
+//                            notice.getNotice_num()
+//                    );
+//                } catch (IndexOutOfBoundsException e) {
+//                    log.error("이미지 업데이트 중 인덱스 오류 발생: {}", e.getMessage());
+//                    throw new IllegalArgumentException("업로드된 파일이나 삭제 요청이 잘못되었습니다.");
+//                } catch (Exception e) {
+//                    throw new RuntimeException("이미지 업데이트 중 오류 발생", e);
+//                }
+//            } else {
+//                log.info("이미지 업데이트 없이 텍스트 정보만 수정");
+//            }
+//
+//            if (!multipartFileList.isEmpty()) { //수정할 이미지파일이 존재하면
+//                // 기존에 존재하는 이미지파일이 있는지 확인 후 삭제
+//            }
+
+            // 변경 사항이 없으면 예외 발생
+            if (!hasChanges) {
+                throw new IllegalArgumentException("변경된 내용이 없습니다.");
+            }
+
+            //변경 사항이 있으면 저장
+            noticeRepository.save(existingNotice);
+
         }
 
-//        boolean hasNewImages = multipartFileList != null && multipartFileList.stream().anyMatch(file -> !file.isEmpty());
-//        boolean hasDeletedImages = delnumList != null && !delnumList.isEmpty();
-//
-//        if (hasNewImages || hasDeletedImages) {
-//            log.info("이미지 업데이트 실행");
-//            try {
-//                imageService.updateImage(
-//                        hasNewImages ? multipartFileList : null,
-//                        hasDeletedImages ? delnumList : null,
-//                        "notice",
-//                        notice.getNotice_num()
-//                );
-//            } catch (IndexOutOfBoundsException e) {
-//                log.error("이미지 업데이트 중 인덱스 오류 발생: {}", e.getMessage());
-//                throw new IllegalArgumentException("업로드된 파일이나 삭제 요청이 잘못되었습니다.");
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        } else {
-//            log.info("이미지 업데이트 없이 텍스트 정보만 수정");
-//        }
-//
-//        if (!multipartFileList.isEmpty()) { //수정할 이미지파일이 존재하면
-//            // 기존에 존재하는 이미지파일이 있는지 확인 후 삭제
-//
-//
-//        }
 
     }
 
     //공지 사항 삭제
     public void noticeDelete(Long notice_num){
+
         noticeRepository.deleteById(notice_num);
 
 //        //삭제된 레코드를 조회
