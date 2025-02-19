@@ -8,16 +8,13 @@
     <title>룸 서비스 주문</title>
 
     <style layout:fragment="css">
-
         .order-section {
             position: sticky;
             top: 100px;
             bottom: 0;
             height: auto;
         }
-
     </style>
-
 </head>
 
 <body>
@@ -32,7 +29,7 @@
 
                     <h2 class="text-center fw-bold my-3" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name} + ' 룸서비스 주문'">룸 서비스 목록</h2>
 
-                    <h3 class="text-center fw-bold my-3">케어 서비스 목록</h3>
+                    <h3 class="text-center fw-bold my-3">케어 서비스</h3>
 
                     <div class="row m-3 row-cols-1 row-cols-md-5 g-4">
                         <th:block th:each="careDTO : ${careDTOPageResponseDTO.dtoList}">
@@ -49,22 +46,30 @@
 
                                     <input type="checkbox" class="order-checkbox"
                                            autocomplete="off" th:data-name="${careDTO.care_name}"
-                                           th:data-id="${careDTO.care_num}" onchange="addToOrder(this)">
+                                           th:data-id="'care-' + ${careDTO.care_num}" onchange="addToOrder(this)">
 
                                 </div>
                             </div>
                         </th:block>
                     </div>
 
-                    <h3 class="text-center fw-bold my-3">룸 서비스 목록</h3>
+                    <h3 class="text-center fw-bold my-3">음식</h3>
 
                     <div class="btn-group p-3" role="group" aria-label="Vertical radio toggle button group">
-                        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" checked>
-                        <label class="btn btn-outline-danger" for="vbtn-radio1">Radio 1</label>
-                        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio2" autocomplete="off">
-                        <label class="btn btn-outline-danger" for="vbtn-radio2">Radio 2</label>
-                        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio3" autocomplete="off">
-                        <label class="btn btn-outline-danger" for="vbtn-radio3">Radio 3</label>
+                        <input type="radio" class="btn-check" name="menu-category" id="radio-korean" autocomplete="off" value="KOREAN" checked>
+                        <label class="btn btn-outline-danger" for="radio-korean">한식</label>
+                        <input type="radio" class="btn-check" name="menu-category" id="radio-chinese" autocomplete="off" value="CHINESE">
+                        <label class="btn btn-outline-danger" for="radio-chinese">중식</label>
+                        <input type="radio" class="btn-check" name="menu-category" id="radio-japanese" autocomplete="off" value="JAPANESE">
+                        <label class="btn btn-outline-danger" for="radio-japanese">일식</label>
+                        <input type="radio" class="btn-check" name="menu-category" id="radio-western" autocomplete="off" value="WESTERN">
+                        <label class="btn btn-outline-danger" for="radio-western">양식</label>
+                        <input type="radio" class="btn-check" name="menu-category" id="radio-snack" autocomplete="off" value="SNACK">
+                        <label class="btn btn-outline-danger" for="radio-snack">분식</label>
+                        <input type="radio" class="btn-check" name="menu-category" id="radio-drink" autocomplete="off" value="DRINK">
+                        <label class="btn btn-outline-danger" for="radio-drink">음료</label>
+                        <input type="radio" class="btn-check" name="menu-category" id="radio-etc" autocomplete="off" value="ETC" >
+                        <label class="btn btn-outline-danger" for="radio-etc">기타</label>
                     </div>
 
                     <div class="row m-3 row-cols-1 row-cols-md-5 g-4">
@@ -81,7 +86,7 @@
                                         <p><span th:text="${menuDTO.menu_price + '원'}"></span></p>
                                     </div>
                                     <input type="checkbox" class="order-checkbox" th:data-name="${menuDTO.menu_name}"
-                                           th:data-id="${menuDTO.menu_num}" onchange="addToOrder(this)">
+                                           th:data-id="'menu-' + ${menuDTO.menu_num}" onchange="addToOrder(this)">
                                 </div>
                             </div>
                         </th:block>
@@ -105,33 +110,7 @@
 
 <script th:inline="javascript" layout:fragment="script">
 
-        function addToOrder(element) {
-            const orderList = document.getElementById('orderList');
 
-            if (element.checked) {
-                const itemName = element.getAttribute('data-name');
-
-                const orderItem = document.createElement('div');
-                orderItem.setAttribute('data-id', element.getAttribute('data-id'));
-
-                orderItem.innerHTML = `
-                ${itemName}
-                <input type='number' value='1' min='1' style='width:50px;'> 개
-                <button type='button' class="btn-danger" onclick='removeFromOrder(this)'>삭제</button>
-                `;
-
-                orderList.appendChild(orderItem);
-
-            } else {
-                const itemId = element.getAttribute('data-id');
-                const orderItems = orderList.querySelectorAll(`[data-id='${itemId}']`);
-                orderItems.forEach(item => item.remove());
-            }
-        }
-
-        function removeFromOrder(button) {
-            button.closest("div").remove();
-        }
 
     </script>
 </body>
