@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <title>룸 서비스 주문</title>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style layout:fragment="css">
 
         .order-section {
@@ -91,9 +91,17 @@
 
             <div class="col-3 mt-3">
                 <div class="card p-3 mt-3 mx-auto order-section">
-                    <h2 class="mb-3 text-center fw-bold">주문하기</h2>
-                    <div class="order-list" id="orderList"></div>
-                    <input type="text" name="request" placeholder="요청사항을 입력하세요">
+                    <h2 class="mb-3 text-center fw-bold">주문 상품 목록</h2>
+
+                    <div class="card p-3 mb-3 orderList">
+                        <div class="" id="orderList"></div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" placeholder="요청사항을 입력하세요" id="floatingTextarea" style="height: 100px"></textarea>
+                        <label for="floatingTextarea">요청사항</label>
+                    </div>
+
                     <button type="submit" class="btn-primary">주문하기</button>
                 </div>
             </div>
@@ -105,33 +113,57 @@
 
 <script th:inline="javascript" layout:fragment="script">
 
-        function addToOrder(element) {
-            const orderList = document.getElementById('orderList');
+    $(document).ready(function () {
+        let orderListCard = $(".orderList");
+        orderListCard.hide(); // 초기에는 숨김
 
-            if (element.checked) {
-                const itemName = element.getAttribute('data-name');
+        $(".order-checkbox").on("change", function () {
+            addToOrder($(this));
+        });
+    });
 
-                const orderItem = document.createElement('div');
-                orderItem.setAttribute('data-id', element.getAttribute('data-id'));
+    function addToOrder($element) {
+        let orderList = $("#orderList");
+        let orderListCard = $(".orderList");
 
-                orderItem.innerHTML = `
+        if ($element.is(":checked")) {
+            let itemName = $element.data("name");
+            let itemId = $element.data("id");
+
+            let orderItem = $(`
+            <div class="text-center" data-id="${itemId}">
                 ${itemName}
                 <input type='number' value='1' min='1' style='width:50px;'> 개
-                <button type='button' class="btn-danger" onclick='removeFromOrder(this)'>삭제</button>
-                `;
+                <button type='button' class="btn btn-danger btn-sm" onclick='removeFromOrder("${itemId}")'><i class="bi bi-x-lg"></i></button>
+            </div>
+        `);
 
-                orderList.appendChild(orderItem);
-
-            } else {
-                const itemId = element.getAttribute('data-id');
-                const orderItems = orderList.querySelectorAll(`[data-id='${itemId}']`);
-                orderItems.forEach(item => item.remove());
-            }
+            orderList.append(orderItem);
+            orderListCard.show();
+        } else {
+            removeOrderItem($element.data("id"));
         }
+    }
 
-        function removeFromOrder(button) {
-            button.closest("div").remove();
+    function removeFromOrder(itemId) {
+        removeOrderItem(itemId);
+    }
+
+    function removeOrderItem(itemId) {
+        let orderList = $("#orderList");
+        let orderListCard = $(".orderList");
+
+        // 해당 ID의 주문 항목 삭제
+        orderList.find(`[data-id='${itemId}']`).remove();
+
+        // 체크박스 해제
+        $(`.order-checkbox[data-id='${itemId}']`).prop("checked", false);
+
+        // 주문 내역이 비었으면 숨기기
+        if (orderList.children().length === 0) {
+            orderListCard.hide();
         }
+    }
 
     </script>
 </body>
