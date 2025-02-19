@@ -32,8 +32,12 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     @Query("select h from Hotel h where h.create_by = :email and h.active_state = 'ACTIVE'")
     List<Hotel> findMyActiveHotel(String email);
 
-    //활성화 된 호텔 유정창 보임
+    @Query("SELECT h FROM Hotel h WHERE h.brand.active_state = 'ACTIVE' and h.active_state = 'ACTIVE'")
+    List<Hotel> findActiveHotel();
 
-    /*@Query("select h from Hotel h where h.create_by = :email and h.brand.active_state = 'ACTIVE'")
-    List<Hotel> findByEmail(String email);*/
+/*    //활성화 된 호텔 유저창 보임
+    @Query("select h from Hotel h where h.create_by = :email and h.brand.active_state = 'ACTIVE' and h.active_state = 'ACTIVE'")
+    List<Hotel> findInactiveHotel(String email);*/
+
+
 }

@@ -1,6 +1,7 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.Util.PagenationUtil;
+import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.dto.PageRequestDTO;
@@ -117,6 +118,16 @@ public class HotelController {
             log.error("이미지 삭제 실패: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
         }
+    }
+
+    //상태변경
+    @PostMapping("/stateUpdate")
+    @ResponseBody
+    public ResponseEntity<HotelDTO> stateUpdate(@RequestParam("hotel_num") Long hotel_num){
+
+        HotelDTO hotelDTO = hotelService.stateUpdate(hotel_num);
+
+        return ResponseEntity.ok(hotelDTO);
     }
 
            /*

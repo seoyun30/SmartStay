@@ -7,11 +7,14 @@ import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,7 +68,8 @@ public class MainController {
     @GetMapping("/")
     public String main(Model model) {
 
-        List<HotelDTO> list = hotelService.hotelList();
+        List<HotelDTO> list = hotelService.activeHotelList();  // 변경된 부분
+
 
         List<HotelDTO> top12Hotels = list.stream().limit(12).collect(Collectors.toList());
 
@@ -126,5 +130,13 @@ public class MainController {
         model.addAttribute("roomDTO", roomDTO);
 
         return "searchRoomRead";
+    }
+
+    //활성화된 호텔만 보이기
+    @GetMapping("/activeHotel")
+    @ResponseBody
+    public ResponseEntity<List<HotelDTO>> getActiveHotel() {
+        List<HotelDTO> activeHotel = hotelService.activeHotelList();
+        return ResponseEntity.ok(activeHotel);
     }
 }

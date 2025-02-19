@@ -121,6 +121,7 @@ public class BrandController {
         }
     }
 
+    //상태변경
     @PostMapping("/stateUpdate")
     @ResponseBody
     public ResponseEntity<BrandDTO> stateUpdate(@RequestParam("brand_num") Long brand_num){
