@@ -27,7 +27,7 @@
             <th>법인사업자번호</th>
             <th>대표자</th>
             <th>전화번호</th>
-            <th>삭제</th>
+            <th>상태</th>
           </tr>
           </thead>
           <tbody>
@@ -43,10 +43,11 @@
               <td th:text="${brand.owner}"></td>
               <td th:text="${brand.tel}"></td>
               <td>
-                <form action="/brand/brandDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                  <input type="hidden" name="id" th:value="${brand.brand_num}">
-                  <button type="submit" class="btn btn-danger" style="padding: 5px 15px; width: auto; font-size: inherit; text-align: center;">삭제</button>
-                </form>
+                <button class="btn btn-danger togglebtn" th:value="${brand.brand_num}"
+                        th:data-num="${brand.brand_num}">
+                  <th:block th:if="${brand.active_state.name().equals('ACTIVE')}">활성화</th:block>
+                  <th:block th:if="${brand.active_state.name().equals('INACTIVE')}">비활성화</th:block>
+                </button>
               </td>
             </tr>
           </th:block>
@@ -62,6 +63,29 @@
   if (messages != null && messages.trim() !== "") {
     alert(messages);
   }
+
+  let togglebtn = $(".togglebtn");
+
+  togglebtn.on("click", function () {
+    let brand_num = $(this).val();
+    console.log("변경: " + brand_num);
+
+    $.ajax({
+      url: "/brand/stateUpdate",
+      method: "post",
+      data: {brand_num: brand_num},
+      success: function (data, status, xhr) {
+        console.log(data)
+        location.reload(true);
+      },
+      errors: function (data, status, err) {
+        console.log(errorMsg)
+      }
+
+    })
+
+
+  })
 
 </script>
 

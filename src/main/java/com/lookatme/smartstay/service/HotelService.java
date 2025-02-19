@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.constant.ActiveState;
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.ImageDTO;
@@ -149,6 +150,23 @@ public class HotelService {
         memberRepository.deleteByHotelHotel_num(id);
         hotelRepository.updateHotelBrandToNull(id); //호텔이 참조하는 브랜드번호를 null로 설정
         hotelRepository.deleteById(id);
+    }
+
+    //hotel 상태 변경
+    public HotelDTO stateUpdate (Long Hotel_num) {
+        Hotel hotel = hotelRepository.findById(Hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        if (hotel != null) {
+            hotel.setActive_state(hotel.getActive_state() == ActiveState.ACTIVE ? ActiveState.INACTIVE : ActiveState.ACTIVE);
+            hotelRepository.save(hotel);
+        }
+
+        hotel = hotelRepository.findById(Hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+        HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+
+        return hotelDTO;
     }
 
 

@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.entity;
 
+import com.lookatme.smartstay.constant.ActiveState;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,5 +27,8 @@ public class Brand extends BaseEntity {
     private String owner; //대표자 이름
 
     private String tel; //연락처
+
+    @Enumerated(EnumType.STRING)
+    private ActiveState active_state; //활성 비활성
 
 }

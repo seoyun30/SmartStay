@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.entity;
 
+import com.lookatme.smartstay.constant.ActiveState;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,9 @@ public class Hotel extends BaseEntity{
     private String tel; //연락처
 
     private String score; //별점
+
+    @Enumerated(EnumType.STRING)
+    private ActiveState active_state; //활성 비활성
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_num")

@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.dto;
 
+import com.lookatme.smartstay.constant.ActiveState;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -47,6 +48,8 @@ public class HotelDTO {
     public List<ImageDTO> imageDTOList = new ArrayList<>();
 
     private List<Long> imageIdList = new ArrayList<>();
+
+    private ActiveState active_state; //활성 비활성
 
     private ImageDTO mainImage;
 
