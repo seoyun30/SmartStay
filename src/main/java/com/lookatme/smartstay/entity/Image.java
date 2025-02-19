@@ -35,6 +35,7 @@ public class Image extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_num")
+    @ToString.Exclude
     private Hotel hotel; //호텔 이미지
 
     @ManyToOne(fetch = FetchType.LAZY)
