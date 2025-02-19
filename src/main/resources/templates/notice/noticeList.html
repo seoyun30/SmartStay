@@ -45,7 +45,8 @@
                     <!--회원목록-->
                     <!--추가버튼-->
                     <div class="d-flex justify-content-end">
-                        <a th:href="@{/notice/noticeRegister}" class="btn btn-dark">등록</a>
+                        <a id="btn1" th:href="@{/notice/noticeRegister}" class="btn btn-dark">등록</a>
+                        <!--오류 메시지가 있을 경우 alert를 띄운다 -->
                     </div>
 
                     <h3>공지 사항</h3>
@@ -115,6 +116,20 @@
     </div>
 </div>
 <script th:inline="javascript" layout:fragment="script">
+    let errorMessage = [[${errorMessage}]]
+    console.log(errorMessage)
+
+    if (errorMessage) {
+        alert(errorMessage); //오류 메시지 알림
+        window.location = "/notice/noticeList"; // 오류 후 목록 페이지 이동
+    }
+
+
+
+
+
+
+
 
 </script>
 </body>
