@@ -30,7 +30,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="care_detail"  class="form-label">룸 케어 상세</label>
-                            <input type="text" min="0" class="form-control" th:field="*{care_detail}" id="care_detail">
+                            <input type="text" class="form-control" th:field="*{care_detail}" id="care_detail">
                             <p th:if="${#fields.hasErrors('care_detail')}" th:errors="*{care_detail}" class="fieldError"></p>
                         </div>
                     </div>

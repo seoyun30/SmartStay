@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.entity;
 
+import com.lookatme.smartstay.constant.MenuSort;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,7 @@ public class Menu extends BaseEntity {
 
     private String menu_name; //메뉴 명
 
-    private String menu_sort; //메뉴 분류
+    private MenuSort menu_sort; //메뉴 분류
 
     private String menu_detail; //메뉴 상세
 

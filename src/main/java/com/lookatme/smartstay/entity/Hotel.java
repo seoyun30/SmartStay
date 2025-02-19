@@ -39,9 +39,4 @@ public class Hotel extends BaseEntity{
     private Brand brand; //브랜드
 
     private Long lowestPrice;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "main_image_id")
-    @ToString.Exclude
-    private Image mainImage;
 }
