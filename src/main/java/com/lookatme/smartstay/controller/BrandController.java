@@ -72,7 +72,6 @@ public class BrandController {
     }
 
 
-
     //목록
     @GetMapping("/brandList") //슈퍼어드민만 사용
     public String brandList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
@@ -80,8 +79,12 @@ public class BrandController {
 
         String email = principal.getName();
         Member member = memberRepository.findByEmail(email);
-        List<BrandDTO> brandDTOList =  brandService.myBrand(email, member);
+
+        Long brandNum = (member.getBrand() != null) ? member.getBrand().getBrand_num() : null;
+
+        List<BrandDTO> brandDTOList = brandService.myBrand(brandNum, member);
         model.addAttribute("brandDTOList", brandDTOList);
+
         return "brand/brandList";
     }
 

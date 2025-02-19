@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,26 +68,27 @@ public class BrandService {
         return brandDTOS;
     }
 
-    // 로그인한 사용자의 브랜드만 조회 (슈퍼어드민은 모든 브랜드 조회)
-    public List<BrandDTO> myBrand(String email, Member member) {
+    public List<BrandDTO> myBrand(Long brand_num, Member member) {
         List<Brand> brands;
 
-        // member에서 role을 확인하여 슈퍼어드민 여부를 체크
         if (member != null && member.getRole().name().equals("SUPERADMIN")) {
-            // 슈퍼어드민일 경우 모든 브랜드를 조회
+            // 슈퍼어드민이면 모든 브랜드 조회
             brands = brandRepository.findAll();
         } else {
-            // 슈퍼어드민이 아니라면, 이메일에 해당하는 브랜드만 조회
-            brands = brandRepository.findByEmail(email);
+            // CHIEF가 등록한 브랜드가 아니라도, 같은 brand_num을 가진 브랜드를 가져오기
+            if (member.getBrand() != null) {
+                brands = brandRepository.findByBrandNum(member.getBrand().getBrand_num());
+            } else {
+                brands = new ArrayList<>(); // 브랜드가 없는 경우 빈 리스트 반환
+            }
         }
 
         // 브랜드 리스트를 BrandDTO로 변환
-        List<BrandDTO> brandDTOS = brands.stream()
+        return brands.stream()
                 .map(brand -> modelMapper.map(brand, BrandDTO.class))
                 .collect(Collectors.toList());
-
-        return brandDTOS;
     }
+
 
     //brand 상세보기
     public BrandDTO read(Long id) {
