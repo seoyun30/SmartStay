@@ -1,6 +1,9 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.dto.BrandDTO;
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.dto.RoomDTO;
 import com.lookatme.smartstay.service.BrandService;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
@@ -12,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -48,7 +50,10 @@ public class MainController {
         model.addAttribute("adminEmail", memberDTO.getEmail());
         model.addAttribute("adminRole", memberDTO.getRole());
 
-        if ("CHIEF".equals(memberDTO.getRole().name())) {
+        if ("SUPERADMIN".equals(memberDTO.getRole().name())) {
+            model.addAttribute("SUPERADMIN", "super admin 입니다.");
+
+        }else if ("CHIEF".equals(memberDTO.getRole().name())) {
             if (memberDTO.getBrandDTO() != null && memberDTO.getBrandDTO().getBrand_num() != null){
                 BrandDTO brandDTO = brandService.read(memberDTO.getBrandDTO().getBrand_num());
                 log.info("Brand details: {}", brandService.read(memberDTO.getBrandDTO().getBrand_num()));
