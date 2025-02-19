@@ -31,7 +31,7 @@
           <th>주소</th>
           <th>전화번호</th>
           <th>별점</th>
-          <th sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')">삭제</th>
+          <th>상태</th>
         </tr>
         </thead>
 
@@ -49,13 +49,12 @@
             <td th:text="${hotel.address}"></td>
             <td th:text="${hotel.tel}"></td>
             <td th:text="${hotel.score}"></td>
-
-            <!--post 방식의 삭제버튼-->
             <td>
-              <form sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" action="/hotel/hotelDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                <input type="hidden" name="id" th:value="${hotel.hotel_num}"> <!-- 삭제할 hotel의 ID를 hidden 필드로 전달 -->
-                <button type="submit" class="btn btn-danger" style="padding: 5px 15px; width: auto; font-size: inherit; text-align: center;">삭제</button>
-              </form>
+              <button class="btn btn-danger togglebtn" th:value="${hotel.hotel_num}"
+                      th:data-num="${hotel.hotel_num}">
+                <th:block th:if="${hotel.active_state.name().equals('ACTIVE')}">활성화</th:block>
+                <th:block th:if="${hotel.active_state.name().equals('INACTIVE')}">비활성화</th:block>
+              </button>
             </td>
           </tr>
         </th:block>
@@ -70,6 +69,27 @@
   if (messages != null && messages.trim() !== "") {
     alert(messages);
   }
+
+  let togglebtn = $(".togglebtn");
+
+  togglebtn.on("click", function () {
+    let hotel_num = $(this).val();
+    console.log("변경: " + hotel_num);
+
+    $.ajax({
+      url: "/hotel/stateUpdate",
+      method: "post",
+      data: {hotel_num: hotel_num},
+      success: function (data, status, xhr) {
+        console.log(data)
+        location.reload(true);
+      },
+      errors: function (data, status, err) {
+        console.log(errorMsg)
+      }
+
+    })
+  })
 
 </script>
 

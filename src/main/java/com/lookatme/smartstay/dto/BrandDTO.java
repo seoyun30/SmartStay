@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.dto;
 
+import com.lookatme.smartstay.constant.ActiveState;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,4 +39,6 @@ public class BrandDTO {
     public List<ImageDTO> imageDTOList = new ArrayList<>();
 
     private List<Long> imageIdList = new ArrayList<>();
+
+    private ActiveState active_state; //활성 비활성
 }

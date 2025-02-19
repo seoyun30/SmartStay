@@ -120,4 +120,13 @@ public class BrandController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
         }
     }
+
+    @PostMapping("/stateUpdate")
+    @ResponseBody
+    public ResponseEntity<BrandDTO> stateUpdate(@RequestParam("brand_num") Long brand_num){
+
+        BrandDTO brandDTO = brandService.stateUpdate(brand_num);
+
+        return ResponseEntity.ok(brandDTO);
+    }
 }
