@@ -39,7 +39,7 @@ public class QnaController {
     @GetMapping("/qnaRegister")
     public String qnaRegisterGet(Model model) {
         model.addAttribute("qnaDTO", new QnaDTO());
-        return "/qna/qnaRegister";
+        return "qna/qnaRegister";
     }
 
     @PostMapping("/qnaRegister")
@@ -53,7 +53,7 @@ public class QnaController {
             log.info("유효성 검사나 문제가 있다 아래 로그는 모든 문제를 출력");
             log.info(bindingResult.getAllErrors());
 
-            return "/qna/qnaRegister";
+            return "qna/qnaRegister";
         }
         qnaService.register(qnaDTO);
         //파일 추가시 qnaService.register(qnaDTO, multipartFile); 활성
@@ -69,29 +69,29 @@ public class QnaController {
         model.addAttribute("qnaDTOList", qnaDTOList);
 
         qnaDTOList.forEach(qnaDTO -> {log.info("qnaDTO: " + qnaDTO);});
-        return "/qna/qnaList";
+        return "qna/qnaList";
     }
 
     //상세
     @GetMapping("/qnaRead")
-    public String qnaRead(Long id, Model model) {
-        log.info("컨트롤러 읽기로 들어온 게시글 번호:" + id);
-        //log.info("컨트롤러 읽기로 들어온 게시글 번호:" + id);
+    public String qnaRead(Long qna_num, Model model) {
+        log.info("컨트롤러 읽기로 들어온 게시글 번호:" + qna_num);
+        //log.info("컨트롤러 읽기로 들어온 게시글 번호:" + qna_num);
 
-        if (id == null || id.equals("")) {
+        if (qna_num == null || qna_num.equals("")) {
             log.info("들어온 id 가 이상함");
             return "redirect:/qna/qnaList";
         }
 
         try {
-            QnaDTO qnaDTO = qnaService.read(id);
+            QnaDTO qnaDTO = qnaService.read(qna_num);
             model.addAttribute("qnaDTO", qnaDTO);
         }catch (EntityNotFoundException e){
             log.info("id로 값을 찾지 못함");
             return "redirect:/qna/qnaList";
         }
 
-        return "/qna/qnaRead";
+        return "qna/qnaRead";
     }
 
     //수정
@@ -113,7 +113,7 @@ public class QnaController {
             return "redirect:/qna/qnaList";
         }
 
-        return "/qna/qnaModify";
+        return "qna/qnaModify";
     }
 
     @PostMapping("/qnaModify")
@@ -125,7 +125,7 @@ public class QnaController {
         if (bindingResult.hasErrors()) {
             log.info("유효성검사 확인!!");
             log.info(bindingResult.getAllErrors()); //유효성 내용 콘솔창에 출력
-            return "/qna/qnaList";
+            return "qna/qnaList";
         }
 
         return "redirect:/qna/qnaList"; //+pageRequestDTO.getLink()
@@ -140,9 +140,11 @@ public class QnaController {
     }
 
     //조회수 상승 코드(REST 방식)
-    @PostMapping("/incrementViewCont")
-    public ResponseEntity<Void> incrementViewCont(@RequestBody Map<String,Long> request) {
+    @PostMapping("/incrementViewCount")
+    public ResponseEntity incrementViewCont(@RequestBody Map<String,Long> request) {
+
         Long qna_num = request.get("qna_num");
+        log.info("qna_num: " + qna_num);
 
         if (qna_num != null) {
             qnaService.incrementViewCount(qna_num);
