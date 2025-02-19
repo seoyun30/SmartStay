@@ -17,17 +17,15 @@
                     <!--제목-->
                     <div class="card-header bg-white">
                         <div class="input-group mt-2 my-3">
-                            <span class="input-group-text bg-white border border-0 fw-bold"
-                                  id="basic-addon1">제목: </span>
-                            <input type="text" class="form-control bg-white" id="title" name="title" placeholder="제목을 입력하세요">
+                            <label for="validationDefault01" class="form-label">제목:  </label>
+                            <input type="text" class="form-control" id="validationDefault01" name="title" required placeholder="제목을 입력하세요">
                         </div>
                     </div>
                     <div class="card-body" style="height: 500px;"><!--공지사항글 제품-->
                         <!--id와 name은 DTO에 변수명으로 작업-->
                         <div class="input-group mt-1 my-3" style="height: 88%">
-                            <span class="input-group-text bg-white border border-0 fw-bold"
-                                  id="basic-addon2">내용: </span>
-                            <textarea type="text" class="form-control bg-white" id="content" name="content" placeholder="내용을 입력하세요"></textarea>
+                            <label for="validationDefault01" class="form-label">내용:  </label>
+                            <textarea type="text" class="form-control" id="validationDefault02" name="content" required placeholder="내용을 입력하세요"></textarea>
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-center">
@@ -44,5 +42,8 @@
     </div><!--row끝-->
 </div><!--container끝-->
 </div>
+<script th:inline="javascript" layout:fragment="script">
+
+</script>
 </body>
 </html>
