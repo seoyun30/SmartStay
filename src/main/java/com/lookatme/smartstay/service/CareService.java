@@ -84,7 +84,20 @@ public class CareService {
         Page<Care> result = careRepository.findByHotel(hotel, pageable);
 
         List<CareDTO> careDTOList = result.stream()
-                .map(care -> modelMapper.map(care, CareDTO.class)).collect(Collectors.toList());
+                .map(care -> modelMapper.map(care, CareDTO.class)
+                        .setHotelDTO(modelMapper.map(care.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        for (CareDTO careDTO : careDTOList) {
+            List<Image> careImageList = imageRepository.findByTarget("care", careDTO.getCare_num());
+            if (!careImageList.isEmpty()) {
+                List<ImageDTO> careImageDTOList = careImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                careDTO.setImageDTOList(careImageDTOList);
+            } else {
+                careDTO.setImageDTOList(null);
+            }
+        }
 
         if (careDTOList == null) {
             careDTOList = Collections.emptyList();
