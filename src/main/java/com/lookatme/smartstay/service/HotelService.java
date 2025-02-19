@@ -36,6 +36,7 @@ public class HotelService {
     private final ModelMapper modelMapper;
     private final ImageService imageService;
     private final RoomRepository roomRepository;
+    private final EmailService emailService;
 
     //hotel 등록
     public void insert(HotelDTO hotelDTO, String email,
@@ -59,6 +60,25 @@ public class HotelService {
     public List<HotelDTO> hotelList() {
         List<Hotel> hotels = hotelRepository.findAll();
         hotels.forEach(hotel -> log.info(hotel));
+        List<HotelDTO> hotelDTOS = hotels.stream()
+                .map(hotel -> {
+                    HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+                    BrandDTO brandDTO = modelMapper.map(hotel.getBrand(), BrandDTO.class);
+                    hotelDTO.setBrandDTO(brandDTO);
+                    Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
+                    hotelDTO.setLowestPrice(lowestPrice);
+                    ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
+                    hotelDTO.setMainImage(mainImage);
+                    return hotelDTO;
+                })
+                .collect(Collectors.toList());
+
+        return hotelDTOS;
+    }
+
+    //활성된 호텔만 유저 보이기
+    public List<HotelDTO> activeHotelList() {
+        List<Hotel> hotels = hotelRepository.findActiveHotel();
         List<HotelDTO> hotelDTOS = hotels.stream()
                 .map(hotel -> {
                     HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
