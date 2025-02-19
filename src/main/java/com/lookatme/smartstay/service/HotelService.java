@@ -110,9 +110,6 @@ public class HotelService {
         return hotelDTO;
     }
 
-    //Optional<Chief> chief = chiefRepository.findById(id);
-    //ChiefDTO chiefDTO = modelMapper.map(chief, ChiefDTO.class);
-    //return chiefDTO;
 
     public HotelDTO myHotel(String email) {
         Member member = memberRepository.findByEmail(email);
@@ -139,11 +136,11 @@ public class HotelService {
 
         hotelRepository.save(hotel);
 
-       /* Optional<Chief> chief = chiefRepository.findById(chiefDTOList.getChief_num());
-        if(chief.isPresent()){
-            Chief chiefs = modelMapper.map(chiefDTOList, Chief.class);
-            chiefRepository.save(chiefs);
-        } */
+        // 이미지 업로드 처리
+        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+            // 기존 이미지를 업데이트 또는 새로운 이미지를 업로드
+            imageService.saveImage(multipartFiles, "hotel", hotel.getHotel_num());
+        }
     }
 
     //chief 삭제
