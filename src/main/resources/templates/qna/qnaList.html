@@ -25,7 +25,7 @@
                     <th>제목</th>
                     <th>작성자</th>
                     <th>조회수</th>
-                    <th>삭제</th>
+                    <th sec:authorize="hasAnyAuthority('USER')">삭제</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -34,16 +34,13 @@
                     <tr class="align-middle">
                         <td th:text="${qna.qna_num}"></td>
                         <td>
-                            <a th:href="@{/qna/qnaRead(id=${qna.qna_num})}" class="increment-view-btn" data-qna_num="$qna.qna_num">
+                            <a href="#" class="increment-view-btn" th:data-qna_num="${qna.qna_num}">
                                 [[${qna.title}]]
                             </a>
                         </td>
                         <td th:text="${qna.writer}"></td>
-                        <td th:number="${qna.content}"></td>
-                        <td th:number="${qna.viewCount}"></td>
-
-                        <!--post 방식의 삭제버튼-->
-                        <td>
+                        <td th:text="${qna.viewCount}"></td>
+                        <td>  <!--post 방식의 삭제버튼-->
                             <form sec:authorize="hasAnyAuthority('USER')" action="/qna/qnaDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
                                 <input type="hidden" name="qna_num" th:value="${qna.qna_num}"> <!-- 삭제할 qna의 ID를 hidden 필드로 전달 -->
                                 <button type="submit" class="btn btn-dark" style="background-color: red;">삭제</button>
@@ -67,27 +64,31 @@
 
     //조회수 상승 코드
     $(document).ready(function() {
-        function incrementViewCount(qna_num) {
-            $.ajax({
-                url: '/qna/incrementViewCount',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ qna_num: qna_num }),
-                success: function() {
-                    window.location.href = `/qna/read?qna_num=${qna_num}`;
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error:', error);
-                }
-            });
-        }
-
         $('.increment-view-btn').on('click', function(e) {
             e.preventDefault();
             var qna_num = $(this).data('qna_num');
             incrementViewCount(qna_num);
         });
     });
+
+    function incrementViewCount(qna_num) {
+        $.ajax({
+            url: '/qna/incrementViewCount',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({ qna_num: qna_num }),
+            success: function(result) {
+                // 조회수 증가 후 상세 페이지로 이동
+                console.info(result)
+                window.location.href = '/qna/qnaRead?qna_num=' + qna_num;
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                // 오류가 발생하면 바로 상세 페이지로 이동
+
+            }
+        });
+    }
 
 </script>
 
