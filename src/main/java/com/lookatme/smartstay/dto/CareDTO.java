@@ -34,4 +34,9 @@ public class CareDTO {
     public List<ImageDTO> imageDTOList = new ArrayList<>();
 
     public List<Long> imageIdList = new ArrayList<>();
+
+    public CareDTO setHotelDTO(HotelDTO hotelDTO) {
+        this.hotelDTO = hotelDTO;
+        return this;
+    }
 }

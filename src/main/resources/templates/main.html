@@ -54,6 +54,8 @@
             <div class="d-flex justify-content-between align-items-center mb-5">
                 <h2 class="text-center flex-grow-1">인기 호텔</h2>
             </div>
+            <div class="row" id="hotel-list"></div> <!--추가-->
+
             <div class="row">
                 <div th:each="hotel : ${list}" class="col-md-3 mb-4">
                     <div class="card shadow-sm">
@@ -120,6 +122,41 @@
                         map.setCenter(locPosition);
                     }
                 </script>
+                <!-- JavaScript 코드 -->
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        fetch("/activeHotels")
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log("Active Hotels:", data);
+                                const hotelList = document.getElementById("hotel-list");
+                                hotelList.innerHTML = ""; // 기존 목록 초기화
+
+                                data.forEach(hotel => {
+                                    const card = document.createElement("div");
+                                    card.className = "col-md-3 mb-4";
+                                    card.innerHTML = `
+                            <div class="card shadow-sm">
+                                <div class="image-container">
+                                    <img src="${hotel.mainImage ? hotel.mainImage.image_url : '/assets/img/default-hotel.jpg'}"
+                                         alt="호텔 이미지" class="img-fluid rounded-top" />
+                                </div>
+                                <div class="card-body text-center">
+                                    <a href="/searchRead?hotel_num=${hotel.hotel_num}" class="text-decoration-none text-primary fw-bold">
+                                        ${hotel.hotel_name}
+                                    </a>
+                                    <p class="text-muted mt-2">${hotel.lowestPrice ? hotel.lowestPrice + '원~' : '가격 정보 없음'}</p>
+                                    <p class="text-warning">별점 : ${hotel.score ? hotel.score : '정보 없음'}</p>
+                                </div>
+                            </div>
+                        `;
+                                    hotelList.appendChild(card);
+                                });
+                            })
+                            .catch(error => console.error("Error fetching active hotels:", error));
+                    });
+                </script>
+
             </div>
         </div>
     </section>

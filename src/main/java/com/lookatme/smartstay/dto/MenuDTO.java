@@ -37,4 +37,9 @@ public class MenuDTO {
     public List<ImageDTO> imageDTOList = new ArrayList<>();
 
     public List<Long> imageIdList = new ArrayList<>();
+
+    public MenuDTO setHotelDTO(HotelDTO hotelDTO) {
+        this.hotelDTO = hotelDTO;
+        return this;
+    }
 }

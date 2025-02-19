@@ -10,6 +10,12 @@
 <body>
 <th:block layout:fragment="content">
     <h1 class="text-center">브랜드 등록</h1>
+
+    <!-- 에러 메시지 출력 -->
+    <div th:if="${error}" class="alert alert-danger text-center">
+        <p th:text="${error}"></p>
+    </div>
+
     <form action="/brand/brandRegister" method="post" th:object="${brandDTO}" enctype="multipart/form-data">
 
         <div class="row">

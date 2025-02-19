@@ -1,6 +1,7 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.ActiveState;
+import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.entity.Brand;
@@ -35,10 +36,17 @@ public class BrandService {
     //brand 등록
     public void insert(BrandDTO brandDTO, String email,
                        List<MultipartFile> multipartFiles) throws Exception {
+
+        Member member = memberRepository.findByEmail(email); // 추가
+
+        if(member.getRole() == Role.CHIEF && member.getBrand() != null) {
+            throw new IllegalStateException("이미 등록된 브랜드가 있습니다. 추가등록 불가");
+        }
+
         Brand brand = modelMapper.map(brandDTO, Brand.class);
         brand.setActive_state(ActiveState.ACTIVE);
 
-        Member member = memberRepository.findByEmail(email); // 추가
+
 
         Brand brand1 = brandRepository.save(brand);
 
