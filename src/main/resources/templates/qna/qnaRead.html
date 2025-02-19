@@ -101,12 +101,22 @@
                 </form>
 
                 <!--댓글-->
-                <div class="card mt-5">
-                    <h5 class="card-header">답변</h5>
-                    <div class="card-body bg-body-tertiary rounded-lg">
-                        <div id="commentContainer">
-                            <p class="card-text">답변 내용</p>
-                            <a href="#" class="btn btn-primary float-end registerBtn" sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" data-bs-toggle="modal" data-bs-target="#replyModal">등록</a>
+                <form action="/qna/qnaRead" method="post" th:object="${qnaReadDTO}">
+                    <div class="form-container mt-5">
+                        <div class="row">
+                            <div class="col text-center">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label for="content" class="form-label">내용</label>
+                                        <textarea th:field="*{content}" min="0" name="content" class="form-control" id="content" rows="3" required></textarea>
+                                        <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                            <a href="#" class="btn btn-primary float-end registerBtn" sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')">등록</a>
                             <a href="#" class="btn btn-primary float-end modiBtn" data-bs-toggle="modal" data-bs-target="#replyModal" style="display:none">수정</a>
                         </div>
                     </div>
@@ -142,6 +152,7 @@
 <script th:inline="javascript" layout:fragment="script">
     let qna_num = document.getElementById("qna_num").value;
 
+    /*
     // 댓글 관련 버튼들
     let registerBtn = $(".registerBtn");  // 댓글 등록 버튼
     let replyText = $(".replyText"); // 댓글 내용
@@ -156,7 +167,7 @@
         qna_num: qna_num, // qna_num을 전달
         qnaReply_num: "", // 댓글 번호
         qnaReply_text: "" // 댓글 내용
-    };
+    };*/
 
     // 목록 버튼 클릭시
     $(".Listbtn").on("click", function () {
@@ -168,7 +179,7 @@
         location.href = "/qna/qnaModify?qna_num=" + qna_num;
     });
 
-    // 댓글 등록 버튼 클릭 시
+  /*  // 댓글 등록 버튼 클릭 시
     registerBtn.on("click", function () {
         cbtn.hide();
         saveBtn.show();
@@ -261,7 +272,7 @@
                 alert("댓글 삭제에 실패했습니다.");
             }
         });
-    }
+    }*/
 </script>
 </body>
 </html>

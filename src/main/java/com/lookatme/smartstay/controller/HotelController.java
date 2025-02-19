@@ -1,7 +1,10 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.Util.PagenationUtil;
-import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.ImageDTO;
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.HotelService;
@@ -9,6 +12,7 @@ import com.lookatme.smartstay.service.ImageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,6 +36,7 @@ public class HotelController {
     private final ImageService imageService;
     private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
+    private final ModelMapper modelMapper;
     private PagenationUtil pagenation;
     private final PagenationUtil pagenationUtil;
 
@@ -42,11 +48,12 @@ public class HotelController {
     }
     @PostMapping("/hotelRegister")
     public String hotelRegisterPost(HotelDTO hotelDTO, RedirectAttributes redirectAttributes,
-                                    @RequestParam(value = "multipartFiles", required = false)  List<MultipartFile> multi,
+                                    @RequestParam(value = "multi", required = false)  List<MultipartFile> multi,
+                                    @RequestParam(value = "mainImageIndex", required = false, defaultValue = "0") Long mainImageIndex,
                                     Principal principal) throws Exception {
         log.info("hotelRegister : " + hotelDTO);
         multi.forEach(multipartFile -> {log.info("multipartFile : " + multipartFile);});
-        hotelService.insert(hotelDTO, principal, multi);
+        hotelService.insert(hotelDTO, principal.getName(), multi);
         redirectAttributes.addFlashAttribute("msg", "등록이 완료되었습니다.");
         return "redirect:/hotel/hotelList";
     }
@@ -79,7 +86,7 @@ public class HotelController {
     @PostMapping("/hotelModify")
     public String hotelModifyPost(HotelDTO hotelDTO, BindingResult bindingResult,
                                   @RequestParam("delnumList") List<Long> delnumList,
-                                  @RequestParam("multipartFiles") List<MultipartFile> multi,
+                                  @RequestParam("multi") List<MultipartFile> multi,
                                   ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
 
         if (bindingResult.hasErrors()) {
@@ -87,7 +94,6 @@ public class HotelController {
             return "hotel/hotelModify";
         }
         log.info("유효성 통과");
-
         hotelService.update(hotelDTO, multi );
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
@@ -112,4 +118,22 @@ public class HotelController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
         }
     }
+
+           /*
+                   // 기존 삭제 처리
+        for (Long delNum : delnumList) {
+            imageService.deleteImage(delNum);
+        }
+           // 새로운 이미지 저장
+        if (multi != null && !multi.isEmpty()) {
+            imageService.saveImage(multi, "hotel", hotelDTO.getHotel_num());
+        }
+
+        // 저장된 이미지 리스트를 다시 불러와서 DTO에 설정
+        List<Image> updatedImages = imageService.findImagesByTarget("hotel", hotelDTO.getHotel_num());
+        List<ImageDTO> imageDTOList = updatedImages.stream()
+                .map(image -> modelMapper.map(image, ImageDTO.class))
+                .collect(Collectors.toList());
+        hotelDTO.setImageDTOList(imageDTOList);
+*/
 }

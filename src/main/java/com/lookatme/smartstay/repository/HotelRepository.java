@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface HotelRepository extends JpaRepository<Hotel, Long> {
 
@@ -18,9 +17,6 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
 
     @Query("select h from Hotel h where h.hotel_name like %:query% or h.address like %:query%")
     List<Hotel> findByHotel_nameOrAddressContaining(@Param("query") String query);
-
-    @Query("select h from Hotel h where h.member.email = :email")
-    Optional<Hotel> findHotelByMemberEmail(@Param("email") String email);
 
     //브랜드는 남겨두고 호텔을 삭제하기 위한 메서드
     @Modifying
@@ -32,4 +28,12 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     @Query("select h from Hotel h where h.brand= :brand")
     List<Hotel> findByMyBrand(Brand brand);
 
+    //호텔 활성화(관리자 전체 보여짐)
+    @Query("select h from Hotel h where h.create_by = :email and h.active_state = 'ACTIVE'")
+    List<Hotel> findMyActiveHotel(String email);
+
+    //활성화 된 호텔 유정창 보임
+
+    /*@Query("select h from Hotel h where h.create_by = :email and h.brand.active_state = 'ACTIVE'")
+    List<Hotel> findByEmail(String email);*/
 }

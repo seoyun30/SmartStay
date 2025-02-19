@@ -1,6 +1,7 @@
 package com.lookatme.smartstay.dto;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +20,10 @@ public class QnaDTO {
     private String content; //문의 내용
 
     private String writer; //문의 작성자
+
+    //private String category; //카테고리
+
+    private int viewCount; // 조회수 추가
 
     private LocalDateTime reg_date;
 

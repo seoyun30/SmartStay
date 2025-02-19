@@ -181,6 +181,19 @@ public class QnaServcieImpl implements QnaService {
 
     }
 
+    //조회수 증가 메서드
+    @Override
+    public void incrementViewCount(Long qna_num) {
+        log.info("조회수 증가 서비스 호출 :"+qna_num);
+
+        Qna qna = qnaRepository.findById(qna_num)
+                .orElseThrow(()-> new EntityNotFoundException("문의 게시글을 찾을 수 없습니다."));
+        qna.incrementViewCount(); // 증가
+        qnaRepository.save(qna); //업데이트된 qna 엔티티 저장
+
+        log.info("조회수 증가 후 QnA:" + qna);
+    }
+
 /*--------------------------추후 페이징 처리 사용
     @Override
     public PageResponseDTO<BoardDTO> pagelist(PageRequestDTO pageRequestDTO) {

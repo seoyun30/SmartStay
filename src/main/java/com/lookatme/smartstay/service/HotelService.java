@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.constant.ActiveState;
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.ImageDTO;
@@ -20,7 +21,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,10 +38,10 @@ public class HotelService {
     private final RoomRepository roomRepository;
 
     //hotel 등록
-    public void insert(HotelDTO hotelDTO, Principal principal,
+    public void insert(HotelDTO hotelDTO, String email,
                        List<MultipartFile> multipartFiles) throws Exception {
         Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
-        Member member = memberRepository.findByEmail(principal.getName()); //추가
+        Member member = memberRepository.findByEmail(email); //추가
         Brand brand =  member.getBrand(); //추가
         hotel.setBrand(brand); //추가
         Hotel hotel1 = hotelRepository.save(hotel);
@@ -64,6 +64,8 @@ public class HotelService {
                     hotelDTO.setBrandDTO(brandDTO);
                     Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
                     hotelDTO.setLowestPrice(lowestPrice);
+                    ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
+                    hotelDTO.setMainImage(mainImage);
                     return hotelDTO;
                 })
                 .collect(Collectors.toList());
@@ -109,9 +111,6 @@ public class HotelService {
         return hotelDTO;
     }
 
-    //Optional<Chief> chief = chiefRepository.findById(id);
-    //ChiefDTO chiefDTO = modelMapper.map(chief, ChiefDTO.class);
-    //return chiefDTO;
 
     public HotelDTO myHotel(String email) {
         Member member = memberRepository.findByEmail(email);
@@ -138,11 +137,11 @@ public class HotelService {
 
         hotelRepository.save(hotel);
 
-       /* Optional<Chief> chief = chiefRepository.findById(chiefDTOList.getChief_num());
-        if(chief.isPresent()){
-            Chief chiefs = modelMapper.map(chiefDTOList, Chief.class);
-            chiefRepository.save(chiefs);
-        } */
+        // 이미지 업로드 처리
+        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+            // 기존 이미지를 업데이트 또는 새로운 이미지를 업로드
+            imageService.saveImage(multipartFiles, "hotel", hotel.getHotel_num());
+        }
     }
 
     //chief 삭제
@@ -151,6 +150,23 @@ public class HotelService {
         memberRepository.deleteByHotelHotel_num(id);
         hotelRepository.updateHotelBrandToNull(id); //호텔이 참조하는 브랜드번호를 null로 설정
         hotelRepository.deleteById(id);
+    }
+
+    //hotel 상태 변경
+    public HotelDTO stateUpdate (Long Hotel_num) {
+        Hotel hotel = hotelRepository.findById(Hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        if (hotel != null) {
+            hotel.setActive_state(hotel.getActive_state() == ActiveState.ACTIVE ? ActiveState.INACTIVE : ActiveState.ACTIVE);
+            hotelRepository.save(hotel);
+        }
+
+        hotel = hotelRepository.findById(Hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+        HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+
+        return hotelDTO;
     }
 
 
@@ -194,5 +210,15 @@ public class HotelService {
 
     public Long getHotelLowestPrice(Long hotel_num) {
         return roomRepository.findLowestRoomPriceByHotelNum(hotel_num);
+    }
+
+    public ImageDTO getHotelMainImage(Long hotel_num) {
+
+        List<Image> imageList = imageService.findImagesByTarget("hotel", hotel_num);
+
+        if (imageList != null && !imageList.isEmpty()) {
+            return modelMapper.map(imageList.get(0), ImageDTO.class);
+        }
+        return null;
     }
 }

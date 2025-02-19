@@ -12,16 +12,19 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -134,6 +137,19 @@ public class QnaController {
         log.info(qna_num);
         qnaService.del(qna_num);
         return "redirect:/qna/qnaList";
+    }
+
+    //조회수 상승 코드(REST 방식)
+    @PostMapping("/incrementViewCont")
+    public ResponseEntity<Void> incrementViewCont(@RequestBody Map<String,Long> request) {
+        Long qna_num = request.get("qna_num");
+
+        if (qna_num != null) {
+            qnaService.incrementViewCount(qna_num);
+            return ResponseEntity.ok().build();
+        }else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 }

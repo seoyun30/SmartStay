@@ -23,8 +23,6 @@
                             <p th:if="${#fields.hasErrors('hotel_name')}" th:errors="*{hotel_name}" class="fieldError"></p>
                         </div>
                     </div>
-                    삭제번호 <input name="delnumList" value="1">
-                    file <input type="file" name="multipartFiles">
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="business_num" class="form-label">사업자번호</label>
@@ -63,19 +61,20 @@
                                     <th:block th:each="img : ${hotelDTO.imageDTOList}">
                                         <th:block th:if="${img.repimg_yn == 'Y'}">
                                             <img th:src="${img.image_url}" alt="Main Image" width="300px">
-                                            <button type="button" th:data-image-id="${img.image_id}" class="delete-image-btn"></button>
-                                            <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
+                                            <button type="button" th:data-id="${img.image_id}" class="btn btn-danger delete-image-btn" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
                                         </th:block>
                                     </th:block>
                                 </div>
+
                                 <div class="mb-3 imgA">
                                     <label for="formFile" class="form-label">대표 이미지 변경</label>
-                                    <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="mult" type="file">
+                                    <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multi" type="file">
                                     <div class="row main imgpreview"></div>
                                     <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">사진 지우기</button>
                                 </div>
                             </div>
-                            <div class="col-12">
+
+                            <div class="col-12 mt-3">
                                 <button type="submit" class="btn btn-primary" style="float:right; margin-left: 10px;">수정</button>
                                 <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
                                 <script>
@@ -119,15 +118,13 @@
                                         // 이미지 삭제 버튼 클릭 시 확인 후 이미지 삭제 폼 제출
                                         document.querySelectorAll('.delete-image-btn').forEach(button => {
                                             button.addEventListener('click', function () {
-                                                const imageId = this.getAttribute('data-image-id');
+                                                const imageId = this.getAttribute('data-id');
                                                 if (confirm('정말 삭제하시겠습니까?')) {
                                                     alert(`이미지 ID: ${imageId} 삭제됩니다.`);
                                                     // 서버로 삭제 요청
-                                                    const data = new FormData();
-                                                    data.append("imageId", imageId);
+
                                                     fetch(`/brand/deleteImage/${imageId}`, {
                                                         method: 'POST',
-                                                        body: data
                                                     }).then(response => {
                                                         if (response.ok) {
                                                             alert('이미지가 삭제되었습니다.');
@@ -140,6 +137,16 @@
                                             });
                                         });
                                     });
+                                    //기존 이미지 처리
+                                    $(document).ready(function() {
+                                        // '삭제' 버튼 클릭 시
+                                        $('#image-list').on('click', '#imagedelelte', function() {
+                                            // 'deletecheck' 입력 필드에 'Y' 값을 설정
+                                            $('#deletecheck').val('Y');
+
+                                            $('#image-main').hide();
+                                        });
+                                    });
                                 </script>
                             </div>
                         </div>
@@ -147,6 +154,9 @@
                 </div>
             </div>
         </div>
+    </form>
+    <form id="deleteForm" action="/hotel/hotelDelete" method="post" style="display:none;">
+        <input type="hidden" name="id" th:value="${hotelDTO.hotel_name}">
     </form>
 </th:block>
 </body>

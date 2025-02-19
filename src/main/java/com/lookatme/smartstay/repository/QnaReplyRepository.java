@@ -17,4 +17,6 @@ public interface QnaReplyRepository extends JpaRepository<QnaReply, Long> {
     @Query("select q from QnaReply q where q.qna.qna_num = :qna_num")
     public List<QnaReply> deleteAllByQna_num(Long qna_num); //수정 필요
 
+
+
 }

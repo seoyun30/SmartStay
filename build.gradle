@@ -60,8 +60,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-    //Querydsl 관련 라이브러리
-    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
+
 
     annotationProcessor(
             "jakarta.persistence:jakarta.persistence-api",

@@ -13,4 +13,7 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     @Query("select b from Brand b where b.create_by = :email")
     public List<Brand> findByEmail(String email);
 
+    @Query("select b from Brand b where b.create_by = :email and b.active_state = 'ACTIVE'")
+    List<Brand> findMyActiveBrand(String email);
+
 }

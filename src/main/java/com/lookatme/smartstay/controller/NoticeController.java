@@ -5,6 +5,7 @@ import com.lookatme.smartstay.dto.*;
 
 import com.lookatme.smartstay.service.ImageService;
 import com.lookatme.smartstay.service.NoticeServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -35,14 +37,15 @@ public class NoticeController {
 
     //목록 페이지
     @GetMapping("/noticeList")
-    public String noticeList(PageRequestDTO pageRequestDTO, @PageableDefault(page = 1) Pageable pageable, Model model){
+    public String noticeList(PageRequestDTO pageRequestDTO, Model model){
         log.info("모든 데이터를 읽어온다..." + pageRequestDTO);
 
-        Page<NoticeDTO> noticeDTOS = noticeService.noticeList(pageable);
-        Map<String, Integer> pageInfo = pagenationUtil.pagination(noticeDTOS);
+        List<NoticeDTO> noticeDTOS = noticeService.noticeList();
+
+//        Map<String, Integer> pageInfo = pagenationUtil.pagination(noticeDTOS);
         model.addAttribute("noticeList", noticeDTOS);
         System.out.println("노티스노티스" + noticeDTOS);
-        model.addAttribute("pageInfo", pageInfo);
+//        model.addAttribute("pageInfo", pageInfo);
 
         return "notice/noticeList";
     }
@@ -57,26 +60,48 @@ public class NoticeController {
 
     //등록 내용 저장
     @PostMapping("/noticeRegister")
-    public String noticeRegisterPost(NoticeDTO noticeDTO, MemberDTO memberDTO, List<MultipartFile> multipartFileList){
+    public String noticeRegisterPost(NoticeDTO noticeDTO, Principal principal, List<MultipartFile> multipartFileList) throws Exception {
 
         log.info("입력폼 내용을 저장..." + noticeDTO);
 //        log.info("들어온값 : " + multipartFileList.get(0).getOriginalFilename());
-        noticeService.noticeRegister(noticeDTO);
+        // principal.getName() 로그인한 사람으로 메일로 ...
+        noticeService.noticeRegister(noticeDTO, principal.getName(), multipartFileList);
 
         return "redirect:/notice/noticeList";
     }
 
     //상세 보기 페이지
     @GetMapping("/noticeRead")
-    public String noticeRead(Long id, PageRequestDTO pageRequestDTO, Model model){
-        log.info("개별읽기...");
-        NoticeDTO noticeDTO = noticeService.noticeRead(id);
-        System.out.println("sss");
+    public String noticeRead(Long id, Model model){
+        log.info("개별읽기..." + id);
 
-        log.info("개별정보를 페이지에 전달...");
-        model.addAttribute("notice", noticeDTO);
+//        log.info("컨드롤러 읽기로 들어온 페이징처리 : " + pageRequestDTO);
 
+//        if (id == null || id.equals("")){
+//            log.info("들어온 notice_num가 이상함");
+//            return "redirect:/notice/noticeList";
+//        }
+
+//        NoticeDTO noticeDTO = new NoticeDTO();
+//        try {
+            NoticeDTO noticeDTO = noticeService.noticeRead(id);
+        System.out.println("없니?"+ noticeDTO);
+            model.addAttribute("noticeDTO", noticeDTO);
         return "notice/noticeRead";
+//        } catch (EntityNotFoundException e) {
+//            log.info("id 값을 찾지 못함");
+//            return "redirect:/notice/noticeList";
+//        }
+//            List<ImageDTO> imageDTOList =
+//                    imageService.findImagesByTarget("notice", notice_num)
+//        }
+//        NoticeDTO noticeDTO = noticeService.noticeRead(notice_num);
+//        System.out.println("sss");
+//
+//        log.info("개별정보를 페이지에 전달...");
+//        model.addAttribute("notice", noticeDTO);
+
+
     }
 
     //
@@ -89,9 +114,9 @@ public class NoticeController {
     }
 
     @PostMapping("/noticeModify")
-    public String noticeModifyPost(NoticeDTO noticeDTO, MemberDTO memberDTO,
-                                   List<MultipartFile> multipartFileList,
-                                   PageRequestDTO pageRequestDTO, ImageDTO imageDTO, List<Long> delnumList) {
+    public String noticeModifyPost(NoticeDTO noticeDTO,
+                                   @RequestParam(value = "multipartFileList", required = false) List<MultipartFile> multipartFileList,
+                                   PageRequestDTO pageRequestDTO, @RequestParam(value = "delnumList", required = false, defaultValue = "0") List<Long> delnumList) {
 
         log.info("수정된 데이터 저장..." + noticeDTO);
         noticeService.noticeModify(noticeDTO, multipartFileList, delnumList);

@@ -26,6 +26,8 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ModelMapper modelMapper;
+
+    //권한 설정 시 필요
     private final MemberRepository memberRepository;
     private final HotelRepository hotelRepository;
 
@@ -146,6 +148,9 @@ public class ReviewService {
         //1. 예약정보 확인
         RoomReserve roomReserve = roomReserveRepository.findById(reserve_num)
                 .orElseThrow(() -> new IllegalArgumentException("룸 예약정보" + reserve_num + "에 대한 정보를 찾을 수 없습니다."));
+
+//        Hotel hotel = hotelRepository.findById(hotel_num)
+//                .orElseThrow(() -> new IllegalArgumentException("예약 되었던 호텔정보를 찾을 수 없습니다."));
 
 //        // 이메일이 없을 경우 방어 로직
 //        if (email == null || email.trim().isEmpty()) {

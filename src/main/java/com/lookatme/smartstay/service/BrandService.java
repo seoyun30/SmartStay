@@ -1,5 +1,7 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.constant.ActiveState;
+import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.ImageDTO;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class BrandService {
 
-    private final BrandRepository BrandRepository;
+    private final BrandRepository brandRepository;
     private final ModelMapper modelMapper;
     private final ImageService imageService;
     private final MemberRepository memberRepository; //추가
@@ -38,10 +40,11 @@ public class BrandService {
     public void insert(BrandDTO brandDTO, String email,
                        List<MultipartFile> multipartFiles) throws Exception {
         Brand brand = modelMapper.map(brandDTO, Brand.class);
+        brand.setActive_state(ActiveState.ACTIVE);
 
         Member member = memberRepository.findByEmail(email); // 추가
 
-        Brand brand1 = BrandRepository.save(brand);
+        Brand brand1 = brandRepository.save(brand);
 
         member.setBrand(brand1); //추가
         //이미지
@@ -53,7 +56,7 @@ public class BrandService {
 
     // 모든 브랜드 목록을 가져오는 메소드
     public List<BrandDTO> brandList() {
-        List<Brand> brands = BrandRepository.findAll();  // 모든 브랜드를 가져옴
+        List<Brand> brands = brandRepository.findAll();  // 모든 브랜드를 가져옴
         List<BrandDTO> brandDTOS = brands.stream()
                 .map(brand -> modelMapper.map(brand, BrandDTO.class))
                 .collect(Collectors.toList());
@@ -67,10 +70,10 @@ public class BrandService {
         // member에서 role을 확인하여 슈퍼어드민 여부를 체크
         if (member != null && member.getRole().name().equals("SUPERADMIN")) {
             // 슈퍼어드민일 경우 모든 브랜드를 조회
-            brands = BrandRepository.findAll();
+            brands = brandRepository.findAll();
         } else {
             // 슈퍼어드민이 아니라면, 이메일에 해당하는 브랜드만 조회
-            brands = BrandRepository.findByEmail(email);
+            brands = brandRepository.findByEmail(email);
         }
 
         // 브랜드 리스트를 BrandDTO로 변환
@@ -83,25 +86,21 @@ public class BrandService {
 
     //brand 상세보기
     public BrandDTO read(Long id) {
-        Brand brand = BrandRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Brand brand = brandRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
 
         List<Image> imageList = imageService.findImagesByTarget("brand", brand.getBrand_num());
         List<ImageDTO> imageDTOList = imageList.stream().map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
         brandDTO.setImageDTOList(imageDTOList);
 
-        return brandDTO;}
-
-
-        //Optional<Brand> brand = brandRepository.findById(id);
-        //BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
-        //return brandDTO;
+        return brandDTO;
+    }
 
 
     //brand 수정
     public void update(BrandDTO brandDTO,
                        List<MultipartFile> multipartFiles) throws Exception{
-        Brand brand = BrandRepository.findById(brandDTO.getBrand_num())
+        Brand brand = brandRepository.findById(brandDTO.getBrand_num())
                 .orElseThrow(EntityNotFoundException::new);
         //set
         brand.setBrand_num(brandDTO.getBrand_num());
@@ -110,7 +109,7 @@ public class BrandService {
         brand.setOwner(brandDTO.getOwner());
         brand.setTel(brandDTO.getTel());
 
-        BrandRepository.save(brand);
+        brandRepository.save(brand);
 
         // 이미지 업로드 처리
         if (multipartFiles != null && !multipartFiles.isEmpty()) {
@@ -118,18 +117,30 @@ public class BrandService {
             imageService.saveImage(multipartFiles, "brand", brand.getBrand_num());
         }
 
-       /* Optional<Brand> brand = brandRepository.findById(brandDTOList.getBrand_num());
-        if(brand.isPresent()){
-            Brand brands = modelMapper.map(brandDTOList, Brand.class);
-            brandRepository.save(brands);
-        } */
     }
+
     //brand 삭제
     public void delete(Long id){
         log.info("서비스로 들어온 삭제할 번호 :"+id);
 
-        BrandRepository.deleteById(id);
+        brandRepository.deleteById(id);
     }
 
+    //brand 상태 변경
+    public BrandDTO stateUpdate (Long brand_num) {
+        Brand brand = brandRepository.findById(brand_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        if (brand != null) {
+            brand.setActive_state(brand.getActive_state() == ActiveState.ACTIVE ? ActiveState.INACTIVE : ActiveState.ACTIVE);
+            brandRepository.save(brand);
+        }
+
+        brand = brandRepository.findById(brand_num)
+                .orElseThrow(EntityNotFoundException::new);
+        BrandDTO brandDTO = modelMapper.map(brand, BrandDTO.class);
+
+        return brandDTO;
+    }
 
 }
