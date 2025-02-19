@@ -76,6 +76,7 @@ public class MenuService {
         return menuDTO;
     }
 
+    //전체 메뉴
     public PageResponseDTO<MenuDTO> menuList(HotelDTO hotelDTO, PageRequestDTO pageRequestDTO) {
 
         Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
@@ -83,6 +84,258 @@ public class MenuService {
         Pageable pageable = pageRequestDTO.getPageable("menu_num");
 
         Page<Menu> result = menuRepository.findByHotel(hotel, pageable);
+
+        List<MenuDTO> menuDTOList = result.stream()
+                .map(menu -> modelMapper.map(menu, MenuDTO.class)
+                        .setHotelDTO(modelMapper.map(menu.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        for (MenuDTO menuDTO : menuDTOList) {
+            List<Image> menuImageList = imageRepository.findByTarget("menu", menuDTO.getMenu_num());
+            if (!menuImageList.isEmpty()) {
+                List<ImageDTO> menuImageDTOList = menuImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                menuDTO.setImageDTOList(menuImageDTOList);
+            } else {
+                menuDTO.setImageDTOList(null);
+            }
+        }
+
+        if (menuDTOList == null) {
+            menuDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = PageResponseDTO.<MenuDTO>withAll()
+                .pageRequestDTO(pageRequestDTO).dtoList(menuDTOList).total((int) result.getTotalElements()).build();
+
+        return menuDTOPageResponseDTO;
+    }
+
+    //한식 메뉴만
+    public PageResponseDTO<MenuDTO> koreanMenuList(Long hotel_num, PageRequestDTO pageRequestDTO) {
+
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Pageable pageable = pageRequestDTO.getPageable("menu_num");
+
+        Page<Menu> result = menuRepository.findKoreanMenu(hotel, pageable);
+
+        List<MenuDTO> menuDTOList = result.stream()
+                .map(menu -> modelMapper.map(menu, MenuDTO.class)
+                        .setHotelDTO(modelMapper.map(menu.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        for (MenuDTO menuDTO : menuDTOList) {
+            List<Image> menuImageList = imageRepository.findByTarget("menu", menuDTO.getMenu_num());
+            if (!menuImageList.isEmpty()) {
+                List<ImageDTO> menuImageDTOList = menuImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                menuDTO.setImageDTOList(menuImageDTOList);
+            } else {
+                menuDTO.setImageDTOList(null);
+            }
+        }
+
+        if (menuDTOList == null) {
+            menuDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = PageResponseDTO.<MenuDTO>withAll()
+                .pageRequestDTO(pageRequestDTO).dtoList(menuDTOList).total((int) result.getTotalElements()).build();
+
+        return menuDTOPageResponseDTO;
+    }
+
+    //중식 메뉴만
+    public PageResponseDTO<MenuDTO> chineseMenuList(Long hotel_num, PageRequestDTO pageRequestDTO) {
+
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Pageable pageable = pageRequestDTO.getPageable("menu_num");
+
+        Page<Menu> result = menuRepository.findChineseMenu(hotel, pageable);
+
+        List<MenuDTO> menuDTOList = result.stream()
+                .map(menu -> modelMapper.map(menu, MenuDTO.class)
+                        .setHotelDTO(modelMapper.map(menu.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        for (MenuDTO menuDTO : menuDTOList) {
+            List<Image> menuImageList = imageRepository.findByTarget("menu", menuDTO.getMenu_num());
+            if (!menuImageList.isEmpty()) {
+                List<ImageDTO> menuImageDTOList = menuImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                menuDTO.setImageDTOList(menuImageDTOList);
+            } else {
+                menuDTO.setImageDTOList(null);
+            }
+        }
+
+        if (menuDTOList == null) {
+            menuDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = PageResponseDTO.<MenuDTO>withAll()
+                .pageRequestDTO(pageRequestDTO).dtoList(menuDTOList).total((int) result.getTotalElements()).build();
+
+        return menuDTOPageResponseDTO;
+    }
+
+    //일식 메뉴만
+    public PageResponseDTO<MenuDTO> japaneseMenuList(Long hotel_num, PageRequestDTO pageRequestDTO) {
+
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Pageable pageable = pageRequestDTO.getPageable("menu_num");
+
+        Page<Menu> result = menuRepository.findJapaneseMenu(hotel, pageable);
+
+        List<MenuDTO> menuDTOList = result.stream()
+                .map(menu -> modelMapper.map(menu, MenuDTO.class)
+                        .setHotelDTO(modelMapper.map(menu.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        for (MenuDTO menuDTO : menuDTOList) {
+            List<Image> menuImageList = imageRepository.findByTarget("menu", menuDTO.getMenu_num());
+            if (!menuImageList.isEmpty()) {
+                List<ImageDTO> menuImageDTOList = menuImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                menuDTO.setImageDTOList(menuImageDTOList);
+            } else {
+                menuDTO.setImageDTOList(null);
+            }
+        }
+
+        if (menuDTOList == null) {
+            menuDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = PageResponseDTO.<MenuDTO>withAll()
+                .pageRequestDTO(pageRequestDTO).dtoList(menuDTOList).total((int) result.getTotalElements()).build();
+
+        return menuDTOPageResponseDTO;
+    }
+
+    //양식 메뉴만
+    public PageResponseDTO<MenuDTO> westernMenuList(Long hotel_num, PageRequestDTO pageRequestDTO) {
+
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Pageable pageable = pageRequestDTO.getPageable("menu_num");
+
+        Page<Menu> result = menuRepository.findWesternMenu(hotel, pageable);
+
+        List<MenuDTO> menuDTOList = result.stream()
+                .map(menu -> modelMapper.map(menu, MenuDTO.class)
+                        .setHotelDTO(modelMapper.map(menu.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        for (MenuDTO menuDTO : menuDTOList) {
+            List<Image> menuImageList = imageRepository.findByTarget("menu", menuDTO.getMenu_num());
+            if (!menuImageList.isEmpty()) {
+                List<ImageDTO> menuImageDTOList = menuImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                menuDTO.setImageDTOList(menuImageDTOList);
+            } else {
+                menuDTO.setImageDTOList(null);
+            }
+        }
+
+        if (menuDTOList == null) {
+            menuDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = PageResponseDTO.<MenuDTO>withAll()
+                .pageRequestDTO(pageRequestDTO).dtoList(menuDTOList).total((int) result.getTotalElements()).build();
+
+        return menuDTOPageResponseDTO;
+    }
+
+    //분식 메뉴만
+    public PageResponseDTO<MenuDTO> snackMenuList(Long hotel_num, PageRequestDTO pageRequestDTO) {
+
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Pageable pageable = pageRequestDTO.getPageable("menu_num");
+
+        Page<Menu> result = menuRepository.findSnackMenu(hotel, pageable);
+
+        List<MenuDTO> menuDTOList = result.stream()
+                .map(menu -> modelMapper.map(menu, MenuDTO.class)
+                        .setHotelDTO(modelMapper.map(menu.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        for (MenuDTO menuDTO : menuDTOList) {
+            List<Image> menuImageList = imageRepository.findByTarget("menu", menuDTO.getMenu_num());
+            if (!menuImageList.isEmpty()) {
+                List<ImageDTO> menuImageDTOList = menuImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                menuDTO.setImageDTOList(menuImageDTOList);
+            } else {
+                menuDTO.setImageDTOList(null);
+            }
+        }
+
+        if (menuDTOList == null) {
+            menuDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = PageResponseDTO.<MenuDTO>withAll()
+                .pageRequestDTO(pageRequestDTO).dtoList(menuDTOList).total((int) result.getTotalElements()).build();
+
+        return menuDTOPageResponseDTO;
+    }
+
+    //음료 메뉴만
+    public PageResponseDTO<MenuDTO> drinkMenuList(Long hotel_num, PageRequestDTO pageRequestDTO) {
+
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Pageable pageable = pageRequestDTO.getPageable("menu_num");
+
+        Page<Menu> result = menuRepository.findDrinkMenu(hotel, pageable);
+
+        List<MenuDTO> menuDTOList = result.stream()
+                .map(menu -> modelMapper.map(menu, MenuDTO.class)
+                        .setHotelDTO(modelMapper.map(menu.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        for (MenuDTO menuDTO : menuDTOList) {
+            List<Image> menuImageList = imageRepository.findByTarget("menu", menuDTO.getMenu_num());
+            if (!menuImageList.isEmpty()) {
+                List<ImageDTO> menuImageDTOList = menuImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                menuDTO.setImageDTOList(menuImageDTOList);
+            } else {
+                menuDTO.setImageDTOList(null);
+            }
+        }
+
+        if (menuDTOList == null) {
+            menuDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = PageResponseDTO.<MenuDTO>withAll()
+                .pageRequestDTO(pageRequestDTO).dtoList(menuDTOList).total((int) result.getTotalElements()).build();
+
+        return menuDTOPageResponseDTO;
+    }
+
+    //기타 메뉴만
+    public PageResponseDTO<MenuDTO> etcMenuList(Long hotel_num, PageRequestDTO pageRequestDTO) {
+
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Pageable pageable = pageRequestDTO.getPageable("menu_num");
+
+        Page<Menu> result = menuRepository.findEtcMenu(hotel, pageable);
 
         List<MenuDTO> menuDTOList = result.stream()
                 .map(menu -> modelMapper.map(menu, MenuDTO.class)

@@ -1,9 +1,6 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.MenuDTO;
-import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.dto.PageResponseDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.service.HotelService;
@@ -216,5 +213,34 @@ public class MenuController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
         }
     }
+
+    //한식 메뉴만
+    @GetMapping("/koreanMenuList")
+    @ResponseBody
+    public ResponseEntity<PageResponseDTO<MenuDTO>> koreanMenuList(@RequestParam("hotel_num") Long hotel_num,
+                                          PageRequestDTO pageRequestDTO) {
+
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = menuService.koreanMenuList(hotel_num, pageRequestDTO);
+
+        return ResponseEntity.ok(menuDTOPageResponseDTO);
+    }
+
+    //중식 메뉴만
+
+
+    //일식 메뉴만
+
+
+    //양식 메뉴만
+
+
+    //분식 메뉴만
+
+
+    //음료 메뉴만
+
+
+    //기타 메뉴만
+
 }
 
