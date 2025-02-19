@@ -337,20 +337,20 @@
                                     </li>
 
                                     <div class="sidebar-footer ml-5 mt-5 mb-3">
-                                        <p th:if="${adminRole != null and adminRole == 'CHIEF'}" style="color: white; font-weight: bold;">
+                                        <p th:if="${adminRole == 'CHIEF'}" style="color: white; font-weight: bold;">
                                             <strong>브랜드 : </strong><span th:text="${brandName}">브랜드 없음</span>
                                         </p>
 
-                                        <p th:if="${adminRole != null and adminRole == 'MANAGER'}" style="color: white; font-weight: bold;">
+                                        <p th:if="${adminRole == 'MANAGER'}" style="color: white; font-weight: bold;">
                                             <strong>호텔 : </strong><span th:text="${hotelName}">호텔 없음</span>
                                         </p>
 
                                         <p style="color: white; font-weight: bold;">
-                                            <strong>권한 : </strong><span th:text="${adminRole}">권한 없음</span>
+                                            <strong>ROLE : </strong><span th:text="${adminRole}">권한 없음</span>
                                         </p>
 
                                         <p style="color: white; font-weight: bold;">
-                                            <strong>ID : </strong><span th:text="${adminEmail}">이메일 없음</span>
+                                            <strong>ID : </strong><span th:text="${adminEmail}">아이디 없음</span>
                                         </p>
                                     </div>
 

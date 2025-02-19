@@ -89,6 +89,13 @@
                                     </div>
                                 </div>
 
+                                <div class="row form-row">
+                                    <label for="writer" class="col-sm-2 col-form-label form-label">조회수</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" readonly class="form-control" id="viewCount" th:value="${qnaDTO.viewCount}">
+                                    </div>
+                                </div>
+
                                 <!-- 버튼 영역 -->
                                 <div class="button-container">
                                     <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
@@ -101,15 +108,15 @@
                 </form>
 
                 <!--댓글-->
-                <form action="/qna/qnaRead" method="post" th:object="${qnaReadDTO}">
+                <form action="/qna/qnaRead" method="post">
                     <div class="form-container mt-5">
                         <div class="row">
                             <div class="col text-center">
                                 <div class="col-12">
                                     <div class="mb-3">
-                                        <label for="content" class="form-label">내용</label>
-                                        <textarea th:field="*{content}" min="0" name="content" class="form-control" id="content" rows="3" required></textarea>
-                                        <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
+                                        <label for="content" class="form-label">답변</label>
+                                        <textarea  min="0" name="content" class="form-control" id="content1" rows="3" required></textarea>
+
                                     </div>
                                 </div>
                             </div>
