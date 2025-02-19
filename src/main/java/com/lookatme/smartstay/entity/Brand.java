@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -30,12 +27,4 @@ public class Brand extends BaseEntity {
 
     private String tel; //연락처
 
-    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
-
-    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Hotel> hotels = new ArrayList<>();
-
-    @OneToMany(mappedBy = "brand")
-    private List<Member> members = new ArrayList<>();
 }
