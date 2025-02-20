@@ -1,9 +1,6 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.CareDTO;
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.dto.PageResponseDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.service.CareService;
@@ -216,6 +213,16 @@ public class CareController {
             log.error("이미지 삭제 실패 : {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
         }
+    }
+
+    @GetMapping("/findCareList")
+    @ResponseBody
+    public ResponseEntity<PageResponseDTO<CareDTO>> findCareList(@RequestParam("hotel_num") Long hotel_num,
+                                                                  PageRequestDTO pageRequestDTO) {
+
+        PageResponseDTO<CareDTO> careDTOPageResponseDTO = careService.findCareList(hotel_num, pageRequestDTO);
+
+        return ResponseEntity.ok(careDTOPageResponseDTO);
     }
 }
 

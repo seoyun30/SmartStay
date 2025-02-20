@@ -181,4 +181,41 @@ public class CareService {
 
         return careDTOS;
     }
+
+    //룸서비스 목록에서 케어 서비스 조회용
+    //기타 메뉴만
+    public PageResponseDTO<CareDTO> findCareList(Long hotel_num, PageRequestDTO pageRequestDTO) {
+
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Pageable pageable = pageRequestDTO.getPageable("care_num");
+
+        Page<Care> result = careRepository.findByHotel(hotel, pageable);
+
+        List<CareDTO> careDTOList = result.stream()
+                .map(care -> modelMapper.map(care, CareDTO.class)
+                        .setHotelDTO(modelMapper.map(care.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        for (CareDTO careDTO : careDTOList) {
+            List<Image> careImageList = imageRepository.findByTarget("care", careDTO.getCare_num());
+            if (!careImageList.isEmpty()) {
+                List<ImageDTO> menuImageDTOList = careImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                careDTO.setImageDTOList(menuImageDTOList);
+            } else {
+                careDTO.setImageDTOList(null);
+            }
+        }
+
+        if (careDTOList == null) {
+            careDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<CareDTO> careDTOPageResponseDTO = PageResponseDTO.<CareDTO>withAll()
+                .pageRequestDTO(pageRequestDTO).dtoList(careDTOList).total((int) result.getTotalElements()).build();
+
+        return careDTOPageResponseDTO;
+    }
 }

@@ -20,6 +20,14 @@
             padding: 5px 5px;
             line-height: 1;
         }
+
+        .menuList {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px; /* 부모 요소의 최소 높이 설정 */
+        }
+
     </style>
 </head>
 
@@ -38,30 +46,22 @@
                     <h3 class="text-center fw-bold my-3">케어 서비스</h3>
 
                     <div class="row m-3 row-cols-1 row-cols-md-5 g-4">
-                        <th:block th:each="careDTO : ${careDTOPageResponseDTO.dtoList}">
-                            <div class="col">
-                                <div class="card h-100" >
-                                    <th:block th:unless="${careDTO.imageDTOList.isEmpty()}" th:each="image : ${careDTO.imageDTOList}">
-                                        <img class="card-img-top" th:src="@{${image.image_url}}" alt="Care Image">
-                                    </th:block>
-                                    <div class="card-body">
-                                        <p><span th:text="${careDTO.care_name}"></span></p>
-                                        <p><span th:text="${careDTO.care_detail}"></span></p>
-                                        <p><span th:text="${careDTO.care_price + '원'}"></span></p>
-                                    </div>
 
-                                    <button type="button" class="btn btn-danger orderAdd"
-                                           th:id="'care-' + ${careDTO.care_num}"
-                                           th:data-name="${careDTO.care_name}"
-                                             th:data-id="'care-' + ${careDTO.care_num}">추가</button>
-                                </div>
+                        <div class="col-md-12 d-flex justify-content-center">
+                            <div class="pagination1 d-flex"></div>
+                            <div class="pagination2 d-flex"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row row-cols-1 row-cols-md-5 careList">
+
                             </div>
-                        </th:block>
+                        </div>
+                        
                     </div>
 
                     <h3 class="text-center fw-bold my-3">음식</h3>
 
-                    <div class="btn-group p-3" role="group" aria-label="Vertical radio toggle button group">
+                    <div class="btn-group category p-3" role="group" aria-label="Vertical radio toggle button group">
                         <input type="radio" class="btn-check" name="menu-category" id="radio-korean" autocomplete="off" value="KOREAN" checked>
                         <label class="btn btn-outline-danger" for="radio-korean">한식</label>
                         <input type="radio" class="btn-check" name="menu-category" id="radio-chinese" autocomplete="off" value="CHINESE">
@@ -80,17 +80,14 @@
 
                     <div class="row m-3 row-cols-1 row-cols-md-5 g-4">
                         <div class="col-md-12 d-flex justify-content-center">
-                            <div class="pagination1 d-flex"></div>
-                            <div class="pagination2 d-flex"></div>
+                            <div class="pagination3 d-flex"></div>
+                            <div class="pagination4 d-flex"></div>
                         </div>
                         <div class="col-md-12">
                             <div class="row row-cols-1 row-cols-md-5 menuList">
-                                <h4 class="text-center blank1">등록된 메뉴가 없습니다.</h4>
 
                             </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>
@@ -108,7 +105,11 @@
                         <label for="floatingTextarea">요청사항</label>
                     </div>
 
-                    <button type="submit" class="btn-primary">주문하기</button>
+                    <div class="text-center">
+                        <button class="btn btn-outline-dark btn-lg cartBtn" type="button"><i class="bi bi-cart"></i></button>
+                        <button type="submit" class="btn btn-primary">주문하기</button>
+                    </div>
+
                 </div>
             </div>
 
@@ -126,15 +127,22 @@
         let str1= "";
         let str2= "";
         let str3= "";
+        let str4= "";
+        let str5= "";
+        let str6= "";
 
         let thispage = 1;
 
+        let careList = $(".careList")
         let menuList = $(".menuList")
+
         let pagination1 = $(".pagination1");
         let pagination2 = $(".pagination2");
+        let pagination3 = $(".pagination3");
+        let pagination4 = $(".pagination4");
         let menuSortMap = { "KOREAN": "한식", "CHINESE": "중식", "JAPANESE": "일식", "WESTERN": "양식", "SNACK": "분식", "DRINK": "음료", "ETC": "기타" };
 
-        let showKoreanMenu = function (page) {
+        let showCareMenu = function (page) {
             str1 = "";
             str2 = "";
             str3 = "";
@@ -144,7 +152,7 @@
             }
 
             $.ajax({
-                url: "/menu/koreanMenuList",
+                url: "/care/findCareList",
                 type: "get",
                 data: { hotel_num: hotel_num, page: page },
                 dataType: "json",
@@ -153,13 +161,17 @@
                     thispage = data.page;
 
                     if (data == null || data.dtoList == null || data.dtoList.length == 0) {
-                        menuList.html('<h4 class="text-center">등록된 메뉴가 없습니다.</h4>');
-                        return;
+
+                        str1 += `<div class="d-flex justify-content-center align-items-center w-100" style="min-height: 200px;">
+                                    <h4 class="text-center">등록된 메뉴가 없습니다.</h4>
+                                </div>`;
+                        careList.html(str1);
+                        pagination1.hide();
+                        pagination2.hide();
+
                     } else {
 
-
                         for (let i = 0; i < data.dtoList.length; i++){
-                            let menuSortText = menuSortMap[data.dtoList[i].menu_sort] || data.dtoList[i].menu_sort;
 
                             if (data.dtoList[i] != null && data.dtoList[i].imageDTOList != null && data.dtoList[i].imageDTOList.length > 0 && data.dtoList[i].imageDTOList[0].image_url != null) {
                                 str1 += `<div class="col mb-3">
@@ -167,14 +179,13 @@
                                                 <div class="ratio ratio-1x1">
                                                     <img class="card-img-top" src="${data.dtoList[i].imageDTOList[0].image_url}" alt="Menu Image">
                                                 </div>
-                                                <div class="card-body">
-                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
-                                                    <p><span>${menuSortText}</span></p>
-                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
-                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].care_name}</span></p>
+                                                    <p><span>${data.dtoList[i].care_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].care_price + '원'}</span></p>
                                                 </div>
-                                                 <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
-                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                                 <button type="button" class="btn btn-danger orderAdd" id="care-${data.dtoList[i].care_num}" data-name="${data.dtoList[i].care_name}"
+                                                       data-id="care-${data.dtoList[i].care_num}">추가</button>
                                             </div>
                                     </div>`
                             } else {
@@ -183,14 +194,13 @@
                                                 <div class="ratio ratio-1x1">
                                                     <img src="/img/thumb_no_img" class="card-img-top" alt="">
                                                 </div>
-                                                <div class="card-body">
-                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
-                                                    <p><span>${menuSortText}</span></p>
-                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
-                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].care_name}</span></p>
+                                                    <p><span>${data.dtoList[i].care_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].care_price + '원'}</span></p>
                                                 </div>
-                                                <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
-                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                                 <button type="button" class="btn btn-danger orderAdd" id="care-${data.dtoList[i].care_num}" data-name="${data.dtoList[i].care_name}"
+                                                       data-id="care-${data.dtoList[i].care_num}">추가</button>
                                             </div>
                                         </a>
                                     </div>`
@@ -208,7 +218,634 @@
 
                     pagination1.html(str2);
                     pagination2.html(str3);
-                    menuList.html(str1);
+                    careList.html(str1);
+                    pagination1.show();
+                    pagination2.show();
+                },
+                error : function (result, error){
+                    alert("에러 발생 : " + result.responseText)
+                    alert("에러 발생 : " + error.responseText)
+                }
+            })
+
+        }
+        let showKoreanMenu = function (page) {
+            str4 = "";
+            str5 = "";
+            str6 = "";
+
+            if (page == null || page == "" || page.length == 0){
+                page = 1;
+            }
+
+            $.ajax({
+                url: "/menu/koreanMenuList",
+                type: "get",
+                data: { hotel_num: hotel_num, page: page },
+                dataType: "json",
+                success : function (data) {
+                    console.log(data)
+                    thispage = data.page;
+
+                    if (data == null || data.dtoList == null || data.dtoList.length == 0) {
+
+                        str4 += `<div class="d-flex justify-content-center align-items-center w-100" style="min-height: 200px;">
+                                    <h4 class="text-center">등록된 메뉴가 없습니다.</h4>
+                                </div>`;
+                        menuList.html(str4);
+                        pagination3.hide();
+                        pagination4.hide();
+
+                    } else {
+
+                        for (let i = 0; i < data.dtoList.length; i++){
+                            let menuSortText = menuSortMap[data.dtoList[i].menu_sort] || data.dtoList[i].menu_sort;
+
+                            if (data.dtoList[i] != null && data.dtoList[i].imageDTOList != null && data.dtoList[i].imageDTOList.length > 0 && data.dtoList[i].imageDTOList[0].image_url != null) {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img class="card-img-top" src="${data.dtoList[i].imageDTOList[0].image_url}" alt="Menu Image">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                 <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                    </div>`
+                            } else {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img src="/img/thumb_no_img" class="card-img-top" alt="">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                        </a>
+                                    </div>`
+                            }
+
+                        }
+                    }
+
+                    str5 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page - 1 <= 0 ? data.end : data.page - 1}">
+                               <i class="bi bi-chevron-left h1"></i>
+                             </a>`
+                    str6 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page + 1 > data.end ? 1 : data.page + 1}">
+                               <i class="bi bi-chevron-right h1"></i>
+                             </a>`
+
+                    pagination3.html(str5);
+                    pagination4.html(str6);
+                    menuList.html(str4);
+                    pagination3.show();
+                    pagination4.show();
+                },
+                error : function (result, error){
+                    alert("에러 발생 : " + result.responseText)
+                    alert("에러 발생 : " + error.responseText)
+                }
+            })
+
+        }
+        let showChineseMenu = function (page) {
+            str4 = "";
+            str5 = "";
+            str6 = "";
+
+            if (page == null || page == "" || page.length == 0){
+                page = 1;
+            }
+
+            $.ajax({
+                url: "/menu/chineseMenuList",
+                type: "get",
+                data: { hotel_num: hotel_num, page: page },
+                dataType: "json",
+                success : function (data) {
+                    console.log(data)
+                    thispage = data.page;
+
+                    if (data == null || data.dtoList == null || data.dtoList.length == 0) {
+
+                        str4 += `<div class="d-flex justify-content-center align-items-center w-100" style="min-height: 200px;">
+                                    <h4 class="text-center">등록된 메뉴가 없습니다.</h4>
+                                </div>`;
+                        menuList.html(str4);
+                        pagination3.hide();
+                        pagination4.hide();
+
+                    } else {
+
+                        for (let i = 0; i < data.dtoList.length; i++){
+                            let menuSortText = menuSortMap[data.dtoList[i].menu_sort] || data.dtoList[i].menu_sort;
+
+                            if (data.dtoList[i] != null && data.dtoList[i].imageDTOList != null && data.dtoList[i].imageDTOList.length > 0 && data.dtoList[i].imageDTOList[0].image_url != null) {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img class="card-img-top" src="${data.dtoList[i].imageDTOList[0].image_url}" alt="Menu Image">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                 <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                    </div>`
+                            } else {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img src="/img/thumb_no_img" class="card-img-top" alt="">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                        </a>
+                                    </div>`
+                            }
+
+                        }
+                    }
+
+                    str5 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page - 1 <= 0 ? data.end : data.page - 1}">
+                               <i class="bi bi-chevron-left h1"></i>
+                             </a>`
+                    str6 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page + 1 > data.end ? 1 : data.page + 1}">
+                               <i class="bi bi-chevron-right h1"></i>
+                             </a>`
+
+                    pagination3.html(str5);
+                    pagination4.html(str6);
+                    menuList.html(str4);
+                    pagination3.css("display", "flex");
+                    pagination4.css("display", "flex");
+                },
+                error : function (result, error){
+                    alert("에러 발생 : " + result.responseText)
+                    alert("에러 발생 : " + error.responseText)
+                }
+            })
+
+        }
+        let showJapaneseMenu = function (page) {
+            str4 = "";
+            str5 = "";
+            str6 = "";
+
+            if (page == null || page == "" || page.length == 0){
+                page = 1;
+            }
+
+            $.ajax({
+                url: "/menu/japaneseMenuList",
+                type: "get",
+                data: { hotel_num: hotel_num, page: page },
+                dataType: "json",
+                success : function (data) {
+                    console.log(data)
+                    thispage = data.page;
+
+                    console.log("pagination3: ", pagination3);
+                    console.log("pagination4: ", pagination4);
+
+                    if (data == null || data.dtoList == null || data.dtoList.length == 0) {
+
+                        str4 += `<div class="d-flex justify-content-center align-items-center w-100" style="min-height: 200px;">
+                                    <h4 class="text-center">등록된 메뉴가 없습니다.</h4>
+                                </div>`;
+
+                        menuList.html(str4);
+                        pagination3.css("display", "none");
+                        pagination4.css("display", "none");
+
+                    } else {
+
+                        for (let i = 0; i < data.dtoList.length; i++){
+                            let menuSortText = menuSortMap[data.dtoList[i].menu_sort] || data.dtoList[i].menu_sort;
+
+                            if (data.dtoList[i] != null && data.dtoList[i].imageDTOList != null && data.dtoList[i].imageDTOList.length > 0 && data.dtoList[i].imageDTOList[0].image_url != null) {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img class="card-img-top" src="${data.dtoList[i].imageDTOList[0].image_url}" alt="Menu Image">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                 <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                    </div>`
+                            } else {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img src="/img/thumb_no_img" class="card-img-top" alt="">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                        </a>
+                                    </div>`
+                            }
+
+                        }
+                    }
+
+                    str5 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page - 1 <= 0 ? data.end : data.page - 1}">
+                               <i class="bi bi-chevron-left h1"></i>
+                             </a>`
+                    str6 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page + 1 > data.end ? 1 : data.page + 1}">
+                               <i class="bi bi-chevron-right h1"></i>
+                             </a>`
+
+                    pagination3.html(str5);
+                    pagination4.html(str6);
+                    menuList.html(str4);
+                    pagination3.show();
+                    pagination4.show();
+                },
+                error : function (result, error){
+                    alert("에러 발생 : " + result.responseText)
+                    alert("에러 발생 : " + error.responseText)
+                }
+            })
+
+        }
+        let showWesternMenu = function (page) {
+            str4 = "";
+            str5 = "";
+            str6 = "";
+
+            if (page == null || page == "" || page.length == 0){
+                page = 1;
+            }
+
+            $.ajax({
+                url: "/menu/westernMenuList",
+                type: "get",
+                data: { hotel_num: hotel_num, page: page },
+                dataType: "json",
+                success : function (data) {
+                    console.log(data)
+                    thispage = data.page;
+
+                    if (data == null || data.dtoList == null || data.dtoList.length == 0) {
+
+                        str4 += `<div class="d-flex justify-content-center align-items-center w-100" style="min-height: 200px;">
+                                    <h4 class="text-center">등록된 메뉴가 없습니다.</h4>
+                                </div>`;
+                        menuList.html(str4);
+
+                        return;
+                    } else {
+
+                        for (let i = 0; i < data.dtoList.length; i++){
+                            let menuSortText = menuSortMap[data.dtoList[i].menu_sort] || data.dtoList[i].menu_sort;
+
+                            if (data.dtoList[i] != null && data.dtoList[i].imageDTOList != null && data.dtoList[i].imageDTOList.length > 0 && data.dtoList[i].imageDTOList[0].image_url != null) {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img class="card-img-top" src="${data.dtoList[i].imageDTOList[0].image_url}" alt="Menu Image">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                 <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                    </div>`
+                            } else {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img src="/img/thumb_no_img" class="card-img-top" alt="">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                        </a>
+                                    </div>`
+                            }
+
+                        }
+                    }
+
+                    str5 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page - 1 <= 0 ? data.end : data.page - 1}">
+                               <i class="bi bi-chevron-left h1"></i>
+                             </a>`
+                    str6 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page + 1 > data.end ? 1 : data.page + 1}">
+                               <i class="bi bi-chevron-right h1"></i>
+                             </a>`
+
+                    pagination3.html(str5);
+                    pagination4.html(str6);
+                    menuList.html(str4);
+
+                },
+                error : function (result, error){
+                    alert("에러 발생 : " + result.responseText)
+                    alert("에러 발생 : " + error.responseText)
+                }
+            })
+
+        }
+        let showSnackMenu = function (page) {
+            str4 = "";
+            str5 = "";
+            str6 = "";
+
+            if (page == null || page == "" || page.length == 0){
+                page = 1;
+            }
+
+            $.ajax({
+                url: "/menu/snackMenuList",
+                type: "get",
+                data: { hotel_num: hotel_num, page: page },
+                dataType: "json",
+                success : function (data) {
+                    console.log(data)
+                    thispage = data.page;
+
+                    if (data == null || data.dtoList == null || data.dtoList.length == 0) {
+
+                        str4 += `<div class="d-flex justify-content-center align-items-center w-100" style="min-height: 200px;">
+                                    <h4 class="text-center">등록된 메뉴가 없습니다.</h4>
+                                </div>`;
+                        menuList.html(str4);
+                        return;
+
+                    } else {
+
+                        for (let i = 0; i < data.dtoList.length; i++){
+                            let menuSortText = menuSortMap[data.dtoList[i].menu_sort] || data.dtoList[i].menu_sort;
+
+                            if (data.dtoList[i] != null && data.dtoList[i].imageDTOList != null && data.dtoList[i].imageDTOList.length > 0 && data.dtoList[i].imageDTOList[0].image_url != null) {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img class="card-img-top" src="${data.dtoList[i].imageDTOList[0].image_url}" alt="Menu Image">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                 <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                    </div>`
+                            } else {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img src="/img/thumb_no_img" class="card-img-top" alt="">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                        </a>
+                                    </div>`
+                            }
+
+                        }
+                    }
+
+                    str5 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page - 1 <= 0 ? data.end : data.page - 1}">
+                               <i class="bi bi-chevron-left h1"></i>
+                             </a>`
+                    str6 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page + 1 > data.end ? 1 : data.page + 1}">
+                               <i class="bi bi-chevron-right h1"></i>
+                             </a>`
+
+                    pagination3.html(str5);
+                    pagination4.html(str6);
+                    menuList.html(str4);
+
+                },
+                error : function (result, error){
+                    alert("에러 발생 : " + result.responseText)
+                    alert("에러 발생 : " + error.responseText)
+                }
+            })
+
+        }
+        let showDrinkMenu = function (page) {
+            str4 = "";
+            str5 = "";
+            str6 = "";
+
+            if (page == null || page == "" || page.length == 0){
+                page = 1;
+            }
+
+            $.ajax({
+                url: "/menu/drinkMenuList",
+                type: "get",
+                data: { hotel_num: hotel_num, page: page },
+                dataType: "json",
+                success : function (data) {
+                    console.log(data)
+                    thispage = data.page;
+
+                    if (data == null || data.dtoList == null || data.dtoList.length == 0) {
+
+                        str4 += `<div class="d-flex justify-content-center align-items-center w-100" style="min-height: 200px;">
+                                    <h4 class="text-center">등록된 메뉴가 없습니다.</h4>
+                                </div>`;
+                        menuList.html(str4);
+                        return;
+
+                    } else {
+
+                        for (let i = 0; i < data.dtoList.length; i++){
+                            let menuSortText = menuSortMap[data.dtoList[i].menu_sort] || data.dtoList[i].menu_sort;
+
+                            if (data.dtoList[i] != null && data.dtoList[i].imageDTOList != null && data.dtoList[i].imageDTOList.length > 0 && data.dtoList[i].imageDTOList[0].image_url != null) {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img class="card-img-top" src="${data.dtoList[i].imageDTOList[0].image_url}" alt="Menu Image">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                 <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                    </div>`
+                            } else {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img src="/img/thumb_no_img" class="card-img-top" alt="">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                        </a>
+                                    </div>`
+                            }
+
+                        }
+                    }
+
+                    str5 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page - 1 <= 0 ? data.end : data.page - 1}">
+                               <i class="bi bi-chevron-left h1"></i>
+                             </a>`
+                    str6 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page + 1 > data.end ? 1 : data.page + 1}">
+                               <i class="bi bi-chevron-right h1"></i>
+                             </a>`
+
+                    pagination3.html(str5);
+                    pagination4.html(str6);
+                    menuList.html(str4);
+
+                },
+                error : function (result, error){
+                    alert("에러 발생 : " + result.responseText)
+                    alert("에러 발생 : " + error.responseText)
+                }
+            })
+
+        }
+        let showEtcMenu = function (page) {
+            str4 = "";
+            str5 = "";
+            str6 = "";
+
+            if (page == null || page == "" || page.length == 0){
+                page = 1;
+            }
+
+            $.ajax({
+                url: "/menu/etcMenuList",
+                type: "get",
+                data: { hotel_num: hotel_num, page: page },
+                dataType: "json",
+                success : function (data) {
+                    console.log(data)
+                    thispage = data.page;
+
+                    if (data == null || data.dtoList == null || data.dtoList.length == 0) {
+
+                        str4 += `<div class="d-flex justify-content-center align-items-center w-100" style="min-height: 200px;">
+                                    <h4 class="text-center">등록된 메뉴가 없습니다.</h4>
+                                </div>`;
+                        menuList.html(str4);
+                        return;
+
+                    } else {
+
+                        for (let i = 0; i < data.dtoList.length; i++){
+                            let menuSortText = menuSortMap[data.dtoList[i].menu_sort] || data.dtoList[i].menu_sort;
+
+                            if (data.dtoList[i] != null && data.dtoList[i].imageDTOList != null && data.dtoList[i].imageDTOList.length > 0 && data.dtoList[i].imageDTOList[0].image_url != null) {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img class="card-img-top" src="${data.dtoList[i].imageDTOList[0].image_url}" alt="Menu Image">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                 <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                    </div>`
+                            } else {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img src="/img/thumb_no_img" class="card-img-top" alt="">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                        </a>
+                                    </div>`
+                            }
+
+                        }
+                    }
+
+                    str5 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page - 1 <= 0 ? data.end : data.page - 1}">
+                               <i class="bi bi-chevron-left h1"></i>
+                             </a>`
+                    str6 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page + 1 > data.end ? 1 : data.page + 1}">
+                               <i class="bi bi-chevron-right h1"></i>
+                             </a>`
+
+                    pagination3.html(str5);
+                    pagination4.html(str6);
+                    menuList.html(str4);
 
                 },
                 error : function (result, error){
@@ -224,8 +861,17 @@
             let dataNum = $(this).data("num");
             showKoreanMenu(dataNum);
         })
-
         pagination2.on("click", "a", function (e) {
+            e.preventDefault();
+            let dataNum = $(this).data("num");
+            showKoreanMenu(dataNum);
+        })
+        pagination3.on("click", "a", function (e) {
+            e.preventDefault();
+            let dataNum = $(this).data("num");
+            showKoreanMenu(dataNum);
+        })
+        pagination4.on("click", "a", function (e) {
             e.preventDefault();
             let dataNum = $(this).data("num");
             showKoreanMenu(dataNum);
@@ -237,6 +883,36 @@
         orderList.empty();
         orderListCard.hide(); // 초기에는 숨김
 
+        // 라디오 버튼 클릭 시 해당하는 함수 실행
+        $("input[name='menu-category']").on("change", function () {
+            let selectedCategory = $(this).val();
+
+            switch (selectedCategory) {
+                case "KOREAN":
+                    showKoreanMenu(1);
+                    break;
+                case "CHINESE":
+                    showChineseMenu(1);
+                    break;
+                case "JAPANESE":
+                    showJapaneseMenu(1);
+                    break;
+                case "WESTERN":
+                    showWesternMenu(1);
+                    break;
+                case "SNACK":
+                    showSnackMenu(1);
+                    break;
+                case "DRINK":
+                    showDrinkMenu(1);
+                    break;
+                case "ETC":
+                    showEtcMenu(1);
+                    break;
+            }
+        });
+
+        //목록 추가 버튼
         $(document).on("click", ".orderAdd", function () {
             console.log(this)
             let itemName = $(this).data("name");
@@ -257,37 +933,7 @@
             }
         });
 
-        function addOrderItem() {
-
-            $("input[type=checkbox]").each(function () {
-                let itemName = $(this).data("name");
-                let itemId = $(this).data("id");
-
-                // 이미 해당 아이템이 주문 목록에 있으면 추가하지 않도록 체크
-                if ($(this).prop("checked") && $("#orderList div[data-id='" + itemId + "']").length === 0) {
-                    let orderItem =
-                        `<div class="col text-center" data-id="${itemId}">
-                        ${itemName}
-                        <input type='number' value='1' min='1' style='width:50px;'> 개
-                        <button type='button' class="btn btn-danger btn-sm removeBtn"><i class="bi bi-x-lg"></i></button>
-                    </div>`
-
-                    orderList.append(orderItem);
-                    orderListCard.show();
-                }
-
-                // 체크박스가 해제되면 주문 목록에서 삭제
-                if (!$(this).prop("checked")) {
-                    removeOrderItem(itemId);
-                }
-
-                // 주문 목록이 비었으면 숨기기
-                if (orderList.children().length === 0) {
-                    orderListCard.hide();
-                }
-            })
-        }
-
+        //목록 삭제 버튼
         $(document).on("click", ".removeBtn", function () {
             $(this).closest('div').remove();
             if (orderList.children().length === 0) {
@@ -295,19 +941,7 @@
             }
         });
 
-        function removeOrderItem(itemId) {
-            // 해당 ID의 주문 항목 삭제
-            orderList.find(`[data-id='${itemId}']`).remove();
-
-            // 체크박스 해제
-            $(`.order-checkbox[data-id='${itemId}']`).prop("checked", false);
-
-            // 주문 내역이 비었으면 숨기기
-            if (orderList.children().length === 0) {
-                orderListCard.hide();
-            }
-        }
-
+        showCareMenu(1);
         showKoreanMenu(1);
     });
 

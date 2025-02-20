@@ -226,21 +226,69 @@ public class MenuController {
     }
 
     //중식 메뉴만
+    @GetMapping("/chineseMenuList")
+    @ResponseBody
+    public ResponseEntity<PageResponseDTO<MenuDTO>> chineseMenuList(@RequestParam("hotel_num") Long hotel_num,
+                                                                   PageRequestDTO pageRequestDTO) {
 
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = menuService.chineseMenuList(hotel_num, pageRequestDTO);
+
+        return ResponseEntity.ok(menuDTOPageResponseDTO);
+    }
 
     //일식 메뉴만
+    @GetMapping("/japaneseMenuList")
+    @ResponseBody
+    public ResponseEntity<PageResponseDTO<MenuDTO>> japaneseMenuList(@RequestParam("hotel_num") Long hotel_num,
+                                                                    PageRequestDTO pageRequestDTO) {
 
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = menuService.japaneseMenuList(hotel_num, pageRequestDTO);
+
+        return ResponseEntity.ok(menuDTOPageResponseDTO);
+    }
 
     //양식 메뉴만
+    @GetMapping("/westernMenuList")
+    @ResponseBody
+    public ResponseEntity<PageResponseDTO<MenuDTO>> westernMenuList(@RequestParam("hotel_num") Long hotel_num,
+                                                                    PageRequestDTO pageRequestDTO) {
 
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = menuService.westernMenuList(hotel_num, pageRequestDTO);
+
+        return ResponseEntity.ok(menuDTOPageResponseDTO);
+    }
 
     //분식 메뉴만
+    @GetMapping("/snackMenuList")
+    @ResponseBody
+    public ResponseEntity<PageResponseDTO<MenuDTO>> snackMenuList(@RequestParam("hotel_num") Long hotel_num,
+                                                                    PageRequestDTO pageRequestDTO) {
 
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = menuService.snackMenuList(hotel_num, pageRequestDTO);
+
+        return ResponseEntity.ok(menuDTOPageResponseDTO);
+    }
 
     //음료 메뉴만
+    @GetMapping("/drinkMenuList")
+    @ResponseBody
+    public ResponseEntity<PageResponseDTO<MenuDTO>> drinkMenuList(@RequestParam("hotel_num") Long hotel_num,
+                                                                    PageRequestDTO pageRequestDTO) {
 
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = menuService.drinkMenuList(hotel_num, pageRequestDTO);
+
+        return ResponseEntity.ok(menuDTOPageResponseDTO);
+    }
 
     //기타 메뉴만
+    @GetMapping("/etcMenuList")
+    @ResponseBody
+    public ResponseEntity<PageResponseDTO<MenuDTO>> etcMenuList(@RequestParam("hotel_num") Long hotel_num,
+                                                                    PageRequestDTO pageRequestDTO) {
 
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = menuService.etcMenuList(hotel_num, pageRequestDTO);
+
+        return ResponseEntity.ok(menuDTOPageResponseDTO);
+    }
 }
 
