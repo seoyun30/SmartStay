@@ -60,7 +60,7 @@
                 </th:block>
 
                 <th:block th:each="memberDTO : ${pageResponseDTO.dtoList}">
-
+                    <input type="hidden" class="brand_num" th:value="${memberDTO.brandDTO.brand_num}">
                     <tr class="text-center">
                         <td th:text="${memberDTO.member_num}"></td>
                         <td th:text="${memberDTO.email}"></td>
@@ -68,6 +68,7 @@
                         <td th:text="${memberDTO.tel}"></td>
                         <th:block th:if="${not #strings.isEmpty(memberDTO.brandDTO)}">
                             <td th:text="${memberDTO.brandDTO.brand_name}"></td>
+
                         </th:block>
                         <th:block th:if="${#strings.isEmpty(memberDTO.brandDTO)}">
                             <td ></td>
@@ -147,13 +148,15 @@
         $(".changebtn").on("click", function () {
             let row = $(this).closest("tr");
             let memberNum = row.find("td:eq(0)").text().trim();
-            let brandNum = row.find("td:eq(4)").attr("data-brand-id"); // 브랜드 ID 가져오기
+            let brandNum = $(".brand_num").val(); // 브랜드 ID 가져오기
+            console.log(brandNum)
             let hotelSelect = $("<select class='form-control hotelSelect'></select>");
             let roleSelect = $("<select class='form-control roleSelect'></select>");
             let saveButton = $("<button class='btn btn-success savebtn'>저장</button>");
 
             roleSelect.append("<option value='CHIEF'>CHIEF</option>");
             roleSelect.append("<option value='MANAGER'>MANAGER</option>");
+
 
             $(this).replaceWith(roleSelect);
             row.find("td:eq(5)").html(hotelSelect); // 호텔명 부분에 select 추가
@@ -173,9 +176,10 @@
                             method: "GET",
                             data: { brand_num: brandNum },
                             success: function (hotels) {
+                                console.log(hotels)
                                 hotelSelect.append("<option value=''>선택</option>");
                                 hotels.forEach(function (hotel) {
-                                    hotelSelect.append("<option value='" + hotel.id + "'>" + hotel.hotel_name + "</option>");
+                                    hotelSelect.append("<option value='" + hotel.hotel_num + "'>" + hotel.hotel_name + "</option>");
                                 });
                             },
                             error: function () {
@@ -202,8 +206,9 @@
                         alert("권한이 변경되었습니다.");
                         location.reload();
                     },
-                    error: function () {
+                    error: function (error) {
                         alert("변경 실패");
+                        console.log(error)
                     }
                 });
             });

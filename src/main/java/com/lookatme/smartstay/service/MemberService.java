@@ -373,21 +373,6 @@ public class MemberService implements UserDetailsService {
         return memberDTO;
     }
 
-    public List<HotelDTO> hotelsByBrand(Principal principal) {
-
-        List<Hotel> hotels = hotelRepository.findByEmail(principal.getName());
-
-        if (hotels != null || hotels.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        List<HotelDTO> hotelDTOs = hotels.stream()
-                .map(hotel -> modelMapper.map(hotel, HotelDTO.class))
-                .collect(Collectors.toList());
-
-        return hotelDTOs;
-    }
-
 
 
     public PageResponseDTO<MemberDTO> adPowerList(PageRequestDTO pageRequestDTO, String email) { //슈퍼어드민이 승인하는 권한리스트
@@ -489,16 +474,10 @@ public class MemberService implements UserDetailsService {
         }
     }
 
-    public void changePower(String role, MemberDTO memberDTO, HotelDTO hotelDTO) {
+    public void changePower(String role, MemberDTO memberDTO, Long hotel_num) {
 
         Member member = memberRepository.findById(memberDTO.getMember_num())
                 .orElseThrow(() -> new EntityNotFoundException("해당 멤버를 찾을 수 없습니다. member_num: " + memberDTO.getMember_num().getClass()));
-
-        try {
-            member.setPower(Power.valueOf(role));
-        } catch (IllegalArgumentException e) {
-            log.info("디비에 값 없음");
-        }
 
         if (role.equals("CHIEF")) { //chief로 변경
             member.setRole(Role.CHIEF);
@@ -507,17 +486,8 @@ public class MemberService implements UserDetailsService {
         } else if (role.equals("MANAGER")) {
             member.setRole(Role.MANAGER); //manager로 변경
 
-            List<Hotel> hotels = null;
-            if (hotelDTO.getHotel_num() == null) {
-                hotels = hotelRepository.findByMyBrand(member.getBrand());
-                if (hotels.isEmpty())
-                    throw new EntityNotFoundException("호텔명을 선택하세요");
-            }
-            Hotel hotel = hotels.get(0);
-            member.setHotel(hotel);
-        } else {
             // hotel_num이 존재하면 그에 맞는 호텔을 찾음
-            Hotel hotel = hotelRepository.findById(hotelDTO.getHotel_num())
+            Hotel hotel = hotelRepository.findById(hotel_num)
                     .orElseThrow(() -> new EntityNotFoundException("호텔을 찾을 수 없습니다."));
             member.setHotel(hotel);
         }
