@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -274,15 +277,18 @@ public class MemberController {
     }
 
     @GetMapping("/memberList") //전체 회원 목록
-    public String memberList(Principal principal, PageRequestDTO pageRequestDTO, Model model){
+    public String memberList(Principal principal, PageRequestDTO pageRequestDTO,
+                             @RequestParam(value = "sort", required = false, defaultValue = "ASC") String sortOrder,
+                             Model model){
 
-        log.info("진입" );
-        log.info("진입" + pageRequestDTO);
+        log.info("진입");
+        log.info("정렬 기준: " + sortOrder);
 
-        PageResponseDTO<MemberDTO> pageResponseDTO =
-                memberService.memberList(pageRequestDTO);
+        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.memberList(pageRequestDTO, sortOrder);
 
         model.addAttribute("pageResponseDTO", pageResponseDTO);
+        model.addAttribute("sortOrder", sortOrder);
+        model.addAttribute("pageRequestDTO", pageRequestDTO);
 
         return "member/memberList";
     }
