@@ -68,7 +68,7 @@ public class NoticeController {
         // 1. 로그인 확인 **: Principal이 null이면 로그인 페이지로 이동 //로그인 창에서 오류가 확인되어야 출력..
         if (principal == null) {
             log.info("로그인 후 이용 가능합니다.");
-            redirectAttributes.addFlashAttribute("logErrorMessages", "로그인 후 이용");
+            redirectAttributes.addFlashAttribute("logErrorMessages", "로그인 후 이용 가능합니다.");
             log.info("오류 메시지 받음 :" + redirectAttributes);
             return "redirect:/member/login";  //
         }
@@ -86,7 +86,7 @@ public class NoticeController {
 
     //등록 내용 저장
     @PostMapping("/noticeRegister")
-    public String noticeRegisterPost(@Valid NoticeDTO noticeDTO, BindingResult result, Principal principal, List<MultipartFile> multipartFileList, Model model) throws Exception {
+    public String noticeRegisterPost(@Valid NoticeDTO noticeDTO,Long hotel_num, BindingResult result, Principal principal, List<MultipartFile> multipartFileList, Model model) throws Exception {
         log.info("입력폼 내용을 저장..." + noticeDTO);
 
         //폼 유효성 검사
@@ -97,7 +97,7 @@ public class NoticeController {
 
         try {
             // 공지사항 등록 서비스 호출
-            noticeService.noticeRegister(noticeDTO, principal.getName(), multipartFileList);
+            noticeService.noticeRegister(noticeDTO, principal.getName(),hotel_num, multipartFileList);
             return "redirect:/notice/noticeList";  // 등록 성공 시 목록 페이지로 이동
         } catch (Exception e) {
             // 기타 예외
