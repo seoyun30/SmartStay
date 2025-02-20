@@ -26,7 +26,7 @@
         <div class="container-fluid row">
             <div class="col-9 mt-3">
                 <div class="card p-3 mt-3 mx-auto">
-
+                    <input type="hidden" class="hotel_num" name="hotel_num" th:value="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_num}">
                     <h2 class="text-center fw-bold my-3" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name} + ' 룸서비스 주문'">룸 서비스 목록</h2>
 
                     <h3 class="text-center fw-bold my-3">케어 서비스</h3>
@@ -34,7 +34,7 @@
                     <div class="row m-3 row-cols-1 row-cols-md-5 g-4">
                         <th:block th:each="careDTO : ${careDTOPageResponseDTO.dtoList}">
                             <div class="col">
-                                <div class="card" >
+                                <div class="card h-100" >
                                     <th:block th:unless="${careDTO.imageDTOList.isEmpty()}" th:each="image : ${careDTO.imageDTOList}">
                                         <img class="card-img-top" th:src="@{${image.image_url}}" alt="Care Image">
                                     </th:block>
@@ -44,10 +44,11 @@
                                         <p><span th:text="${careDTO.care_price + '원'}"></span></p>
                                     </div>
 
-                                    <input type="checkbox" class="order-checkbox"
-                                           autocomplete="off" th:data-name="${careDTO.care_name}"
-                                           th:data-id="'care-' + ${careDTO.care_num}" onchange="addToOrder(this)">
-
+                                    <input type="checkbox" class="btn-check order-checkbox"
+                                           th:id="'care-' + ${careDTO.care_num}"
+                                           th:data-name="${careDTO.care_name}"
+                                           th:data-id="'care-' + ${careDTO.care_num}"  autocomplete="off">
+                                    <label class="btn btn-outline-danger" th:for="'care-' + ${careDTO.care_num}"><i class="bi bi-check-lg"></i></label><br>
                                 </div>
                             </div>
                         </th:block>
@@ -73,23 +74,16 @@
                     </div>
 
                     <div class="row m-3 row-cols-1 row-cols-md-5 g-4">
-                        <th:block th:each="menuDTO : ${menuDTOPageResponseDTO.dtoList}">
-                            <div class="col">
-                                <div class="card">
-                                    <th:block th:unless="${menuDTO.imageDTOList.isEmpty()}" th:each="image : ${menuDTO.imageDTOList}">
-                                        <img class="card-img-top" th:src="@{${image.image_url}}" alt="Menu Image">
-                                    </th:block>
-                                    <div class="card-body">
-                                        <p><span th:text="${menuDTO.menu_name}"></span></p>
-                                        <p><span th:text="${menuDTO.menu_sort}"></span></p>
-                                        <p><span th:text="${menuDTO.menu_detail}"></span></p>
-                                        <p><span th:text="${menuDTO.menu_price + '원'}"></span></p>
-                                    </div>
-                                    <input type="checkbox" class="order-checkbox" th:data-name="${menuDTO.menu_name}"
-                                           th:data-id="'menu-' + ${menuDTO.menu_num}" onchange="addToOrder(this)">
-                                </div>
+                        <div class="col-md-6 pagination1 text-end"></div>
+                        <div class="col-md-6 pagination2"></div>
+                        <div class="col-md-12">
+                            <div class="row row-cols-1 row-cols-md-5 menuList">
+                                <h4 class="text-center blank1">등록된 메뉴가 없습니다.</h4>
+
                             </div>
-                        </th:block>
+                        </div>
+
+
                     </div>
                 </div>
             </div>
@@ -119,56 +113,181 @@
 <script th:inline="javascript" layout:fragment="script">
 
     $(document).ready(function () {
+
+        let hotel_num = $(".hotel_num").val()
+
+        let str1= "";
+        let str2= "";
+        let str3= "";
+
+        let thispage = 1;
+
+        let menuList = $(".menuList")
+        let pagination1 = $(".pagination1");
+        let pagination2 = $(".pagination2");
+        let menuSortMap = { "KOREAN": "한식", "CHINESE": "중식", "JAPANESE": "일식", "WESTERN": "양식", "SNACK": "분식", "DRINK": "음료", "ETC": "기타" };
+
+        let showKoreanMenu = function (page) {
+            str1 = "";
+            str2 = "";
+            str3 = "";
+
+            if (page == null || page == "" || page.length == 0){
+                page = 1;
+            }
+
+            $.ajax({
+                url: "/menu/koreanMenuList",
+                type: "get",
+                data: { hotel_num: hotel_num, page: page },
+                dataType: "json",
+                success : function (data) {
+                    console.log(data)
+                    thispage = data.page;
+
+                    if (data == null || data.dtoList == null || data.dtoList.length == 0) {
+                        menuList.html('<h4 class="text-center">등록된 메뉴가 없습니다.</h4>');
+                        return;
+                    } else {
+
+
+                        for (let i = 0; i < data.dtoList.length; i++){
+                            let menuSortText = menuSortMap[data.dtoList[i].menu_sort] || data.dtoList[i].menu_sort;
+
+                            if (data.dtoList[i] != null && data.dtoList[i].imageDTOList != null && data.dtoList[i].imageDTOList.length > 0 && data.dtoList[i].imageDTOList[0].image_url != null) {
+                                str1 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img class="card-img-top" src="${data.dtoList[i].imageDTOList[0].image_url}" alt="Menu Image">
+                                                </div>
+                                                <div class="card-body">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                <input type="checkbox" class="btn-check order-checkbox" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">
+                                                <label class="btn btn-outline-danger" for="menu-${data.dtoList[i].menu_num}"><i class="bi bi-check-lg"></i></label><br>
+                                            </div>
+                                    </div>`
+                            } else {
+                                str1 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img src="/img/thumb_no_img" class="card-img-top" alt="">
+                                                </div>
+                                                <div class="card-body">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_sort}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                <input type="checkbox" class="btn-check order-checkbox" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">
+                                                <label class="btn btn-outline-danger" for="menu-${data.dtoList[i].menu_num}"><i class="bi bi-check-lg"></i></label><br>
+                                            </div>
+                                        </a>
+                                    </div>`
+                            }
+
+                        }
+                    }
+
+                    str2 += `<a class="page-link" href="#" data-num="${data.page - 1 <= 0 ? data.end : data.page - 1}">
+                               <i class="bi bi-chevron-left"></i>
+                             </a>`
+                    str3 += `<a class="page-link" href="#" data-num="${data.page + 1 > data.end ? 1 : data.page + 1}">
+                               <i class="bi bi-chevron-right"></i>
+                             </a>`
+
+                    pagination1.html(str2);
+                    pagination2.html(str3);
+                    menuList.html(str1);
+
+                },
+                error : function (result, error){
+                    alert("에러 발생 : " + result.responseText)
+                    alert("에러 발생 : " + error.responseText)
+                }
+            })
+
+        }
+
+        pagination1.on("click", "a", function (e) {
+            e.preventDefault();
+            let dataNum = $(this).data("num");
+            showKoreanMenu(dataNum);
+        })
+
+        pagination2.on("click", "a", function (e) {
+            e.preventDefault();
+            let dataNum = $(this).data("num");
+            showKoreanMenu(dataNum);
+        })
+
         let orderListCard = $(".orderList");
+        let orderList = $("#orderList");
+
+        orderList.empty();
         orderListCard.hide(); // 초기에는 숨김
 
-        $(".order-checkbox").on("change", function () {
-            addToOrder($(this));
+        $(document).on("change", ".order-checkbox", function () {
+            console.log(this)
+            addOrderItem();
         });
+
+        function addOrderItem() {
+
+            $("input[type=checkbox]").each(function () {
+                let itemName = $(this).data("name");
+                let itemId = $(this).data("id");
+
+                // 이미 해당 아이템이 주문 목록에 있으면 추가하지 않도록 체크
+                if ($(this).prop("checked") && $("#orderList div[data-id='" + itemId + "']").length === 0) {
+                    let orderItem =
+                        `<div class="text-center" data-id="${itemId}">
+                        ${itemName}
+                        <input type='number' value='1' min='1' style='width:50px;'> 개
+                        <button type='button' class="btn btn-danger btn-sm removeBtn"><i class="bi bi-x-lg"></i></button>
+                    </div>`
+
+                    orderList.append(orderItem);
+                    orderListCard.show();
+                }
+
+                // 체크박스가 해제되면 주문 목록에서 삭제
+                if (!$(this).prop("checked")) {
+                    removeOrderItem(itemId);
+                }
+
+                // 주문 목록이 비었으면 숨기기
+                if (orderList.children().length === 0) {
+                    orderListCard.hide();
+                }
+            })
+        }
+
+        $(document).on("click", ".removeBtn", function () {
+            let itemId = $(this).closest('div').data("id");
+            removeOrderItem(itemId);
+        });
+
+        function removeOrderItem(itemId) {
+            // 해당 ID의 주문 항목 삭제
+            orderList.find(`[data-id='${itemId}']`).remove();
+
+            // 체크박스 해제
+            $(`.order-checkbox[data-id='${itemId}']`).prop("checked", false);
+
+            // 주문 내역이 비었으면 숨기기
+            if (orderList.children().length === 0) {
+                orderListCard.hide();
+            }
+        }
+
+        showKoreanMenu(1);
     });
-
-    function addToOrder($element) {
-        let orderList = $("#orderList");
-        let orderListCard = $(".orderList");
-
-        if ($element.is(":checked")) {
-            let itemName = $element.data("name");
-            let itemId = $element.data("id");
-
-            let orderItem = $(`
-            <div class="text-center" data-id="${itemId}">
-                ${itemName}
-                <input type='number' value='1' min='1' style='width:50px;'> 개
-                <button type='button' class="btn btn-danger btn-sm" onclick='removeFromOrder("${itemId}")'><i class="bi bi-x-lg"></i></button>
-            </div>
-        `);
-
-            orderList.append(orderItem);
-            orderListCard.show();
-        } else {
-            removeOrderItem($element.data("id"));
-        }
-    }
-
-    function removeFromOrder(itemId) {
-        removeOrderItem(itemId);
-    }
-
-    function removeOrderItem(itemId) {
-        let orderList = $("#orderList");
-        let orderListCard = $(".orderList");
-
-        // 해당 ID의 주문 항목 삭제
-        orderList.find(`[data-id='${itemId}']`).remove();
-
-        // 체크박스 해제
-        $(`.order-checkbox[data-id='${itemId}']`).prop("checked", false);
-
-        // 주문 내역이 비었으면 숨기기
-        if (orderList.children().length === 0) {
-            orderListCard.hide();
-        }
-    }
 
     </script>
 </body>

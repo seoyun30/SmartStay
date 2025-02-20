@@ -214,7 +214,7 @@ public class MenuController {
         }
     }
 
-   /* //한식 메뉴만
+    //한식 메뉴만
     @GetMapping("/koreanMenuList")
     @ResponseBody
     public ResponseEntity<PageResponseDTO<MenuDTO>> koreanMenuList(@RequestParam("hotel_num") Long hotel_num,
@@ -241,6 +241,6 @@ public class MenuController {
 
 
     //기타 메뉴만
-*/
+
 }
 
