@@ -21,7 +21,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("select m from Menu m")
     List<Menu> findAllMenus();
 
- /*   //한식 메뉴만
+    //한식 메뉴만
     @Query("select m from Menu m where m.hotel = :hotel and m.menu_sort = 'KOREAN'")
     Page<Menu> findKoreanMenu(@Param("hotel") Hotel hotel, Pageable pageable);
 
@@ -48,6 +48,5 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     //기타 메뉴만
     @Query("select m from Menu m where m.hotel = :hotel and m.menu_sort = 'ETC'")
     Page<Menu> findEtcMenu(@Param("hotel") Hotel hotel, Pageable pageable);
-*/
 
 }

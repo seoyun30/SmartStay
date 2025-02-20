@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.config.CustomAuthenticationFailureHandler;
 import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.*;
@@ -13,7 +14,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.catalina.Manager;
+import org.junit.validator.PublicClassValidator;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.context.LifecycleAutoConfiguration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +31,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,8 +51,7 @@ public class MemberService implements UserDetailsService {
     private final BrandRepository brandRepository;
     private final HotelRepository hotelRepository;
     private final EmailService emailService;
-
-
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
 
     @Override
@@ -163,7 +167,6 @@ public class MemberService implements UserDetailsService {
 
         member =
                 memberRepository.save(member);
-
 
 
         return member;
@@ -469,6 +472,26 @@ public class MemberService implements UserDetailsService {
                     .total((int) memberPage.getTotalElements())
                     .build();
         }
+    }
+
+    public void changePower(String role, MemberDTO memberDTO, Long hotel_num) {
+
+        Member member = memberRepository.findById(memberDTO.getMember_num())
+                .orElseThrow(() -> new EntityNotFoundException("해당 멤버를 찾을 수 없습니다. member_num: " + memberDTO.getMember_num().getClass()));
+
+        if (role.equals("CHIEF")) { //chief로 변경
+            member.setRole(Role.CHIEF);
+            member.setHotel(null);
+
+        } else if (role.equals("MANAGER")) {
+            member.setRole(Role.MANAGER); //manager로 변경
+
+            // hotel_num이 존재하면 그에 맞는 호텔을 찾음
+            Hotel hotel = hotelRepository.findById(hotel_num)
+                    .orElseThrow(() -> new EntityNotFoundException("호텔을 찾을 수 없습니다."));
+            member.setHotel(hotel);
+        }
+        memberRepository.save(member);
     }
 
 
