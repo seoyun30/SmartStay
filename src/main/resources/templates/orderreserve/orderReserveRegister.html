@@ -14,6 +14,12 @@
             bottom: 0;
             height: auto;
         }
+
+        .btn-xs {
+            font-size: 1rem;
+            padding: 5px 5px;
+            line-height: 1;
+        }
     </style>
 </head>
 
@@ -44,11 +50,10 @@
                                         <p><span th:text="${careDTO.care_price + '원'}"></span></p>
                                     </div>
 
-                                    <input type="checkbox" class="btn-check order-checkbox"
+                                    <button type="button" class="btn btn-danger orderAdd"
                                            th:id="'care-' + ${careDTO.care_num}"
                                            th:data-name="${careDTO.care_name}"
-                                           th:data-id="'care-' + ${careDTO.care_num}"  autocomplete="off">
-                                    <label class="btn btn-outline-danger" th:for="'care-' + ${careDTO.care_num}"><i class="bi bi-check-lg"></i></label><br>
+                                             th:data-id="'care-' + ${careDTO.care_num}">추가</button>
                                 </div>
                             </div>
                         </th:block>
@@ -74,8 +79,10 @@
                     </div>
 
                     <div class="row m-3 row-cols-1 row-cols-md-5 g-4">
-                        <div class="col-md-6 pagination1 text-end"></div>
-                        <div class="col-md-6 pagination2"></div>
+                        <div class="col-md-12 d-flex justify-content-center">
+                            <div class="pagination1 d-flex"></div>
+                            <div class="pagination2 d-flex"></div>
+                        </div>
                         <div class="col-md-12">
                             <div class="row row-cols-1 row-cols-md-5 menuList">
                                 <h4 class="text-center blank1">등록된 메뉴가 없습니다.</h4>
@@ -90,10 +97,10 @@
 
             <div class="col-3 mt-3">
                 <div class="card p-3 mt-3 mx-auto order-section">
-                    <h2 class="mb-3 text-center fw-bold">주문 상품 목록</h2>
+                    <h2 class="mb-3 text-center fw-bold">주문 목록</h2>
 
                     <div class="card p-3 mb-3 orderList">
-                        <div class="" id="orderList"></div>
+                        <div class="row" id="orderList"></div>
                     </div>
 
                     <div class="form-floating mb-3">
@@ -166,9 +173,8 @@
                                                     <p><span>${data.dtoList[i].menu_detail}</span></p>
                                                     <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
                                                 </div>
-                                                <input type="checkbox" class="btn-check order-checkbox" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
-                                                       data-id="menu-${data.dtoList[i].menu_num}">
-                                                <label class="btn btn-outline-danger" for="menu-${data.dtoList[i].menu_num}"><i class="bi bi-check-lg"></i></label><br>
+                                                 <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
                                             </div>
                                     </div>`
                             } else {
@@ -179,13 +185,12 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <p><span>${data.dtoList[i].menu_name}</span></p>
-                                                    <p><span>${data.dtoList[i].menu_sort}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
                                                     <p><span>${data.dtoList[i].menu_detail}</span></p>
                                                     <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
                                                 </div>
-                                                <input type="checkbox" class="btn-check order-checkbox" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
-                                                       data-id="menu-${data.dtoList[i].menu_num}">
-                                                <label class="btn btn-outline-danger" for="menu-${data.dtoList[i].menu_num}"><i class="bi bi-check-lg"></i></label><br>
+                                                <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
                                             </div>
                                         </a>
                                     </div>`
@@ -194,11 +199,11 @@
                         }
                     }
 
-                    str2 += `<a class="page-link" href="#" data-num="${data.page - 1 <= 0 ? data.end : data.page - 1}">
-                               <i class="bi bi-chevron-left"></i>
+                    str2 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page - 1 <= 0 ? data.end : data.page - 1}">
+                               <i class="bi bi-chevron-left h1"></i>
                              </a>`
-                    str3 += `<a class="page-link" href="#" data-num="${data.page + 1 > data.end ? 1 : data.page + 1}">
-                               <i class="bi bi-chevron-right"></i>
+                    str3 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page + 1 > data.end ? 1 : data.page + 1}">
+                               <i class="bi bi-chevron-right h1"></i>
                              </a>`
 
                     pagination1.html(str2);
@@ -232,9 +237,24 @@
         orderList.empty();
         orderListCard.hide(); // 초기에는 숨김
 
-        $(document).on("change", ".order-checkbox", function () {
+        $(document).on("click", ".orderAdd", function () {
             console.log(this)
-            addOrderItem();
+            let itemName = $(this).data("name");
+            let itemId = $(this).data("id");
+
+            let existingItem = orderList.find(`div[data-id='${itemId}']`);
+            if (existingItem.length > 0) {
+                let qtyInput = existingItem.find("input[type='number']");
+                qtyInput.val(parseInt(qtyInput.val()) + 1);
+            } else {
+                let orderItem = `<div class="col-12 mb-1 text-center" data-id="${itemId}">
+                                    ${itemName}
+                                    <input type='number' value='1' min='1' style='width:50px;'> 개
+                                    <button type='button' class="btn btn-outline-danger btn-xs removeBtn"><i class="bi bi-x-lg"></i></button>
+                                 </div>`;
+                orderList.append(orderItem);
+                orderListCard.show();
+            }
         });
 
         function addOrderItem() {
@@ -246,7 +266,7 @@
                 // 이미 해당 아이템이 주문 목록에 있으면 추가하지 않도록 체크
                 if ($(this).prop("checked") && $("#orderList div[data-id='" + itemId + "']").length === 0) {
                     let orderItem =
-                        `<div class="text-center" data-id="${itemId}">
+                        `<div class="col text-center" data-id="${itemId}">
                         ${itemName}
                         <input type='number' value='1' min='1' style='width:50px;'> 개
                         <button type='button' class="btn btn-danger btn-sm removeBtn"><i class="bi bi-x-lg"></i></button>
@@ -269,8 +289,10 @@
         }
 
         $(document).on("click", ".removeBtn", function () {
-            let itemId = $(this).closest('div').data("id");
-            removeOrderItem(itemId);
+            $(this).closest('div').remove();
+            if (orderList.children().length === 0) {
+                orderListCard.hide();
+            }
         });
 
         function removeOrderItem(itemId) {
