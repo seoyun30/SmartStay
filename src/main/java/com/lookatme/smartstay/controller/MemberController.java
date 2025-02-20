@@ -346,14 +346,17 @@ public class MemberController {
     }
 
     @PostMapping("/changePower") // 권한승인(치프, 매니져)
-    public ResponseEntity<?> changePower(String role, Long hotelNum, HotelDTO hotelDTO, MemberDTO memberDTO, Principal principal) {
+    public ResponseEntity<?> changePower(String role, Long hotel_num, MemberDTO memberDTO, Principal principal) {
 
         log.info("권한변경 요청: ", principal.getName());
+        log.info("role: " + role);
+        log.info("hotel_num: " + hotel_num);
+        log.info("memberDTO: " + memberDTO);
 
-        if(role.equals("MANAGER") && hotelDTO.getHotel_num() == null) {
+        if(role.equals("MANAGER") && hotel_num == null) {
             return ResponseEntity.badRequest().body("MANAGER는 호텔번호가 필요함");
         }
-        memberService.changePower(role, memberDTO, hotelDTO);
+        memberService.changePower(role, memberDTO, hotel_num);
 
 
         return ResponseEntity.ok().build();
