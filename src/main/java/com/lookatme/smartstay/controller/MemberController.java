@@ -1,16 +1,19 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.*;
-import com.lookatme.smartstay.entity.Hotel;
-import com.lookatme.smartstay.repository.HotelRepository;
+import com.lookatme.smartstay.dto.BrandDTO;
+import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.PageResponseDTO;
+import com.lookatme.smartstay.dto.RoomReserveItemDTO;
 import com.lookatme.smartstay.repository.MemberRepository;
-import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.RoomReserveService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -20,7 +23,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,8 +33,6 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final RoomReserveService roomReserveService;
-    private final HotelRepository hotelRepository;
-    private final HotelService hotelService;
 
     @GetMapping("/adMypage") // 마이페이지 정보보기(관리자)
     public String adMypage(Principal principal, Model model, Authentication authentication){
@@ -345,29 +345,6 @@ public class MemberController {
         return "member/cmPowerList";
     }
 
-    @PostMapping("/changePower") // 권한승인(치프, 매니져)
-    public ResponseEntity<?> changePower(String role, Long hotelNum, HotelDTO hotelDTO, MemberDTO memberDTO, Principal principal) {
-
-        log.info("권한변경 요청: ", principal.getName());
-
-        if(role.equals("MANAGER") && hotelDTO.getHotel_num() == null) {
-            return ResponseEntity.badRequest().body("MANAGER는 호텔번호가 필요함");
-        }
-        memberService.changePower(role, memberDTO, hotelDTO);
-
-
-        return ResponseEntity.ok().build();
-    }
-
-
-
-
-    @GetMapping("/hotelsByBrand") // 브랜드에 속한 호텔 목록 반환
-    public ResponseEntity<List<HotelDTO>> getHotelsByBrand( Principal principal) {
-
-        List<HotelDTO> hotelDTOs = hotelService.myHotelList(principal.getName());
-        return ResponseEntity.ok(hotelDTOs);
-    }
 
     @PostMapping("/powerMember") //권한 승인
     public String powerMember(@RequestParam("email") String email, Model model){
