@@ -34,6 +34,7 @@ public class Room extends BaseEntity{
     private Long room_bed; //룸 인원수
 
     @Column(nullable = false)
+    @Min(value = 100, message = "룸 최소 가격은 100원입니다.")
     private Long room_price; //룸 가격
 
     @Enumerated(EnumType.STRING)
