@@ -53,7 +53,9 @@ public class NoticeServiceImpl  {
     //공지 사항 등록
     public void noticeRegister(NoticeDTO noticeDTO, String email, List<MultipartFile> multipartFiles) throws Exception {
 
+        // Controller registerget에서 로그인 확인을 하고 있음
         log.info(email);
+
         Member member = memberRepository.findByEmail(email);
         //이메일 유효성 검증
         if (email == null || email.isEmpty()) {
@@ -119,6 +121,7 @@ public class NoticeServiceImpl  {
 
     //공지 사항 상세보기
     public NoticeDTO noticeRead(Long id){
+
         log.info("읽기로 들어온 값: "+id);
 
 //        if (id == null || id <= 0) {

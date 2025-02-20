@@ -11,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -60,13 +61,24 @@ public class NoticeController {
 
     //등록 페이지 이동
     @GetMapping("/noticeRegister")
-    public String noticeRegisterGet(Principal principal, RedirectAttributes redirectAttributes){
+    public String noticeRegisterGet(Principal principal, Model model, RedirectAttributes redirectAttributes){
         log.info("입력폼 페이지 이동..." );
-        // chief || Manager가 아닐 경우 페이지 이동 오류
+
+
+        // 1. 로그인 확인 **: Principal이 null이면 로그인 페이지로 이동 //로그인 창에서 오류가 확인되어야 출력..
+        if (principal == null) {
+            log.info("로그인 후 이용 가능합니다.");
+            redirectAttributes.addFlashAttribute("logErrorMessages", "로그인 후 이용");
+            log.info("오류 메시지 받음 :" + redirectAttributes);
+            return "redirect:/member/login";  //
+        }
+
+        //현재 로그인한 사용자의 정보 조회(성공)
         MemberDTO memberDTO = memberService.readMember(principal.getName());
+        // 2. 권한확인**: chief || Manager가 아닐 경우 페이지 이동 오류
         if (memberDTO != null && memberDTO.getRole().name().equals("USER")) {
             redirectAttributes.addFlashAttribute("errorMessage", "작성 권한이 없습니다.");
-            return "redirect:/notice/noticeList";
+            return "redirect:/notice/noticeList";   //목록으로
         }
 
         return "notice/noticeRegister";
@@ -79,7 +91,7 @@ public class NoticeController {
 
         //폼 유효성 검사
         if (result.hasErrors()) {
-            model.addAttribute("errorMessage", "제목과 내용을 모두 입력해주세요.");
+            model.addAttribute("registerErrorMessage", "제목과 내용을 모두 입력해주세요.");
             return "notice/noticeRegister";  // 유효성 검사 실패시 오류
         }
 
@@ -89,7 +101,7 @@ public class NoticeController {
             return "redirect:/notice/noticeList";  // 등록 성공 시 목록 페이지로 이동
         } catch (Exception e) {
             // 기타 예외
-            model.addAttribute("errorMessage","공지사항 등록 중 오류가 발생했습니다." );
+            model.addAttribute("registerErrorMessage","공지사항 등록 중 오류가 발생했습니다." );
         }
         return "notice/noticeList";  // 오류 발생 시 목록 페이지로 이동
 
@@ -111,6 +123,7 @@ public class NoticeController {
     //상세 보기 페이지
     @GetMapping("/noticeRead")
     public String noticeRead(Long id, Model model){
+
         log.info("개별읽기..." + id);
 
 //        log.info("컨드롤러 읽기로 들어온 페이징처리 : " + pageRequestDTO);
@@ -122,9 +135,9 @@ public class NoticeController {
 
 //        NoticeDTO noticeDTO = new NoticeDTO();
 //        try {
-            NoticeDTO noticeDTO = noticeService.noticeRead(id);
+        NoticeDTO noticeDTO = noticeService.noticeRead(id);
         System.out.println("없니?"+ noticeDTO);
-            model.addAttribute("noticeDTO", noticeDTO);
+        model.addAttribute("noticeDTO", noticeDTO);
         return "notice/noticeRead";
 //        } catch (EntityNotFoundException e) {
 //            log.info("id 값을 찾지 못함");
@@ -147,13 +160,18 @@ public class NoticeController {
     public String noticeModifyGet(Long notice_num, RedirectAttributes redirectAttributes,Principal principal, PageRequestDTO pageRequestDTO, Model model){
         log.info("수정 폼 페이지 이동..");
 
-        //로그인한 사용자 확인
+        //로그인한 사용자 정보 조회
         MemberDTO memberDTO = memberService.readMember(principal.getName());
-        // 권한이 있는지 확인
-        if (memberDTO != null && memberDTO.getRole().name().equals("USER")) {
-            redirectAttributes.addFlashAttribute("errorMessage", "수정 권한이 없습니다.");
-            return "redirect:/notice/noticeRead";
+        if (principal == null){
+
         }
+        System.out.println("들어오니??");
+//        // 권한이 있는지 확인
+//        if (memberDTO != null && memberDTO.getRole().name().equals("USER")) {
+//            redirectAttributes.addFlashAttribute("errorMessage", "작성자가 아님으로 수정할 권한이 없습니다.");
+//            return "redirect:/notice/noticeRead?notice_num=" + notice_num; // 오류 메시지를 추가하여 read 페이지로 리다이렉트
+//        }
+
 
         model.addAttribute("noticeDTO", noticeService.noticeRead(notice_num));
 
