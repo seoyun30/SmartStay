@@ -35,21 +35,11 @@ public class OrderReserveController {
 
     @GetMapping("/orderReserveRegister")
     public String orderReserveRegisterGet(Principal principal, Long roomreserveitem_num,
-                                          PageRequestDTO pageRequestDTO, Model model) {
+                                          Model model) {
 
         RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(roomreserveitem_num, principal.getName());
 
         model.addAttribute("roomReserveItemDTO", roomReserveItemDTO);
-
-        if (roomReserveItemDTO != null) {
-
-            PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = menuService.menuList(roomReserveItemDTO.getRoomDTO().getHotelDTO(), pageRequestDTO);
-            model.addAttribute("menuDTOPageResponseDTO", menuDTOPageResponseDTO);
-
-            PageResponseDTO<CareDTO> careDTOPageResponseDTO = careService.careList(roomReserveItemDTO.getRoomDTO().getHotelDTO(), pageRequestDTO);
-            model.addAttribute("careDTOPageResponseDTO", careDTOPageResponseDTO);
-
-        }
 
         return "orderreserve/orderReserveRegister";
     }
