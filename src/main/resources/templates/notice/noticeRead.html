@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/userlayout}">
 <head>
@@ -8,6 +9,7 @@
 </head>
 <body>
 
+<!--오류 메시지 처리-->
 <div layout:fragment="content">
     <div id="row" class="row justify-content-center">
             <div class="col">
@@ -47,13 +49,19 @@
                         </div>
 
                         <div class="text-center d-flex justify-content-center" id="table_search">
-                            <button type="button" class="btn btn-info fw-bold"
-                                    th:onclick="|location.href='@{/notice/noticeModify(notice_num=${noticeDTO.notice_num})}'|">수정</button>
-                            <form class="delform " action="/notice/noticeDelete"  method="post">
-                                <input type="hidden" name="notice_num" th:value="${noticeDTO.notice_num}" class="num">
-                                <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>
-                            </form>
-                            <button type="button" class="btn btn-outline-success fw-bold"
+                            <div sec:authorize="hasAnyAuthority('CHIEF', 'MANAGER')" class="row mt-3">
+                                <button type="button" class="btn btn-info fw-bold"
+                                        th:onclick="|location.href='@{/notice/noticeModify(notice_num=${noticeDTO.notice_num})}'|">수정</button>
+                            </div>
+
+                            <div sec:authorize="hasAnyAuthority('CHIEF', 'MANAGER')" class="row mt-3">
+                                <form class="delform " action="/notice/noticeDelete"  method="post">
+                                    <input type="hidden" name="notice_num" th:value="${noticeDTO.notice_num}" class="num">
+                                    <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>
+                                </form>
+                            </div>
+
+                            <button type="button" class="btn btn-outline-success fw-bold row mt-3"
                                     th:onclick="|location.href='@{/notice/noticeList}'|">목록</button>
 <!--                            @{주소}, 문자열+주소 |문자열@{주소}|-->
                         </div>
@@ -84,6 +92,27 @@
             form.submit();
         });
     })
+
+
+    //권한에러 메시지
+    let readErrorMessage = [[${readErrorMessage}]]
+    console.log(readErrorMessage)
+
+    if (readErrorMessage) {
+        alert(readErrorMessage); //오류 메시지 알림
+        window.location = "/notice/noticeList"; // 오류 후 목록 페이지 이동
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 </script>

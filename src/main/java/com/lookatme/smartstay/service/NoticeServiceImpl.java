@@ -3,10 +3,7 @@ package com.lookatme.smartstay.service;
 import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.dto.NoticeDTO;
 
-import com.lookatme.smartstay.entity.Hotel;
-import com.lookatme.smartstay.entity.Image;
-import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.entity.Notice;
+import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
@@ -51,11 +48,11 @@ public class NoticeServiceImpl  {
 
 
     //공지 사항 등록
-    public void noticeRegister(NoticeDTO noticeDTO, String email, List<MultipartFile> multipartFiles) throws Exception {
+    public void noticeRegister(NoticeDTO noticeDTO, String email, Long hotel_num, List<MultipartFile> multipartFiles) throws Exception {
 
-        log.info(email);
+        log.info(email); //??
+        // 1. Member (email) 가져오기
         Member member = memberRepository.findByEmail(email);
-        //이메일 유효성 검증
         if (email == null || email.isEmpty()) {
             throw new IllegalArgumentException("이메일이 비어 있습니다.");
         }
@@ -71,14 +68,22 @@ public class NoticeServiceImpl  {
             throw new AccessDeniedException("공지사항을 작성할 권한이 없습니다.");
         }
 
+        // 호텔 정보 가져오기
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(()-> new EntityNotFoundException("해당 호텔을 찾을 수 없습니다."));
+
+        // 브랜드 정보 가져오기
+        Brand brand = hotel.getBrand();  //호텔에서 브랜드 정보 가져오기
+
         // 공지사항 생성 및 정보 세팅
         Notice notice = modelMapper.map(noticeDTO, Notice.class);  //DTO-> Entity 변환
-
-        // 호텔은 직접 넣어줘야한다..
+        // 호텔 & 브랜드 정보 세팅
+        notice.setHotel(hotel);
+        notice.getHotel().setBrand(brand);
+        //작성자 & 작성일
         notice.setMember(member);  // member 객체 설정
         notice.setCreate_by(member.getEmail());  //작성자 설정(로그인한 사용자의 email)
         notice.setReg_date(LocalDateTime.now()); //작성일을 현재 시간으로 설정
-
 
         // 이미지가 없다면 저장
         if (multipartFiles != null && !multipartFiles.isEmpty()) {
@@ -119,6 +124,7 @@ public class NoticeServiceImpl  {
 
     //공지 사항 상세보기
     public NoticeDTO noticeRead(Long id){
+
         log.info("읽기로 들어온 값: "+id);
 
 //        if (id == null || id <= 0) {
@@ -161,8 +167,6 @@ public class NoticeServiceImpl  {
         List<Notice> noticeList = noticeRepository.findAll();  //모든 공지사항 조회
 
         List<NoticeDTO> noticeDTOS = modelMapper.map(noticeList, List.class);
-
-
 
 //        //화면페이지번호 1,2,3,4 .. 데이터베이스에서 페이지번호 0,1,2,3...
 //        int currentPage = page.getPageNumber()-1; // 화면에 출력할 페이지번호를 데이터베이스 페이지번호
