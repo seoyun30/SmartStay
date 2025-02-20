@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.config.CustomAuthenticationFailureHandler;
 import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.*;
@@ -13,7 +14,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.catalina.Manager;
+import org.junit.validator.PublicClassValidator;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.context.LifecycleAutoConfiguration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +31,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,8 +51,7 @@ public class MemberService implements UserDetailsService {
     private final BrandRepository brandRepository;
     private final HotelRepository hotelRepository;
     private final EmailService emailService;
-
-
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
 
     @Override
@@ -85,7 +89,7 @@ public class MemberService implements UserDetailsService {
             role = Role.SUPERADMIN.name();
             authorities.add(new SimpleGrantedAuthority(Role.SUPERADMIN.name()));
         }else if("CHIEF".equals(member.getRole().name()) && member.getPower() == Power.YES){
-                                                    //나중에 승인기능 개발후 적용예정
+            //나중에 승인기능 개발후 적용예정
             log.info("치프");
             role = Role.CHIEF.name();
             authorities.add(new SimpleGrantedAuthority(Role.CHIEF.name()));
@@ -157,13 +161,12 @@ public class MemberService implements UserDetailsService {
                 MemberDTO.dtoEntity(memberDTO);
 
 
-            member.setRole(Role.CHIEF);
-            member.setPower(Power.NO);
+        member.setRole(Role.CHIEF);
+        member.setPower(Power.NO);
 
 
         member =
                 memberRepository.save(member);
-
 
 
         return member;
@@ -261,9 +264,9 @@ public class MemberService implements UserDetailsService {
         log.info("서비스 진입");
         Page<Member> memberPage = null;
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().equals("")) {
-             memberPage = memberRepository.searchMember(pageRequestDTO.getKeyword(), pageable);
+            memberPage = memberRepository.searchMember(pageRequestDTO.getKeyword(), pageable);
         }else {
-             memberPage = memberRepository.selectAll(pageable);
+            memberPage = memberRepository.selectAll(pageable);
 
         }
 
@@ -299,13 +302,13 @@ public class MemberService implements UserDetailsService {
             throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
         }
 
-      return MemberDTO.builder()
-              .email(member.getEmail())
-              .name(member.getName())
-              .tel(member.getTel())
-              .role(member.getRole())
-              .reg_date(member.getReg_date())
-              .build();
+        return MemberDTO.builder()
+                .email(member.getEmail())
+                .name(member.getName())
+                .tel(member.getTel())
+                .role(member.getRole())
+                .reg_date(member.getReg_date())
+                .build();
     }
 
     public boolean checkPassword(String email, String password) {
@@ -368,6 +371,21 @@ public class MemberService implements UserDetailsService {
         MemberDTO memberDTO = modelMapper.map(member, MemberDTO.class);
 
         return memberDTO;
+    }
+
+    public List<HotelDTO> hotelsByBrand(Principal principal) {
+
+        List<Hotel> hotels = hotelRepository.findByEmail(principal.getName());
+
+        if (hotels != null || hotels.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<HotelDTO> hotelDTOs = hotels.stream()
+                .map(hotel -> modelMapper.map(hotel, HotelDTO.class))
+                .collect(Collectors.toList());
+
+        return hotelDTOs;
     }
 
 
@@ -471,6 +489,41 @@ public class MemberService implements UserDetailsService {
         }
     }
 
+    public void changePower(String role, MemberDTO memberDTO, HotelDTO hotelDTO) {
+
+        Member member = memberRepository.findById(memberDTO.getMember_num())
+                .orElseThrow(() -> new EntityNotFoundException("해당 멤버를 찾을 수 없습니다. member_num: " + memberDTO.getMember_num().getClass()));
+
+        try {
+            member.setPower(Power.valueOf(role));
+        } catch (IllegalArgumentException e) {
+            log.info("디비에 값 없음");
+        }
+
+        if (role.equals("CHIEF")) { //chief로 변경
+            member.setRole(Role.CHIEF);
+            member.setHotel(null);
+
+        } else if (role.equals("MANAGER")) {
+            member.setRole(Role.MANAGER); //manager로 변경
+
+            List<Hotel> hotels = null;
+            if (hotelDTO.getHotel_num() == null) {
+                hotels = hotelRepository.findByMyBrand(member.getBrand());
+                if (hotels.isEmpty())
+                    throw new EntityNotFoundException("호텔명을 선택하세요");
+            }
+            Hotel hotel = hotels.get(0);
+            member.setHotel(hotel);
+        } else {
+            // hotel_num이 존재하면 그에 맞는 호텔을 찾음
+            Hotel hotel = hotelRepository.findById(hotelDTO.getHotel_num())
+                    .orElseThrow(() -> new EntityNotFoundException("호텔을 찾을 수 없습니다."));
+            member.setHotel(hotel);
+        }
+        memberRepository.save(member);
+    }
+
 
    /* public void adPowerMember(String email) {
 
@@ -496,12 +549,12 @@ public class MemberService implements UserDetailsService {
             } else {
                 log.info("해당 이메일로 회원을 찾을 수 없음: " + email);
             }
-            }
-
         }
 
+    }
 
-     public Member findID(String name, String tel){ //회원Email찾기
+
+    public Member findID(String name, String tel){ //회원Email찾기
 
         log.info("name: " + name + " tel: " + tel);
 
@@ -513,7 +566,7 @@ public class MemberService implements UserDetailsService {
         log.info("member: " + member);
 
         return member;
-     }
+    }
 
 
     public void passwordSend(MemberDTO memberDTO){ //pw 이메일로 임시비밀번호 받기
