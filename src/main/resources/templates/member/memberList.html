@@ -11,7 +11,7 @@
 <body>
 
 <th:block layout:fragment="content">
-    <h1 class="text-center mt-3">전체 회원 목록</h1>
+    <h1 class="text-center mt-5">전체 회원 목록</h1>
 
     <nav class="navbar" id="navbar">
         <div class="navbar-right">
@@ -38,7 +38,13 @@
                     <th>Email</th>
                     <th>이름</th>
                     <th>연락처</th>
-                    <th>권한</th>
+                    <th>
+                        <a th:href="@{/member/memberList(sort=${sortOrder == 'ASC' ? 'DESC' : 'ASC'}, page=${pageRequestDTO.page})}">
+                            권한
+                            <span th:if="${sortOrder == 'ASC'}">▲</span>
+                            <span th:if="${sortOrder == 'DESC'}">▼</span>
+                        </a>
+                    </th>
                     <th>승인여부</th>
                 </tr>
                 </thead>

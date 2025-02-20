@@ -33,9 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -258,10 +256,11 @@ public class MemberService implements UserDetailsService {
 //
 //    }
 
-    public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO){
+    public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO, String sortOrder){
         Pageable pageable = pageRequestDTO.getPageable("member_num");
         log.info(pageable);
-        log.info("서비스 진입");
+        log.info("정렬방식" + sortOrder);
+
         Page<Member> memberPage = null;
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().equals("")) {
              memberPage = memberRepository.searchMember(pageRequestDTO.getKeyword(), pageable);
@@ -272,14 +271,26 @@ public class MemberService implements UserDetailsService {
 
 
         List<Member> memberList = memberPage.getContent();
-        log.info("결과 받아");
-        memberList.forEach(member -> log.info(member));
+        log.info("DB에서 가져온 회원 목록 : ");
+        memberList.forEach(member -> log.info(member.toString()));
 
 //        if(memberList.isEmpty()) {
 //            memberList = new ArrayList<>();
 //        }
 
         List<MemberDTO> memberDTOList = memberList.stream().map(member -> modelMapper.map(member, MemberDTO.class) ).collect(Collectors.toList());
+
+        List<String> roleOrder = Arrays.asList("SUPERADMIN", "CHIEF", "MANAGER", "USER");
+
+
+        if ("DESC".equalsIgnoreCase(sortOrder)) {
+            memberDTOList.sort(Comparator.comparing((MemberDTO m) -> roleOrder.indexOf(m.getRole())).reversed());
+        } else {
+            memberDTOList.sort(Comparator.comparing(m -> roleOrder.indexOf(m.getRole())));
+        }
+
+        log.info("정렬된 회원 목록:");
+        memberDTOList.forEach(memberDTO -> log.info(memberDTO.toString()));
 
         PageResponseDTO<MemberDTO> memberDTOPageResponseDTO= PageResponseDTO.<MemberDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
