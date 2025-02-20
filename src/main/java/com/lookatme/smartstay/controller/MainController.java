@@ -48,26 +48,41 @@ public class MainController {
         log.info("user:{}", memberDTO);
 
         model.addAttribute("adminEmail", memberDTO.getEmail());
-        model.addAttribute("adminRole", memberDTO.getRole());
+        model.addAttribute("adminRole", memberDTO.getRole() != null ? memberDTO.getRole().name() : "권한 없음");
 
         if ("SUPERADMIN".equals(memberDTO.getRole().name())) {
             model.addAttribute("SUPERADMIN", "super admin 입니다.");
+            log.info("SUPERADMIN 로그인: {}", email);
 
-        }else if ("CHIEF".equals(memberDTO.getRole().name())) {
-            if (memberDTO.getBrandDTO() != null && memberDTO.getBrandDTO().getBrand_num() != null){
+        } else if ("CHIEF".equals(memberDTO.getRole().name())) {
+            if (memberDTO.getBrandDTO() != null && memberDTO.getBrandDTO().getBrand_num() != null) {
                 BrandDTO brandDTO = brandService.read(memberDTO.getBrandDTO().getBrand_num());
-                log.info("Brand details: {}", brandService.read(memberDTO.getBrandDTO().getBrand_num()));
-                model.addAttribute("brandName", brandDTO.getBrand_name());
-                model.addAttribute("brandDTO", brandDTO);
-            }else {
-                log.info("SUPER CHIEF:{}", memberDTO.getEmail());
-                model.addAttribute("brandDTO", null);
+                if (brandDTO != null) {
+                    model.addAttribute("brandName", brandDTO.getBrand_name());
+                    model.addAttribute("brandDTO", brandDTO);
+                    log.info("CHIEF 브랜드 정보: {}", brandDTO);
+                } else {
+                    log.warn("브랜드 정보를 찾을 수 없습니다.");
+                    model.addAttribute("brandName", "브랜드 없음");
+                }
+            } else {
+                log.warn("CHIEF의 브랜드 정보가 설정되어 있지 않습니다.");
+                model.addAttribute("brandName", "");
             }
+
         } else if ("MANAGER".equals(memberDTO.getRole().name())) {
             HotelDTO hotelDTO = hotelService.myHotel(memberDTO.getEmail());
-            log.info("Hotel details: {}", hotelService.myHotel(memberDTO.getEmail()));
-            model.addAttribute("hotelName", hotelDTO.getHotel_name());
-            model.addAttribute("hotelDTO", hotelDTO);
+            if (hotelDTO != null) {
+                model.addAttribute("hotelName", hotelDTO.getHotel_name());
+                model.addAttribute("hotelDTO", hotelDTO);
+                log.info("MANAGER 호텔 정보: {}", hotelDTO);
+            } else {
+                log.warn("호텔 정보를 찾을 수 없습니다.");
+                model.addAttribute("hotelName", "호텔 없음");
+            }
+        } else {
+            log.warn("알 수 없는 ROLE: {}", memberDTO.getRole());
+            model.addAttribute("adminRole", "권한 없음");
         }
 
         log.info("User authorities in controller: {}", authentication.getAuthorities());

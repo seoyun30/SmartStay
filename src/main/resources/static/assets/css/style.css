@@ -78,7 +78,7 @@ body {
   line-height: 1.5;
   color: #8a909d;
   text-align: left;
-  background-color: #f0f1f5;
+  background-color: #FFFFFF;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -4567,7 +4567,7 @@ input[type=button].btn-block {
   word-wrap: break-word;
   background-color: #ffffff;
   background-clip: border-box;
-  border: 1px solid #e5e9f2;
+  border: 1px solid #a2aec7;
   border-radius: 0.25rem;
 }
 .card > hr {
@@ -12598,7 +12598,7 @@ code {
 
 /* Header Light */
 .navbar.navbar-light {
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   border-color: #e5e9f2;
 }
 .navbar.navbar-light .sidebar-toggle {

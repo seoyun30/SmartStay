@@ -28,7 +28,7 @@ public class RoomDTO {
     @NotBlank(message = "룸 정보를 입력해주세요.")
     private String room_info; //룸 정보
 
-    @NotBlank(message = "룸 타입을 입력해주세요.")
+    @NotNull(message = "룸 타입을 설정해주세요.")
     private RoomType room_type; //룸 타입
 
     @NotNull(message = "룸 인원을 입력해주세요.")
@@ -36,6 +36,7 @@ public class RoomDTO {
     private Long room_bed; //룸 인원수
 
     @NotNull(message = "룸 가격을 입력해주세요.")
+    @Min(value = 100, message = "룸 최소 가격은 100원입니다.")
     private Long room_price; //룸 가격
 
     @NotNull(message = "룸 상태를 설정해주세요.")

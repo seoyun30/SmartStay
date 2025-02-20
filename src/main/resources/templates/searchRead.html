@@ -15,7 +15,7 @@
     <div class="container mt-5 text-center">
 
         <div th:each="hotel : ${hotelDTO}" class="col mb-5">
-            <div class="card border-0 shadow-sm h-100">
+            <div class="card shadow-sm h-100">
                 <div class="card-body text-center">
                     <img th:src="${hotel.mainImage.image_url}" alt="호텔 이미지" class="img-fluid rounded-top" />
                     <h2 class="card-title fw-bold">
@@ -33,13 +33,13 @@
         </div>
 
         <div th:each="room : ${roomList}" class="mb-4">
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-sm">
                 <div class="row g-0">
                     <div class="col-md-4 position-relative">
                         <img th:src="${room.mainImage != null and room.mainImage.image_url != null ? room.mainImage.image_url : '/assets/img/room.jpg'}"
                              class="img-fluid rounded-start"
                              alt="룸 대표 이미지"
-                             style="height: 100%; object-fit: cover;">
+                             style="height: 260px; object-fit: cover;">
                     </div>
                     <div class="col-md-8 rounded-start d-flex flex-column justify-content-between">
                         <div class="card-body">

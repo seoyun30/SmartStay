@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,8 +16,10 @@ public class CareDTO {
 
     private Long care_num; //케어 번호
 
+    @NotBlank(message = "케어 서비스 이름을 입력해주세요.")
     private String care_name; //케어 명
 
+    @NotBlank(message = "케어 서비스 설명을 입력해주세요.")
     private String care_detail; //케어 상세
 
     private Long care_price; //케어 가격

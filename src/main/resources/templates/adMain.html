@@ -16,7 +16,7 @@
         <div sec:authorize="hasAuthority('CHIEF')">
             <th:block th:if="${brandDTO != null}" class="col-8">
                 <div class="row">
-                    <div class="card shadow-sm">
+                    <div class="card">
                         <div class="card-body">
                             <img th:src="${brandDTO.mainImage.image_url}" class="mb-5 img-fluid" alt="브랜드 이미지" />
                             <h5 class="card-title">
@@ -37,7 +37,7 @@
         <div sec:authorize="hasAuthority('MANAGER')">
             <th:block th:if="${hotelDTO != null}" class="col-8">
                 <div class="row">
-                    <div class="card shadow-sm">
+                    <div class="card">
                         <div class="card-body">
                             <img th:src="${hotelDTO.mainImage.image_url}" class="mb-5 img-fluid" alt="호텔 이미지" />
                             <h5 class="card-title">

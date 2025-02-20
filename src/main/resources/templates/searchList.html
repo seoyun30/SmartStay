@@ -18,7 +18,7 @@
             <div class="container mt-5">
                 <div class="row">
                     <div th:each="hotel : ${results}" class="col-md-6 mb-4">
-                        <div class="card shadow-lg border-0">
+                        <div class="card shadow-sm">
                             <div class="card-body">
                                 <h5 class="card-title text-primary font-weight-bold">
                                     <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none">호텔 이름</a>

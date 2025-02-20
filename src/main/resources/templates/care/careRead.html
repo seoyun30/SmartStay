@@ -38,14 +38,14 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="care_detail"  class="form-label">룸 케어 상세</label>
-                            <input type="text" min="0" class="form-control" th:field="*{care_detail}" id="care_detail" readonly>
+                            <input type="text" class="form-control" th:field="*{care_detail}" id="care_detail" readonly>
                             <p th:if="${#fields.hasErrors('care_detail')}" th:errors="*{care_detail}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="care_price" class="form-label">룸 케어 가격</label>
-                            <input type="number" min="0" class="form-control" th:field="*{care_price}" id="care_price" readonly>
+                            <input type="number" class="form-control" th:field="*{care_price}" id="care_price" readonly>
                             <p th:if="${#fields.hasErrors('care_price')}" th:errors="*{care_price}" class="fieldError"></p>
                         </div>
                     </div>
