@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemberServiceAImplTest {
 
     @Autowired
-    private MemberServiceA memberService;
+    private MemberService memberService;
 
     @Test
     public void testMemberService() {

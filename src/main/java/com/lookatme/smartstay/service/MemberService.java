@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.config.CustomAuthenticationFailureHandler;
 import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.*;
@@ -13,7 +14,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.catalina.Manager;
+import org.junit.validator.PublicClassValidator;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.context.LifecycleAutoConfiguration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +31,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,8 +51,7 @@ public class MemberService implements UserDetailsService {
     private final BrandRepository brandRepository;
     private final HotelRepository hotelRepository;
     private final EmailService emailService;
-
-
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
 
     @Override
@@ -163,7 +167,6 @@ public class MemberService implements UserDetailsService {
 
         member =
                 memberRepository.save(member);
-
 
 
         return member;
@@ -370,6 +373,21 @@ public class MemberService implements UserDetailsService {
         return memberDTO;
     }
 
+    public List<HotelDTO> hotelsByBrand(Principal principal) {
+
+        List<Hotel> hotels = hotelRepository.findByEmail(principal.getName());
+
+        if (hotels != null || hotels.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<HotelDTO> hotelDTOs = hotels.stream()
+                .map(hotel -> modelMapper.map(hotel, HotelDTO.class))
+                .collect(Collectors.toList());
+
+        return hotelDTOs;
+    }
+
 
 
     public PageResponseDTO<MemberDTO> adPowerList(PageRequestDTO pageRequestDTO, String email) { //슈퍼어드민이 승인하는 권한리스트
@@ -469,6 +487,41 @@ public class MemberService implements UserDetailsService {
                     .total((int) memberPage.getTotalElements())
                     .build();
         }
+    }
+
+    public void changePower(String role, MemberDTO memberDTO, HotelDTO hotelDTO) {
+
+        Member member = memberRepository.findById(memberDTO.getMember_num())
+                .orElseThrow(() -> new EntityNotFoundException("해당 멤버를 찾을 수 없습니다. member_num: " + memberDTO.getMember_num().getClass()));
+
+        try {
+            member.setPower(Power.valueOf(role));
+        } catch (IllegalArgumentException e) {
+            log.info("디비에 값 없음");
+        }
+
+        if (role.equals("CHIEF")) { //chief로 변경
+            member.setRole(Role.CHIEF);
+            member.setHotel(null);
+
+        } else if (role.equals("MANAGER")) {
+            member.setRole(Role.MANAGER); //manager로 변경
+
+            List<Hotel> hotels = null;
+            if (hotelDTO.getHotel_num() == null) {
+                hotels = hotelRepository.findByMyBrand(member.getBrand());
+                if (hotels.isEmpty())
+                    throw new EntityNotFoundException("호텔명을 선택하세요");
+            }
+            Hotel hotel = hotels.get(0);
+            member.setHotel(hotel);
+        } else {
+            // hotel_num이 존재하면 그에 맞는 호텔을 찾음
+            Hotel hotel = hotelRepository.findById(hotelDTO.getHotel_num())
+                    .orElseThrow(() -> new EntityNotFoundException("호텔을 찾을 수 없습니다."));
+            member.setHotel(hotel);
+        }
+        memberRepository.save(member);
     }
 
 
