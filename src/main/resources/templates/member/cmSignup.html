@@ -60,7 +60,7 @@
                                 <div class="mb-1">
                                     <label for="tel" class="form-label">tel</label>
                                     <input type="text" th:field="*{tel}" class="form-control" id="tel" placeholder="숫자만 입력하세요.">
-                                    <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
+                                    <p id="tel-error" style="color:red; display: none;" class="fieldError">유효한 연락처가 아닙니다.</p>
                                 </div>
                             </th:block>
 
@@ -224,10 +224,18 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         const telInput = document.getElementById("tel");
+        const telError = document.getElementById("tel-error");
 
-        // 숫자만 입력 가능하도록 설정
+        // 허용된 전화번호 패턴
+        const validPrefixes = [
+            "010", "011", "017", "018", "019", "02", "031", "032", "033", "041", "042", "043", "044",
+            "051", "052", "053", "054", "055", "061", "062", "063", "064", "070"
+        ];
+
+        // 입력 시 숫자만 허용
         telInput.addEventListener("input", function () {
-            this.value = this.value.replace(/\D/g, ""); // 숫자가 아닌 모든 문자 제거
+            this.value = this.value.replace(/\D/g, ""); // 숫자가 아닌 문자 제거
+            validateTel();
         });
 
         // 붙여넣기 방지 및 숫자만 허용
@@ -235,24 +243,59 @@
             e.preventDefault();
             let pasteData = (e.clipboardData || window.clipboardData).getData("text");
             this.value = pasteData.replace(/\D/g, ""); // 숫자가 아닌 문자 제거 후 붙여넣기
+            validateTel();
         });
+
+        // 전화번호 유효성 검사 함수
+        window.validateTel = function() {
+            let telValue = telInput.value;
+
+            // 입력된 번호가 허용된 패턴으로 시작하는지 확인
+            let isValid = validPrefixes.some(prefix => telValue.startsWith(prefix));
+
+            if (!isValid && telValue.length > 0) {
+                telError.style.display = "block"; // 에러 메시지 표시
+                return false;
+            } else {
+                telError.style.display = "none"; // 에러 메시지 숨김
+                return true;
+            }
+        }
     });
+
 
     function test(){
         var password = document.getElementById('password').value;
         var repassword = document.getElementById('repassword').value;
         var errorMessage = document.getElementById('password-error');
         var repasswordInput = document.getElementById('repassword');
+        var passwordInput = document.getElementById('password');
+
+        if (password.length < 8 || password.length > 20) {
+            errorMessage.style.display = "block"; // 비밀번호 오류 메시지 표시
+            alert("비밀번호는 8자리 이상~ 20자리 미만이어야 합니다.");
+            passwordInput.focus(); // 비밀번호 입력란에 포커스
+            return false; // 회원가입 진행 막기
+        }
 
         if(password != repassword) {
             errorMessage.style.display = "block"; // 오류 메시지 표시
             alert("비밀번호가 일치하지 않습니다.");
             repasswordInput.focus();
             return false; // 회원가입 진행 막기
+
         } else {
             errorMessage.style.display = "none"; // 오류 메시지 숨김
-            return true; // 회원가입 진행 가능
+
         }
+        const telValid = validateTel();
+        if (!telValid) {
+            var telInput = document.getElementById("tel");
+            alert("유효한 연락처가 아닙니다.")
+            telInput.focus(); // 전화번호 입력란에 포커스
+            return false; // 전화번호가 유효하지 않으면 회원가입 진행 막기
+        }
+        return true; // 회원가입 진행 가능
     }
 
 
