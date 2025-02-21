@@ -30,15 +30,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each=" data : ${noticeList}"><!--더미값으로 채우기(가장 긴값)-->
-                    <td th:text="${data.notice_num}"></td>
+                <tr th:each=" dto : ${noticeList}"><!--더미값으로 채우기(가장 긴값)-->
+                    <td th:text="${dto.notice_num}"></td>
 <!--                    <td th:text="${data.hotelDTO.getHotel_name()}"></td>-->  <!--호텔 이름 받아올거-->
                     <td>
-                        <a th:href="@{/notice/noticeRead(id=${data.notice_num})}" th:text="${data.getTitle()}">
+                        <a th:href="@{/notice/noticeRead(id=${dto.notice_num})}" th:text="${dto.getTitle()}">
                         </a>
                     </td>
-                    <td th:text="${data.create_by}"></td>
-                    <td th:text="${#temporals.format(data.reg_date, 'yyyy-MM-dd')}"></td>
+                    <td th:text="${dto.create_by}"></td>
+                    <td th:text="${#temporals.format(dto.reg_date, 'yyyy-MM-dd')}"></td>
                 </tr>
                 </tbody>
             </table>

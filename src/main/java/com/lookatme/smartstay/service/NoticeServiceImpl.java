@@ -50,49 +50,50 @@ public class NoticeServiceImpl  {
     //공지 사항 등록
     public void noticeRegister(NoticeDTO noticeDTO, String email, Long hotel_num, List<MultipartFile> multipartFiles) throws Exception {
 
-        log.info(email); //??
+        //데이터베이스에서 회원 일치여부 확인
+        log.info("서비스 email: " + email);
+
         // 1. Member (email) 가져오기
         Member member = memberRepository.findByEmail(email);
-        if (email == null || email.isEmpty()) {
-            throw new IllegalArgumentException("이메일이 비어 있습니다.");
-        }
 
-        //데이터베이스에서 회원 일치여부 확인
-        log.info("찾아온 email: " + email);
         if (member == null) {
-            throw new AccessDeniedException("해당 이메일로 회원정보를 찾을 수 없습니다.");
+            log.info("회원정보를 찾을 수 없습니다.");
+            throw new AccessDeniedException("회원정보를 찾을 수 없습니다.");
         }
 
         //권한 확인
-        if (!member.getRole().name().equals("CHIEF") && !member.getRole().name().equals("MANAGER")) {
+        if ( member.getRole().name().equals("USER") ) {
+            log.info("공지사항을 작성할 권한이 없습니다.");
             throw new AccessDeniedException("공지사항을 작성할 권한이 없습니다.");
         }
 
         // 호텔 정보 가져오기
-        Hotel hotel = hotelRepository.findById(hotel_num)
+        Hotel hotel = hotelRepository.findById(1L)  // 임시대처
                 .orElseThrow(()-> new EntityNotFoundException("해당 호텔을 찾을 수 없습니다."));
 
-        // 브랜드 정보 가져오기
-        Brand brand = hotel.getBrand();  //호텔에서 브랜드 정보 가져오기
+        log.info("hotel : " + hotel);
 
         // 공지사항 생성 및 정보 세팅
         Notice notice = modelMapper.map(noticeDTO, Notice.class);  //DTO-> Entity 변환
+
+        log.info("notice : " + notice);
+
         // 호텔 & 브랜드 정보 세팅
         notice.setHotel(hotel);
-        notice.getHotel().setBrand(brand);
+
         //작성자 & 작성일
         notice.setMember(member);  // member 객체 설정
-        notice.setCreate_by(member.getEmail());  //작성자 설정(로그인한 사용자의 email)
-        notice.setReg_date(LocalDateTime.now()); //작성일을 현재 시간으로 설정
+
+        log.info("세팅 notice : " + notice);
+
+        //저장
+        noticeRepository.save(notice);
 
         // 이미지가 없다면 저장
         if (multipartFiles != null && !multipartFiles.isEmpty()) {
             imageService.saveImage(multipartFiles, "notice", notice.getNotice_num());
         }
 
-
-        //저장
-        noticeRepository.save(notice);
     }
 
 //    //사진을 추가한 등록
@@ -166,7 +167,9 @@ public class NoticeServiceImpl  {
         //공지사항 전체 조회
         List<Notice> noticeList = noticeRepository.findAll();  //모든 공지사항 조회
 
-        List<NoticeDTO> noticeDTOS = modelMapper.map(noticeList, List.class);
+        List<NoticeDTO> noticeDTOList = noticeList.stream()
+                .map(notice -> modelMapper.map(notice, NoticeDTO.class))
+                .collect(Collectors.toList());
 
 //        //화면페이지번호 1,2,3,4 .. 데이터베이스에서 페이지번호 0,1,2,3...
 //        int currentPage = page.getPageNumber()-1; // 화면에 출력할 페이지번호를 데이터베이스 페이지번호
@@ -185,7 +188,7 @@ public class NoticeServiceImpl  {
 //        System.out.println("khjkhjkj:"+notices);
 //        Page<NoticeDTO> noticeDTOPage = notices.map(data->modelMapper.map(data, NoticeDTO.class));
 
-        return noticeDTOS;
+        return noticeDTOList;
     }
 
 
@@ -194,7 +197,7 @@ public class NoticeServiceImpl  {
 
         Member member = memberRepository.findByEmail(email);
         //이메일 유효성 검증
-        if (email == null || email.isEmpty()) {
+        if (email == null) {
             throw new IllegalArgumentException("이메일이 비어 있습니다.");
         }
 

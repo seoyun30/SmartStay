@@ -4,6 +4,8 @@ import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.dto.ReviewDTO;
+import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.ReviewService;
@@ -29,6 +31,7 @@ public class ReviewController {
     private final MemberService memberService;
     private final HotelService hotelService;
     private final ReviewService reviewService;
+    private final MemberRepository memberRepository;
 
     //관리자 리뷰 목록 페이지
     @GetMapping("/adMyReviewList")
@@ -53,30 +56,45 @@ public class ReviewController {
 
     //등록 페이지 이동
     @GetMapping("/reviewRegister")
-    public String reviewRegisterFrom(Principal principal){
+    public String reviewRegisterFrom(Principal principal, Model model) {
         log.info("입력폼 페이지 이동...");
+        //로그인한 회원 확인
+        if (principal == null) {
+            //로그인 페이지로 이동
+            return "redirect:/member/login";
+        }
 
-        return "review/reviewRegister";
+        model.addAttribute("reviewDTO", new ReviewDTO());
+        return "review/reviewRegister"; // 로그인한 사용자만 볼수 있음
     }
-//
-    //등록 내용 저장
+
+    //등록 내용저장
     @PostMapping("/reviewRegister")
     public String reviewRegisterPost(ReviewDTO reviewDTO,
                                      Long hotel_num, Principal principal, Long reserve_num,
                                      List<MultipartFile> multipartFileList, BindingResult bindingResult) throws Exception {
 
-        log.info("입력폼 내용을 저장..." + reviewDTO);
+        log.info("컨드롤러로 들어온 값:" + reviewDTO);
 
-        if (bindingResult.hasErrors()) {
-            log.info(bindingResult.getAllErrors());
-
-            return "review/reviewRegister";
+        if (principal == null) {
+            return "redirect:/member/login"; //로그인 하시오
         }
 
+        //로그인한 사용자의 정보를 얻어옴
+        String email = principal.getName();
+        Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            return "redirect:/member/login";
+        }
+
+        if (bindingResult.hasErrors()) {
+            log.info("문제가 있다..");
+            log.info(bindingResult.getAllErrors());
+            return "review/reviewRegister";
+        }
         reviewService.reviewRegister(reviewDTO, principal.getName(), hotel_num, reserve_num, multipartFileList );
 
-
-        return "redirect:/review/reviewList";
+        return "redirect:/review/reviewList"; // 리뷰 목록으로 이동
     }
 //
 //    //상세 보기 페이지
