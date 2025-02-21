@@ -55,16 +55,16 @@
             </div>
             <div class="row" id="hotel-list"></div> <!--추가-->
 
-            <div class="row">
-                <div th:each="hotel : ${list}" class="col-md-3 mb-4">
-                    <div class="card shadow-sm">
+            <div class="row row-cols-1 row-cols-md-4">
+                <div th:each="hotel : ${list}" class="col">
+                    <div class="card h-100 shadow-sm">
                         <div>
-                            <img th:src="${hotel.mainImage.image_url}" style="height: 200px" alt="호텔 이미지" class="img-fluid rounded-top" />
+                            <img th:src="${hotel.mainImage.image_url}" style="height: 200px; object-fit: cover;" alt="호텔 이미지" class="card-img-top img-fluid rounded-top" />
                         </div>
-                        <div class="card-body text-center">
+                        <div class="card-body text-center d-flex flex-column">
                             <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none text-primary fw-bold"></a>
-                            <p class="text-muted mt-2" th:text="${hotel.lowestPrice + '원~'}"></p>
-                            <p class="text-warning" th:text="'별점 : ' + ${hotel.score}"></p>
+                            <p class="text-muted mt-3" th:text="${hotel.lowestPrice + '원~'}"></p>
+                            <p class="text-warning mt-auto" th:text="'별점 : ' + ${hotel.score}"></p>
                         </div>
                     </div>
                 </div>

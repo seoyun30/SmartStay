@@ -7,6 +7,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+    <style>
+        .card img {
+            width: 100%;
+            object-fit: cover;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -15,21 +23,59 @@
     <div class="container mt-5 text-center">
 
         <div th:each="hotel : ${hotelDTO}" class="col mb-5">
-            <div class="card shadow-sm h-100">
-                <div class="card-body text-center">
-                    <img th:src="${hotel.mainImage.image_url}" alt="호텔 이미지" class="img-fluid rounded-top" />
-                    <h2 class="card-title fw-bold">
-                        <h2 th:text="${hotel.hotel_name}">호텔 이름</h2>
-                    </h2>
-                    <span class="text-dark" th:text="${hotel.address}">주소</span><br>
-                    <span class="text-dark" th:text="${hotel.lowestPrice + '원~'}">최저가</span><br>
-                    <span class="text-dark" th:text="${hotel.score}">별점</span>
+            <div class="row">
+                <div class="card">
+                    <th:block>
+                        <div class="container mt-6 mb-3">
+                            <div id="carouselExampleFade" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    <th:block th:each="img: ${hotelDTO.imageDTOList}">
+                                        <th:block th:if="${img.repimg_yn == 'Y'}">
+                                            <div class="carousel-item active d-flex justify-content-center" data-bs-interval="5000">
+                                                <div class="col-12">
+                                                    <img width="100%" th:src="${img.image_url}" alt="대표 이미지" style="height: 600px;">
+                                                </div>
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+
+                                    <th:block th:each="img: ${hotelDTO.imageDTOList}">
+                                        <th:block th:unless="${img.repimg_yn == 'Y'}">
+                                            <div class="carousel-item" data-bs-interval="5000">
+                                                <div class="col-12">
+                                                    <img width="100%" th:src="${img.image_url}" alt="상세 이미지" style="height: 600px;">
+                                                </div>
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        </div>
+                    </th:block>
+                    <div class="col-12 text-center mb-3">
+                        <div class="card-title text-black fw-bold">
+                            <h2 th:text="${hotel.hotel_name}">호텔 이름</h2>
+                        </div>
+                        <span class="text-dark fw-bold" th:text="${hotel.address}">주소</span><br>
+                        <span class="text-dark fw-bold" th:text="${hotel.lowestPrice + '원~'}">최저가</span><br>
+                        <span class="text-warning fw-bold" th:text="${hotel.score + '별점'}">별점</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="mb-5">
-            (리뷰)
+        <div class="card container col-10 mb-5">
+            <div class="mt-5 mb-5 text-center">
+                (리뷰)
+            </div>
         </div>
 
         <div th:each="room : ${roomList}" class="mb-4">

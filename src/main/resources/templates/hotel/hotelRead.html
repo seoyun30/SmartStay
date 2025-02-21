@@ -10,33 +10,18 @@
 <body>
 <th:block layout:fragment="content">
     <h1 class="text-center mt-5 mb-3">호텔 상세보기</h1>
-    <div class="d=flex vh-100">
+    <div class="d-flex">
         <div class="container my-auto">
             <div class=" row justify-content-center">
 
                 <form action="/hotel/hotelRegister" method="post" th:object="${hotelDTO}">
                     <div class="row mt-5">
-                        <div class="col text-center">
+                        <div class="col-8 offset-2">
                             <div class="row">
-
-                                <div class="row mb-3">
-                                    <th:block th:unless="${hotelDTO.imageDTOList.isEmpty()}" th:each="imgdto: ${hotelDTO.imageDTOList}">
-                                        <div class="col">
-                                            <img class="img-fluid" th:src="${imgdto.image_url}">
-                                        </div>
-                                    </th:block>
-
-                                    <th:block th:if="${hotelDTO.imageDTOList.isEmpty()}">
-                                        <div class="col">
-                                            이미지가 없습니다.
-                                        </div>
-                                    </th:block>
-                                </div>
-
                                 <div class="col text-center">
                                     <div class="card">
                                         <div class="card-body">
-                                            <input id="hotel_num" type="hidden" th:value="${hotelDTO.hotel_num}"></input>
+                                            <input id="hotel_num" type="hidden" th:value="${hotelDTO.hotel_num}">
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text">호텔명</span>
                                                 <input type="text" class="form-control" th:value="${hotelDTO.hotel_name}">
@@ -64,9 +49,37 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="col-12">
+                                    <div class="mt-3 mb-3 imgA">
+                                        <div class="row">
+                                            <th:block th:each="img: ${hotelDTO.imageDTOList}">
+                                                <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                    <label class="col-12 form-label">
+                                                        대표 이미지<br>
+                                                        <img width="600px" height="auto" th:src="${img.image_url}" alt="대표 이미지">
+                                                    </label>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+
+                                        <div class="row">
+                                            <th:block th:each="img: ${hotelDTO.imageDTOList}">
+                                                <th:block th:unless="${img.repimg_yn == 'Y'}">
+                                                    <label class="col-12 form-label">
+                                                        상세 이미지<br>
+                                                        <img width="400px" height="auto" th:src="${img.image_url}" alt="상세 이미지">
+                                                    </label>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+                                    </div>
+                                </div>
+
+
                                 <div class="col-12 mt-3">
-                                    <button type="button" class="btn btn-primary Modbtn" style="float:right; margin-left: 10px;";>수정</button>
-                                    <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
+                                    <button type="button" class="btn btn-primary Listbtn">목록</button>
+                                    <button type="button" class="btn btn-dark Modbtn">수정</button>
                                     <script>
                                         let hotel_num = document.getElementById("hotel_num").value;
 

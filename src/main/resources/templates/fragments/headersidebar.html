@@ -318,7 +318,7 @@
                                         </ul>
                                     </li>
 
-                                    <li sec:authorize="hasAuthority('MANAGER')" class="has-sub">
+                                    <li sec:authorize="hasAuthority('MANAGER')" class="has-sub mb-8">
                                         <a class="sidenav-item-link" data-bs-target="#review-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
                                             <i class="bi bi-menu-button-wide"></i>
                                             <span class="nav-text">리뷰 관리</span>
@@ -336,7 +336,7 @@
                                         </ul>
                                     </li>
 
-                                    <div class="sidebar-footer ml-5 mt-5 mb-3">
+                                    <div class="sidebar-footer ml-5 mt-8 mb-3">
                                         <p th:if="${adminRole == 'CHIEF'}" style="color: white; font-weight: bold;">
                                             <strong>BRAND : </strong><span th:text="${brandName}">브랜드 없음</span>
                                         </p>

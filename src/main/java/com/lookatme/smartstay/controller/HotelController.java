@@ -1,16 +1,13 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.Util.PagenationUtil;
-import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.ImageService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -25,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -86,8 +82,8 @@ public class HotelController {
     }
     @PostMapping("/hotelModify")
     public String hotelModifyPost(HotelDTO hotelDTO, BindingResult bindingResult,
-                                  @RequestParam("delnumList") List<Long> delnumList,
-                                  @RequestParam("multi") List<MultipartFile> multi,
+                                  @RequestParam(value = "delnumList", required = false) List<Long> delnumList,
+                                  @RequestParam(value = "multi", required = false) List<MultipartFile> multi,
                                   ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
 
         if (bindingResult.hasErrors()) {
@@ -95,7 +91,15 @@ public class HotelController {
             return "hotel/hotelModify";
         }
         log.info("유효성 통과");
-        hotelService.update(hotelDTO, multi );
+
+        if (multi != null && multi.stream().allMatch(MultipartFile::isEmpty)) {
+            multi = null;
+        }
+        if (delnumList != null && delnumList.isEmpty()) {
+            delnumList = null;
+        }
+
+        hotelService.update(hotelDTO, multi, delnumList);
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
         log.info("수정 완료");

@@ -1,14 +1,14 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.Util.PagenationUtil;
-import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.dto.BrandDTO;
+import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.BrandService;
 import com.lookatme.smartstay.service.ImageService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -105,8 +104,8 @@ public class BrandController {
     }
     @PostMapping("/brandModify")
     public String brandModifyPost(BrandDTO brandDTO, BindingResult bindingResult,
-                                  @RequestParam("delnumList") List<Long> delnumList,
-                                  @RequestParam("multi") List<MultipartFile> multi,
+                                  @RequestParam(value = "delnumList", required = false) List<Long> delnumList,
+                                  @RequestParam(value = "multi", required = false) List<MultipartFile> multi,
                                   ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
 
         if (bindingResult.hasErrors()) {
@@ -114,7 +113,15 @@ public class BrandController {
             return "brand/brandModify";
         }
         log.info("유효성 통과");
-        brandService.update(brandDTO, multi );
+
+        if (multi != null && multi.stream().allMatch(MultipartFile::isEmpty)) {
+            multi = null;
+        }
+        if (delnumList != null && delnumList.isEmpty()) {
+            delnumList = null;
+        }
+
+        brandService.update(brandDTO, multi, delnumList);
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
         log.info("수정 완료");
@@ -128,7 +135,7 @@ public class BrandController {
         return "redirect:/brand/brandList";
     }
 
-    @PostMapping("/deleteImage/{imageId}")
+    @DeleteMapping("/deleteImage/{imageId}")
     public ResponseEntity<String> deleteImage(@PathVariable Long imageId) {
         try {
             imageService.deleteImage(imageId);

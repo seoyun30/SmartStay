@@ -9,6 +9,7 @@ import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.BrandRepository;
 import com.lookatme.smartstay.repository.HotelRepository;
+import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -33,6 +34,7 @@ public class BrandService {
     private final ImageService imageService;
     private final MemberRepository memberRepository; //추가
     private final HotelRepository hotelRepository;
+    private final ImageRepository imageRepository;
 
     //brand 등록
     public void insert(BrandDTO brandDTO, String email,
@@ -110,7 +112,7 @@ public class BrandService {
 
     //brand 수정
     public void update(BrandDTO brandDTO,
-                       List<MultipartFile> multipartFiles) throws Exception{
+                       List<MultipartFile> multipartFiles, List<Long> delnumList) throws Exception{
         Brand brand = brandRepository.findById(brandDTO.getBrand_num())
                 .orElseThrow(EntityNotFoundException::new);
         //set
@@ -122,10 +124,24 @@ public class BrandService {
 
         brandRepository.save(brand);
 
-        // 이미지 업로드 처리
-        if (multipartFiles != null && !multipartFiles.isEmpty()) {
-            // 기존 이미지를 업데이트 또는 새로운 이미지를 업로드
-            imageService.saveImage(multipartFiles, "brand", brand.getBrand_num());
+        boolean hasNewImages = multipartFiles != null && multipartFiles.stream().anyMatch(file -> !file.isEmpty());
+        boolean hasDeletedImages = delnumList != null && !delnumList.isEmpty();
+
+        if (hasNewImages || hasDeletedImages) {
+            log.info("이미지 업데이트 실행");
+            try {
+                imageService.updateImage(
+                        hasNewImages ? multipartFiles : null,
+                        hasDeletedImages ? delnumList : null,
+                        "brand",
+                        brand.getBrand_num()
+                );
+            } catch (IndexOutOfBoundsException e) {
+                log.error("이미지 업데이트 중 인덱스 오류 발생: {}", e.getMessage());
+                throw new IllegalArgumentException("업로드된 파일이나 삭제 요청이 잘못되었습니다.");
+            }
+        } else {
+            log.info("이미지 업데이트 없이 텍스트 정보만 수정");
         }
 
     }
@@ -133,6 +149,22 @@ public class BrandService {
     //brand 삭제
     public void delete(Long id){
         log.info("서비스로 들어온 삭제할 번호 :"+id);
+
+        List<Image> images = imageRepository.findByTarget("brand", id);
+
+        if (images == null || images.isEmpty()) {
+            log.error("삭제하려는 브랜드의 이미지가 없습니다. brand_num : " +id);
+        }else {
+            for (Image image : images) {
+                try {
+                    imageService.deleteImage(image.getImage_id());
+                    imageRepository.deleteById(image.getImage_id());
+                    log.info("삭제된 이미지 id : " + image.getImage_id());
+                }catch (Exception e) {
+                    log.error("이미지 삭제 실패 :" + e.getMessage());
+                }
+            }
+        }
 
         brandRepository.deleteById(id);
     }

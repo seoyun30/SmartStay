@@ -91,7 +91,7 @@
                                     <th:block th:each="img : ${roomDTO.imageDTOList}">
                                         <th:block th:unless="${img.repimg_yn == 'Y'}">
                                             <div th:id="'image-' + ${img.image_id}">
-                                                <img th:src="${img.image_url}" alt="Detail Image" width="200px">
+                                                <img th:src="${img.image_url}" alt="Detail Image" class="mb-1" width="200px">
                                                 <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
                                             </div>
                                         </th:block>
@@ -113,7 +113,7 @@
 
                         <div class="col-12">
                             <button type="submit" class="btn btn-dark">저장</button>
-                            <button type="button" class="btn btn-dark" onclick="location.href='/room/roomList'">목록</button>
+                            <button type="button" class="btn btn-primary" onclick="location.href='/room/roomList'">목록</button>
                             <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
                         </div>
                     </div>
