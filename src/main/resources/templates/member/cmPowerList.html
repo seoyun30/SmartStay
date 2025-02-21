@@ -122,22 +122,58 @@
     </form>
 
 <!--페이징처리-->
-    <div class="pagination mt-3" th:if="${pageResponseDTO != null and not #lists.isEmpty(pageResponseDTO.dtoList)}">
-        <th:block th:if="${pageResponseDTO.prev}">
-            <a class="pagingbtn" th:href="@{/member/memberList(page=${pageResponseDTO.start -1}, keyword=${pageRequestDTO.keyword})}">이전</a>
-        </th:block>
 
-        <th:block th:each="i: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
-            <a class="pagingbtn" th:href="@{/member/memberList(page=${i}, keyword=${pageRequestDTO.keyword})}">
-                [[${i}]]
-            </a>
-        </th:block>
+    <div class="row mt-3">
+        <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <th:block th:if="${pageResponseDTO.prev}">
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/member/cmPowerList(page=${pageResponseDTO.start -1}, keyword=${pageRequestDTO.keyword})}">이전</a>
+                                </li>
+                            </th:block>
 
+                            <th:block th:each="i: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/member/cmPowerList(page=${i}, keyword=${pageRequestDTO.keyword})}">
+                                        [[${i}]]
+                                    </a>
+                                </li>
+                            </th:block>
 
-        <th:block th:if="${pageResponseDTO.next}">
-            <a class="pagingbtn" th:href="@{/member/memberList.html(page=${pageResponseDTO.end + 1}, keyword=${pageRequestDTO.keyword})}">다음</a>
+                            <th:block th:if="${pageResponseDTO.next}">
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/member/cmPowerList.html(page=${pageResponseDTO.end + 1}, keyword=${pageRequestDTO.keyword})}">다음</a>
+                                </li>
+                            </th:block>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </th:block>
     </div>
+
+
+<!--    <div class="pagination-container">-->
+<!--        <div class="pagination mt-3" th:if="${pageResponseDTO != null and not #lists.isEmpty(pageResponseDTO.dtoList)}">-->
+<!--            <th:block th:if="${pageResponseDTO.prev}">-->
+<!--                <a class="pagingbtn" th:href="@{/member/cmPowerList(page=${pageResponseDTO.start -1}, keyword=${pageRequestDTO.keyword})}">이전</a>-->
+<!--            </th:block>-->
+
+<!--            <th:block th:each="i: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">-->
+<!--                <a class="pagingbtn" th:href="@{/member/cmPowerList(page=${i}, keyword=${pageRequestDTO.keyword})}">-->
+<!--                    [[${i}]]-->
+<!--                </a>-->
+<!--            </th:block>-->
+
+
+<!--            <th:block th:if="${pageResponseDTO.next}">-->
+<!--                <a class="pagingbtn" th:href="@{/member/cmPowerList.html(page=${pageResponseDTO.end + 1}, keyword=${pageRequestDTO.keyword})}">다음</a>-->
+<!--            </th:block>-->
+<!--        </div>-->
+<!--    </div>-->
 
 </th:block>
 
