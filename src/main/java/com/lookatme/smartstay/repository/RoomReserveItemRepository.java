@@ -22,9 +22,7 @@ public interface RoomReserveItemRepository extends JpaRepository<RoomReserveItem
     List<RoomReserveItem> findByRoomRoom_num(Long room_num);
 
     @Query("select r from RoomReserveItem r where r.roomreserveitem_num = :roomreserveitem_num and r.roomReserve.member.email = :email")
-    public RoomReserveItem findByReserveItemNumAndEmail(Long roomreserveitem_num, String email);
-
-    //추후 룸서비스 버전도 생성 예정
+    RoomReserveItem findByReserveItemNumAndEmail(Long roomreserveitem_num, String email);
 
 
 }

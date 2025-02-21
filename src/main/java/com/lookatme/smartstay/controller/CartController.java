@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.dto.OrderItemDTO;
 import com.lookatme.smartstay.dto.RoomItemDTO;
 import com.lookatme.smartstay.service.CartService;
 import com.lookatme.smartstay.service.RoomItemService;
@@ -59,6 +60,28 @@ public class CartController {
 
     }
 
+
+    //룸서비스 장바구니 등록
+    @PostMapping("/cartOrderReserveRegister")
+    public ResponseEntity<?> cartOrderReserveRegister(@RequestBody OrderItemDTO orderItemDTO,
+                                                      Principal principal) {
+
+        log.info("브라우저 orderItemDTO: " + orderItemDTO);
+        log.info("로그인 principal: " + principal);
+
+        if (orderItemDTO.getRoomreserveitem_num() == null) {
+            return new ResponseEntity<>("roomreserveitem_num 값이 필요합니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        String email = principal.getName();
+
+        try {
+            Long serviceNum = cartService.addCartOrderItem(orderItemDTO, email);
+            return new ResponseEntity<>(serviceNum, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
     //장바구니 전체 목록
     @GetMapping("/cartList")
     public String cartList(Principal principal, Model model) {

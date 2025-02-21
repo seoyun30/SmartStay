@@ -1,9 +1,6 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.ImageDTO;
-import com.lookatme.smartstay.dto.RoomDTO;
-import com.lookatme.smartstay.dto.RoomItemDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,13 +23,17 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final MemberRepository memberRepository;
-    private final RoomReserveRepository roomReserveRepository;
-    private final OrderReserveRepository orderReserveRepository;
-    private final PayRepository payRepository;
-    private final RoomItemRepository roomItemRepository;
     private final RoomRepository roomRepository;
+    private final RoomItemRepository roomItemRepository;
+    private final RoomReserveItemRepository roomReserveItemRepository;
+    private final MenuRepository menuRepository;
+    private final MenuItemRepository menuItemRepository;
+    private final CareRepository careRepository;
+    private final CareItemRepository careItemRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ImageRepository imageRepository;
     private final ModelMapper modelMapper;
+
 
     //룸예약 장바구니 등록
     public Long addCartRoomItem(RoomItemDTO roomItemDTO, String email) {
@@ -150,9 +151,67 @@ public class CartService {
 
     }
 
-    //차후 룸서비스 관련 추가 필요
+    //룸서비스 장바구니 등록
+    public Long addCartOrderItem(OrderItemDTO orderItemDTO, String email) {
+        log.info("장바구니 서비스 email : " + email);
+        log.info("장바구니 서비스 orderItemDTO : " + orderItemDTO);
 
-    //장바구니의 주문
+        // 회원 정보 조회
+        Member member = memberRepository.findByEmail(email);
+        log.info("장바구니 서비스 member : " + member);
+
+        RoomReserveItem roomReserveItem =
+                roomReserveItemRepository.findByReserveItemNumAndEmail(orderItemDTO.getRoomreserveitem_num(), email);
+
+        // 장바구니 조회 (없으면 생성)
+        Cart cart = cartRepository.findByMemberEmail(email);
+        if (cart == null) {
+            cart = Cart.createCart(member);
+            cartRepository.save(cart);
+        }
+        log.info("장바구니 서비스 cart : " + cart);
+
+        // OrderItem 생성
+        OrderItem orderItem = OrderItem.builder()
+                .cart(cart)
+                .menu_request(orderItemDTO.getMenu_request())
+                .roomReserveItem(roomReserveItem)
+                .build();
+
+        // 메뉴 추가
+        if (orderItemDTO.getMenuItemDTOList() != null && !orderItemDTO.getMenuItemDTOList().isEmpty()) {
+            for (MenuItemDTO menuItemDTO : orderItemDTO.getMenuItemDTOList()) {
+                Menu menu = menuRepository.findById(menuItemDTO.getMenuDTO().getMenu_num())
+                        .orElseThrow(() -> new EntityNotFoundException("메뉴가 존재하지 않습니다."));
+                MenuItem menuItem = new MenuItem();
+                menuItem.setMenu(menu);
+                menuItem.setOrderItem(orderItem);
+                menuItem.setMenu_count(menuItemDTO.getMenu_count());
+                menuItemRepository.save(menuItem);
+                orderItem.getMenuItemList().add(menuItem);
+            }
+        }
+
+        // 케어 서비스 추가
+        if (orderItemDTO.getCareItemDTOList() != null && !orderItemDTO.getCareItemDTOList().isEmpty()) {
+            for (CareItemDTO careItemDTO : orderItemDTO.getCareItemDTOList()) {
+                Care care = careRepository.findById(careItemDTO.getCareDTO().getCare_num())
+                        .orElseThrow(() -> new EntityNotFoundException("케어 서비스가 존재하지 않습니다."));
+                CareItem careItem = new CareItem();
+                careItem.setCare(care);
+                careItem.setOrderItem(orderItem);
+                careItem.setCare_count(careItemDTO.getCare_count());
+                careItemRepository.save(careItem);
+                orderItem.getCareItemList().add(careItem);
+            }
+        }
+
+        orderItem = orderItemRepository.save(orderItem);
+        return orderItem.getService_num();
+
+    }
+
+    //장바구니의 룸예약 상품 찾기
     public List<RoomItemDTO> findCartOrderRoomItem(Long[] roomitem_nums) {
 
         //현재 룸예약만 진행중 차후 수정 필요
