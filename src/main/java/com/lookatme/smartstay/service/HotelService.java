@@ -9,10 +9,7 @@ import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.repository.BrandRepository;
-import com.lookatme.smartstay.repository.HotelRepository;
-import com.lookatme.smartstay.repository.MemberRepository;
-import com.lookatme.smartstay.repository.RoomRepository;
+import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +34,7 @@ public class HotelService {
     private final ImageService imageService;
     private final RoomRepository roomRepository;
     private final EmailService emailService;
+    private final ImageRepository imageRepository;
 
     //hotel 등록
     public void insert(HotelDTO hotelDTO, String email,
@@ -158,7 +156,7 @@ public class HotelService {
 
     //chief 수정
     public void update(HotelDTO hotelDTO,
-                       List<MultipartFile> multipartFiles) throws Exception {
+                       List<MultipartFile> multipartFiles, List<Long> delnumList) throws Exception {
         Hotel hotel = hotelRepository.findById(hotelDTO.getHotel_num())
                 .orElseThrow(EntityNotFoundException::new);
         //set
@@ -170,16 +168,47 @@ public class HotelService {
 
         hotelRepository.save(hotel);
 
-        // 이미지 업로드 처리
-        if (multipartFiles != null && !multipartFiles.isEmpty()) {
-            // 기존 이미지를 업데이트 또는 새로운 이미지를 업로드
-            imageService.saveImage(multipartFiles, "hotel", hotel.getHotel_num());
+        boolean hasNewImages = multipartFiles != null && multipartFiles.stream().anyMatch(file -> !file.isEmpty());
+        boolean hasDeletedImages = delnumList != null && !delnumList.isEmpty();
+
+        if (hasNewImages || hasDeletedImages) {
+            log.info("이미지 업데이트 실행");
+            try {
+                imageService.updateImage(
+                        hasNewImages ? multipartFiles : null,
+                        hasDeletedImages ? delnumList : null,
+                        "hotel",
+                        hotel.getHotel_num()
+                );
+            } catch (IndexOutOfBoundsException e) {
+                log.error("이미지 업데이트 중 인덱스 오류 발생: {}", e.getMessage());
+                throw new IllegalArgumentException("업로드된 파일이나 삭제 요청이 잘못되었습니다.");
+            }
+        } else {
+            log.info("이미지 업데이트 없이 텍스트 정보만 수정");
         }
     }
 
     //chief 삭제
     public void delete(Long id) {
         log.info("서비스로 들어온 삭제할 번호 :" + id);
+
+        List<Image> images = imageRepository.findByTarget("hotel", id);
+
+        if (images == null || images.isEmpty()) {
+            log.error("삭제하려는 호텔의 이미지가 없습니다. hotel_num : " +id);
+        }else {
+            for (Image image : images) {
+                try {
+                    imageService.deleteImage(image.getImage_id());
+                    imageRepository.deleteById(image.getImage_id());
+                    log.info("삭제된 이미지 id : " + image.getImage_id());
+                }catch (Exception e) {
+                    log.error("이미지 삭제 실패 :" + e.getMessage());
+                }
+            }
+        }
+
         memberRepository.deleteByHotelHotel_num(id);
         hotelRepository.updateHotelBrandToNull(id); //호텔이 참조하는 브랜드번호를 null로 설정
         hotelRepository.deleteById(id);

@@ -10,69 +10,70 @@
 <body>
 <th:block layout:fragment="content">
 
-    <form th:object="${careDTO}" action="" method="">
 
-        <div class="row">
-            <div class="col-8 offset-2">
-                <div class="row">
+    <div class="d-flex">
+        <div class="container my-auto">
+            <div class=" row justify-content-center">
+                <form th:object="${careDTO}" action="" method="">
 
-                    <div class="col-12">
-                        <div class="mb-3 text-center">
-                            <h2 th:text="${careDTO.hotelDTO.hotel_name}"></h2>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="care_num" class="form-label">룸 케어 번호</label>
-                            <input type="text" class="form-control" th:field="*{care_num}" required id="care_num" readonly>
-                            <p th:if="${#fields.hasErrors('care_num')}" th:errors="*{care_num}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="care_name" class="form-label">룸 케어 명</label>
-                            <input type="text" class="form-control" th:field="*{care_name}" required id="care_name" readonly>
-                            <p th:if="${#fields.hasErrors('care_name')}" th:errors="*{care_name}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="care_detail"  class="form-label">룸 케어 상세</label>
-                            <input type="text" class="form-control" th:field="*{care_detail}" id="care_detail" readonly>
-                            <p th:if="${#fields.hasErrors('care_detail')}" th:errors="*{care_detail}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="care_price" class="form-label">룸 케어 가격</label>
-                            <input type="number" class="form-control" th:field="*{care_price}" id="care_price" readonly>
-                            <p th:if="${#fields.hasErrors('care_price')}" th:errors="*{care_price}" class="fieldError"></p>
-                        </div>
-                    </div>
+                    <div class="row">
+                        <div class="col-8 offset-2">
+                            <div class="row">
 
-                    <div class="col-12">
-                        <div class="mb-3 imgA">
-                            <div class="row mb-5">
-                                <th:block th:each="img: ${careDTO.imageDTOList}">
-                                    <th:block th:if="${img.repimg_yn == 'Y'}">
-                                        <div class="col-12">
-                                            <img width="600px" height="auto" th:src="${img.image_url}" alt="이미지">
+                                <div class="mb-3 mt-5 text-center">
+                                    <h2 th:text="${careDTO.hotelDTO.hotel_name}"></h2>
+
+                                </div>
+
+                                <div class="col text-center">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">룸 케어 번호</span>
+                                                <input type="text" class="form-control" th:value="${careDTO.care_num}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">룸 케어 명</span>
+                                                <input type="text" class="form-control" th:value="${careDTO.care_name}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">룸 케어 설명</span>
+                                                <input type="text" class="form-control" th:value="${careDTO.care_detail}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">룸 케어 가격</span>
+                                                <input type="number" class="form-control" th:value="${careDTO.care_price}">
+                                            </div>
                                         </div>
-                                    </th:block>
-                                </th:block>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="mt-3 mb-3 imgA">
+                                        <div class="row mb-5">
+                                            <th:block th:each="img: ${careDTO.imageDTOList}">
+                                                <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                    <div class="col-12">
+                                                        <img width="600px" height="auto" th:src="${img.image_url}" alt="이미지">
+                                                    </div>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="button" th:onclick="|location.href='@{/care/careModify(care_num=${careDTO.care_num})}'|" class="btn btn-dark">수정</button>
+                                    <button type="button" onclick="location.href='/care/careList'"class="btn btn-primary">목록</button>
+                                    <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-12">
-                        <button type="button" th:onclick="|location.href='@{/care/careModify(care_num=${careDTO.care_num})}'|" class="btn btn-dark">수정</button>
-                        <button type="button" onclick="location.href='/care/careList'"class="btn btn-dark">목록</button>
-                        <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
-    </form>
+    </div>
 
     <form id="deleteForm" action="/care/careDelete" method="post" style="display:none;">
         <input type="hidden" name="id" th:value="${careDTO.care_num}" />

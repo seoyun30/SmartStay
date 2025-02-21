@@ -10,76 +10,71 @@
 <body>
 <th:block layout:fragment="content">
 
-    <form th:object="${menuDTO}" action="" method="">
-        <div class="row">
-            <div class="col-8 offset-2">
-                <div class="row">
+    <div class="d-flex">
+        <div class="container my-auto">
+            <div class=" row justify-content-center">
+                <form th:object="${menuDTO}" action="" method="">
+                    <div class="row mt-5">
+                        <div class="col-8 offset-2">
+                            <div class="row">
+                                <div class="mb-3 mt-5 text-center">
+                                    <h2 th:text="${menuDTO.hotelDTO.hotel_name}"></h2>
+                                </div>
 
-                    <div class="col-12">
-                        <div class="mb-3 text-center">
-                            <h2 th:text="${menuDTO.hotelDTO.hotel_name}"></h2>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="menu_num" class="form-label">메뉴 번호</label>
-                            <input type="text" class="form-control" th:field="*{menu_num}" required id="menu_num" readonly>
-                            <p th:if="${#fields.hasErrors('menu_num')}" th:errors="*{menu_num}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="menu_sort" class="form-label">메뉴 분류</label>
-                            <input type="text" class="form-control" th:field="*{menu_sort}" id="service_info" readonly>
-                            <p th:if="${#fields.hasErrors('menu_sort')}" th:errors="*{menu_sort}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="menu_name" class="form-label">메뉴 명</label>
-                            <input type="text" class="form-control" th:field="*{menu_name}" required id="menu_name" readonly>
-                            <p th:if="${#fields.hasErrors('menu_name')}" th:errors="*{menu_name}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="menu_detail"  class="form-label">메뉴 상세</label>
-                            <input type="text" class="form-control" th:field="*{menu_detail}" id="menu_detail" readonly>
-                            <p th:if="${#fields.hasErrors('menu_detail')}" th:errors="*{menu_detail}" class="fieldError"></p>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="menu_price" class="form-label">메뉴 가격</label>
-                            <input type="number"  class="form-control" th:field="*{menu_price}" id="menu_price" readonly>
-                            <p th:if="${#fields.hasErrors('menu_price')}" th:errors="*{menu_price}" class="fieldError"></p>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="mb-3 imgA">
-                            <div class="row mb-5">
-                                <th:block th:each="img: ${menuDTO.imageDTOList}">
-                                    <th:block th:if="${img.repimg_yn == 'Y'}">
-                                        <div class="col-12">
-                                            <img width="600px" height="auto" th:src="${img.image_url}" alt="이미지">
+                                <div class="col text-center">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">메뉴 번호</span>
+                                                <input type="text" class="form-control" th:value="${menuDTO.menu_num}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">메뉴 분류</span>
+                                                <input type="text" class="form-control" th:value="${menuDTO.menu_sort}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">메뉴 명</span>
+                                                <input type="text" class="form-control" th:value="${menuDTO.menu_name}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">메뉴 설명</span>
+                                                <input type="text" class="form-control" th:value="${menuDTO.menu_detail}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">메뉴 가격</span>
+                                                <input type="number" class="form-control" th:value="${menuDTO.menu_price}">
+                                            </div>
                                         </div>
-                                    </th:block>
-                                </th:block>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="mt-3 mb-3 imgA">
+                                        <div class="row mb-5">
+                                            <th:block th:each="img: ${menuDTO.imageDTOList}">
+                                                <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                    <div class="col-12">
+                                                        <img width="600px" height="auto" th:src="${img.image_url}" alt="이미지">
+                                                    </div>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="button" th:onclick="|location.href='@{/menu/menuModify(menu_num=${menuDTO.menu_num})}'|" class="btn btn-dark">수정</button>
+                                    <button type="button" onclick="location.href='/menu/menuList'"class="btn btn-primary">목록</button>
+                                    <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
+
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-12">
-                        <button type="button" th:onclick="|location.href='@{/menu/menuModify(menu_num=${menuDTO.menu_num})}'|" class="btn btn-dark">수정</button>
-                        <button type="button" onclick="location.href='/menu/menuList'"class="btn btn-dark">목록</button>
-                        <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
-
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
-    </form>
+    </div>
 
     <form id="deleteForm" action="/menu/menuDelete" method="post" style="display:none;">
         <input type="hidden" name="id" th:value="${menuDTO.menu_num}" />
