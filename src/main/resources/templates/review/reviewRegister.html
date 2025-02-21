@@ -44,6 +44,31 @@
         <div class="col">
             <form th:action="@{/review/reviewRegister}" method="post" class="position: 0;">
                 <h2 class="text-center">리뷰 등록</h2>
+                <div class="starpoint_wrap">
+                    <div class="starpoint_box">
+                        <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>
+                        <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>
+                        <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>
+                        <label for="starpoint_4" class="label_star" title="2"><span class="blind">2점</span></label>
+                        <label for="starpoint_5" class="label_star" title="2.5"><span class="blind">2.5점</span></label>
+                        <label for="starpoint_6" class="label_star" title="3"><span class="blind">3점</span></label>
+                        <label for="starpoint_7" class="label_star" title="3.5"><span class="blind">3.5점</span></label>
+                        <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>
+                        <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
+                        <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
+                        <input type="radio" name="score" value="0.5" id="starpoint_1" class="star_radio">
+                        <input type="radio" name="score" value="1" id="starpoint_2" class="star_radio">
+                        <input type="radio" name="score" value="1.5" id="starpoint_3" class="star_radio">
+                        <input type="radio" name="score" value="2" id="starpoint_4" class="star_radio">
+                        <input type="radio" name="score" value="2.5" id="starpoint_5" class="star_radio">
+                        <input type="radio" name="score" value="3" id="starpoint_6" class="star_radio">
+                        <input type="radio" name="score" value="3.5" id="starpoint_7" class="star_radio">
+                        <input type="radio" name="score" value="4" id="starpoint_8" class="star_radio">
+                        <input type="radio" name="score" value="4.5" id="starpoint_9" class="star_radio">
+                        <input type="radio" name="score" value="5" id="starpoint_10" class="star_radio">
+                        <span class="starpoint_bg"></span>
+                    </div>
+                </div>
                 <div class="card" style="width: 100%; height: 90%;">
 
                     <div class="card-body" style="height: 500px;"><!--공지사항글 제품-->
@@ -54,38 +79,20 @@
                             placeholder="리뷰 내용을 적어주세요."></textarea>
                         </div>
 
-                        <div class="starpoint_wrap">
-                            <div class="starpoint_box">
-                                <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>
-                                <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>
-                                <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>
-                                <label for="starpoint_4" class="label_star" title="2"><span class="blind">2점</span></label>
-                                <label for="starpoint_5" class="label_star" title="2.5"><span class="blind">2.5점</span></label>
-                                <label for="starpoint_6" class="label_star" title="3"><span class="blind">3점</span></label>
-                                <label for="starpoint_7" class="label_star" title="3.5"><span class="blind">3.5점</span></label>
-                                <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>
-                                <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
-                                <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
-                                <input type="radio" name="score" value="0.5" id="starpoint_1" class="star_radio">
-                                <input type="radio" name="score" value="1" id="starpoint_2" class="star_radio">
-                                <input type="radio" name="score" value="1.5" id="starpoint_3" class="star_radio">
-                                <input type="radio" name="score" value="2" id="starpoint_4" class="star_radio">
-                                <input type="radio" name="score" value="2.5" id="starpoint_5" class="star_radio">
-                                <input type="radio" name="score" value="3" id="starpoint_6" class="star_radio">
-                                <input type="radio" name="score" value="3.5" id="starpoint_7" class="star_radio">
-                                <input type="radio" name="score" value="4" id="starpoint_8" class="star_radio">
-                                <input type="radio" name="score" value="4.5" id="starpoint_9" class="star_radio">
-                                <input type="radio" name="score" value="5" id="starpoint_10" class="star_radio">
-                                <span class="starpoint_bg"></span>
-                            </div>
+                        <div>
+                            <!--이미지 업로드 (선택 넣을 예정)-->
                         </div>
 
+                        <!--호텔 정보 (숨겨진 필드)-->
+                        <input type="hidden" name="hotel_num" th:value="호텔번호">
 
 
+                        <!--호텔 예약 정보 (숨겨진 필드)-->
+                        <input type="hidden" name="reserve_num" th:value="호텔 예약번호">
 
                     </div>
                     <div class="card-footer d-flex justify-content-center">
-                        <button type="submit" class="btn btn-primary">확인</button>
+                        <button type="submit" class="btn btn-primary">등록</button>
                         <button type="reset" class="btn btn-secondary">초기화</button>
                         <button type="button" class="btn btn-danger"
                                 th:onclick="|location.href='@{/notice/noticeList}'|">취소</button>
