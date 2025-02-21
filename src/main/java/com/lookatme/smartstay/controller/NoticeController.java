@@ -4,6 +4,7 @@ import com.lookatme.smartstay.Util.PagenationUtil;
 import com.lookatme.smartstay.dto.*;
 
 import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.entity.Notice;
 import com.lookatme.smartstay.service.ImageService;
 import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.NoticeServiceImpl;
@@ -49,11 +50,11 @@ public class NoticeController {
     public String noticeList(PageRequestDTO pageRequestDTO, Model model){
         log.info("모든 데이터를 읽어온다..." + pageRequestDTO);
 
-        List<NoticeDTO> noticeDTOS = noticeService.noticeList();
+        List<NoticeDTO> noticeDTOList = noticeService.noticeList();
 
 //        Map<String, Integer> pageInfo = pagenationUtil.pagination(noticeDTOS);
-        model.addAttribute("noticeList", noticeDTOS);
-        System.out.println("노티스노티스" + noticeDTOS);
+        model.addAttribute("noticeList", noticeDTOList);
+        System.out.println("노티스노티스" + noticeDTOList);
 //        model.addAttribute("pageInfo", pageInfo);
 
         return "notice/noticeList";
@@ -68,12 +69,10 @@ public class NoticeController {
         // 1. 로그인 확인 **: Principal이 null이면 로그인 페이지로 이동 //로그인 창에서 오류가 확인되어야 출력..
         if (principal == null) {
             log.info("로그인 후 이용 가능합니다.");
-            redirectAttributes.addFlashAttribute("logErrorMessages", "로그인 후 이용 가능합니다.");
-            log.info("오류 메시지 받음 :" + redirectAttributes);
-            return "redirect:/member/login";  //
+            return "redirect:/member/login";
         }
 
-        //현재 로그인한 사용자의 정보 조회(성공)
+        //현재 로그인한 사용자의 정보 조회(성공)// 등록 버튼을 권한이 없을 시 안보이게 가려놓음
         MemberDTO memberDTO = memberService.readMember(principal.getName());
         // 2. 권한확인**: chief || Manager가 아닐 경우 페이지 이동 오류
         if (memberDTO != null && memberDTO.getRole().name().equals("USER")) {
@@ -88,12 +87,15 @@ public class NoticeController {
     @PostMapping("/noticeRegister")
     public String noticeRegisterPost(@Valid NoticeDTO noticeDTO,Long hotel_num, BindingResult result, Principal principal, List<MultipartFile> multipartFileList, Model model) throws Exception {
         log.info("입력폼 내용을 저장..." + noticeDTO);
+        System.out.println("저장된 내용"+ noticeDTO);
 
         //폼 유효성 검사
         if (result.hasErrors()) {
+            System.out.println(result.hasErrors());
             model.addAttribute("registerErrorMessage", "제목과 내용을 모두 입력해주세요.");
-            return "notice/noticeRegister";  // 유효성 검사 실패시 오류
+            return "redirect:/notice/noticeRegister";  // 유효성 검사 실패시 오류
         }
+
 
         try {
             // 공지사항 등록 서비스 호출
@@ -102,22 +104,10 @@ public class NoticeController {
         } catch (Exception e) {
             // 기타 예외
             model.addAttribute("registerErrorMessage","공지사항 등록 중 오류가 발생했습니다." );
+            return "redirect:/notice/noticeList";  // 오류 발생 시 목록 페이지로 이동
         }
-        return "notice/noticeList";  // 오류 발생 시 목록 페이지로 이동
 
 
-//        try {
-//            noticeService.noticeRegister(noticeDTO, principal.getName(), multipartFileList);
-//            return "redirect:/notice/noticeList";
-//        } catch (AccessDeniedException e) {
-//            // 권한 없는 경우 오류 메세지 설정
-//            model.addAttribute("errorMessage", "공지사항을 작성할 권한이 없습니다.");
-//        } catch (Exception e) {
-//            //기타 예외에 대한 처리
-//            model.addAttribute("errorMessage", "공지사항 등록 중 오류가 발생했습니다.");
-//        }
-
-//        return "redirect:/notice/noticeList";
     }
 
     //상세 보기 페이지
@@ -126,32 +116,10 @@ public class NoticeController {
 
         log.info("개별읽기..." + id);
 
-//        log.info("컨드롤러 읽기로 들어온 페이징처리 : " + pageRequestDTO);
-
-//        if (id == null || id.equals("")){
-//            log.info("들어온 notice_num가 이상함");
-//            return "redirect:/notice/noticeList";
-//        }
-
-//        NoticeDTO noticeDTO = new NoticeDTO();
-//        try {
         NoticeDTO noticeDTO = noticeService.noticeRead(id);
         System.out.println("없니?"+ noticeDTO);
         model.addAttribute("noticeDTO", noticeDTO);
         return "notice/noticeRead";
-//        } catch (EntityNotFoundException e) {
-//            log.info("id 값을 찾지 못함");
-//            return "redirect:/notice/noticeList";
-//        }
-//            List<ImageDTO> imageDTOList =
-//                    imageService.findImagesByTarget("notice", notice_num)
-//        }
-//        NoticeDTO noticeDTO = noticeService.noticeRead(notice_num);
-//        System.out.println("sss");
-//
-//        log.info("개별정보를 페이지에 전달...");
-//        model.addAttribute("notice", noticeDTO);
-
 
     }
 

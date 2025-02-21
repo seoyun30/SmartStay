@@ -25,6 +25,8 @@ public class NoticeDTO {
     @NotBlank(message = "내용을 입력해주세요")
     private String content; //내용
 
+    private Long hotel_num;
+
     private HotelDTO hotelDTO; //호텔(매장)
 
     private MemberDTO memberDTO; //회원 조인
