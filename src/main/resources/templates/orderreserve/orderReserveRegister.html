@@ -41,6 +41,7 @@
             <div class="col-9 mt-3">
                 <div class="card p-3 mt-3 mx-auto">
                     <input type="hidden" class="hotel_num" name="hotel_num" th:value="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_num}">
+                    <input type="text" class="roomreserveitem_num" name="roomreserveitem_num" th:value="${roomReserveItemDTO.roomreserveitem_num}">
                     <h2 class="text-center fw-bold my-3" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name} + ' 룸서비스 주문'">룸 서비스 목록</h2>
 
                     <h3 class="text-center fw-bold my-3">케어 서비스</h3>
@@ -101,7 +102,7 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <textarea class="form-control" placeholder="요청사항을 입력하세요" id="floatingTextarea" style="height: 100px"></textarea>
+                        <textarea class="form-control" name="menu_request" placeholder="요청사항을 입력하세요" id="floatingTextarea" style="height: 100px"></textarea>
                         <label for="floatingTextarea">요청사항</label>
                     </div>
 
@@ -123,6 +124,7 @@
     $(document).ready(function () {
 
         let hotel_num = $(".hotel_num").val()
+        let roomreserveitem_num = $(".roomreserveitem_num").val()
 
         let str1= "";
         let str2= "";
@@ -925,7 +927,7 @@
             } else {
                 let orderItem = `<div class="col-12 mb-1 text-center" data-id="${itemId}">
                                     ${itemName}
-                                    <input type='number' value='1' min='1' style='width:50px;'> 개
+                                    <input type='number' class="count" value='1' min='1' style='width:50px;'> 개
                                     <button type='button' class="btn btn-outline-danger btn-xs removeBtn"><i class="bi bi-x-lg"></i></button>
                                  </div>`;
                 orderList.append(orderItem);
@@ -939,6 +941,54 @@
             if (orderList.children().length === 0) {
                 orderListCard.hide();
             }
+        });
+
+        // 🛒 장바구니 추가 AJAX 요청
+        $(document).on("click", ".cartBtn", function () {
+            if (!roomreserveitem_num) {
+                alert("예약된 룸 정보가 없습니다.");
+                return;
+            }
+
+            let orderItemDTO = {
+                'roomreserveitem_num': roomreserveitem_num,
+                'menu_request': $("#floatingTextarea").val(),
+                'menuItemDTOList': [],
+                'careItemDTOList': []
+            };
+
+            $("#orderList .col-12").each(function () {
+                let itemId = $(this).data("id");
+                let count = parseInt($(this).find(".count").val());
+
+                if (itemId.startsWith("menu-")) {
+                    orderItemDTO.menuItemDTOList.push({ menuDTO: { menu_num: parseInt(itemId.replace("menu-", "")) }, menu_count: count });
+                } else if (itemId.startsWith("care-")) {
+                    orderItemDTO.careItemDTOList.push({ careDTO: { care_num: parseInt(itemId.replace("care-", "")) }, care_count: count });
+                }
+            });
+
+            if (orderItemDTO.menuItemDTOList.length === 0 && orderItemDTO.careItemDTOList.length === 0) {
+                alert("장바구니에 추가할 항목이 없습니다.");
+                return;
+            }
+
+            console.log(orderItemDTO)
+
+            $.ajax({
+                type: "POST",
+                url: "/cart/cartOrderReserveRegister",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(orderItemDTO),
+                success: function (response) {
+                    alert("장바구니에 추가되었습니다.");
+                    location.href="/cart/cartList";
+                },
+                error: function (error) {
+                    console.log(error.responseText)
+                    alert("장바구니 추가 실패: " + error.responseText);
+                }
+            });
         });
 
         showCareMenu(1);

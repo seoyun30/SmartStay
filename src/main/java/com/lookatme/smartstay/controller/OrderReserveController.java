@@ -1,17 +1,15 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.RoomReserveItemDTO;
 import com.lookatme.smartstay.entity.OrderReserve;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.service.*;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,31 +43,31 @@ public class OrderReserveController {
     }
 
 
-    @PostMapping("/orderReserveRegister")
-    public String orederReserveRegisterPost(@Valid OrderItemDTO orderItemDTO, Model model,
-                                            BindingResult bindingResult, Principal principal) {
-
-        if (bindingResult.hasErrors()) {
-            StringBuffer sb = new StringBuffer();
-
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            for (FieldError fieldError : fieldErrors) {
-                sb.append(fieldError.getDefaultMessage());
-            }
-
-            return sb.toString();
-        }
-
-        try {
-            orderItemService.createOrder(orderItemDTO);
-        }catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "orderreserve/orderReserveRegister";
-        }
-        model.addAttribute("successMessage", "룸서비스 주문 성공");
-
-        return "orderreserve/pay";
-    }
+//    @PostMapping("/orderReserveRegister")
+//    public String orederReserveRegisterPost(@Valid OrderItemDTO orderItemDTO, Model model,
+//                                            BindingResult bindingResult, Principal principal) {
+//
+//        if (bindingResult.hasErrors()) {
+//            StringBuffer sb = new StringBuffer();
+//
+//            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+//            for (FieldError fieldError : fieldErrors) {
+//                sb.append(fieldError.getDefaultMessage());
+//            }
+//
+//            return sb.toString();
+//        }
+//
+//        try {
+//            orderItemService.createOrder(orderItemDTO);
+//        }catch (Exception e) {
+//            model.addAttribute("errorMessage", e.getMessage());
+//            return "orderreserve/orderReserveRegister";
+//        }
+//        model.addAttribute("successMessage", "룸서비스 주문 성공");
+//
+//        return "orderreserve/pay";
+//    }
 
     @PostMapping("/pay")
     public String pay() {
