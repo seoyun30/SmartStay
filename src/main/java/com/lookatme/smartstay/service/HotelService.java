@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -263,6 +264,8 @@ public class HotelService {
                                     HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
                                     Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
                                     hotelDTO.setLowestPrice(lowestPrice);
+                                    ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
+                                    hotelDTO.setMainImage(mainImage);
                                     return hotelDTO;
                                 })
                 .collect(Collectors.toList());
@@ -282,5 +285,12 @@ public class HotelService {
             return modelMapper.map(imageList.get(0), ImageDTO.class);
         }
         return null;
+    }
+
+    public List<HotelDTO> getHotelsSortedByPrice(String order) {
+        Sort sort = Sort.by(order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, "lowestPrice");
+        List<Hotel> hotels = hotelRepository.findAll(sort);
+
+        return hotels.stream().map(hotel -> modelMapper.map(hotel, HotelDTO.class)).collect(Collectors.toList());
     }
 }

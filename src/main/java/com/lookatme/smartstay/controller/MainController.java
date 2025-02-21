@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -131,12 +132,18 @@ public class MainController {
     }
 
     @GetMapping("/searchRead")
-    public String searchRead(@RequestParam Long hotel_num, Model model) {
+    public String searchRead(@RequestParam Long hotel_num, @RequestParam(defaultValue = "asc") String order, Model model) {
 
         HotelDTO hotelDTO = hotelService.read(hotel_num);
         model.addAttribute("hotelDTO", hotelDTO);
 
         List<RoomDTO> roomList = roomService.searchRead(hotel_num);
+
+        if (order.equalsIgnoreCase("asc")) {
+            roomList.sort(Comparator.comparing(RoomDTO::getRoom_price));
+        }else if (order.equalsIgnoreCase("desc")) {
+            roomList.sort(Comparator.comparing(RoomDTO::getRoom_price).reversed());
+        }
 
         for (RoomDTO room : roomList) {
             log.info("룸 번호:{}", room.getRoom_num());
@@ -144,6 +151,8 @@ public class MainController {
         }
 
         model.addAttribute("roomList", roomList);
+        model.addAttribute("hotel_num", hotel_num);
+        model.addAttribute("order", order);
 
         return "searchRead";
     }

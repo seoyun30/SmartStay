@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -75,11 +77,13 @@ public class CareService {
         return careDTO;
     }
 
-    public PageResponseDTO<CareDTO> careList(HotelDTO hotelDTO, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<CareDTO> careList(HotelDTO hotelDTO, PageRequestDTO pageRequestDTO, String sortField, String sortDir) {
 
         Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
 
-        Pageable pageable = pageRequestDTO.getPageable("care_num");
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort);
 
         Page<Care> result = careRepository.findByHotel(hotel, pageable);
 
@@ -168,16 +172,39 @@ public class CareService {
         log.info("케어가 삭제되었습니다. care_num:" + id);
     }
 
-    public List<CareDTO> searchList(String query) {
+    public List<CareDTO> searchList(String query, String sortField, String sortDir) {
 
-        List<Care> cares = careRepository.findByCare_nameContaining(query);
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        List<Care> cares = careRepository.findByCare_nameContainingOrCare_detailContaining(query, sort);
 
         if (cares == null || cares.isEmpty()) {
             return Collections.emptyList();
         }
 
         List<CareDTO> careDTOS = cares.stream()
-                .map(care -> modelMapper.map(care, CareDTO.class)).collect(Collectors.toList());
+                .map(care -> {
+                    CareDTO careDTO = modelMapper.map(care, CareDTO.class);
+
+                    List<Image> imageList = imageRepository.findByTarget("care", care.getCare_num());
+
+                    if (imageList != null && !imageList.isEmpty()) {
+                        List<ImageDTO> imageDTOList = imageList.stream()
+                                .map(image -> modelMapper.map(image, ImageDTO.class))
+                                .collect(Collectors.toList());
+                        careDTO.setImageDTOList(imageDTOList);
+
+                        ImageDTO mainImage = imageDTOList.stream()
+                                .filter(image -> "Y".equalsIgnoreCase(image.getRepimg_yn()))
+                                .findFirst()
+                                .orElse(imageDTOList.get(0));
+                        careDTO.setMainImage(mainImage);
+                    }else {
+                        log.warn("케어서비스 번호:{}에 이미지가 없습니다.", care.getCare_num());
+                    }
+                    return careDTO;
+                })
+                .collect(Collectors.toList());
 
         return careDTOS;
     }

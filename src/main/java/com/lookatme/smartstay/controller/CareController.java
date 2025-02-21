@@ -80,6 +80,8 @@ public class CareController {
 
     @GetMapping("/careList")
     public String careList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
+                           @RequestParam(defaultValue = "care_num") String sortField,
+                           @RequestParam(defaultValue = "asc") String sortDir,
                            @RequestParam(value = "query", required = false) String query) {
 
         if (principal == null){
@@ -90,14 +92,16 @@ public class CareController {
         if (hotelDTO == null) {
             return "redirect:/adMain";
         }
+        model.addAttribute("hotel_name", hotelDTO.getHotel_name());
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
 
         if (query == null || query.trim().isEmpty()) {
-            PageResponseDTO<CareDTO> pageResponseDTO = careService.careList(hotelDTO, pageRequestDTO);
-            model.addAttribute("hotel_name", hotelDTO.getHotel_name());
+            PageResponseDTO<CareDTO> pageResponseDTO = careService.careList(hotelDTO, pageRequestDTO, sortField, sortDir);
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("isSearch", false);
         }else {
-            List<CareDTO> results = careService.searchList(query);
+            List<CareDTO> results = careService.searchList(query, sortField, sortDir);
             model.addAttribute("results", results != null ? results : Collections.emptyList());
             model.addAttribute("query", query);
             model.addAttribute("isSearch", true);

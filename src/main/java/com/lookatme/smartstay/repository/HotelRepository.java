@@ -3,6 +3,7 @@ package com.lookatme.smartstay.repository;
 import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Hotel;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,8 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
 
     @Query("select h from Hotel h where h.create_by = :email")
     List<Hotel> findByEmail(String email);
+
+    List<Hotel> findAll(Sort sort);
 
     @Query("select h from Hotel h where h.hotel_name like %:query% or h.address like %:query%")
     List<Hotel> findByHotel_nameOrAddressContaining(@Param("query") String query);

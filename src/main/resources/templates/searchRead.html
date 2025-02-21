@@ -78,6 +78,14 @@
             </div>
         </div>
 
+        <form method="get" th:action="@{/searchRead}">
+            <input type="hidden" name="hotel_num" th:attr="value=${hotel_num}">
+            <select name="order" class="form-select w-auto d-inline-block mb-4" onchange="this.form.submit()">
+                <option value="asc" th:selected="${order == 'asc'}">가격 낮은 순</option>
+                <option value="desc" th:selected="${order == 'desc'}">가격 높은 순</option>
+            </select>
+        </form>
+
         <div th:each="room : ${roomList}" class="mb-4">
             <div class="card shadow-sm">
                 <div class="row g-0">
@@ -104,5 +112,6 @@
         </div>
     </div>
 </th:block>
+
 </body>
 </html>

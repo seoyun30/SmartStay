@@ -46,6 +46,16 @@ public class MenuDTO {
 
     public List<Long> imageIdList = new ArrayList<>();
 
+    private ImageDTO mainImage;
+
+    public ImageDTO getMainImage() {
+        return mainImage;
+    }
+
+    public void setMainImage(ImageDTO mainImage) {
+        this.mainImage = mainImage;
+    }
+
     public MenuDTO setHotelDTO(HotelDTO hotelDTO) {
         this.hotelDTO = hotelDTO;
         return this;

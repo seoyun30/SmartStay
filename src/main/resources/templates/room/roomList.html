@@ -40,26 +40,22 @@
     </nav>
 
     <div th:if="${isSearch}">
-        <h5>검색 결과</h5>
+        <h3 class="text-center mt-3 mb-3">검색 결과</h3>
         <table class="table" th:if="${results != null && results.size() > 0}">
             <div class="container mt-5">
-                <div th:each="room : ${results}" class="mb-4">
-                    <div class="card shadow-lg">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary font-weight-bold">
-                                <a th:href="@{/searchRead(room_num=${room.room_num})}" th:text="${room.room_name}" class="text-decoration-none">룸 이름</a>
+                <div th:each="room : ${results}" class="col-12 mb-2">
+                    <div class="card col-8 offset-2 shadow-sm">
+                        <div class="card-body d-flex flex-column align-items-center">
+                            <h5 class="card-title text-center text-primary font-weight-bold">
+                                <a th:href="@{/room/roomRead(room_num=${room.room_num})}" th:text="${room.room_name}" class="text-decoration-none">룸 명</a>
                             </h5>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">
-                                    (룸 대표 이미지)
-                                </li>
-                            </ul>
+                            <img th:src="${room.mainImage.image_url}" style="height: 200px; width: 300px;" class="rounded-top" mt-2/>
                         </div>
                     </div>
                 </div>
             </div>
         </table>
-        <p th:if="${results.size() == 0}">검색 결과가 없습니다.</p>
+        <h2 class="text-center text-primary" th:if="${results.size() == 0}">검색 결과가 없습니다.</h2>
     </div>
 
    <div th:if = "${!isSearch}">
@@ -121,7 +117,7 @@
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-center">
                             <th:block th:if="${pageResponseDTO.prev}">
-                                <li class="page-item"><a class="page-link" th:href="|@{'/room/roomList?page=' +${pageResponseDTO.start-1}}|">Previous</a></li>
+                                <li class="page-item"><a class="page-link" th:href="|@{'/room/roomList?page=' +${pageResponseDTO.start-1}}|">이전</a></li>
                             </th:block>
 
                             <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
@@ -129,7 +125,7 @@
                             </th:block>
 
                             <th:block th:if="${pageResponseDTO.next}">
-                                <li class="page-item"><a class="page-link" th:href="|@{'/room/roomList?page=' +${pageResponseDTO.end+1}}|">Next</a></li>
+                                <li class="page-item"><a class="page-link" th:href="|@{'/room/roomList?page=' +${pageResponseDTO.end+1}}|">다음</a></li>
                             </th:block>
                         </ul>
                     </nav>
