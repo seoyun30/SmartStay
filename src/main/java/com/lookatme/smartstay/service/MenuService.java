@@ -433,7 +433,27 @@ public class MenuService {
         }
 
         List<MenuDTO> menuDTOS = menus.stream()
-                .map(menu -> modelMapper.map(menu, MenuDTO.class)).collect(Collectors.toList());
+                .map(menu -> {
+                    MenuDTO menuDTO = modelMapper.map(menu, MenuDTO.class);
+
+                    List<Image> imageList = imageRepository.findByTarget("menu", menu.getMenu_num());
+                    if (imageList != null && !imageList.isEmpty()) {
+                        List<ImageDTO> imageDTOList = imageList.stream()
+                                .map(image -> modelMapper.map(image, ImageDTO.class))
+                                .collect(Collectors.toList());
+                        menuDTO.setImageDTOList(imageDTOList);
+
+                        ImageDTO mainImage = imageDTOList.stream()
+                                .filter(image -> "Y".equalsIgnoreCase(image.getRepimg_yn()))
+                                .findFirst()
+                                .orElse(imageDTOList.get(0));
+                        menuDTO.setMainImage(mainImage);
+                    }else {
+                        log.warn("메뉴 번호:{}에 이미지가 없습니다.", menu.getMenu_num());
+                    }
+                    return menuDTO;
+                })
+                .collect(Collectors.toList());
 
         return menuDTOS;
     }

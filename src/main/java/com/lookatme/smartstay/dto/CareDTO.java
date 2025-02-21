@@ -38,6 +38,16 @@ public class CareDTO {
 
     public List<Long> imageIdList = new ArrayList<>();
 
+    private ImageDTO mainImage;
+
+    public ImageDTO getMainImage() {
+        return mainImage;
+    }
+
+    public void setMainImage(ImageDTO mainImage) {
+        this.mainImage = mainImage;
+    }
+
     public CareDTO setHotelDTO(HotelDTO hotelDTO) {
         this.hotelDTO = hotelDTO;
         return this;
