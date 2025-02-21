@@ -144,52 +144,52 @@ public class ReviewService {
 
     //리뷰 등록<작성>(룸 예약을 한 유저만 등록 가능)
     public void reviewRegister(ReviewDTO reviewDTO, String email, Long hotel_num, Long reserve_num, List<MultipartFile> multipartFiles) throws Exception {
+        log.info("등록서비스 들어온값:" + reviewDTO);
 
         //1. 예약정보 확인
         RoomReserve roomReserve = roomReserveRepository.findById(reserve_num)
                 .orElseThrow(() -> new IllegalArgumentException("룸 예약정보" + reserve_num + "에 대한 정보를 찾을 수 없습니다."));
 
-//        Hotel hotel = hotelRepository.findById(hotel_num)
-//                .orElseThrow(() -> new IllegalArgumentException("예약 되었던 호텔정보를 찾을 수 없습니다."));
-
-//        // 이메일이 없을 경우 방어 로직
-//        if (email == null || email.trim().isEmpty()) {
-//            throw new IllegalArgumentException("이메일이 유효하지 않습니다.");
-//        }
-        //2. 작성자 정보확인
+        //2.작성자 정보확인(principal은 컨트롤러에서 검증 )
         Member member = memberRepository.findByEmail(email);
         if (member == null) {
-            throw new IllegalArgumentException("이메일에 해당하는 작성자 정보를 찾을 수 없습니다.");
+            throw new IllegalArgumentException("해당하는 작성자 정보를 찾을 수 없습니다.");
         }
 
         //3. 예약자와 작성자 일치 여부 확인( 만약 룸 예약자가 일치하지 않더라도 리뷰 작성이 가능하면 필요없음)
-        if (!roomReserve.getMember().equals(member)) { // 룸 예약을한 회원이 리뷰를 작성하려는 회원과 다른경우
-            throw new SecurityException("룸 예약을 한 회원과 리뷰 작성자가 일치하지 않습니다.");
+        if (!roomReserve.getMember().getEmail().equals(member.getEmail())) { // 룸 예약을한 회원이 리뷰를 작성하려는 회원과 다른경우
+            throw new IllegalArgumentException("룸 예약을 한 회원과 작성자가 일치하지 않습니다.");
         }
 
-        //3. 리뷰 생성 및 정보 세팅
-        Review review = modelMapper.map(reviewDTO, Review.class);   //DTO -> entity로 변환
-        review.setRoomReserve(roomReserve);  // 예약 정보를 세팅
-        review.setMember(member);  // Member 객체 설정
-        review.setCreate_by(member.getEmail()); // 작성자 설정(로그인한 사용자의 이메일로 설정)
-        review.setReg_date(LocalDateTime.now()); // 작성일을 현재 시간으로 설정
-
-        //4. 별점 유효성 체크(1~5)
+        //4. 별점 유효성 체크(0.1~ 5)
         String scoreStr = reviewDTO.getScore();
         if (scoreStr == null || scoreStr.trim().isEmpty()) {
             throw new IllegalArgumentException("별점은 필수 입력값입니다.");
         }
-
-        int score;
+        //별점을 숫자로 변환
+        double score;
         try {
-            score = Integer.parseInt(scoreStr);
+            score = Double.parseDouble(scoreStr);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("별점은 숫자여야 합니다.");
         }
-
-        if (score < 0.5 || score > 5.0 || score * 10 % 5 !=0) {
-            throw new IllegalArgumentException("별점은 1~5점 사이여야 합니다.");
+        // 1.0~ 5.0 사이의 값인지 체크
+        if (score < 1.0 || score > 5.0 || score * 10 % 5 != 0) {
+            throw new IllegalArgumentException("별점은 1~5점 사이여야 하고, 0.5 단위 입력도 가능합니다.");
         }
+
+        //호텔 정보 확인
+        HotelDTO hotelDTO = reviewDTO.getHotelDTO();
+        Hotel hotel = hotelRepository.findById(hotelDTO.getHotel_num())
+                .orElseThrow(()-> new IllegalArgumentException("호텔 번호" + hotelDTO.getHotel_num() + "에 대한 정보를 찾을 수 없습니다."));
+
+        //6. 리뷰 생성 및 정보 세팅
+        Review review = modelMapper.map(reviewDTO, Review.class);   //DTO -> entity로 변환
+        review.setRoomReserve(roomReserve);  // 예약 정보를 세팅
+        review.setHotel(hotel);  //호텔 정보 설정
+        review.setMember(member);  // Member 객체 설정
+        review.setCreate_by(member.getEmail()); // 작성자 설정(로그인한 사용자의 이메일로 설정)
+        review.setReg_date(LocalDateTime.now()); // 작성일을 현재 시간으로 설정
 
         // 이미지가 없다면 저장
         if (multipartFiles != null && multipartFiles.isEmpty()) {

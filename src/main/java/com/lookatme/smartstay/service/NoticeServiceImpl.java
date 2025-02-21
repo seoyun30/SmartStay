@@ -197,7 +197,7 @@ public class NoticeServiceImpl  {
 
         Member member = memberRepository.findByEmail(email);
         //이메일 유효성 검증
-        if (email == null || email.isEmpty()) {
+        if (email == null) {
             throw new IllegalArgumentException("이메일이 비어 있습니다.");
         }
 
