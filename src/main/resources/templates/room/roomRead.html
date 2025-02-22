@@ -6,6 +6,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+    <style>
+        .main-image {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            display: block;
+        }
+
+        .detail-images-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .detail-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+        }
+    </style>
+
 </head>
 <body>
 <th:block layout:fragment="content">
@@ -21,34 +43,42 @@
                                     <h2 th:text="${roomDTO.hotelDTO.hotel_name}"></h2>
                                 </div>
                                 <div class="col text-center">
-                                    <div class="card">
+                                    <div class="card mb-3">
                                         <div class="card-body">
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">룸 번호</span>
+                                                <span class="input-group-text" style="width: 140px">룸 번호</span>
                                                 <input type="text" class="form-control" th:value="${roomDTO.room_num}">
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">룸 명</span>
+                                                <span class="input-group-text" style="width: 140px">룸 명</span>
                                                 <input type="text" class="form-control" th:value="${roomDTO.room_name}">
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">룸 정보</span>
+                                                <span class="input-group-text" style="width: 140px">체크인 시간</span>
+                                                <input type="text" class="form-control" th:value="${roomDTO.in_time}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">체크아웃 시간</span>
+                                                <input type="text" class="form-control" th:value="${roomDTO.out_time}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">룸 정보</span>
                                                 <input type="text" class="form-control" th:value="${roomDTO.room_info}">
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">룸 타입</span>
+                                                <span class="input-group-text" style="width: 140px">룸 타입</span>
                                                 <input type="text" class="form-control" th:value="${roomDTO.room_type}">
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">룸 인원수</span>
+                                                <span class="input-group-text" style="width: 140px">룸 인원수</span>
                                                 <input type="text" class="form-control" th:value="${roomDTO.room_bed}">
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">룸 가격</span>
+                                                <span class="input-group-text" style="width: 140px">룸 가격</span>
                                                 <input type="number" class="form-control" th:value="${roomDTO.room_price}">
                                             </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">룸 상태</span>
+                                            <div class="input-group">
+                                                <span class="input-group-text" style="width: 140px">룸 상태</span>
                                                 <input type="text" class="form-control" th:value="${roomDTO.room_state}">
                                             </div>
                                         </div>
@@ -56,25 +86,28 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <div class="mt-3 mb-3 imgA">
+                                    <div class="mt-5 mb-3 imgA">
                                         <div class="row">
                                             <th:block th:each="img: ${roomDTO.imageDTOList}">
                                                 <th:block th:if="${img.repimg_yn == 'Y'}">
                                                     <label class="col-12 form-label">
                                                         대표 이미지<br>
-                                                        <img width="600px" height="auto" th:src="${img.image_url}" alt="대표 이미지">
+                                                        <img class="main-image mt-3" th:src="${img.image_url}" alt="대표 이미지">
                                                     </label>
                                                 </th:block>
                                             </th:block>
                                         </div>
 
-                                        <div class="row row-cols-md-2">
-                                            <th:block th:each="img: ${roomDTO.imageDTOList}">
+                                        <div class="mt-3 row detail-images-container">
+                                            <th:block th:if="${roomDTO.imageDTOList.?[repimg_yn != 'Y'].size() > 0}">
+                                                <label class="col-12 form-label">상세 이미지</label>
+                                            </th:block>
+
+                                            <th:block th:each="img, iterStat : ${roomDTO.imageDTOList}">
                                                 <th:block th:unless="${img.repimg_yn == 'Y'}">
-                                                    <label class="col-12 form-label">
-                                                        상세 이미지<br>
-                                                        <img width="400px" height="auto" th:src="${img.image_url}" alt="상세 이미지">
-                                                    </label>
+                                                    <div class="col-6 col-md-6">
+                                                        <img class="detail-image" th:src="${img.image_url}" alt="상세 이미지">
+                                                    </div>
                                                 </th:block>
                                             </th:block>
                                         </div>

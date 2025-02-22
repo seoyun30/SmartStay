@@ -52,7 +52,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="menu_price" class="form-label">메뉴 가격</label>
-                            <input type="number" min="100" class="form-control" th:field="*{menu_price}" id="menu_price">
+                            <input type="number" min="100" class="form-control" th:field="*{menu_price}" required id="menu_price">
                             <p th:if="${#fields.hasErrors('menu_price')}" th:errors="*{menu_price}" class="fieldError"></p>
                         </div>
                     </div>

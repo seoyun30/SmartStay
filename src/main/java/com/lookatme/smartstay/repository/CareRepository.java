@@ -17,7 +17,7 @@ public interface CareRepository extends JpaRepository<Care, Long> {
     Page<Care> findByHotel(@Param("hotel")Hotel hotel, Pageable pageable);
 
     @Query("select c from Care c where c.care_name like %:query% or c.care_detail like %:query%")
-    List<Care> findByCare_nameContainingOrCare_detailContaining(@Param("query") String query, Sort sort);
+    List<Care> findByCare_nameContainingIgnoreCaseOrCare_detailContainingIgnoreCase(@Param("query") String query, Sort sort);
 
     @Query("select c from Care c")
     List<Care> findAllCares();

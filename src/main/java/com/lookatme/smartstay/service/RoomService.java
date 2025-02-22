@@ -15,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -84,12 +86,13 @@ public class RoomService {
         return roomDTO;
     }
 
-    public PageResponseDTO<RoomDTO> getRoomsByHotel(HotelDTO hotelDTO, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<RoomDTO> getRoomsByHotel(HotelDTO hotelDTO, PageRequestDTO pageRequestDTO, String sortField, String sortDir) {
 
         Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
 
-        Pageable pageable = pageRequestDTO.getPageable("room_num");
-        log.info("Pageable created with room_num sort: {}", pageable);
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort);
 
         Page<Room> result = roomRepository.findByHotel(hotel, pageable);
         log.info("PageResult: " + result);
@@ -180,9 +183,11 @@ public class RoomService {
         log.info("룸이 삭제되었습니다. room_num: " + id);
     }
 
-    public List<RoomDTO> searchList(String query) {
+    public List<RoomDTO> searchList(String query, String sortField, String sortDir) {
 
-        List<Room> rooms = roomRepository.findByRoom_nameContaining(query);
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        List<Room> rooms = roomRepository.findByRoom_nameContainingIgnoreCaseOrRoom_infoContainingIgnoreCase(query, sort);
 
         if (rooms == null || rooms.isEmpty()) {
             return Collections.emptyList();

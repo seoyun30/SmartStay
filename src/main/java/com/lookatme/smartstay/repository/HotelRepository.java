@@ -19,7 +19,7 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     List<Hotel> findAll(Sort sort);
 
     @Query("select h from Hotel h where h.hotel_name like %:query% or h.address like %:query%")
-    List<Hotel> findByHotel_nameOrAddressContaining(@Param("query") String query);
+    List<Hotel> findByHotel_nameIgnoreCaseOrAddressContainingIgnoreCase(@Param("query") String query);
 
     //브랜드는 남겨두고 호텔을 삭제하기 위한 메서드
     @Modifying

@@ -176,7 +176,7 @@ public class CareService {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
-        List<Care> cares = careRepository.findByCare_nameContainingOrCare_detailContaining(query, sort);
+        List<Care> cares = careRepository.findByCare_nameContainingIgnoreCaseOrCare_detailContainingIgnoreCase(query, sort);
 
         if (cares == null || cares.isEmpty()) {
             return Collections.emptyList();

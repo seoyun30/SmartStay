@@ -40,8 +40,8 @@
     </nav>
 
     <div th:if="${isSearch}">
-        <h3 class="text-center mt-3 mb-3">검색 결과</h3>
         <table class="table" th:if="${results != null && results.size() > 0}">
+            <h3 class="text-center mt-3 mb-3">검색 결과</h3>
             <div class="container mt-5">
                 <div th:each="room : ${results}" class="col-12 mb-2">
                     <div class="card col-8 offset-2 shadow-sm">
@@ -55,7 +55,7 @@
                 </div>
             </div>
         </table>
-        <h2 class="text-center text-primary" th:if="${results.size() == 0}">검색 결과가 없습니다.</h2>
+        <h2 class="text-center text-primary mt-5" th:if="${results.size() == 0}">검색 결과가 없습니다.</h2>
     </div>
 
    <div th:if = "${!isSearch}">
@@ -67,12 +67,32 @@
                        <td>룸 번호</td>
                        <td>룸 명</td>
                        <td>룸 정보</td>
-                       <td>룸 타입</td>
-                       <td>룸 인원수</td>
-                       <td>룸 가격</td>
-                       <td>룸 상태</td>
-                       <td>등록일자</td>
-                       <td>수정일자</td>
+                       <td>
+                           <a th:href="@{/room/roomList(sortField='room_type', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                               룸 타입
+                               <span th:if="${sortField == 'room_type'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                           </a>
+                       </td>
+                       <td>
+                           <a th:href="@{/room/roomList(sortField='room_bed', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                               최대 인원
+                               <span th:if="${sortField == 'room_bed'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                           </a>
+                       </td>
+                       <td>
+                           <a th:href="@{/room/roomList(sortField='room_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                               룸 가격
+                               <span th:if="${sortField == 'room_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                           </a>
+                       </td>
+                       <td>
+                           <a th:href="@{/room/roomList(sortField='room_state', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                               룸 상태
+                               <span th:if="${sortField == 'room_state'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                           </a>
+                       </td>
+                       <td>체크인 시간</td>
+                       <td>체크아웃 시간</td>
                        <td>수정</td>
                        <td>삭제</td>
                    </tr>
@@ -92,8 +112,8 @@
                            <td th:text="${roomDTO.room_bed}"></td>
                            <td th:text="${roomDTO.room_price}"></td>
                            <td th:text="${roomDTO.room_state}"></td>
-                           <td th:text="${#temporals.format(roomDTO.reg_date, 'yyyy-MM-dd')}"></td>
-                           <td th:text="${#temporals.format(roomDTO.modi_date, 'yyyy-MM-dd')}"></td>
+                           <td th:text="${#temporals.format(roomDTO.in_time, 'HH'+'시')}"></td>
+                           <td th:text="${#temporals.format(roomDTO.out_time, 'HH'+'시')}"></td>
                            <td>
                                <button type="button" th:attr="onclick='location.href=\'/room/roomModify?room_num=' + ${roomDTO.room_num} + '\''" class="btn btn-warning">수정</button>
                            </td>

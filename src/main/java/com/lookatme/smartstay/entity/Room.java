@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
+import java.time.LocalTime;
+
 @Entity
 @Getter
 @Setter
@@ -44,4 +46,11 @@ public class Room extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_num")
     private Hotel hotel; //호텔
+
+    @Column(nullable = false)
+    private LocalTime in_time = LocalTime.of(15, 0);  // 체크인 시간: 기본값 오후 3시
+
+    @Column(nullable = false)
+    private LocalTime out_time = LocalTime.of(11, 0); // 체크아웃 시간: 기본값 오전 11시
+
 }
