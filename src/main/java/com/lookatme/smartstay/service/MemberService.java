@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.context.LifecycleAutoConfiguration
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -256,8 +257,18 @@ public class MemberService implements UserDetailsService {
 //
 //    }
 
-    public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO, String sortOrder){
-        Pageable pageable = pageRequestDTO.getPageable("member_num");
+    public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO, String sortOrder, String orderType){
+        Pageable pageable = null;
+
+
+        if(sortOrder.equals("DESC")){
+            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(orderType).descending());
+
+        }else {
+            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(orderType).ascending());
+
+        }
+
         log.info(pageable);
         log.info("정렬방식" + sortOrder);
 
@@ -280,14 +291,7 @@ public class MemberService implements UserDetailsService {
 
         List<MemberDTO> memberDTOList = memberList.stream().map(member -> modelMapper.map(member, MemberDTO.class) ).collect(Collectors.toList());
 
-        List<String> roleOrder = Arrays.asList("SUPERADMIN", "CHIEF", "MANAGER", "USER");
 
-
-        if ("DESC".equalsIgnoreCase(sortOrder)) {
-            memberDTOList.sort(Comparator.comparing((MemberDTO m) -> roleOrder.indexOf(m.getRole())).reversed());
-        } else {
-            memberDTOList.sort(Comparator.comparing(m -> roleOrder.indexOf(m.getRole())));
-        }
 
         log.info("정렬된 회원 목록:");
         memberDTOList.forEach(memberDTO -> log.info(memberDTO.toString()));
