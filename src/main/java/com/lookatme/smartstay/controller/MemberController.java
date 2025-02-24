@@ -278,13 +278,15 @@ public class MemberController {
 
     @GetMapping("/memberList") //전체 회원 목록
     public String memberList(Principal principal, PageRequestDTO pageRequestDTO,
-                             @RequestParam(value = "sort", required = false, defaultValue = "ASC") String sortOrder,
+                             @RequestParam(value = "sort", required = false, defaultValue = "DESC") String sortOrder,
+                             @RequestParam(value = "orderType", required = false, defaultValue = "member_num") String orderType,
                              Model model){
 
         log.info("진입");
         log.info("정렬 기준: " + sortOrder);
+        log.info("정렬 기준: " + orderType);
 
-        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.memberList(pageRequestDTO, sortOrder);
+        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.memberList(pageRequestDTO, sortOrder, orderType);
 
         model.addAttribute("pageResponseDTO", pageResponseDTO);
         model.addAttribute("sortOrder", sortOrder);

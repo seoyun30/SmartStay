@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.context.LifecycleAutoConfiguration
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -87,7 +88,7 @@ public class MemberService implements UserDetailsService {
             role = Role.SUPERADMIN.name();
             authorities.add(new SimpleGrantedAuthority(Role.SUPERADMIN.name()));
         }else if("CHIEF".equals(member.getRole().name()) && member.getPower() == Power.YES){
-                                                    //나중에 승인기능 개발후 적용예정
+            //나중에 승인기능 개발후 적용예정
             log.info("치프");
             role = Role.CHIEF.name();
             authorities.add(new SimpleGrantedAuthority(Role.CHIEF.name()));
@@ -159,8 +160,8 @@ public class MemberService implements UserDetailsService {
                 MemberDTO.dtoEntity(memberDTO);
 
 
-            member.setRole(Role.CHIEF);
-            member.setPower(Power.NO);
+        member.setRole(Role.CHIEF);
+        member.setPower(Power.NO);
 
 
         member =
@@ -256,16 +257,26 @@ public class MemberService implements UserDetailsService {
 //
 //    }
 
-    public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO, String sortOrder){
-        Pageable pageable = pageRequestDTO.getPageable("member_num");
+    public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO, String sortOrder, String orderType){
+        Pageable pageable = null;
+
+
+        if(sortOrder.equals("DESC")){
+            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(orderType).descending());
+
+        }else {
+            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(orderType).ascending());
+
+        }
+
         log.info(pageable);
         log.info("정렬방식" + sortOrder);
 
         Page<Member> memberPage = null;
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().equals("")) {
-             memberPage = memberRepository.searchMember(pageRequestDTO.getKeyword(), pageable);
+            memberPage = memberRepository.searchMember(pageRequestDTO.getKeyword(), pageable);
         }else {
-             memberPage = memberRepository.selectAll(pageable);
+            memberPage = memberRepository.selectAll(pageable);
 
         }
 
@@ -280,14 +291,7 @@ public class MemberService implements UserDetailsService {
 
         List<MemberDTO> memberDTOList = memberList.stream().map(member -> modelMapper.map(member, MemberDTO.class) ).collect(Collectors.toList());
 
-        List<String> roleOrder = Arrays.asList("SUPERADMIN", "CHIEF", "MANAGER", "USER");
 
-
-        if ("DESC".equalsIgnoreCase(sortOrder)) {
-            memberDTOList.sort(Comparator.comparing((MemberDTO m) -> roleOrder.indexOf(m.getRole())).reversed());
-        } else {
-            memberDTOList.sort(Comparator.comparing(m -> roleOrder.indexOf(m.getRole())));
-        }
 
         log.info("정렬된 회원 목록:");
         memberDTOList.forEach(memberDTO -> log.info(memberDTO.toString()));
@@ -313,13 +317,13 @@ public class MemberService implements UserDetailsService {
             throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
         }
 
-      return MemberDTO.builder()
-              .email(member.getEmail())
-              .name(member.getName())
-              .tel(member.getTel())
-              .role(member.getRole())
-              .reg_date(member.getReg_date())
-              .build();
+        return MemberDTO.builder()
+                .email(member.getEmail())
+                .name(member.getName())
+                .tel(member.getTel())
+                .role(member.getRole())
+                .reg_date(member.getReg_date())
+                .build();
     }
 
     public boolean checkPassword(String email, String password) {
@@ -530,12 +534,12 @@ public class MemberService implements UserDetailsService {
             } else {
                 log.info("해당 이메일로 회원을 찾을 수 없음: " + email);
             }
-            }
-
         }
 
+    }
 
-     public Member findID(String name, String tel){ //회원Email찾기
+
+    public Member findID(String name, String tel){ //회원Email찾기
 
         log.info("name: " + name + " tel: " + tel);
 
@@ -547,7 +551,7 @@ public class MemberService implements UserDetailsService {
         log.info("member: " + member);
 
         return member;
-     }
+    }
 
 
     public void passwordSend(MemberDTO memberDTO){ //pw 이메일로 임시비밀번호 받기
