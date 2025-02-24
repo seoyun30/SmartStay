@@ -286,10 +286,18 @@ public class MemberController {
         log.info("정렬 기준: " + sortOrder);
         log.info("정렬 기준: " + orderType);
 
+        if (orderType == null || orderType.isEmpty()) {
+            orderType = "member_num";  // 기본 정렬 기준
+        }
+        if (sortOrder == null || sortOrder.isEmpty()) {
+            sortOrder = "DESC";  // 기본 정렬 방향
+        }
+
         PageResponseDTO<MemberDTO> pageResponseDTO = memberService.memberList(pageRequestDTO, sortOrder, orderType);
 
         model.addAttribute("pageResponseDTO", pageResponseDTO);
         model.addAttribute("sortOrder", sortOrder);
+        model.addAttribute("orderType", orderType);
         model.addAttribute("pageRequestDTO", pageRequestDTO);
 
         return "member/memberList";
