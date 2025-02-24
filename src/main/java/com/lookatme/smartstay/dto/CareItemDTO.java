@@ -3,6 +3,8 @@ package com.lookatme.smartstay.dto;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,5 +31,19 @@ public class CareItemDTO{
     private String create_by;
 
     private String modified_by;
+
+    public List<ImageDTO> imageDTOList = new ArrayList<>();
+
+    private List<Long> imageIdList = new ArrayList<>();
+
+    public CareItemDTO setCareDTO (CareDTO careDTO) {
+        this.careDTO = careDTO;
+        return this;
+    }
+
+    public CareItemDTO setHotelDTO (HotelDTO hotelDTO) {
+        this.hotelDTO = hotelDTO;
+        return this;
+    }
 
 }

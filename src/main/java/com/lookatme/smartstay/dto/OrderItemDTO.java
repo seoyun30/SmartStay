@@ -40,4 +40,9 @@ public class OrderItemDTO {
 
     private String modified_by;
 
+    public OrderItemDTO setRoomReserveItemDTO (RoomReserveItemDTO roomReserveItemDTO) {
+        this.roomReserveItemDTO = roomReserveItemDTO;
+        return this;
+    }
+
 }

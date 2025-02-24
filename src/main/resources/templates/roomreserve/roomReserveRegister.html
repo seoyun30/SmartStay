@@ -225,7 +225,7 @@
                 success : function (result) {
                     alert("장바구니에 추가하였습니다.")
                     console.log(result)
-                    history.go(-1)
+                    location.href="/cart/cartList";
                 },
                 error : function (result, status, error) {
                     console.log(result)

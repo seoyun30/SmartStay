@@ -36,6 +36,7 @@ public class Hotel extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_num")
+    @ToString.Exclude
     private Brand brand; //브랜드
 
     private Long lowestPrice;

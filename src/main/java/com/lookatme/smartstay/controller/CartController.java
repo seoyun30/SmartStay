@@ -90,7 +90,6 @@ public class CartController {
             return "redirect:/member/login";
         }
 
-
         //룸 예약 장바구니 목록
         List<RoomItemDTO> roomItemDTOList = cartService.getCartRoomItemList(principal.getName());
 
@@ -98,7 +97,12 @@ public class CartController {
 
         model.addAttribute("roomItemDTOList", roomItemDTOList);
 
-        //차후 서비스 예약 장바구니 목록 추가
+        //룸서비스 장바구니 목록
+        List<OrderItemDTO> orderItemDTOList = cartService.getCartOrderItemList(principal.getName());
+
+        orderItemDTOList.forEach(orderItemDTO -> log.info("orderItemDTO: " + orderItemDTO));
+
+        model.addAttribute("orderItemDTOList", orderItemDTOList);
 
         return "cart/cartList";
     }
@@ -146,6 +150,18 @@ public class CartController {
 
         return new ResponseEntity<Long>(roomitem_num, HttpStatus.OK);
     }
+    //룸서비스 장바구니 삭제
+    @DeleteMapping("/cartOrderReserveDelete/{service_num}")
+    public ResponseEntity cartOrderReserveDelete (@PathVariable("service_num") Long service_num,
+                                                 Principal principal) {
 
+        if (!cartService.validateCartOrderItem(service_num, principal.getName())) {
+            return new ResponseEntity<String>("수정권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        cartService.deleteCartOrderItem(service_num);
+
+        return new ResponseEntity<Long>(service_num, HttpStatus.OK);
+    }
 
 }

@@ -8,13 +8,21 @@
     <title>Title</title>
     <link th:href="@{/css/stikysidebar.css}" rel="stylesheet">
     <style layout:fragment="css">
+        #contain {
+            position: relative;
+            width: 75%;
+            margin: 0 auto;
+        }
+
         #aside {
             position: sticky;
+            border: 1px solid #a2aec7;
             background-color: white;
             left: 0;
             right: 0;
             bottom: 0;
-            height: auto;
+            width: 75%;
+            height: 100%;
         }
 
         .square-image {
@@ -72,14 +80,14 @@
                             <p class="card-text fs-5 fw-bold roomName"> [[${roomItem.roomDTO.room_name}]] / [[${roomItem.roomDTO.room_type}]] </p>
                         </div>
                         <div class="col-md-4 text-end">
-                            <button th:value="${roomItem.roomitem_num}" class="btn btn-outline-dark btn-sm roomremovebtn" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+                            <button th:value="${roomItem.roomitem_num}" class="btn btn-outline-dark btn-sm roomRemoveBtn" aria-label="Close"><i class="bi bi-x-lg"></i></button>
                         </div>
                     </div>
 
                     <div class="row g-0">
                         <div class="col-md-1 align-self-center">
-                            <input type="checkbox" class="btn-check" name="cartChkBox" th:value="${roomItem.roomitem_num}" th:id="'btn-check-' + ${iterStat.index}" autocomplete="off">
-                            <label class="btn btn-outline-secondary" th:for="'btn-check-' + ${iterStat.index}"><i class="bi bi-check-lg"></i></label><br>
+                            <input type="checkbox" class="btn-check" name="roomChkBox" th:value="${roomItem.roomitem_num}" th:id="'roomCheck-' + ${iterStat.index}" autocomplete="off">
+                            <label class="btn btn-outline-secondary" th:for="'roomCheck-' + ${iterStat.index}"><i class="bi bi-check-lg"></i></label><br>
                         </div>
 
                         <div class="col-md-2 align-self-center">
@@ -135,38 +143,117 @@
         <span class="h4 ms-3 fw-bold">룸 서비스 예약</span>
 
         <div class="card-body">
-            <div class="mt-3">
-                <span class="h5 fw-bold">장바구니가 비어있습니다.</span>
-            </div>
-<!--            <div class="card p-3 mb-3"  style="box-shadow: none">-->
-<!--                <span class="h4 fw-bold">호텔 매장 이름</span>-->
-<!--                <small class="text-body-secondary">매장 주소</small>-->
-<!--                <hr>-->
-<!--                <div class="row mb-2">-->
-<!--                    <div class="col-md-8">-->
-<!--                        <p class="card-text fs-5 fw-bold"> 룸 이름 / 룸 타입</p>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-4 text-end">-->
-<!--                        <button type="button" class="btn-close" aria-label="Close"></button>-->
-<!--                    </div>-->
-<!--                </div>-->
+            <th:block th:if="${orderItemDTOList.isEmpty()}">
+                <div class="mt-3">
+                    <span class="h5 fw-bold">장바구니가 비어있습니다.</span>
+                </div>
+            </th:block>
 
-<!--                <div class="row g-0">-->
-<!--                    <div class="col-md-2 align-self-center">-->
-<!--                        <input type="checkbox" class="text-center">-->
-<!--                        <img src="https://picsum.photos/200" class="img-fluid">-->
-<!--                    </div>-->
-<!--                    <div class="col-md-10 align-self-center">-->
-<!--                        <div class="card-body">-->
-<!--                            <span>체크인~체크아웃 기간 | n박</span> <br>-->
-<!--                            <span class="fs-6">기준 n명 / 예약인원 n명</span> <br>-->
-<!--                            <span>룸서비스 신청</span> <br>-->
-<!--                            <span>요청사항</span>-->
-<!--                            <h5 class="text-end fw-bold">숙박/연박 <span class="text-danger">10000</span>원</h5>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
+            <th:block th:unless="${orderItemDTOList.isEmpty()}" th:each="orderItem, iterStat : ${orderItemDTOList}">
+
+                <!-- 같은 호텔 매장인지 확인 -->
+                <th:block th:if="${iterStat.index == 0
+                or (not #lists.isEmpty(orderItem.menuItemDTOList) and not #lists.isEmpty(orderItemDTOList[iterStat.index - 1].menuItemDTOList)
+                    and orderItem.menuItemDTOList[0].hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].menuItemDTOList[0].hotelDTO.hotel_name)
+                or (not #lists.isEmpty(orderItem.careItemDTOList) and not #lists.isEmpty(orderItemDTOList[iterStat.index - 1].careItemDTOList)
+                    and orderItem.careItemDTOList[0].hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].careItemDTOList[0].hotelDTO.hotel_name)}">
+                    <div class="p-3">
+                    <span class="h4 fw-bold"
+                          th:text="${not #lists.isEmpty(orderItem.menuItemDTOList) ? orderItem.menuItemDTOList[0].hotelDTO.hotel_name : orderItem.careItemDTOList[0].hotelDTO.hotel_name}">
+                        호텔 매장 이름
+                    </span>
+                        <br>
+                        <small class="text-body-secondary"
+                               th:text="${not #lists.isEmpty(orderItem.menuItemDTOList) ? orderItem.menuItemDTOList[0].hotelDTO.address : orderItem.careItemDTOList[0].hotelDTO.address}">
+                            매장 주소
+                        </small>
+                        <hr>
+                    </div>
+                </th:block>
+
+                <div class="p-3">
+                    <div class="row mb-2">
+                        <div class="col-md-8">
+                            <p class="card-text fs-5 fw-bold roomName"> [[${orderItem.roomReserveItemDTO.roomDTO.room_name}]] / [[${orderItem.roomReserveItemDTO.roomDTO.room_type}]] </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button th:value="${orderItem.service_num}" class="btn btn-outline-dark btn-sm serviceRemoveBtn" aria-label="Close">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row g-0">
+                        <div class="col-md-1 align-self-center">
+                            <input type="checkbox" class="btn-check" name="serviceChkBox" th:value="${orderItem.service_num}" th:id="'serviceCheck-' + ${iterStat.index}" autocomplete="off">
+                            <label class="btn btn-outline-secondary" th:for="'serviceCheck-' + ${iterStat.index}"><i class="bi bi-check-lg"></i></label><br>
+                        </div>
+
+                        <div class="col-md-11 align-self-center">
+                            <div class="card-body roomServiceInfo">
+                                <h4 class="mb-3 fw-bold">룸케어 서비스</h4>
+                                <th:block th:each="careItem : ${orderItem.careItemDTOList}">
+                                    <div class="row mb-3">
+                                        <div class="col-md-2 align-self-center">
+                                            <th:block th:each="img: ${careItem.imageDTOList}">
+                                                <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                    <div class="square-image">
+                                                        <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
+                                                    </div>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+                                        <div class="col-md-10 align-self-center">
+                                            <input type="hidden" class="careitem_num" th:value="${careItem.careitem_num}">
+                                            <p class="h5" th:text="${careItem.careDTO.care_name}"></p>
+                                            <p class="h5 care_count" th:text="${careItem.care_count + '개'}"></p>
+                                            <p class="h5 care_price" th:text="${careItem.careDTO.care_price + '원'}"></p>
+                                        </div>
+                                    </div>
+                                </th:block>
+
+                                <h4 class="mb-3 fw-bold">주문 메뉴</h4>
+                                <th:block th:each="menuItem : ${orderItem.menuItemDTOList}">
+                                    <div class="row">
+                                        <div class="col-md-2 align-self-center">
+                                            <th:block th:each="img: ${menuItem.imageDTOList}">
+                                                <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                    <div class="square-image">
+                                                        <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
+                                                    </div>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+
+                                        <div class="col-md-10 align-self-center">
+                                            <input type="hidden" class="menuitem_num" th:value="${menuItem.menuitem_num}">
+                                            <p class="h5" th:text="${menuItem.menuDTO.menu_name}"></p>
+                                            <p class="h5 menu_count" th:text="${menuItem.menu_count + '개'}"></p>
+                                            <p class="h5 menu_price" th:text="${menuItem.menuDTO.menu_price + '원'}"></p>
+                                        </div>
+
+                                    </div>
+                                </th:block>
+                                <h5 class="mt-3 fw-bold menu_request">요청사항 : [[${orderItem.menu_request}]]</h5>
+
+                                <h5 class="mt-3 text-end fw-bold">총 가격 <span class="text-danger" th:id="'servicePrice-' + ${orderItem.service_num}">0</span>원</h5>
+
+                            </div>
+                        </div>
+
+                        <th:block th:if="${iterStat.index == 0
+                or (not #lists.isEmpty(orderItem.menuItemDTOList) and not #lists.isEmpty(orderItemDTOList[iterStat.index - 1].menuItemDTOList)
+                    and orderItem.menuItemDTOList[0].hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].menuItemDTOList[0].hotelDTO.hotel_name)
+                or (not #lists.isEmpty(orderItem.careItemDTOList) and not #lists.isEmpty(orderItemDTOList[iterStat.index - 1].careItemDTOList)
+                    and orderItem.careItemDTOList[0].hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].careItemDTOList[0].hotelDTO.hotel_name)}">
+                            <div>
+                                <hr>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+
+            </th:block>
 
         </div>
 
@@ -185,15 +272,12 @@
                 </div>
             </div>
 
-            <div class="d-grid gap-2 text-center mt-2">
+            <div class="d-grid gap-2 col-6 mx-auto text-center mt-2">
                 <button class="btn btn-primary btn-lg buybtn" type="submit">결제하기</button>
             </div>
         </div>
 
-        <hr>
-
     </aside>
-
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -250,8 +334,35 @@
 
     $(document).ready(function () {
 
+        calculateServiceTotalPrice();
+
+        function calculateServiceTotalPrice() {
+            //케어+메뉴 총 가격 계산
+            $(".roomServiceInfo").each(function () {
+                let serviceTotalPrice = 0;
+                let serviceNum = $(this).find("span[id^='servicePrice-']").attr("id").split('-')[1];
+
+                // 룸케어 서비스 가격 합산
+                $(this).find(".care_price").each(function () {
+                    let price = parseInt($(this).text().replace(/[^0-9]/g, '')) || 0;
+                    let count = parseInt($(this).siblings(".care_count").text().replace(/[^0-9]/g, '')) || 1;
+                    serviceTotalPrice += price * count;
+                });
+
+                // 주문 메뉴 가격 합산
+                $(this).find(".menu_price").each(function () {
+                    let price = parseInt($(this).text().replace(/[^0-9]/g, '')) || 0;
+                    let count = parseInt($(this).siblings(".menu_count").text().replace(/[^0-9]/g, '')) || 1;
+                    serviceTotalPrice += price * count;
+                });
+
+                // 총 가격 반영
+                $("#servicePrice-" + serviceNum).text(serviceTotalPrice);
+            })
+        }
+
         //체크시 가격 반영
-        $("input[name=cartChkBox]").change(function () {
+        $("input[name=roomChkBox], input[name=serviceChkBox]").change(function () {
             getOrderTotalPrice()
         })
 
@@ -260,14 +371,24 @@
             let orderTotalPrice  = 0;
             let checkedCount = 0;
 
-            $("input[name=cartChkBox]:checked").each(function () {
+            // 룸예약 항목 가격 계산
+            $("input[name=roomChkBox]:checked").each(function () {
                     let roomitem_num = $(this).val()
                     let price = $("#price-" + roomitem_num).text()
                     price = parseInt(price.replace(/[^0-9]/g, ''));
                     orderTotalPrice += price;
                     checkedCount++;
                 }
-            )
+            );
+
+            // 룸서비스 (케어, 메뉴) 항목 가격 계산
+            $("input[name=serviceChkBox]:checked").each(function () {
+                let service_num = $(this).val();
+                let price = $("#servicePrice-" + service_num).text();
+                price = parseInt(price.replace(/[^0-9]/g, ''));
+                orderTotalPrice += price;
+                checkedCount++;
+            });
 
             $("#orderTotalPrice").text(orderTotalPrice)
             $(".checkedCount").text("총 " + checkedCount + "건");
@@ -275,8 +396,8 @@
         }
 
         //룸예약 장바구니 삭제
-        $(".roomremovebtn").on("click", function () {
-            let roomitem_num =  $(this).val()
+        $(".roomRemoveBtn").on("click", function () {
+            let roomitem_num = $(this).val()
 
             let url = "/cart/cartRoomReserveDelete/" + roomitem_num
 
@@ -300,6 +421,33 @@
 
             })
 
+        })
+        
+        //룸서비스 장바구니 삭제
+        $(".serviceRemoveBtn").on("click", function () {
+            let service_num = $(this).val();
+
+            let url = "/cart/cartOrderReserveDelete/" + service_num
+
+            $.ajax({
+                url : url ,
+                type: "delete",
+                dataType : "json",
+                success : function (result) {
+                    location.href = "/cart/cartList"
+                },
+                error : function (result, status, error) {
+
+                    if(result.status == '401'){
+                        alert("로그인 후 이용해주세요")
+                        location.href = "/member/login"
+                    }else {
+                        alert(result.responseText)
+                    }
+
+                }
+
+            })
         })
 
         // 예약 정보 클릭 시 모달 창에 데이터 채우기
@@ -508,7 +656,7 @@
             //차후 서비스도 추가
             let roomitem_nums = [];
 
-            $("input[name=cartChkBox]:checked").each(function () {
+            $("input[name=roomChkBox]:checked").each(function () {
                 roomitem_nums.push($(this).val());
             });
 

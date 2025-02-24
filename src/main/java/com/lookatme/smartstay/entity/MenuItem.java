@@ -20,9 +20,11 @@ public class MenuItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_num")
+    @ToString.Exclude
     private OrderItem orderItem;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_num")
+    @ToString.Exclude
     private Menu menu;
 }

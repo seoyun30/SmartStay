@@ -30,18 +30,22 @@ public class Pay extends BaseEntity {
 
     @OneToMany(mappedBy = "pay", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<RoomItem> roomItemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "pay", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<RoomReserveItem> roomReserveItemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "pay", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<OrderItem> orderItemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "pay", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<OrderReserveItem> orderReserveItemList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
