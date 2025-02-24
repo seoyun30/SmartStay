@@ -27,6 +27,21 @@
                     </div>
                 </div>
                 <div class="col-12">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="in_time" class="form-label">체크인 시간</label>
+                            <input type="time" class="form-control" th:value="${inTimeString}" id="in_time" name="in_time">
+                            <p th:if="${#fields.hasErrors('in_time')}" th:errors="*{in_time}" class="fieldError"></p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="out_time" class="form-label">체크아웃 시간</label>
+                            <input type="time" class="form-control" th:value="${outTimeString}" id="out_time" name="out_time">
+                            <p th:if="${#fields.hasErrors('out_time')}" th:errors="*{out_time}" class="fieldError"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
                     <div class="mb-3">
                         <label for="room_info" class="form-label">룸 정보</label>
                         <input type="text" class="form-control" th:field="*{room_info}" id="room_info">

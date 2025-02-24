@@ -78,13 +78,21 @@
             </div>
         </div>
 
-        <form method="get" th:action="@{/searchRead}">
-            <input type="hidden" name="hotel_num" th:attr="value=${hotel_num}">
-            <select name="order" class="form-select w-auto d-inline-block mb-4" onchange="this.form.submit()">
-                <option value="asc" th:selected="${order == 'asc'}">가격 낮은 순</option>
-                <option value="desc" th:selected="${order == 'desc'}">가격 높은 순</option>
-            </select>
-        </form>
+        <div class="d-flex justify-content-end mb-2">
+            <form method="get" th:action="@{/searchRead}" class="d-inline-block">
+                <input type="hidden" name="hotel_num" th:value="${hotel_num}">
+                <div style="position: relative; display: inline-block; width: auto;">
+                    <select name="order" class="form-select"
+                            style="appearance: none; -webkit-appearance: none; -moz-appearance: none;
+                           padding-right: 2.5rem; text-align-last: center; cursor: pointer;
+                           border: 1px solid #ced4da; border-radius: 0.25rem;"
+                            onchange="this.form.submit()">
+                        <option value="asc" th:selected="${order == 'asc'}">가격 낮은 순</option>
+                        <option value="desc" th:selected="${order == 'desc'}">가격 높은 순</option>
+                    </select>
+                </div>
+            </form>
+        </div>
 
         <div th:each="room : ${roomList}" class="mb-4">
             <div class="card shadow-sm">

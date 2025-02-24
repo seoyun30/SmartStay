@@ -114,7 +114,8 @@ public class MainController {
     }
 
     @GetMapping("/searchList")
-    public String searchList(@RequestParam(value = "query", required = false) String query, Model model) {
+    public String searchList(@RequestParam(value = "query", required = false) String query,
+                             @RequestParam(value = "order", required = false, defaultValue = "asc") String order, Model model) {
 
         List<HotelDTO> results;
 
@@ -125,8 +126,21 @@ public class MainController {
             results = hotelService.searchList(query);
         }
 
+        if ("asc".equalsIgnoreCase(order)) {
+            results.sort((h1, h2) -> Long.compare(
+                    h1.getLowestPrice() != null ? h1.getLowestPrice() : Long.MAX_VALUE,
+                    h2.getLowestPrice() != null ? h2.getLowestPrice() : Long.MAX_VALUE
+            ));
+        } else {
+            results.sort((h1, h2) -> Long.compare(
+                    h2.getLowestPrice() != null ? h2.getLowestPrice() : Long.MIN_VALUE,
+                    h1.getLowestPrice() != null ? h1.getLowestPrice() : Long.MIN_VALUE
+            ));
+        }
+
         model.addAttribute("results", results);
         model.addAttribute("query", query);
+        model.addAttribute("order", order);
 
         return "searchList";
     }

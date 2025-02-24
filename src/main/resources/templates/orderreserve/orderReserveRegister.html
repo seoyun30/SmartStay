@@ -35,13 +35,14 @@
 
 <th:block layout:fragment="content">
 
-    <form action="/orderreserve/pay" method="post">
+    <form action="/orderreserve/orderReserveRegister" method="get">
 
         <div class="container-fluid row">
             <div class="col-9 mt-3">
                 <div class="card p-3 mt-3 mx-auto">
                     <input type="hidden" class="hotel_num" name="hotel_num" th:value="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_num}">
                     <input type="text" class="roomreserveitem_num" name="roomreserveitem_num" th:value="${roomReserveItemDTO.roomreserveitem_num}">
+
                     <h2 class="text-center fw-bold my-3" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name} + ' 룸서비스 주문'">룸 서비스 목록</h2>
 
                     <h3 class="text-center fw-bold my-3">케어 서비스</h3>
@@ -63,7 +64,9 @@
                     <h3 class="text-center fw-bold my-3">음식</h3>
 
                     <div class="btn-group category p-3" role="group" aria-label="Vertical radio toggle button group">
-                        <input type="radio" class="btn-check" name="menu-category" id="radio-korean" autocomplete="off" value="KOREAN" checked>
+                        <input type="radio" class="btn-check" name="menu-category" id="radio-all" autocomplete="off" value="ALL" checked>
+                        <label class="btn btn-outline-danger" for="radio-all">전체</label>
+                        <input type="radio" class="btn-check" name="menu-category" id="radio-korean" autocomplete="off" value="KOREAN">
                         <label class="btn btn-outline-danger" for="radio-korean">한식</label>
                         <input type="radio" class="btn-check" name="menu-category" id="radio-chinese" autocomplete="off" value="CHINESE">
                         <label class="btn btn-outline-danger" for="radio-chinese">중식</label>
@@ -94,6 +97,22 @@
             </div>
 
             <div class="col-3 mt-3">
+
+                <nav class="navbar" id="navbar">
+                    <div class="navbar-right">
+                        <div class="search-form">
+                            <form method="get" action="">
+                                <div class="input-group input-group-sm" id="input-group-search">
+                                    <input type="text" autocomplete="off" class="form-control" name="" placeholder="룸서비스 찾기" id="search-input">
+                                    <div class="input-group-append">
+                                        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </nav>
+
                 <div class="card p-3 mt-3 mx-auto order-section">
                     <h2 class="mb-3 text-center fw-bold">주문 목록</h2>
 
@@ -110,7 +129,6 @@
                         <button class="btn btn-outline-dark btn-lg cartBtn" type="button"><i class="bi bi-cart"></i></button>
                         <button type="submit" class="btn btn-primary">주문하기</button>
                     </div>
-
                 </div>
             </div>
 
@@ -231,6 +249,99 @@
             })
 
         }
+
+        let showAllMenu = function (page) {
+            str4 = "";
+            str5 = "";
+            str6 = "";
+
+            if (page == null || page == "" || page.length == 0){
+                page = 1;
+            }
+
+            $.ajax({
+                url: "/menu/allMenuList",
+                type: "get",
+                data: { hotel_num: hotel_num, page: page },
+                dataType: "json",
+                success : function (data) {
+                    console.log(data)
+                    thispage = data.page;
+
+                    if (data == null || data.dtoList == null || data.dtoList.length == 0) {
+
+                        str4 += `<div class="d-flex justify-content-center align-items-center w-100" style="min-height: 200px;">
+                                    <h4 class="text-center">등록된 메뉴가 없습니다.</h4>
+                                </div>`;
+                        menuList.html(str4);
+                        pagination3.hide();
+                        pagination4.hide();
+
+                    } else {
+
+                        for (let i = 0; i < data.dtoList.length; i++){
+                            let menuSortText = menuSortMap[data.dtoList[i].menu_sort] || data.dtoList[i].menu_sort;
+
+                            if (data.dtoList[i] != null && data.dtoList[i].imageDTOList != null && data.dtoList[i].imageDTOList.length > 0 && data.dtoList[i].imageDTOList[0].image_url != null) {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img class="card-img-top" src="${data.dtoList[i].imageDTOList[0].image_url}" alt="Menu Image">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                 <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                    </div>`
+                            } else {
+                                str4 += `<div class="col mb-3">
+                                            <div class="card h-100">
+                                                <div class="ratio ratio-1x1">
+                                                    <img src="/img/thumb_no_img" class="card-img-top" alt="">
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <p><span>${data.dtoList[i].menu_name}</span></p>
+                                                    <p><span>${menuSortText}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_detail}</span></p>
+                                                    <p><span>${data.dtoList[i].menu_price + '원'}</span></p>
+                                                </div>
+                                                <button type="button" class="btn btn-danger orderAdd" id="menu-${data.dtoList[i].menu_num}" data-name="${data.dtoList[i].menu_name}"
+                                                       data-id="menu-${data.dtoList[i].menu_num}">추가</button>
+                                            </div>
+                                        </a>
+                                    </div>`
+                            }
+
+                        }
+                    }
+
+                    str5 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page - 1 <= 0 ? data.end : data.page - 1}">
+                               <i class="bi bi-chevron-left h1"></i>
+                             </a>`
+                    str6 += `<a class="page-link text-center rounded-circle mx-2" href="#" data-num="${data.page + 1 > data.end ? 1 : data.page + 1}">
+                               <i class="bi bi-chevron-right h1"></i>
+                             </a>`
+
+                    pagination3.html(str5);
+                    pagination4.html(str6);
+                    menuList.html(str4);
+                    pagination3.show();
+                    pagination4.show();
+                },
+                error : function (result, error){
+                    alert("에러 발생 : " + result.responseText)
+                    alert("에러 발생 : " + error.responseText)
+                }
+            })
+
+        }
+
+
         let showKoreanMenu = function (page) {
             str4 = "";
             str5 = "";
@@ -861,22 +972,22 @@
         pagination1.on("click", "a", function (e) {
             e.preventDefault();
             let dataNum = $(this).data("num");
-            showKoreanMenu(dataNum);
+            showAllMenu(dataNum);
         })
         pagination2.on("click", "a", function (e) {
             e.preventDefault();
             let dataNum = $(this).data("num");
-            showKoreanMenu(dataNum);
+            showAllMenu(dataNum);
         })
         pagination3.on("click", "a", function (e) {
             e.preventDefault();
             let dataNum = $(this).data("num");
-            showKoreanMenu(dataNum);
+            showAllMenu(dataNum);
         })
         pagination4.on("click", "a", function (e) {
             e.preventDefault();
             let dataNum = $(this).data("num");
-            showKoreanMenu(dataNum);
+            showAllMenu(dataNum);
         })
 
         let orderListCard = $(".orderList");
@@ -890,6 +1001,9 @@
             let selectedCategory = $(this).val();
 
             switch (selectedCategory) {
+                case "ALL":
+                    showAllMenu(1);
+                    break;
                 case "KOREAN":
                     showKoreanMenu(1);
                     break;
@@ -992,7 +1106,7 @@
         });
 
         showCareMenu(1);
-        showKoreanMenu(1);
+        showAllMenu(1);
     });
 
     </script>

@@ -22,26 +22,26 @@
                                 </div>
 
                                 <div class="col text-center">
-                                    <div class="card">
+                                    <div class="card mb-3">
                                         <div class="card-body">
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">메뉴 번호</span>
+                                                <span class="input-group-text" style="width: 120px">메뉴 번호</span>
                                                 <input type="text" class="form-control" th:value="${menuDTO.menu_num}">
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">메뉴 분류</span>
+                                                <span class="input-group-text" style="width: 120px">메뉴 분류</span>
                                                 <input type="text" class="form-control" th:value="${menuDTO.menu_sort}">
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">메뉴 명</span>
+                                                <span class="input-group-text" style="width: 120px">메뉴 명</span>
                                                 <input type="text" class="form-control" th:value="${menuDTO.menu_name}">
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">메뉴 설명</span>
+                                                <span class="input-group-text" style="width: 120px">메뉴 설명</span>
                                                 <input type="text" class="form-control" th:value="${menuDTO.menu_detail}">
                                             </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">메뉴 가격</span>
+                                            <div class="input-group">
+                                                <span class="input-group-text" style="width: 120px">메뉴 가격</span>
                                                 <input type="number" class="form-control" th:value="${menuDTO.menu_price}">
                                             </div>
                                         </div>

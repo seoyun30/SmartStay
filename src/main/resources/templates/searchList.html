@@ -16,35 +16,56 @@
 
         <table class="table" th:if="${results != null && results.size() > 0}">
             <h3 class="text-center mt-5 mb-3">검색 결과</h3>
-            <table class="table" th:if="${results != null && results.size() > 0}">
-                <div class="container mt-5">
-                    <div th:each="hotel : ${results}" class="col-12 mb-2">
-                        <div class="card col-8 offset-2 shadow-sm">
-                            <div class="card-body d-flex flex-column align-items-center">
-                                <h5 class="card-title text-center text-primary font-weight-bold">
-                                    <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none">호텔 이름</a>
-                                </h5>
-                                <img th:src="${hotel.mainImage.image_url}" style="height: 200px; width: 300px;" class="rounded-top" mt-2/>
-                                <div class="mt-1">
-                                    <span class="font-weight-bold text-secondary">주소 </span>
-                                    <span class="text-dark" th:text="${hotel.address}">주소</span><br>
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-8 offset-2">
+                        <div class="d-flex justify-content-end mb-2">
+                            <form method="get" th:action="@{/searchList}" class="d-inline-block">
+                                <input type="hidden" name="query" th:value="${query}">
+                                <div style="position: relative; display: inline-block; width: auto;">
+                                    <select name="order" class="form-select"
+                                            style="appearance: none; -webkit-appearance: none; -moz-appearance: none;
+                                                    padding-right: 2.5rem; text-align-last: center; cursor: pointer;
+                                                    border: 1px solid #ced4da; border-radius: 0.25rem;"
+                                            onchange="this.form.submit()">
+                                        <option value="asc" th:selected="${order == 'asc'}">최저가 낮은 순</option>
+                                        <option value="desc" th:selected="${order == 'desc'}">최저가 높은 순</option>
+                                    </select>
                                 </div>
-                                <div class="mt-1">
-                                    <span class="font-weight-bold text-secondary">가격 </span>
-                                    <span class="text-dark" th:text="${hotel.lowestPrice + '원~'}">최저가</span><br>
-                                </div>
-                                <div class="mt-1">
-                                    <span class="font-weight-bold text-secondary">별점 </span>
-                                    <span class="text-dark" th:text="${hotel.score}">별점</span>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-8 offset-2">
+                        <div th:each="hotel : ${results}" class="mb-3">
+                            <div class="card shadow-sm">
+                                <div class="card-body d-flex flex-column align-items-center">
+                                    <h5 class="card-title text-center text-primary font-weight-bold">
+                                        <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none">호텔 이름</a>
+                                    </h5>
+                                    <img th:src="${hotel.mainImage.image_url}" style="height: 200px; width: 300px;" class="rounded-top mt-2"/>
+                                    <div class="mt-1">
+                                        <span class="font-weight-bold text-secondary">주소 </span>
+                                        <span class="text-dark" th:text="${hotel.address}">주소</span><br>
+                                    </div>
+                                    <div class="mt-1">
+                                        <span class="font-weight-bold text-secondary">가격 </span>
+                                        <span class="text-dark" th:text="${hotel.lowestPrice != null ? hotel.lowestPrice + '원' : '정보 없음'}">최저가</span><br>
+                                    </div>
+                                    <div class="mt-1">
+                                        <span class="font-weight-bold text-secondary">별점 </span>
+                                        <span class="text-dark" th:text="${hotel.score}">별점</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </table>
-            <h2 class="text-center text-primary" th:if="${results.size() == 0}">검색 결과가 없습니다.</h2>
+            </div>
         </table>
-
+    <h2 class="text-center text-primary mt-5" th:if="${results.size() == 0}">검색 결과가 없습니다.</h2>
 </th:block>
 </body>
 </html>
