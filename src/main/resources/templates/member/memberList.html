@@ -34,18 +34,41 @@
             <table class="table table-striped table-hover">
                 <thead>
                 <tr class="text-center">
-                    <th>번호</th>
-                    <th>Email</th>
-                    <th>이름</th>
-                    <th>연락처</th>
                     <th>
-                        <a th:href="@{/member/memberList(sort=${sortOrder == 'ASC' ? 'DESC' : 'ASC'},orderType='role' ,page=${pageRequestDTO.page})}">
-                            권한
-                            <span th:if="${sortOrder == 'ASC'}">▲</span>
-                            <span th:if="${sortOrder == 'DESC'}">▼</span>
+                        <a th:href="@{/member/memberList(sort=${sortOrder == 'ASC' ? 'DESC' : 'ASC'}, orderType='member_num' ,page=${pageRequestDTO.page})}">
+                            번호
+                        <span th:if="${orderType == 'member_num'}" th:text="${sortOrder == 'ASC' ? '▲' : '▼'}"></span>
+                        </a></th>
+                    <th>
+                        <a th:href="@{/member/memberList(sort=${sortOrder == 'ASC' ? 'DESC' : 'ASC'}, orderType='email' ,page=${pageRequestDTO.page})}">
+                        Email
+                        <span th:if="${orderType == 'email'}" th:text="${sortOrder == 'ASC' ? '▲' : '▼'}"></span>
                         </a>
                     </th>
-                    <th>승인여부</th>
+                    <th>
+                        <a th:href="@{/member/memberList(sort=${sortOrder == 'ASC' ? 'DESC' : 'ASC'}, orderType='name' ,page=${pageRequestDTO.page})}">
+                        이름
+                        <span th:if="${orderType == 'name'}" th:text="${sortOrder == 'ASC' ? '▲' : '▼'}"></span>
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{/member/memberList(sort=${sortOrder == 'ASC' ? 'DESC' : 'ASC'}, orderType='tel' ,page=${pageRequestDTO.page})}">
+                        연락처
+                        <span th:if="${orderType == 'tel'}" th:text="${sortOrder == 'ASC' ? '▲' : '▼'}"></span>
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{/member/memberList(sort=${sortOrder == 'ASC' ? 'DESC' : 'ASC'}, orderType='role' ,page=${pageRequestDTO.page})}">
+                            권한
+                        <span th:if="${orderType == 'role'}" th:text="${sortOrder == 'ASC' ? '▲' : '▼'}"></span>
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{/member/memberList(sort=${sortOrder == 'ASC' ? 'DESC' : 'ASC'}, orderType='power' ,page=${pageRequestDTO.page})}">
+                            승인여부
+                        <span th:if="${orderType == 'power'}" th:text="${sortOrder == 'ASC' ? '▲' : '▼'}"></span>
+                        </a>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
