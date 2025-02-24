@@ -39,7 +39,7 @@
                     <th>이름</th>
                     <th>연락처</th>
                     <th>
-                        <a th:href="@{/member/memberList(sort=${sortOrder == 'ASC' ? 'DESC' : 'ASC'}, page=${pageRequestDTO.page})}">
+                        <a th:href="@{/member/memberList(sort=${sortOrder == 'ASC' ? 'DESC' : 'ASC'},orderType='role' ,page=${pageRequestDTO.page})}">
                             권한
                             <span th:if="${sortOrder == 'ASC'}">▲</span>
                             <span th:if="${sortOrder == 'DESC'}">▼</span>
