@@ -20,9 +20,11 @@ public class CareItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_num")
+    @ToString.Exclude
     private OrderItem orderItem;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "care_num")
+    @ToString.Exclude
     private Care care;
 }

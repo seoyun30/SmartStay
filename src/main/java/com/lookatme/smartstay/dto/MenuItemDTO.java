@@ -4,6 +4,8 @@ import com.lookatme.smartstay.entity.OrderItem;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,4 +32,18 @@ public class MenuItemDTO {
     private String create_by;
 
     private String modified_by;
+
+    public List<ImageDTO> imageDTOList = new ArrayList<>();
+
+    private List<Long> imageIdList = new ArrayList<>();
+
+    public MenuItemDTO setMenuDTO (MenuDTO menuDTO) {
+        this.menuDTO = menuDTO;
+        return this;
+    }
+
+    public MenuItemDTO setHotelDTO (HotelDTO hotelDTO) {
+        this.hotelDTO = hotelDTO;
+        return this;
+    }
 }
