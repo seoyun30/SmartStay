@@ -1,22 +1,25 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.ImageDTO;
-import com.lookatme.smartstay.dto.MemberDTO;
-import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.dto.ReviewDTO;
+import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.entity.RoomReserve;
 import com.lookatme.smartstay.repository.MemberRepository;
+import com.lookatme.smartstay.repository.RoomReserveRepository;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.ReviewService;
+import com.lookatme.smartstay.service.RoomReserveService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -28,10 +31,18 @@ import java.util.List;
 @RequestMapping("/review")
 public class ReviewController {
 
+    // 멤버
     private final MemberService memberService;
-    private final HotelService hotelService;
-    private final ReviewService reviewService;
     private final MemberRepository memberRepository;
+    //룸 예약
+    private final RoomReserveService roomReserveService;
+    private final RoomReserveRepository roomReserveRepository;
+    //호텔
+    private final HotelService hotelService;
+    //리뷰
+    private final ReviewService reviewService;
+    private final ModelMapper modelMapper;
+
 
     //관리자 리뷰 목록 페이지
     @GetMapping("/adMyReviewList")
@@ -54,47 +65,52 @@ public class ReviewController {
         return null;
     }
 
-    //등록 페이지 이동
+    //등록 페이지 이동(유저)
     @GetMapping("/reviewRegister")
-    public String reviewRegisterFrom(Principal principal, Model model) {
+    public String reviewRegisterFrom(@RequestParam Long reserve_num,
+                                    Principal principal, Model model) {
         log.info("입력폼 페이지 이동...");
-        //로그인한 회원 확인
+        //로그인 확인
         if (principal == null) {
-            //로그인 페이지로 이동
             return "redirect:/member/login";
         }
 
-        model.addAttribute("reviewDTO", new ReviewDTO());
+        RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(reserve_num, principal.getName());
+        if (roomReserveItemDTO == null) {
+            log.error("해당 예약 정보를 찾을 수 없습니다: {}", reserve_num);
+            return "redirect:/member/myRoomReserveRead"; //룸예약 정보가 없다면 다른 페이지로 이동
+        }
+
+        ReviewDTO reviewDTO = new ReviewDTO();
+        reviewDTO.setRoomReserveDTO(roomReserveItemDTO.getRoomReserveDTO());
+        model.addAttribute("roomReserveItemDTO", roomReserveItemDTO); //룸예약 정보
+        model.addAttribute("reviewDTO", reviewDTO );
+
         return "review/reviewRegister"; // 로그인한 사용자만 볼수 있음
     }
 
     //등록 내용저장
     @PostMapping("/reviewRegister")
     public String reviewRegisterPost(ReviewDTO reviewDTO,
-                                     Long hotel_num, Principal principal, Long reserve_num,
+                                     Principal principal, Long reserve_num,
                                      List<MultipartFile> multipartFileList, BindingResult bindingResult) throws Exception {
 
         log.info("컨드롤러로 들어온 값:" + reviewDTO);
+        log.info("받아온 값 - 예약 번호: {}, 호텔 번호:{}" +  reserve_num);
 
-        if (principal == null) {
-            return "redirect:/member/login"; //로그인 하시오
+        try {
+            //로그인 사용자의 email 가져오기
+            String email = principal.getName();
+            RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(reserve_num, principal.getName());
+            reviewService.reviewRegister(reviewDTO, principal.getName(), reserve_num, multipartFileList);
+
+
+            return "redirect:/review/reviewList"; //성공 시 목록 페이지
+
+        } catch (Exception e) {
+            log.error("리뷰 등록 오류:{}", e.getMessage());
+            return "redirect:/review/register?error=true"; // 실패 시 다시 등록 페이지
         }
-
-        //로그인한 사용자의 정보를 얻어옴
-        String email = principal.getName();
-        Member member = memberRepository.findByEmail(email);
-        if (member == null) {
-            return "redirect:/member/login";
-        }
-
-        if (bindingResult.hasErrors()) {
-            log.info("문제가 있다..");
-            log.info(bindingResult.getAllErrors());
-            return "review/reviewRegister";
-        }
-        reviewService.reviewRegister(reviewDTO, principal.getName(), hotel_num, reserve_num, multipartFileList );
-
-        return "redirect:/review/reviewList"; // 리뷰 목록으로 이동
     }
 //
 //    //상세 보기 페이지

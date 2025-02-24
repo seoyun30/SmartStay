@@ -143,12 +143,14 @@ public class ReviewService {
 
 
     //리뷰 등록<작성>(룸 예약을 한 유저만 등록 가능)
-    public void reviewRegister(ReviewDTO reviewDTO, String email, Long hotel_num, Long reserve_num, List<MultipartFile> multipartFiles) throws Exception {
-        log.info("등록서비스 들어온값:" + reviewDTO);
+    public void reviewRegister(ReviewDTO reviewDTO, String email, Long reserve_num, List<MultipartFile> multipartFiles) throws Exception {
+        log.info("리뷰 등록 요청 :{}" , reviewDTO);
 
         //1. 예약정보 확인
         RoomReserve roomReserve = roomReserveRepository.findById(reserve_num)
                 .orElseThrow(() -> new IllegalArgumentException("룸 예약정보" + reserve_num + "에 대한 정보를 찾을 수 없습니다."));
+
+        System.out.println("들어온 reserve_num" + reserve_num);
 
         //2.작성자 정보확인(principal은 컨트롤러에서 검증 )
         Member member = memberRepository.findByEmail(email);
@@ -161,7 +163,7 @@ public class ReviewService {
             throw new IllegalArgumentException("룸 예약을 한 회원과 작성자가 일치하지 않습니다.");
         }
 
-        //4. 별점 유효성 체크(0.1~ 5)
+        //4. 별점 유효성 체크(0.1~ 5) / 따로 validateScore private로 빼야하는지 확인중
         String scoreStr = reviewDTO.getScore();
         if (scoreStr == null || scoreStr.trim().isEmpty()) {
             throw new IllegalArgumentException("별점은 필수 입력값입니다.");
@@ -183,6 +185,7 @@ public class ReviewService {
         Hotel hotel = hotelRepository.findById(hotelDTO.getHotel_num())
                 .orElseThrow(()-> new IllegalArgumentException("호텔 번호" + hotelDTO.getHotel_num() + "에 대한 정보를 찾을 수 없습니다."));
 
+        reviewDTO.setHotelDTO(hotelDTO);
         //6. 리뷰 생성 및 정보 세팅
         Review review = modelMapper.map(reviewDTO, Review.class);   //DTO -> entity로 변환
         review.setRoomReserve(roomReserve);  // 예약 정보를 세팅
@@ -190,6 +193,7 @@ public class ReviewService {
         review.setMember(member);  // Member 객체 설정
         review.setCreate_by(member.getEmail()); // 작성자 설정(로그인한 사용자의 이메일로 설정)
         review.setReg_date(LocalDateTime.now()); // 작성일을 현재 시간으로 설정
+        log.info("세팅 리뷰 :" + review);
 
         // 이미지가 없다면 저장
         if (multipartFiles != null && multipartFiles.isEmpty()) {
