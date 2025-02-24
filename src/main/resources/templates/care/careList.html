@@ -40,8 +40,8 @@
     </nav>
 
     <div th:if="${isSearch}">
-        <h3 class="text-center mt-3 mb-3">검색 결과</h3>
         <table class="table" th:if="${results != null && results.size() > 0}">
+            <h3 class="text-center mt-3 mb-3">검색 결과</h3>
             <div class="container mt-5">
                 <div th:each="care : ${results}" class="col-12 mb-2">
                     <div class="card col-8 offset-2 shadow-sm">
@@ -55,7 +55,7 @@
                 </div>
             </div>
         </table>
-        <h2 class="text-center text-primary" th:if="${results.size() == 0}">검색 결과가 없습니다.</h2>
+        <h2 class="text-center text-primary mt-5" th:if="${results.size() == 0}">검색 결과가 없습니다.</h2>
     </div>
 
     <div th:if="${!isSearch}">
@@ -73,8 +73,6 @@
                                 <span th:if="${sortField == 'care_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                             </a>
                         </td>
-                        <td>등록일자</td>
-                        <td>수정일자</td>
                         <td>수정</td>
                         <td>삭제</td>
                     </tr>
@@ -91,8 +89,6 @@
                             </td>
                             <td th:text="${careDTO.care_detail}"></td>
                             <td th:text="${careDTO.care_price}"></td>
-                            <td th:text="${#temporals.format(careDTO.reg_date, 'yyyy-MM-dd')}"></td>
-                            <td th:text="${#temporals.format(careDTO.modi_date, 'yyyy-MM-dd')}"></td>
                             <td>
                                 <button type="button" th:attr="onclick='location.href=\'/care/careModify?care_num=' + ${careDTO.care_num} + '\''" class="btn btn-warning">수정</button>
                             </td>

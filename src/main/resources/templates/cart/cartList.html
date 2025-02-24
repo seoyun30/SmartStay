@@ -103,7 +103,7 @@
                                 <th:block th:if="${roomItem.day == 1}">
                                     <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">
                                     <input type="hidden" class="reserveDay" th:value="${roomItem.day}">
-                                    <h5 class="text-end fw-bold">숙박 <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.day * roomItem.roomDTO.room_price}">10000</span>원</h5>
+                                    <h5 class="text-end fw-bold">1박 <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.day * roomItem.roomDTO.room_price}">10000</span>원</h5>
                                 </th:block>
                                 <th:block th:unless="${roomItem.day == 1}">
                                     <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">

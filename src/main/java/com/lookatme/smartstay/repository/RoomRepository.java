@@ -4,6 +4,7 @@ import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,8 +20,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     List<Room> findByHotel(Hotel hotel);
 
-    @Query("select r from Room r where r.room_name like %:query%")
-    List<Room> findByRoom_nameContaining(@Param("query") String query);
+    @Query("select r from Room r where r.room_name like %:query% or r.room_info like %:query%")
+    List<Room> findByRoom_nameContainingIgnoreCaseOrRoom_infoContainingIgnoreCase(@Param("query") String query, Sort sort);
 
     @Query("select min(r.room_price) from Room r where r.hotel.hotel_num = :hotel_num")
     Long findLowestRoomPriceByHotelNum(@Param("hotel_num") Long hotel_num);

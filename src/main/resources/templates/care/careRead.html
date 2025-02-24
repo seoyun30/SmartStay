@@ -22,26 +22,25 @@
 
                                 <div class="mb-3 mt-5 text-center">
                                     <h2 th:text="${careDTO.hotelDTO.hotel_name}"></h2>
-
                                 </div>
 
                                 <div class="col text-center">
-                                    <div class="card">
+                                    <div class="card mb-3">
                                         <div class="card-body">
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">룸 케어 번호</span>
+                                                <span class="input-group-text" style="width: 130px">룸 케어 번호</span>
                                                 <input type="text" class="form-control bg-white" th:value="${careDTO.care_num}" readonly>
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">룸 케어 명</span>
+                                                <span class="input-group-text" style="width: 130px">룸 케어 명</span>
                                                 <input type="text" class="form-control bg-white text-black" th:value="${careDTO.care_name}" readonly>
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">룸 케어 설명</span>
+                                                <span class="input-group-text" style="width: 130px">룸 케어 설명</span>
                                                 <input type="text" class="form-control bg-white text-black" th:value="${careDTO.care_detail}" readonly>
                                             </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">룸 케어 가격</span>
+                                            <div class="input-group">
+                                                <span class="input-group-text" style="width: 130px">룸 케어 가격</span>
                                                 <input type="number" class="form-control bg-white text-black" th:value="${careDTO.care_price}" readonly>
                                             </div>
                                         </div>

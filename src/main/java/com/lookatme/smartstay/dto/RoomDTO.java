@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lookatme.smartstay.constant.RoomState;
 import com.lookatme.smartstay.constant.RoomType;
 import jakarta.validation.constraints.Min;
@@ -9,6 +10,7 @@ import lombok.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,14 @@ public class RoomDTO {
 
     @NotNull(message = "룸 상태를 설정해주세요.")
     private RoomState room_state; //룸 상태
+
+    @JsonFormat(pattern = "HH:mm")
+    @NotNull
+    private LocalTime in_time = LocalTime.of(15, 0); // 오후 3시
+
+    @JsonFormat(pattern = "HH:mm")
+    @NotNull
+    private LocalTime out_time = LocalTime.of(11, 0); // 오전 11시
 
     private HotelDTO hotelDTO; //호텔
 

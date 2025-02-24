@@ -257,7 +257,7 @@ public class HotelService {
 
     public List<HotelDTO> searchList(String query) {
 
-        List<Hotel> hotels = hotelRepository.findByHotel_nameOrAddressContaining(query);
+        List<Hotel> hotels = hotelRepository.findByHotel_nameIgnoreCaseOrAddressContainingIgnoreCase(query);
 
         List<HotelDTO> hotelDTOS = hotels.stream()
                         .map(hotel -> {
@@ -274,7 +274,9 @@ public class HotelService {
     }
 
     public Long getHotelLowestPrice(Long hotel_num) {
-        return roomRepository.findLowestRoomPriceByHotelNum(hotel_num);
+        Long lowestPrice = roomRepository.findLowestRoomPriceByHotelNum(hotel_num);
+
+        return lowestPrice != null ? lowestPrice : 0L;
     }
 
     public ImageDTO getHotelMainImage(Long hotel_num) {

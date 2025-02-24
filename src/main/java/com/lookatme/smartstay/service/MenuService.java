@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -77,11 +79,13 @@ public class MenuService {
     }
 
     //전체 메뉴
-    public PageResponseDTO<MenuDTO> menuList(HotelDTO hotelDTO, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<MenuDTO> menuList(HotelDTO hotelDTO, PageRequestDTO pageRequestDTO, String sortField, String sortDir) {
 
         Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
 
-        Pageable pageable = pageRequestDTO.getPageable("menu_num");
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort);
 
         Page<Menu> result = menuRepository.findByHotel(hotel, pageable);
 
@@ -111,6 +115,41 @@ public class MenuService {
         return menuDTOPageResponseDTO;
     }
 
+    //전체 메뉴
+    public PageResponseDTO<MenuDTO> allMenuList(Long hotel_num, PageRequestDTO pageRequestDTO) {
+
+        Hotel hotel = hotelRepository.findById(hotel_num)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Pageable pageable = pageRequestDTO.getPageable("menu_num");
+
+        Page<Menu> result = menuRepository.findAllMenu(hotel, pageable);
+
+        List<MenuDTO> menuDTOList = result.stream()
+                .map(menu -> modelMapper.map(menu, MenuDTO.class)
+                        .setHotelDTO(modelMapper.map(menu.getHotel(), HotelDTO.class)))
+                .collect(Collectors.toList());
+
+        for (MenuDTO menuDTO : menuDTOList) {
+            List<Image> menuImageList = imageRepository.findByTarget("menu", menuDTO.getMenu_num());
+            if (!menuImageList.isEmpty()) {
+                List<ImageDTO> menuImageDTOList = menuImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                menuDTO.setImageDTOList(menuImageDTOList);
+            } else {
+                menuDTO.setImageDTOList(null);
+            }
+        }
+
+        if (menuDTOList == null) {
+            menuDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = PageResponseDTO.<MenuDTO>withAll()
+                .pageRequestDTO(pageRequestDTO).dtoList(menuDTOList).total((int) result.getTotalElements()).build();
+
+        return menuDTOPageResponseDTO;
+    }
 
     //한식 메뉴만
     public PageResponseDTO<MenuDTO> koreanMenuList(Long hotel_num, PageRequestDTO pageRequestDTO) {
@@ -424,9 +463,11 @@ public class MenuService {
         log.info("메뉴가 삭제되었습니다. menu_num:" + id);
     }
 
-    public List<MenuDTO> searchList(String query) {
+    public List<MenuDTO> searchList(String query, String sortField, String sortDir) {
 
-        List<Menu> menus = menuRepository.findByMenu_nameContaining(query);
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+
+        List<Menu> menus = menuRepository.findByMenu_nameContainingIgnoreCaseOrMenu_detailContainingIgnoreCase(query, sort);
 
         if (menus == null || menus.isEmpty()) {
             return Collections.emptyList();

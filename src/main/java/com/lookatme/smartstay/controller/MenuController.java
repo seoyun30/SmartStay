@@ -10,6 +10,7 @@ import com.lookatme.smartstay.service.MenuService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -80,7 +81,9 @@ public class MenuController {
 
     @GetMapping("/menuList")
     public String menuList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
-                           @RequestParam(value = "query", required = false) String query) {
+                           @RequestParam(defaultValue = "menu_num") String sortField,
+                           @RequestParam(defaultValue = "asc") String sortDir,
+                           @RequestParam(value = "query", required = false) String query, Sort sort) {
 
         if (principal == null) {
             return "redirect:/member/login";
@@ -90,14 +93,16 @@ public class MenuController {
         if (hotelDTO == null){
             return "redirect:/adMain";
         }
+        model.addAttribute("hotel_name", hotelDTO.getHotel_name());
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
 
         if (query == null || query.trim().isEmpty()){
-            PageResponseDTO<MenuDTO> pageResponseDTO = menuService.menuList(hotelDTO, pageRequestDTO);
-            model.addAttribute("hotel_name", hotelDTO.getHotel_name());
+            PageResponseDTO<MenuDTO> pageResponseDTO = menuService.menuList(hotelDTO, pageRequestDTO, sortField, sortDir);
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("isSearch", false);
         }else {
-            List<MenuDTO> results = menuService.searchList(query);
+            List<MenuDTO> results = menuService.searchList(query, sortField, sortDir);
             model.addAttribute("results", results != null ? results : Collections.emptyList());
             model.addAttribute("query", query);
             model.addAttribute("isSearch", true);
@@ -212,6 +217,17 @@ public class MenuController {
             log.error("이미지 삭제 실패: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
         }
+    }
+
+    //전체 메뉴
+    @GetMapping("/allMenuList")
+    @ResponseBody
+    public ResponseEntity<PageResponseDTO<MenuDTO>> allMenuList(@RequestParam("hotel_num") Long hotel_num,
+                                                                   PageRequestDTO pageRequestDTO) {
+
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = menuService.allMenuList(hotel_num, pageRequestDTO);
+
+        return ResponseEntity.ok(menuDTOPageResponseDTO);
     }
 
     //한식 메뉴만

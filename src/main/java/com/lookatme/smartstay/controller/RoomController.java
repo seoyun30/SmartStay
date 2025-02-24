@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +55,16 @@ public class RoomController {
        }
        RoomDTO roomDTO = new RoomDTO();
        roomDTO.setHotelDTO(hotelDTO);
+       roomDTO.setIn_time(LocalTime.of(15, 0));
+       roomDTO.setOut_time(LocalTime.of(11, 0));
+
+       System.out.println("체크인 시간: " + roomDTO.getIn_time());
+       System.out.println("체크아웃 시간: " + roomDTO.getOut_time());
+
        model.addAttribute("roomDTO", roomDTO);
+       model.addAttribute("inTimeString", roomDTO.getIn_time().toString());
+       model.addAttribute("outTimeString", roomDTO.getOut_time().toString());
+
        return "room/roomRegister";
     }
 
@@ -88,6 +98,8 @@ public class RoomController {
 
     @GetMapping("/roomList")
     public String roomList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
+                           @RequestParam(defaultValue = "room_num") String sortField,
+                           @RequestParam(defaultValue = "asc") String sortDir,
                            @RequestParam(value = "query", required = false) String query) {
 
         if (principal == null) {
@@ -98,16 +110,18 @@ public class RoomController {
         if (hotelDTO == null) {
             return "redirect:/adMain";
         }
+        model.addAttribute("hotel_name", hotelDTO.getHotel_name());
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
 
         if (query == null || query.trim().isEmpty()) {
-            PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotelDTO, pageRequestDTO);
-            model.addAttribute("hotel_name", hotelDTO.getHotel_name());
+            PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotelDTO, pageRequestDTO, sortField, sortDir);
             log.info("PageResponseDTO: " + pageResponseDTO);
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("isSearch", false);
 
         }else {
-            List<RoomDTO> results = roomService.searchList(query);
+            List<RoomDTO> results = roomService.searchList(query, sortField, sortDir);
             model.addAttribute("results", results != null ? results : Collections.emptyList());
             model.addAttribute("query", query);
             model.addAttribute("isSearch", true);
@@ -164,7 +178,20 @@ public class RoomController {
         if (!roomDTO.getHotelDTO().getHotel_num().equals(hotelDTO.getHotel_num())) {
             throw new SecurityException("권한이 없습니다.");
         }
+
+        LocalTime in_time = roomDTO.getIn_time();
+        LocalTime out_time = roomDTO.getOut_time();
+
+        if (in_time == null) {
+            in_time = LocalTime.of(15, 0);
+        }
+        if (out_time == null) {
+            out_time = LocalTime.of(11, 0);
+        }
+
         model.addAttribute("roomDTO", roomDTO);
+        model.addAttribute("inTimeString", in_time.toString());
+        model.addAttribute("outTimeString", out_time.toString());
 
         return "room/roomModify";
     }

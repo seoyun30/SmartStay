@@ -36,7 +36,6 @@ public class ReviewDTO {
         this.score = score;
     }
 
-
     private RoomReserveDTO roomReserveDTO; //룸 예약 조인
 
     // 룸 예약 가져오는
