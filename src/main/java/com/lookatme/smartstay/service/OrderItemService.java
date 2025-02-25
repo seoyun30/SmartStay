@@ -3,6 +3,8 @@ package com.lookatme.smartstay.service;
 import com.lookatme.smartstay.dto.CareItemDTO;
 import com.lookatme.smartstay.dto.MenuItemDTO;
 import com.lookatme.smartstay.dto.OrderItemDTO;
+import com.lookatme.smartstay.entity.CareItem;
+import com.lookatme.smartstay.entity.MenuItem;
 import com.lookatme.smartstay.entity.OrderItem;
 import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,23 +30,33 @@ public class OrderItemService {
     private final ImageRepository imageRepository;
     private final CareItemService careItemService;
     private final MenuItemService menuItemService;
+    private final MenuItemRepository menuItemRepository;
 
     private final ModelMapper modelMapper;
 
-    public OrderItemDTO modifyOrderItem(OrderItemDTO orderItemDTO, CareItemDTO careItemDTO,
-                                        MenuItemDTO menuItemDTO) {
+    public OrderItemDTO modifyOrderItem(OrderItemDTO orderItemDTO) {
 
         OrderItem orderItem = orderItemRepository.findById(orderItemDTO.getService_num())
                 .orElseThrow(EntityNotFoundException::new);
 
         orderItem.setMenu_request(orderItemDTO.getMenu_request());
 
-        if (careItemDTO != null) {
-            careItemService.modifyCareItemCount(careItemDTO);
+        if (orderItemDTO.getCareItemDTOList() != null) {
+            for (CareItemDTO careItemDTO : orderItemDTO.getCareItemDTOList()) {
+                CareItem careItem = careItemRepository.findById(careItemDTO.getCareitem_num())
+                        .orElseThrow(EntityNotFoundException::new);
+                careItem.setCare_count(careItemDTO.getCare_count());
+                careItemRepository.save(careItem);
+            }
         }
 
-        if (menuItemDTO != null) {
-            menuItemService.modifyMenuItemCount(menuItemDTO);
+        if (orderItemDTO.getMenuItemDTOList() != null) {
+            for (MenuItemDTO menuItemDTO : orderItemDTO.getMenuItemDTOList()) {
+                MenuItem menuItem = menuItemRepository.findById(menuItemDTO.getMenuitem_num())
+                        .orElseThrow(EntityNotFoundException::new);
+                menuItem.setMenu_count(menuItemDTO.getMenu_count());
+                menuItemRepository.save(menuItem);
+            }
         }
 
         orderItem = orderItemRepository.save(orderItem);
