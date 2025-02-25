@@ -60,19 +60,21 @@
                         <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>
                         <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
                         <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
-                        <input type="radio" name="score" value="0.5" id="starpoint_1" class="star_radio">
-                        <input type="radio" name="score" value="1" id="starpoint_2" class="star_radio">
-                        <input type="radio" name="score" value="1.5" id="starpoint_3" class="star_radio">
-                        <input type="radio" name="score" value="2" id="starpoint_4" class="star_radio">
-                        <input type="radio" name="score" value="2.5" id="starpoint_5" class="star_radio">
-                        <input type="radio" name="score" value="3" id="starpoint_6" class="star_radio">
-                        <input type="radio" name="score" value="3.5" id="starpoint_7" class="star_radio">
-                        <input type="radio" name="score" value="4" id="starpoint_8" class="star_radio">
-                        <input type="radio" name="score" value="4.5" id="starpoint_9" class="star_radio">
-                        <input type="radio" name="score" value="5" id="starpoint_10" class="star_radio">
+                        <input type="radio" name="score" value="0.5" id="starpoint_1" class="star_radio" required>
+                        <input type="radio" name="score" value="1" id="starpoint_2" class="star_radio" required>
+                        <input type="radio" name="score" value="1.5" id="starpoint_3" class="star_radio" required>
+                        <input type="radio" name="score" value="2" id="starpoint_4" class="star_radio" required>
+                        <input type="radio" name="score" value="2.5" id="starpoint_5" class="star_radio" required>
+                        <input type="radio" name="score" value="3" id="starpoint_6" class="star_radio" required>
+                        <input type="radio" name="score" value="3.5" id="starpoint_7" class="star_radio" required>
+                        <input type="radio" name="score" value="4" id="starpoint_8" class="star_radio" required>
+                        <input type="radio" name="score" value="4.5" id="starpoint_9" class="star_radio" required>
+                        <input type="radio" name="score" value="5" id="starpoint_10" class="star_radio" required>
                         <span class="starpoint_bg"></span>
                     </div>
                 </div>
+                <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}"></div>
+                <!--리뷰 내용-->
                 <div class="card">
                     <div class="card-body" style="height: 500px;"><!--공지사항글 제품-->
 <!--                        <div class="mb-3">-->
@@ -80,15 +82,18 @@
 <!--                            <input type="hidden" class="card-title fw-bold" th:text="${roomReserveItemDTO.roomReserveDTO.reserve_num}"></input>-->
 <!--                        </div>-->
                         <div class="mb-3">
+                            <input type="hidden" name="roomreserveitem_num" th:value="${roomReserveItemDTO.roomreserveitem_num}">
+                            <input type="hidden" name="reserve_num" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">
                             <label class="form-label">호텔 이름</label>
+                            <input th:value="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">
                             <h2 class="card-title fw-bold" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}"></h2>
                         </div>
                         <div class="mb-3">
                             <label for="exampleFormControlTextarea1" class="form-label">리뷰 내용</label>
                             <textarea class="form-control" th:field="*{content}" id="exampleFormControlTextarea1" rows="5"
                                       placeholder="리뷰 내용을 적어주세요."></textarea>
+                            <div th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
                         </div>
-
                         <div class="mb-3 imgA">
                             <!--이미지 업로드 -->
                             <label for="formFile" class="form-label">대표 이미지</label>
@@ -151,7 +156,10 @@
             imgPreview.innerHTML = '';
             removeMainImage.style.display = 'none';
         });
+
     });
+
+
 </script>
 </body>
 </html>
