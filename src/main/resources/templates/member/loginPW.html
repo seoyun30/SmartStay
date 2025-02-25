@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/userlayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+
+</head>
+<body>
+
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mt-5 justify-content-center">
+            <!-- 가운데 로그인 폼 -->
+            <div class="col-4">
+                <div class="text-center">
+                    <h1>로그인</h1>
+                </div>
+
+                <!-- <div  th:if="${param.error}">
+                     <h1>
+                         ID또는 비밀번호를 확인해주세요.
+                     </h1>
+                 </div>-->
+
+                <script th:inline="javascript">
+                    let errorMsg = [[${param.error}]];
+                    if (errorMsg) {
+                        if (errorMsg == 'approval') {
+                            alert("가입 승인중입니다.");
+                        } else {
+                            alert("아이디 또는 비밀번호를 확인해주세요.");
+                        }
+                    }
+                </script>
+
+
+                <form class="row g-3 mt-3" action="/member/loginPW" method="post">
+                    <div class="mb-1">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="text" name="email" class="form-control" id="email" placeholder="가입한 이메일을 입력해주세요." required>
+                    </div>
+
+                    <div class="mb-1">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" id="password" placeholder="비밀번호를 입력해주세요." required>
+                    </div>
+
+                    <div class="nav justify-content-center">
+                        <a href="/member/findID" class="nav-link px-2 text-primary">Email찾기</a>
+                        <span class="nav-link px-2 text-primary">|</span>
+                        <a href="/member/findPW" class="nav-link px-2 text-primary">비밀번호재설정</a>
+                    </div>
+
+                    <div class="text-center d-flex justify-content-center gap-3 mt-4">
+                        <button type="submit" class="btn btn-primary">로그인</button>
+                        <a href="/member/signup" class="btn btn-secondary">회원가입</a>
+                    </div>
+
+
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+
+
+<th:block layout:fragment="script">
+</th:block>
+
+</body>
+</html>
