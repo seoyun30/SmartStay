@@ -23,21 +23,27 @@
                     <span th:text="${msg}"></span>
                 </div>
 
-                <form class="row g-3 mt-3" action="/member/changePW" method="post" th:object="${memberDTO}" onsubmit="return test()">
+                <form class="row g-3 mt-3" action="/member/changePW" method="post" th:object="${newPasswordDTO}" onsubmit="return test()">
 
                     <div class="mb-1">
-                        <label for="newPassword" class="form-label">기존 비밀번호</label>
-                        <input class="form-control" type="password" id="newPassword" th:field="*{newPassword}">
-                    </div>
-
-                    <div class="mb-1">
-                        <label for="password" class="form-label">새로운 비밀번호</label>
+                        <label for="password" class="form-label">기존 비밀번호</label>
                         <input class="form-control" type="password" id="password" th:field="*{password}">
+                        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError"></p>
+
                     </div>
 
                     <div class="mb-1">
-                        <label for="repassword" class="form-label">비밀번호 재확인</label>
-                        <input class="form-control" type="password" id="repassword" th:field="*{repassword}">
+                        <label for="newPassword" class="form-label">새로운 비밀번호</label>
+                        <input class="form-control" type="password" id="newPassword" th:field="*{newPassword}">
+                        <p th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}" class="fieldError"></p>
+
+                    </div>
+
+                    <div class="mb-1">
+                        <label for="rePassword" class="form-label">비밀번호 재확인</label>
+                        <input class="form-control" type="password" id="rePassword" th:field="*{rePassword}">
+                        <p th:if="${#fields.hasErrors('rePassword')}" th:errors="*{rePassword}" class="fieldError"></p>
+
                     </div>
 
                     <div class="col text-center d-flex justify-content-center gap-3 mt-4">
@@ -64,38 +70,38 @@
 
 
         function test(){
-            var temPassword = document.getElementById('newPassword').value;
-            var password = document.getElementById('password').value;
-            var repassword = document.getElementById('repassword').value;
-            var errorMessage = document.getElementById('password-error');
-            var repasswordInput = document.getElementById('repassword');
+            var password = document.getElementById('password');
+            var newPassword = document.getElementById('newPassword');
+            var rePassword = document.getElementById('rePassword');
 
-            if(!newPassword) {
+
+            if(password.value.length <= 0 ) {
                 alert("기존 비밀번호를 입력해주세요.");
-                document.getElementById('temPassword').focus();
+
+                newPassword.value = ""
+                rePassword.value = ""
+                password.value = ""
+                password.focus();
+                return false;
+            }
+            if(password.value.length < 8  || password.value.length > 20){
+                alert("비밀번호는 8~20자 입니다.");
+
+                newPassword.value = ""
+                rePassword.value = ""
+                password.value = ""
+                password.focus();
                 return false;
             }
 
-            if (!password) {
-                repasswordInput.value = ''; //비밀번호 비어있으면 re비밀번호도 비우기.
-            }
-
-            if(password != repassword) {
-                errorMessage.style.display = "block"; // 오류 메시지 표시
-                alert("비밀번호가 일치하지 않습니다.");
-                repasswordInput.focus();
+            if(newPassword.value != rePassword.value) {
+                alert("새비밀번호가 일치하지 않습니다.");
+                newPassword.value = ""
+                rePassword.value = ""
+                newPassword.focus();
                 return false; // 회원가입 진행 막기
-            } else {
-                errorMessage.style.display = "none"; // 오류 메시지 숨김
+            }
 
-            }
-            const telValid = validateTel();
-            if (!telValid) {
-                var telInput = document.getElementById("tel");
-                alert("유효한 연락처가 아닙니다.")
-                telInput.focus(); // 전화번호 입력란에 포커스
-                return false; // 전화번호가 유효하지 않으면 회원가입 진행 막기
-            }
             return true; // 회원가입 진행 가능
         }
 

@@ -31,7 +31,6 @@ public class MemberDTO {
     @Size(min = 8, max= 20, message = "비밀번호는 8 ~ 20 글자로 입력해주세요.")
     private String password; //회원 비밀번호
 
-    @NotBlank(message = "새로운 비밀번호를 입력하세요.") // 추가
     private String newPassword; // 임시 비밀번호
 
     @NotBlank(message = "비밀번호를 다시 입력하세요.") // 추가

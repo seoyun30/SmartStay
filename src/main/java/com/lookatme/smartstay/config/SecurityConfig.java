@@ -58,7 +58,6 @@ public class SecurityConfig {
                 .loginPage("/member/login") //로그인은 /login맵핑으로 //인증을 요할때 권한을 요할때 로그인이 되어있지 않다면
                 // 해당 url로 이동   일반유저 로그인
                 .loginProcessingUrl("/member/login")
-                .loginProcessingUrl("/member/loginPW")
                 .usernameParameter("email") //userid를 username으로 사용
                 .permitAll() //모든 사용자가 로그인폼 사용
                 .failureHandler(new CustomAuthenticationFailureHandler()) //로그인 실패시 처리할 클래스
