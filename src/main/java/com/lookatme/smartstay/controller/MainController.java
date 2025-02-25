@@ -161,7 +161,6 @@ public class MainController {
 
         for (RoomDTO room : roomList) {
             log.info("룸 번호:{}", room.getRoom_num());
-            log.info("대표 이미지 URL:{}", room.getMainImage() != null ? room.getMainImage().getImage_url() : "없음");
         }
 
         model.addAttribute("roomList", roomList);

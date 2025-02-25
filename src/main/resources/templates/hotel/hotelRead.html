@@ -79,7 +79,7 @@
                                                 <th:block th:if="${img.repimg_yn == 'Y'}">
                                                     <label class="col-12 form-label">
                                                         대표 이미지<br>
-                                                        <img class="main-image mt-3" th:src="${img.image_url}" alt="대표 이미지">
+                                                        <img class="main-image mt-3" th:src="${img.thumbnail_url}" alt="대표 이미지">
                                                     </label>
                                                 </th:block>
                                             </th:block>
@@ -93,7 +93,7 @@
                                             <th:block th:each="img, iterStat : ${hotelDTO.imageDTOList}">
                                                 <th:block th:unless="${img.repimg_yn == 'Y'}">
                                                     <div class="col-6 col-md-6">
-                                                        <img class="detail-image" th:src="${img.image_url}" alt="상세 이미지">
+                                                        <img class="detail-image" th:src="${img.thumbnail_url}" alt="상세 이미지">
                                                     </div>
                                                 </th:block>
                                             </th:block>

@@ -21,6 +21,8 @@ public class ImageDTO {
 
     private String repimg_yn; //대표 이미지 여부
 
+    private String thumbnail_url; // 썸네일 URL
+
     private BrandDTO brandDTO; //브랜드 이미지
 
     private HotelDTO hotelDTO; //호텔 이미지

@@ -9,7 +9,7 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-    <h1 class="text-center mt-5">문의사항 목록</h1>
+    <h1 class="text-center mb-3 mt-5">문의사항 목록</h1>
     <div sec:authorize="hasAnyAuthority('USER')" class="row mt-3">
         <div class="col text-end">
             <button type="button" onclick="location.href='/qna/qnaRegister'" class="btn btn-dark">등록</button>

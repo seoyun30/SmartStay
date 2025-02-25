@@ -13,7 +13,7 @@
     <form action="/brand/brandModify" method="post" th:object="${brandDTO}" enctype="multipart/form-data">
 
         <div class="row">
-            <div class="col-8 offset-2">
+            <div class="col-6 offset-3">
                 <input type="hidden" name="brand_num" th:value="${brandDTO.brand_num}">
                 <div class="row">
                     <div class="col-12">
@@ -55,7 +55,7 @@
                                         대표 이미지<br>
                                         <th:block th:each="img : ${brandDTO.imageDTOList}">
                                             <th:block th:if="${img.repimg_yn == 'Y'}">
-                                                <img th:src="${img.image_url}" alt="Main Image" width="250px">
+                                                <img th:src="${img.thumbnail_url}" alt="Main Image" width="250px">
                                                 <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
                                             </th:block>
                                         </th:block>
@@ -68,7 +68,7 @@
                                         <th:block th:each="img : ${brandDTO.imageDTOList}">
                                             <th:block th:unless="${img.repimg_yn == 'Y'}">
                                                 <div th:id="'image-' + ${img.image_id}">
-                                                    <img th:src="${img.image_url}" alt="Detail Image" width="200px">
+                                                    <img th:src="${img.thumbnail_url}" alt="Detail Image" width="200px">
                                                     <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
                                                 </div>
                                             </th:block>

@@ -18,7 +18,7 @@
                 <div class="row">
                     <div class="card">
                         <div class="card-body">
-                            <img th:src="${brandDTO.mainImage.image_url}" class="mb-5 img-fluid" alt="브랜드 이미지" />
+                            <img th:src="${brandDTO.mainImage.thumbnail_url}" class="mb-5 img-fluid" alt="브랜드 이미지" />
                             <h5 class="card-title">
                                 <a th:href="@{/brand/brandRead(brand_num=${brandDTO.brand_num})}" th:text="${brandDTO.brand_name}">브랜드 이름</a>
                             </h5>
@@ -39,7 +39,7 @@
                 <div class="row">
                     <div class="card">
                         <div class="card-body">
-                            <img th:src="${hotelDTO.mainImage.image_url}" class="mb-5 img-fluid" alt="호텔 이미지" />
+                            <img th:src="${hotelDTO.mainImage.thumbnail_url}" class="mb-5 img-fluid" alt="호텔 이미지" />
                             <h5 class="card-title">
                                 <a th:href="@{/hotel/hotelRead(hotel_num=${hotelDTO.hotel_num})}" th:text="${hotelDTO.hotel_name}">호텔 이름</a>
                             </h5>

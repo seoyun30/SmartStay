@@ -49,7 +49,7 @@
                             <h5 class="card-title text-center text-primary font-weight-bold">
                                 <a th:href="@{/menu/menuRead(menu_num=${menu.menu_num})}" th:text="${menu.menu_name}" class="text-decoration-none">메뉴 명</a>
                             </h5>
-                            <img th:src="${menu.mainImage.image_url}" style="height: 200px; width: 300px;" class="rounded-top" mt-2/>
+                            <img th:src="${menu.mainImage.thumbnail_url}" style="height: 200px; width: 300px;" class="rounded-top" mt-2/>
                         </div>
                     </div>
                 </div>

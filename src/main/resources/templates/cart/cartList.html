@@ -86,7 +86,7 @@
                             <th:block th:each="img: ${roomItem.imageDTOList}">
                                 <th:block th:if="${img.repimg_yn == 'Y'}">
                                     <div class="col-12 square-image">
-                                        <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
+                                        <img class="img-fluid" th:src="${img.thumbnail_url}" alt="대표 이미지">
                                     </div>
                                 </th:block>
                             </th:block>

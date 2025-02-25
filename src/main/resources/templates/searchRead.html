@@ -33,7 +33,7 @@
                                         <th:block th:if="${img.repimg_yn == 'Y'}">
                                             <div class="carousel-item active d-flex justify-content-center" data-bs-interval="5000">
                                                 <div class="col-12">
-                                                    <img width="100%" th:src="${img.image_url}" alt="대표 이미지" style="height: 600px;">
+                                                    <img width="100%" th:src="${img.thumbnail_url}" alt="대표 이미지" style="height: 600px;">
                                                 </div>
                                             </div>
                                         </th:block>
@@ -43,7 +43,7 @@
                                         <th:block th:unless="${img.repimg_yn == 'Y'}">
                                             <div class="carousel-item" data-bs-interval="5000">
                                                 <div class="col-12">
-                                                    <img width="100%" th:src="${img.image_url}" alt="상세 이미지" style="height: 600px;">
+                                                    <img width="100%" th:src="${img.thumbnail_url}" alt="상세 이미지" style="height: 600px;">
                                                 </div>
                                             </div>
                                         </th:block>
@@ -98,7 +98,7 @@
             <div class="card shadow-sm">
                 <div class="row g-0">
                     <div class="col-md-4 position-relative">
-                        <img th:src="${room.mainImage != null and room.mainImage.image_url != null ? room.mainImage.image_url : '/assets/img/room.jpg'}"
+                        <img th:src="${room.mainImage != null and room.mainImage.thumbnail_url != null ? room.mainImage.thumbnail_url : '/assets/img/room.jpg'}"
                              class="img-fluid rounded-start"
                              alt="룸 대표 이미지"
                              style="height: 260px; object-fit: cover;">
