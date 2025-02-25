@@ -87,7 +87,7 @@
                     <div class="row g-0">
                         <div class="col-md-1 align-self-center">
                             <input type="checkbox" class="btn-check" name="roomChkBox" th:value="${roomItem.roomitem_num}" th:id="'roomCheck-' + ${iterStat.index}" autocomplete="off">
-                            <label class="btn btn-outline-secondary" th:for="'roomCheck-' + ${iterStat.index}"><i class="bi bi-check-lg"></i></label><br>
+                            <label class="btn btn-outline-danger" th:for="'roomCheck-' + ${iterStat.index}"><i class="bi bi-check-lg"></i></label><br>
                         </div>
 
                         <div class="col-md-2 align-self-center">
@@ -186,11 +186,12 @@
                     <div class="row g-0">
                         <div class="col-md-1 align-self-center">
                             <input type="checkbox" class="btn-check" name="serviceChkBox" th:value="${orderItem.service_num}" th:id="'serviceCheck-' + ${iterStat.index}" autocomplete="off">
-                            <label class="btn btn-outline-secondary" th:for="'serviceCheck-' + ${iterStat.index}"><i class="bi bi-check-lg"></i></label><br>
+                            <label class="btn btn-outline-danger" th:for="'serviceCheck-' + ${iterStat.index}"><i class="bi bi-check-lg"></i></label><br>
                         </div>
 
                         <div class="col-md-11 align-self-center">
                             <div class="card-body roomServiceInfo">
+
                                 <h4 class="mb-3 fw-bold">룸케어 서비스</h4>
                                 <th:block th:each="careItem : ${orderItem.careItemDTOList}">
                                     <div class="row mb-3">
@@ -279,50 +280,83 @@
 
     </aside>
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- 룸예약 수정 모달 -->
+    <div class="modal fade" id="roomModal" tabindex="-1" aria-labelledby="roomModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title fw-bold">호텔 매장 이름 <span class="fs-4 fw-bold"> 룸 이름 / 룸 타입</span></h3>
+                    <h3 class="modal-title roomHotel fw-bold">호텔 매장 이름 <span class="fs-4 roomModalRoom fw-bold"> 룸 이름 / 룸 타입</span></h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row mb-3">
-                        <input type="hidden" class="roomItem_num" name="roomItem_num">
-                        <input type="hidden" class="room_num" name="room_num">
+                        <input type="hidden" class="modalRoomItem_num" name="roomItem_num">
+                        <input type="hidden" class="modalRoom_num" name="room_num">
                         <div class="col">
                             <span class="fs-6 text-secondary">체크인</span> <br>
-                            <input class="in_date" type="datetime-local" name="in_date">
+                            <input class="modalIn_date" type="datetime-local" name="in_date">
                         </div>
                         <div class="col">
                             <span class="fs-6 text-secondary">체크아웃</span> <br>
-                            <input class="out_date" type="datetime-local" name="out_date">
+                            <input class="modalOut_date" type="datetime-local" name="out_date">
                         </div>
                     </div>
 
                     <span class="fs-6 maxCount">최대 1명 예약 가능</span>
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">예약 인원</span>
-                        <input type="number" class="form-control count" name="count" min="1"
+                        <input type="number" class="form-control modalCount" name="count" min="1"
                                placeholder="예약 인원 수를 입력하세요.">
                     </div>
 
                     <div class="mb-3">
                         <label for="exampleFormControlTextarea1" class="form-label">요청사항</label>
-                        <textarea class="form-control reserve_request" name="reserve_request" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        <textarea class="form-control modalReserve_request" name="reserve_request" id="exampleFormControlTextarea1" rows="3"></textarea>
                     </div>
 
                     <div class="text-end mb-3">
-                        <span>숙박/1박당 </span> <input type="hidden" class="day" name="day">
-                        <span class="fs-5 fw-bold price">10000</span>
+                        <span>숙박/1박당 </span> <input type="hidden" class="modalDay" name="day">
+                        <span class="fs-5 fw-bold modalPrice">10000</span>
                         <span>원</span>
-                        <h3 class="fw-bold">총 금액 <span class="text-danger totalPrice">10000</span>원</h3>
+                        <h3 class="fw-bold">총 금액 <span class="text-danger roomTotalPrice">10000</span>원</h3>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                     <button type="button" class="btn btn-primary roomReserveModifyBtn">수정</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 룸서비스 수정 모달 -->
+    <div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title serviceHotel fw-bold">호텔 매장 이름 <span class="fs-4 serviceRoom fw-bold"> 룸 이름 / 룸 타입</span></h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="mb-3 fw-bold">룸케어 서비스</h4>
+                    <div class="mb-3 careService"></div>
+
+                    <h4 class="mb-3 fw-bold">주문 메뉴</h4>
+                    <div class="mb-3 menuService"></div>
+
+                    <div class="mb-3">
+                        <label for="exampleFormControlTextarea2" class="form-label">요청사항</label>
+                        <textarea class="form-control modalMenu_request" name="reserve_request" id="exampleFormControlTextarea2" rows="3"></textarea>
+                    </div>
+
+                    <div class="text-end mb-3">
+                        <h3 class="fw-bold">총 금액 <span class="text-danger serviceTotalPrice">0</span>원</h3>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary roomServiceModifyBtn">수정</button>
                 </div>
             </div>
         </div>
@@ -450,7 +484,7 @@
             })
         })
 
-        // 예약 정보 클릭 시 모달 창에 데이터 채우기
+        //룸예약 모달창 표시
         $(".reserveinfo").on("click", function () {
             // 현재 클릭된 요소에서 필요한 데이터 가져오기
             let roomItemNumber = $(this).find(".roomItemNumber").val();
@@ -483,25 +517,121 @@
             let totalPrice = roomPrice * reserveDay;
 
             // 모달 창에 데이터 삽입
-            $(".modal input.roomItem_num").val(roomItemNumber); //룸예약 번호
-            $(".modal input.room_num").val(roomNumber); //룸 번호
-            $(".modal .modal-title").html(hotelName + ' <span class="fs-4 fw-bold">' + roomInfoText + '</span>');  // 호텔 매장 이름 + 룸 정보
-            $(".modal input.in_date").val(checkInDate);  // 체크인 날짜
-            $(".modal input.out_date").val(checkOutDate); // 체크아웃 날짜
-            $(".modal textarea.reserve_request").val(requestContent); // 요청사항
-            $(".modal .day").val(reserveDay); // 숙박일
-            $(".modal .price").text(roomPrice); // 1박당 가격
-            $(".modal .totalPrice").text(totalPrice); // 총 금액
-
-            // 최대 예약 가능 인원 반영
-            $(".modal .maxCount").text("최대 " + maxPeople + "명 예약 가능");
-            $(".modal input.count").attr("max", maxPeople).val(reservedPeople); // 예약 인원 설정
+            $("#roomModal input.modalRoomItem_num").val(roomItemNumber);
+            $("#roomModal input.modalRoom_num").val(roomNumber);
+            $("#roomModal .roomHotel").html(hotelName + ' <span class="fs-4 fw-bold">' + roomInfoText + '</span>');
+            $("#roomModal input.modalIn_date").val(checkInDate);
+            $("#roomModal input.modalOut_date").val(checkOutDate);
+            $("#roomModal textarea.modalReserve_request").val(requestContent);
+            $("#roomModal input.modalDay").val(reserveDay);
+            $("#roomModal .modalPrice").text(roomPrice);
+            $("#roomModal .roomTotalPrice").text(totalPrice);
+            $("#roomModal .maxCount").text("최대 " + maxPeople + "명 예약 가능");
+            $("#roomModal input.modalCount").attr("max", maxPeople).val(reservedPeople);
 
             // 모달 창 띄우기
-            $("#exampleModal").modal("show");
+            $("#roomModal").modal("show");
 
             // 모달이 열린 후 setMinDateTime 실행
             setMinDateTime()
+        });
+
+        //룸서비스 모달창 표시
+        $(".roomServiceInfo").on("click", function () {
+            // 해당 `.roomServiceInfo` 요소에서 필요한 데이터 가져오기
+            let hotelName = $(this).closest(".p-3").prev(".p-3").find(".h4.fw-bold").text().trim();
+            let roomName = $(this).closest(".p-3").find(".roomName").text().trim();
+            let serviceNum = $(this).closest(".p-3").find(".serviceRemoveBtn").val();
+
+            // 룸 정보 설정
+            $("#serviceModal .serviceHotel").text(hotelName);
+            $("#serviceModal .serviceRoom").text(roomName);
+
+            // 기존 모달 데이터 초기화
+            $("#serviceModal .careService").empty();
+            $("#serviceModal .menuService").empty();
+            $("#serviceModal .modalMenu_request").val("").closest(".mb-3").show();
+            $("#serviceModal h4:contains('룸케어 서비스')").show();
+            $("#serviceModal h4:contains('주문 메뉴')").show();
+
+            //룸케어 서비스 추가
+            let careItems = $(this).find(".careitem_num");
+            if (careItems.length > 0) {
+                careItems.each(function () {
+                    let careName = $(this).siblings("p:first").text();
+                    let careCount = $(this).siblings(".care_count").text();
+                    let carePrice = $(this).siblings(".care_price").text();
+                    let careImage =  $(this).closest(".col-md-10").prev(".col-md-2").find("img").attr("src"); // 대표 이미지 가져오기
+
+                    let careHtml = `
+                    <div class="row mb-3">
+                        <div class="col-md-2 align-self-center">
+                         <button value="${serviceNum}" class="btn btn-outline-dark btn-sm careRemoveBtn" aria-label="Close">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                        <div class="col-md-3 align-self-center">
+                            ${careImage ? `<img src="${careImage}" class="img-fluid rounded" alt="룸케어 이미지">` : ""}
+                        </div>
+                        <div class="col-md-7 align-self-center">
+                            <p class="h5 mb-1">${careName} | ${carePrice}</p>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">수량</span>
+                                <input type="number" class="form-control modalCare_count" value="${parseInt(careCount)}">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    $("#serviceModal .careService").append(careHtml);
+                });
+            } else {
+                $("#serviceModal h4:contains('룸케어 서비스')").hide();
+            }
+
+            //주문 메뉴 추가
+            let menuItems = $(this).find(".menuitem_num");
+            if (menuItems.length > 0) {
+                menuItems.each(function () {
+                    let menuName = $(this).siblings("p:first").text();
+                    let menuCount = $(this).siblings(".menu_count").text();
+                    let menuPrice = $(this).siblings(".menu_price").text();
+                    let menuImage =  $(this).closest(".col-md-10").prev(".col-md-2").find("img").attr("src"); // 대표 이미지 가져오기
+
+                    let menuHtml = `
+                    <div class="row">
+                        <div class="col-md-2 align-self-center">
+                            <button value="${serviceNum}" class="btn btn-outline-dark btn-sm menuRemoveBtn" aria-label="Close">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                        <div class="col-md-3 align-self-center">
+                            ${menuImage ? `<img src="${menuImage}" class="img-fluid rounded" alt="메뉴 이미지">` : ""}
+                        </div>
+                        <div class="col-md-7 align-self-center">
+                            <p class="h5 mb-1">${menuName} | ${menuPrice}</p>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">수량</span>
+                                <input type="number" class="form-control modalMenu_count" value="${parseInt(menuCount)}">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    $("#serviceModal .menuService").append(menuHtml);
+                });
+            } else {
+                $("#serviceModal h4:contains('주문 메뉴')").hide();
+            }
+
+            //요청사항 설정
+            let menuRequest = $(this).closest(".p-3").find(".menu_request").text().trim();
+            if (menuRequest !== "요청사항 : ") {
+                $("#serviceModal .modalMenu_request").val(menuRequest.replace("요청사항 : ", ""));
+            } else {
+                $("#serviceModal .modalMenu_request").closest(".mb-3").hide();
+            }
+
+            //모달 창 띄우기
+            $("#serviceModal").modal("show");
         });
 
         function setMinDateTime() {

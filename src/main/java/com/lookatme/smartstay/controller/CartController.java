@@ -1,9 +1,10 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.dto.CareItemDTO;
+import com.lookatme.smartstay.dto.MenuItemDTO;
 import com.lookatme.smartstay.dto.OrderItemDTO;
 import com.lookatme.smartstay.dto.RoomItemDTO;
-import com.lookatme.smartstay.service.CartService;
-import com.lookatme.smartstay.service.RoomItemService;
+import com.lookatme.smartstay.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,6 +26,9 @@ import java.util.List;
 public class CartController {
     private final CartService cartService;
     private final RoomItemService roomItemService;
+    private final CareItemService careItemService;
+    private final MenuItemService menuItemService;
+    private final OrderItemService orderItemService;
 
     //룸예약 장바구니 등록
     @PostMapping("/cartRoomReserveRegister")
@@ -162,6 +166,75 @@ public class CartController {
         cartService.deleteCartOrderItem(service_num);
 
         return new ResponseEntity<Long>(service_num, HttpStatus.OK);
+    }
+
+    //케어아이템 삭제
+    @DeleteMapping("/careItemDelete/{careitem_num}")
+    public ResponseEntity careItemDelete (@PathVariable("careitem_num") Long careitem_num,
+                                                  Principal principal) {
+
+        if (!careItemService.validateCareItem(careitem_num, principal.getName())) {
+            return new ResponseEntity<String>("수정권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        careItemService.deleteCareItem(careitem_num);
+
+        return new ResponseEntity<Long>(careitem_num, HttpStatus.OK);
+    }
+
+    //메뉴아이템 삭제
+    @DeleteMapping("/menuItemDelete/{menuitem_num}")
+    public ResponseEntity menuItemDelete (@PathVariable("menuitem_num") Long menuitem_num,
+                                          Principal principal) {
+
+        if (!menuItemService.validateMenuItem(menuitem_num, principal.getName())) {
+            return new ResponseEntity<String>("수정권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        menuItemService.deleteMenuItem(menuitem_num);
+
+        return new ResponseEntity<Long>(menuitem_num, HttpStatus.OK);
+    }
+
+    //룸서비스 수정
+    @PostMapping("/cartOrderReserveModify")
+    public ResponseEntity cartOrderReserveModify (OrderItemDTO orderItemDTO, CareItemDTO careItemDTO,
+                                                  MenuItemDTO menuItemDTO, Principal principal) {
+
+        if (!cartService.validateCartOrderItem(orderItemDTO.getService_num(), principal.getName())) {
+            return new ResponseEntity<String>("수정권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        orderItemService.modifyOrderItem(orderItemDTO, careItemDTO, menuItemDTO);
+
+        return new ResponseEntity<String>("장바구니 정보가 수정되었습니다.", HttpStatus.OK);
+    }
+
+    //케어아이템 수정
+    @PostMapping("/careItemModify")
+    public ResponseEntity careItemModify (CareItemDTO careItemDTO, Principal principal) {
+
+        if (!careItemService.validateCareItem(careItemDTO.getCareitem_num(), principal.getName())) {
+            return new ResponseEntity<String>("수정권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        //수량 수정
+        careItemService.modifyCareItemCount(careItemDTO);
+
+        return new ResponseEntity<String>("수량이 수정되었습니다.", HttpStatus.OK);
+    }
+
+    //메뉴아이템 수정
+    @PostMapping("/menuItemModify")
+    public ResponseEntity menuItemModify (MenuItemDTO menuItemDTO, Principal principal) {
+
+        if (!menuItemService.validateMenuItem(menuItemDTO.getMenuitem_num(), principal.getName())) {
+            return new ResponseEntity<String>("수정권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        menuItemService.modifyMenuItemCount(menuItemDTO);
+
+        return new ResponseEntity<String>("수량이 수정되었습니다.", HttpStatus.OK);
     }
 
 }
