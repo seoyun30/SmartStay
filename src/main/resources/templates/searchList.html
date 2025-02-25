@@ -45,7 +45,7 @@
                                     <h5 class="card-title text-center text-primary font-weight-bold">
                                         <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none">호텔 이름</a>
                                     </h5>
-                                    <img th:src="${hotel.mainImage.image_url}" style="height: 200px; width: 300px;" class="rounded-top mt-2"/>
+                                    <img th:src="${hotel.mainImage.thumbnail_url}" style="height: 200px; width: 300px;" class="rounded-top mt-2"/>
                                     <div class="mt-1">
                                         <span class="font-weight-bold text-secondary">주소 </span>
                                         <span class="text-dark" th:text="${hotel.address}">주소</span><br>

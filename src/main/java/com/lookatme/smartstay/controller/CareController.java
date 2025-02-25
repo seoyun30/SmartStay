@@ -49,6 +49,7 @@ public class CareController {
         }
         CareDTO careDTO = new CareDTO();
         careDTO.setHotelDTO(hotelDTO);
+        careDTO.setCare_price(0L);
         model.addAttribute("careDTO", careDTO);
 
         return "care/careRegister";

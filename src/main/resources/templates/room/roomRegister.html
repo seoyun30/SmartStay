@@ -61,8 +61,8 @@
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="room_bed" class="form-label">룸 인원수</label>
-                            <input type="number" min="2" class="form-control" th:field="*{room_bed}" required id="room_bed">
+                            <label for="room_bed" class="form-label">최대 인원</label>
+                            <input type="number" min="2" class="form-control" th:field="*{room_bed}" value="2" id="room_bed">
                             <p th:if="${#fields.hasErrors('room_bed')}" th:errors="*{room_bed}" class="fieldError"></p>
                         </div>
                     </div>

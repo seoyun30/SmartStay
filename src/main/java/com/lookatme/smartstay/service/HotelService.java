@@ -126,7 +126,11 @@ public class HotelService {
         hotelDTO.setLowestPrice(lowestPrice);
 
         List<Image> imageList = imageService.findImagesByTarget("hotel", hotel.getHotel_num());
-        List<ImageDTO> imageDTOList = imageList.stream().map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+        List<ImageDTO> imageDTOList = imageList.stream().map(image -> {ImageDTO imageDTO = modelMapper.map(image, ImageDTO.class);
+        imageDTO.setThumbnail_url(image.getThumbnail_url());
+        return imageDTO;
+        }).collect(Collectors.toList());
+
         hotelDTO.setImageDTOList(imageDTOList);
 
         ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());

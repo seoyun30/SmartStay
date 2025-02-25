@@ -16,7 +16,7 @@
                 <div class="row">
                     <input type="hidden" th:field="*{care_num}">
                     <div class="col-12">
-                        <div class="mb-3 text-center">
+                        <div class="mb-3 mt-5 text-center">
                             <h2 th:text="${careDTO.hotelDTO.hotel_name}"></h2>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                                     이미지<br>
                                     <th:block th:each="img : ${careDTO.imageDTOList}">
                                         <th:block th:if="${img.repimg_yn == 'Y'}">
-                                            <img th:src="${img.image_url}" alt="Main Image" width="250px">
+                                            <img th:src="${img.thumbnail_url}" alt="Main Image" width="250px">
                                             <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
                                         </th:block>
                                     </th:block>

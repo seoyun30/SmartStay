@@ -59,7 +59,7 @@
                 <div th:each="hotel : ${list}" class="col">
                     <div class="card h-100 shadow-sm">
                         <div>
-                            <img th:src="${hotel.mainImage.image_url}" style="height: 200px; object-fit: cover;" alt="호텔 이미지" class="card-img-top img-fluid rounded-top" />
+                            <img th:src="${hotel.mainImage.thumbnail_url}" style="height: 200px; object-fit: cover;" alt="호텔 이미지" class="card-img-top img-fluid rounded-top" />
                         </div>
                         <div class="card-body text-center d-flex flex-column">
                             <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none text-primary fw-bold"></a>
@@ -137,7 +137,7 @@
                                     card.innerHTML = `
                             <div class="card shadow-sm">
                                 <div class="image-container">
-                                    <img src="${hotel.mainImage ? hotel.mainImage.image_url : '/assets/img/default-hotel.jpg'}"
+                                    <img src="${hotel.mainImage ? hotel.mainImage.thumbnail_url : '/assets/img/default-hotel.jpg'}"
                                          alt="호텔 이미지" class="img-fluid rounded-top" />
                                 </div>
                                 <div class="card-body text-center">

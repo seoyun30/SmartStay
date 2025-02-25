@@ -49,7 +49,7 @@
                             <h5 class="card-title text-center text-primary font-weight-bold">
                                 <a th:href="@{/care/careRead(care_num=${care.care_num})}" th:text="${care.care_name}" class="text-decoration-none">룸 케어 명</a>
                             </h5>
-                            <img th:src="${care.mainImage.image_url}" style="height: 200px; width: 300px;" class="rounded-top" mt-2/>
+                            <img th:src="${care.mainImage.thumbnail_url}" style="height: 200px; width: 300px;" class="rounded-top" mt-2/>
                         </div>
                     </div>
                 </div>

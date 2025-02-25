@@ -22,7 +22,7 @@ public class CareDTO {
     @NotBlank(message = "케어 서비스 설명을 입력해주세요.")
     private String care_detail; //케어 상세
 
-    private Long care_price; //케어 가격
+    private Long care_price = 0L; //케어 가격
 
     private HotelDTO hotelDTO; //호텔
 

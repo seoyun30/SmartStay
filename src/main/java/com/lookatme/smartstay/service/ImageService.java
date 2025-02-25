@@ -42,12 +42,17 @@ public class ImageService {
 
                 String imageName = fileUpload.FileUpload(file);
                 String originalName = file.getOriginalFilename();
-                String imageUrl = "/images/image" + imageName; // 실제 서비스 시에는 S3 URL 등으로 변경해야 함
+                String imageUrl = "/images/" + imageName;
+                String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
+
+                log.info("Image URL: {}", imageUrl);
+                log.info("Thumbnail URL: {}", thumbnailUrl);
 
                 Image image = Image.builder()
                         .image_name(imageName)
                         .origin_name(originalName)
                         .image_url(imageUrl)
+                        .thumbnail_url(thumbnailUrl)
                         .build();
 
                 // targetType에 따라 연관관계 설정
@@ -142,12 +147,14 @@ public class ImageService {
 
                 String imageName = fileUpload.FileUpload(file);
                 String originalName = file.getOriginalFilename();
-                String imageUrl = "/images/image" + imageName;
+                String imageUrl = "/images/" + imageName;
+                String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
 
                 Image image = Image.builder()
                         .image_name(imageName)
                         .origin_name(originalName)
                         .image_url(imageUrl)
+                        .thumbnail_url(thumbnailUrl)
                         .build();
 
                 switch (targetType) {

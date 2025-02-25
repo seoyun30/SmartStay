@@ -55,6 +55,7 @@ public class RoomController {
        }
        RoomDTO roomDTO = new RoomDTO();
        roomDTO.setHotelDTO(hotelDTO);
+       roomDTO.setRoom_bed(2L);
        roomDTO.setIn_time(LocalTime.of(15, 0));
        roomDTO.setOut_time(LocalTime.of(11, 0));
 

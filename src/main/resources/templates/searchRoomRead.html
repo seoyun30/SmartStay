@@ -29,7 +29,7 @@
                                         <th:block th:if="${img.repimg_yn == 'Y'}">
                                             <div class="carousel-item active d-flex justify-content-center" data-bs-interval="5000">
                                                 <div class="col-12">
-                                                    <img width="100%" th:src="${img.image_url}" alt="대표 이미지" style="height: 600px;">
+                                                    <img width="100%" th:src="${img.thumbnail_url}" alt="대표 이미지" style="height: 600px;">
                                                 </div>
                                             </div>
                                         </th:block>
@@ -39,7 +39,7 @@
                                         <th:block th:unless="${img.repimg_yn == 'Y'}">
                                             <div class="carousel-item" data-bs-interval="5000">
                                                 <div class="col-12">
-                                                    <img width="100%" th:src="${img.image_url}" alt="상세 이미지" style="height: 600px;">
+                                                    <img width="100%" th:src="${img.thumbnail_url}" alt="상세 이미지" style="height: 600px;">
                                                 </div>
                                             </div>
                                         </th:block>
