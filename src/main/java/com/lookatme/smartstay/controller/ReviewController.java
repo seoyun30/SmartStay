@@ -10,6 +10,7 @@ import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.ReviewService;
 import com.lookatme.smartstay.service.RoomReserveService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -70,41 +71,57 @@ public class ReviewController {
     public String reviewRegisterFrom(@RequestParam Long reserve_num,
                                     Principal principal, Model model) {
         log.info("입력폼 페이지 이동...");
-        //로그인 확인
-        if (principal == null) {
+
+        if (reserve_num == null) {
+            log.error("reserve_num이 제공되지 않았습니다.");
+            return "redirect:/errorPage"; //예외
+        } else if (principal == null) {
             return "redirect:/member/login";
         }
 
-        RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(reserve_num, principal.getName());
-        if (roomReserveItemDTO == null) {
-            log.error("해당 예약 정보를 찾을 수 없습니다: {}", reserve_num);
-            return "redirect:/member/myRoomReserveRead"; //룸예약 정보가 없다면 다른 페이지로 이동
-        }
+        if (!roomReserveService.validateroomResereve(reserve_num, principal.getName())) {
+            log.error("예약 회원의 이메일과 로그인 이메일이 일치하지 않습니다.");
+            return "redirect:/member/myRoomReserveRead"; //
+        };
 
-        ReviewDTO reviewDTO = new ReviewDTO();
-//        reviewDTO.setRoomReserveDTO(roomReserveItemDTO.getRoomReserveDTO());
+        RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(reserve_num, principal.getName());
+
+        log.info(roomReserveItemDTO);
+
+        //모델에 세팅한 reviewDTO와 roomReserveItemDTO를 전달
         model.addAttribute("roomReserveItemDTO", roomReserveItemDTO); //룸예약 정보
-        model.addAttribute("reviewDTO", reviewDTO );
+        model.addAttribute("reviewDTO", new ReviewDTO());
 
         return "review/reviewRegister"; // 로그인한 사용자만 볼수 있음
     }
 
     //등록 내용저장
     @PostMapping("/reviewRegister")
-    public String reviewRegisterPost(ReviewDTO reviewDTO,
-                                     Principal principal, Long reserve_num,
-                                     List<MultipartFile> multipartFileList, BindingResult bindingResult) throws Exception {
+    public String reviewRegisterPost(@Valid ReviewDTO reviewDTO,
+                                     BindingResult bindingResult,
+                                     Long reserve_num,
+                                     Principal principal,
+                                     List<MultipartFile> multipartFileList) throws Exception {
 
-        log.info("컨드롤러로 들어온 값:" + reviewDTO);
-        log.info("받아온 값 - 예약 번호: {}: " +  reserve_num);
+        log.info("리뷰 등록 :{}", reviewDTO); // reviewDTO상태 확인
+        log.info("principal: {}", principal);
 
+        if (bindingResult.hasErrors()) {
+            log.error("Binding errors: {}", bindingResult.getAllErrors());
+            return "review/reviewRegister"; //오류가 있을 경우 등록페이지로 이동
+        }
+
+        if (!roomReserveService.validateroomResereve(reserve_num, principal.getName())) {
+            log.error("예약 회원의 이메일과 로그인 이메일이 일치하지 앟습니다.");
+            return "redirect:/member/myRoomReserveRead"; //
+        };
+
+        //리뷰 등록 처리
         try {
-            //로그인 사용자의 email 가져오기
-            reviewService.reviewRegister(reviewDTO, principal.getName(), reserve_num, multipartFileList);
+            reviewService.reviewRegister(reviewDTO, principal.getName(), multipartFileList);
             return "redirect:/review/reviewList"; //성공 시 목록 페이지
-
         } catch (Exception e) {
-            log.error("리뷰 등록 오류:{}", e.getMessage());
+            log.error("Error occurred while registering review: {}", e.getMessage());
             return "redirect:/review/register?error=true"; // 실패 시 다시 등록 페이지
         }
     }

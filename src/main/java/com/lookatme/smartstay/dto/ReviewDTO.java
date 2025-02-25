@@ -6,6 +6,7 @@ import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.RoomReserve;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -25,12 +26,15 @@ public class ReviewDTO {
     @NotBlank(message = "리뷰 내용을 적어주세요")
     private String content; //리뷰 내용
 
-    @NotBlank(message = "별점 주세요")
+    @NotBlank(message = "별점은 0.5점 부터 시작합니다")
     private String score; //별점
+
+    @NotNull
+    private Long roomreserveitem_num;
 
     private RoomReserveDTO roomReserveDTO; //룸 예약 조인
 
-    // 룸 예약 가져오는
+    // 룸 예약 설정
     public ReviewDTO setRoomReserveDTO(RoomReserveDTO roomReserveDTO) {
         this.roomReserveDTO = roomReserveDTO;
         return this;
@@ -38,9 +42,14 @@ public class ReviewDTO {
 
     private MemberDTO memberDTO; //회원 조인
 
+//    public ReviewDTO setMemberDTO(MemberDTO memberDTO) {
+//        this.memberDTO = memberDTO;
+//        return this;
+//    }
+
     private HotelDTO hotelDTO; //호텔 조인
 
-    // 호텔 가져오는
+    // 호텔 설정
     public ReviewDTO setHotelDTO(HotelDTO hotelDTO) {
         this.hotelDTO = hotelDTO;
         return this;
