@@ -1,6 +1,6 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.constant.Power;
+import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
@@ -9,9 +9,12 @@ import com.lookatme.smartstay.service.BrandService;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -249,7 +252,7 @@ public class LoginController {
         return "redirect:/adLogin";
     }*/
 
-   @GetMapping("/login") //로그인페이지(유저)
+   @GetMapping("/login") //로그인페이지
     public String loginGet(MemberDTO memberDTO, Principal principal){
 
         if(principal != null){
@@ -259,6 +262,17 @@ public class LoginController {
 
         return "member/login";
    }
+
+    @GetMapping("/loginPW") //로그인페이지(임시비밀번호 발급시)
+    public String loginPW(MemberDTO memberDTO, Principal principal){
+
+        if(principal != null){
+            log.info("=========================");
+
+        }
+
+        return "member/loginPW";
+    }
 
 /*   @PostMapping("/login") //로그인
     public String loginPost(MemberDTO memberDTO, Principal principal){
@@ -277,6 +291,72 @@ public class LoginController {
         return "redirect:/login";
    }*/
 
+
+    @GetMapping("/changePW") // 임시비밀번호 변경
+    public String changePWGet(Principal principal, Model model){
+
+        MemberDTO memberDTO = memberService.findbyEmail(principal.getName());
+
+        log.info("memberDTO" + memberDTO);
+
+        if(memberDTO == null){
+            return "redirect:/member/loginPW";
+        }
+
+        model.addAttribute("memberDTO", memberDTO);
+
+        return "member/changePW";
+    }
+
+
+
+    @PostMapping("/changePW") // 마이페이지 정보수정
+    public String changePWPost(@ModelAttribute MemberDTO memberDTO, Model model) {
+
+        log.info("정보업데이트" + memberDTO);
+        log.info("정보업데이트" + memberDTO.getPassword().length());
+
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        if (!passwordEncoder.matches(memberDTO.getPassword(), memberDTO.getPassword())) {
+            log.info("기존 비밀번호가 일치하지 않음");
+            model.addAttribute("msg", "기존 비밀번호가 올바르지 않습니다.");
+            model.addAttribute("memberDTO", memberDTO);
+            return "member/changePW";
+        }
+
+        // 새 비밀번호 유효성 검사
+        if (memberDTO.getPassword().length() < 8 || memberDTO.getPassword().length() > 20) {
+            model.addAttribute("msg", "비밀번호는 8 ~ 20 글자로 입력해주세요.");
+            model.addAttribute("memberDTO", memberDTO);
+            return "member/changePW";
+        }
+
+        if (!memberDTO.getPassword().equals(memberDTO.getRepassword())) {
+            model.addAttribute("msg", "비밀번호와 비밀번호 재확인이 일치하지 않습니다.");
+            model.addAttribute("memberDTO", memberDTO);
+            return "member/changePW"; //
+        }
+
+            // 비밀번호 업데이트
+            try {
+                memberDTO.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
+                memberService.updateMember(memberDTO);
+            } catch (Exception e) {
+                model.addAttribute("msg", "비밀번호 변경 중 오류가 발생했습니다.");
+                model.addAttribute("memberDTO", memberDTO);
+                return "member/changePW";
+            }
+
+            String redirectUrl = "/"; // 기본값 (USER는 메인 페이지로 이동)
+            if (memberDTO.getRole() == Role.SUPERADMIN || memberDTO.getRole() == Role.CHIEF || memberDTO.getRole() == Role.MANAGER) {
+                redirectUrl = "/adMain"; // 관리자 계열은 /adMain으로 이동
+            }
+
+            return "redirect:" + redirectUrl;
+
+    }
 
 
    @GetMapping("/findID") //아이디찾기(유저)
@@ -321,17 +401,6 @@ public class LoginController {
            model.addAttribute("msg", "예기치 않은 오류가 발생했습니다.");
            return "member/findPW";
        }
-    }
-
-
-    @GetMapping("/changePW") //비밀번호 재설정(유저)
-    public String changePWGet(){
-        return "member/changePW";
-    }
-
-    @PostMapping("/changePW") //비밀번호 재설정(유저)
-    public String changePW(MemberDTO memberDTO){
-        return "member/changePW";
     }
 
 
