@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 @Log4j2
-
 public class CareService {
 
     private final CareRepository careRepository;

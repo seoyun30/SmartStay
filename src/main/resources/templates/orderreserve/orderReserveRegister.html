@@ -41,7 +41,7 @@
             <div class="col-9 mt-3">
                 <div class="card p-3 mt-3 mx-auto">
                     <input type="hidden" class="hotel_num" name="hotel_num" th:value="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_num}">
-                    <input type="text" class="roomreserveitem_num" name="roomreserveitem_num" th:value="${roomReserveItemDTO.roomreserveitem_num}">
+                    <input type="hidden" class="roomreserveitem_num" name="roomreserveitem_num" th:value="${roomReserveItemDTO.roomreserveitem_num}">
 
                     <h2 class="text-center fw-bold my-3" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name} + ' 룸서비스 주문'">룸 서비스 목록</h2>
 
@@ -249,7 +249,6 @@
             })
 
         }
-
         let showAllMenu = function (page) {
             str4 = "";
             str5 = "";
@@ -340,8 +339,6 @@
             })
 
         }
-
-
         let showKoreanMenu = function (page) {
             str4 = "";
             str5 = "";
@@ -1059,6 +1056,11 @@
 
         // 🛒 장바구니 추가 AJAX 요청
         $(document).on("click", ".cartBtn", function () {
+            let request = $("#floatingTextarea").val();
+            if (request === "") {
+                request = "요청 사항 없음";
+            }
+
             if (!roomreserveitem_num) {
                 alert("예약된 룸 정보가 없습니다.");
                 return;
@@ -1066,7 +1068,7 @@
 
             let orderItemDTO = {
                 'roomreserveitem_num': roomreserveitem_num,
-                'menu_request': $("#floatingTextarea").val(),
+                'menu_request': request,
                 'menuItemDTOList': [],
                 'careItemDTOList': []
             };
