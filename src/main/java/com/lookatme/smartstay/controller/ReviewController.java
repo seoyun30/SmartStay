@@ -82,7 +82,7 @@ public class ReviewController {
         }
 
         ReviewDTO reviewDTO = new ReviewDTO();
-        reviewDTO.setRoomReserveDTO(roomReserveItemDTO.getRoomReserveDTO());
+//        reviewDTO.setRoomReserveDTO(roomReserveItemDTO.getRoomReserveDTO());
         model.addAttribute("roomReserveItemDTO", roomReserveItemDTO); //룸예약 정보
         model.addAttribute("reviewDTO", reviewDTO );
 
@@ -96,15 +96,11 @@ public class ReviewController {
                                      List<MultipartFile> multipartFileList, BindingResult bindingResult) throws Exception {
 
         log.info("컨드롤러로 들어온 값:" + reviewDTO);
-        log.info("받아온 값 - 예약 번호: {}, 호텔 번호:{}" +  reserve_num);
+        log.info("받아온 값 - 예약 번호: {}: " +  reserve_num);
 
         try {
             //로그인 사용자의 email 가져오기
-            String email = principal.getName();
-            RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(reserve_num, principal.getName());
             reviewService.reviewRegister(reviewDTO, principal.getName(), reserve_num, multipartFileList);
-
-
             return "redirect:/review/reviewList"; //성공 시 목록 페이지
 
         } catch (Exception e) {
