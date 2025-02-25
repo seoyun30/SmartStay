@@ -198,14 +198,15 @@ public class CartController {
 
     //룸서비스 수정
     @PostMapping("/cartOrderReserveModify")
-    public ResponseEntity cartOrderReserveModify (OrderItemDTO orderItemDTO, CareItemDTO careItemDTO,
-                                                  MenuItemDTO menuItemDTO, Principal principal) {
+    public ResponseEntity cartOrderReserveModify (OrderItemDTO orderItemDTO, Principal principal) {
+
+        log.info("orderItemDTO: " + orderItemDTO);
 
         if (!cartService.validateCartOrderItem(orderItemDTO.getService_num(), principal.getName())) {
             return new ResponseEntity<String>("수정권한이 없습니다.", HttpStatus.FORBIDDEN);
         }
 
-        orderItemService.modifyOrderItem(orderItemDTO, careItemDTO, menuItemDTO);
+        orderItemService.modifyOrderItem(orderItemDTO);
 
         return new ResponseEntity<String>("장바구니 정보가 수정되었습니다.", HttpStatus.OK);
     }
