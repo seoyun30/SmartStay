@@ -1,7 +1,5 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.CareItemDTO;
-import com.lookatme.smartstay.dto.MenuItemDTO;
 import com.lookatme.smartstay.dto.OrderItemDTO;
 import com.lookatme.smartstay.dto.RoomItemDTO;
 import com.lookatme.smartstay.service.*;
@@ -198,7 +196,7 @@ public class CartController {
 
     //룸서비스 수정
     @PostMapping("/cartOrderReserveModify")
-    public ResponseEntity cartOrderReserveModify (OrderItemDTO orderItemDTO, Principal principal) {
+    public ResponseEntity cartOrderReserveModify (@RequestBody OrderItemDTO orderItemDTO, Principal principal) {
 
         log.info("orderItemDTO: " + orderItemDTO);
 
@@ -208,34 +206,7 @@ public class CartController {
 
         orderItemService.modifyOrderItem(orderItemDTO);
 
-        return new ResponseEntity<String>("장바구니 정보가 수정되었습니다.", HttpStatus.OK);
-    }
-
-    //케어아이템 수정
-    @PostMapping("/careItemModify")
-    public ResponseEntity careItemModify (CareItemDTO careItemDTO, Principal principal) {
-
-        if (!careItemService.validateCareItem(careItemDTO.getCareitem_num(), principal.getName())) {
-            return new ResponseEntity<String>("수정권한이 없습니다.", HttpStatus.FORBIDDEN);
-        }
-
-        //수량 수정
-        careItemService.modifyCareItemCount(careItemDTO);
-
-        return new ResponseEntity<String>("수량이 수정되었습니다.", HttpStatus.OK);
-    }
-
-    //메뉴아이템 수정
-    @PostMapping("/menuItemModify")
-    public ResponseEntity menuItemModify (MenuItemDTO menuItemDTO, Principal principal) {
-
-        if (!menuItemService.validateMenuItem(menuItemDTO.getMenuitem_num(), principal.getName())) {
-            return new ResponseEntity<String>("수정권한이 없습니다.", HttpStatus.FORBIDDEN);
-        }
-
-        menuItemService.modifyMenuItemCount(menuItemDTO);
-
-        return new ResponseEntity<String>("수량이 수정되었습니다.", HttpStatus.OK);
+        return new ResponseEntity<String>("주문 정보가 수정되었습니다.", HttpStatus.OK);
     }
 
 }
