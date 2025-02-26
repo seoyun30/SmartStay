@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.junit.validator.PublicClassValidator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -314,6 +315,27 @@ public class LoginController {
     }
 
 
+    @GetMapping("/changeMove")
+    public String changeMoveGet(Principal principal, Model model){
+
+        if(principal == null){
+            return "redirect:/member/loginPW";
+        }
+
+        MemberDTO memberDTO = memberService.findbyEmail(principal.getName());
+
+        model.addAttribute("memberDTO", memberDTO);
+
+        String redirectUrl = "/"; // 기본값 (USER는 메인 페이지로 이동)
+        if (memberDTO.getRole() == Role.SUPERADMIN || memberDTO.getRole() == Role.CHIEF || memberDTO.getRole() == Role.MANAGER) {
+            redirectUrl = "/adMain"; // 관리자 계열은 /adMain으로 이동
+        }
+
+        return "redirect:" + redirectUrl;
+
+    }
+
+
 
     @PostMapping("/changePW") // 마이페이지 정보수정
     public String changePWPost(@Valid NewPasswordDTO newPasswordDTO, BindingResult bindingResult, Model model, Principal principal) {
@@ -333,7 +355,7 @@ public class LoginController {
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-        if (!passwordEncoder.matches(newPasswordDTO.getPassword(), memberDTO.getPassword()    )) {
+        if (!passwordEncoder.matches(newPasswordDTO.getPassword(), memberDTO.getPassword())) {
             log.info("기존 비밀번호가 일치하지 않음");
             model.addAttribute("msg", "기존 비밀번호가 올바르지 않습니다.");
             return "member/changePW";
