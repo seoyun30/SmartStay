@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import okhttp3.Request;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -82,8 +83,18 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             System.out.println(url);
         }
 
-        response.sendRedirect(url);
+//        response.sendRedirect(url);
 //        response.sendRedirect("/"); //시작페이지로 이동
 
+
+
+        String referer = request.getHeader("referer");
+
+        if (referer != null && referer.contains("/member/loginPW")) {
+            url = "/member/changePW";
+        }
+            response.sendRedirect(url);
     }
+
 }
+

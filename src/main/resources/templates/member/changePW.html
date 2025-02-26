@@ -2,13 +2,112 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/mainlayout}">
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>비밀번호 변경</title>
 
 </head>
 <body>
+
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mt-5 justify-content-center">
+            <div class="col-4">
+                <div class="text-center">
+                    <h1>비밀번호 변경</h1>
+                </div>
+
+                <!-- 오류 메시지 출력 -->
+                <div th:if="${msg}" class="alert alert-danger">
+                    <span th:text="${msg}"></span>
+                </div>
+
+                <form class="row g-3 mt-3" action="/member/changePW" method="post" th:object="${newPasswordDTO}" onsubmit="return test()">
+
+                    <div class="mb-1">
+                        <label for="password" class="form-label">기존 비밀번호</label>
+                        <input class="form-control" type="password" id="password" th:field="*{password}">
+                        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError"></p>
+
+                    </div>
+
+                    <div class="mb-1">
+                        <label for="newPassword" class="form-label">새로운 비밀번호</label>
+                        <input class="form-control" type="password" id="newPassword" th:field="*{newPassword}">
+                        <p th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}" class="fieldError"></p>
+
+                    </div>
+
+                    <div class="mb-1">
+                        <label for="rePassword" class="form-label">비밀번호 재확인</label>
+                        <input class="form-control" type="password" id="rePassword" th:field="*{rePassword}">
+                        <p th:if="${#fields.hasErrors('rePassword')}" th:errors="*{rePassword}" class="fieldError"></p>
+
+                    </div>
+
+                    <div class="col text-center d-flex justify-content-center gap-3 mt-4">
+                        <button type="submit" class="btn btn-primary">저장</button>
+                        <button type="button" class="btn btn-primary" onclick="location.href='/adMain'">홈</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript" layout:fragment="script">
+
+
+        $(document).ready(function () {
+            let msg = [[${msg}]]
+            let password = $("#password")
+            console.log(msg)
+            if(msg != null){
+                alert(msg)
+                password.focus();
+            }
+
+        })
+
+
+        function test(){
+            var password = document.getElementById('password');
+            var newPassword = document.getElementById('newPassword');
+            var rePassword = document.getElementById('rePassword');
+
+
+            if(password.value.length <= 0 ) {
+                alert("기존 비밀번호를 입력해주세요.");
+
+                newPassword.value = ""
+                rePassword.value = ""
+                password.value = ""
+                password.focus();
+                return false;
+            }
+            if(password.value.length < 8  || password.value.length > 20){
+                alert("비밀번호는 8~20자 입니다.");
+
+                newPassword.value = ""
+                rePassword.value = ""
+                password.value = ""
+                password.focus();
+                return false;
+            }
+
+            if(newPassword.value != rePassword.value) {
+                alert("새비밀번호가 일치하지 않습니다.");
+                newPassword.value = ""
+                rePassword.value = ""
+                newPassword.focus();
+                return false; // 회원가입 진행 막기
+            }
+
+            return true; // 회원가입 진행 가능
+        }
+
+    </script>
+</th:block>
+
 
 </body>
 </html>
