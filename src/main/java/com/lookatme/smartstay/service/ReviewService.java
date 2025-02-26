@@ -165,6 +165,7 @@ public class ReviewService {
             throw new IllegalArgumentException("별점은 1~5점 사이여야 하고, 0.5 단위 입력도 가능합니다.");
         }
 
+        //조인 사용방법
         // 리뷰 객체 생성 및 데이터 설정
         Review review = modelMapper.map(reviewDTO, Review.class);
 
@@ -183,7 +184,6 @@ public class ReviewService {
             imageService.saveImage(multipartFiles, "review", review.getRev_num());
         }
     }
-
 
     //리뷰 상세보기(보이는 리뷰가 있으면 모두 가능)
     public ReviewDTO reviewRead(Long rev_num) {
