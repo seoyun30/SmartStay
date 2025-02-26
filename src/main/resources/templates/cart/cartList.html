@@ -111,12 +111,18 @@
                                 <th:block th:if="${roomItem.day == 1}">
                                     <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">
                                     <input type="hidden" class="reserveDay" th:value="${roomItem.day}">
-                                    <h5 class="text-end fw-bold">1박 <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.day * roomItem.roomDTO.room_price}">10000</span>원</h5>
+                                    <h5 class="text-end fw-bold">
+                                        1박
+                                        <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.roomDTO.room_price != null ? (roomItem.day * roomItem.roomDTO.room_price) : 0}">10000</span>원
+                                    </h5>
                                 </th:block>
                                 <th:block th:unless="${roomItem.day == 1}">
                                     <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">
                                     <input type="hidden" class="reserveDay" th:value="${roomItem.day}">
-                                    <h5 class="text-end fw-bold">연박 <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.day * roomItem.roomDTO.room_price}">10000</span>원</h5>
+                                    <h5 class="text-end fw-bold">
+                                        연박
+                                        <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.roomDTO.room_price != null ? (roomItem.day * roomItem.roomDTO.room_price) : 0}">10000</span>원
+                                    </h5>
                                 </th:block>
                             </div>
                         </div>
@@ -542,6 +548,7 @@
             let hotelName = $(this).closest(".p-3").prev(".p-3").find(".h4.fw-bold").text().trim();
             let roomName = $(this).closest(".p-3").find(".roomName").text().trim();
             let serviceNum = $(this).closest(".p-3").find(".serviceRemoveBtn").val();
+            $("#serviceModal .roomServiceModifyBtn").val(serviceNum);
 
             // 룸 정보 설정
             $("#serviceModal .serviceHotel").text(hotelName);
@@ -553,6 +560,9 @@
             $("#serviceModal .modalMenu_request").val("").closest(".mb-3").show();
             $("#serviceModal h4:contains('룸케어 서비스')").show();
             $("#serviceModal h4:contains('주문 메뉴')").show();
+
+            // 총 가격 초기화
+            let totalPrice = 0;
 
             //룸케어 서비스 추가
             let careItems = $(this).find(".careitem_num");
@@ -578,12 +588,15 @@
                             <p class="h5 mb-1">${careName} | ${carePrice}</p>
                             <div class="input-group mb-3">
                                 <span class="input-group-text">수량</span>
-                                <input type="number" class="form-control modalCare_count" value="${parseInt(careCount)}">
+                                <input type="number" class="form-control modalCare_count" value="${parseInt(careCount)}" min="1" max="100">
                             </div>
                         </div>
                     </div>
                 `;
                     $("#serviceModal .careService").append(careHtml);
+
+                    totalPrice += parseInt(carePrice.replace(/[^0-9]/g, "")) * careCount;
+
                 });
             } else {
                 $("#serviceModal h4:contains('룸케어 서비스')").hide();
@@ -614,12 +627,15 @@
                             <p class="h5 mb-1">${menuName} | ${menuPrice}</p>
                             <div class="input-group mb-3">
                                 <span class="input-group-text">수량</span>
-                                <input type="number" class="form-control modalMenu_count" value="${parseInt(menuCount)}">
+                                <input type="number" class="form-control modalMenu_count" value="${parseInt(menuCount)}" min="1" max="100">
                             </div>
                         </div>
                     </div>
                 `;
                     $("#serviceModal .menuService").append(menuHtml);
+
+                    totalPrice += parseInt(menuPrice.replace(/[^0-9]/g, "")) * menuCount;
+
                 });
             } else {
                 $("#serviceModal h4:contains('주문 메뉴')").hide();
@@ -632,6 +648,8 @@
             } else {
                 $("#serviceModal .modalMenu_request").closest(".mb-3").hide();
             }
+
+            $(".serviceTotalPrice").text(totalPrice.toLocaleString());
 
             //모달 창 띄우기
             $("#serviceModal").modal("show");
@@ -671,7 +689,7 @@
             totalpriceChange();
         });
 
-        //총 가격 계산 함수
+        //룸예약 총 가격 계산 함수
         function totalpriceChange(){
 
             let in_date = $(".modal .in_date").val();
@@ -704,6 +722,68 @@
             $(".modal .totalPrice").text(totalPrice);
         }
 
+        let deletedCareItems = []; // 삭제할 룸케어 아이템 리스트
+        let deletedMenuItems = []; // 삭제할 메뉴 아이템 리스트
+
+        //룸케어 아이템 삭제 (UI에서만 숨김)
+        $("#serviceModal").on("click", ".careRemoveBtn", function () {
+            let careItemId = $(this).val();
+            deletedCareItems.push(careItemId); // 삭제 목록에 추가
+            $(this).closest(".row").hide(); // UI에서 숨김 처리
+            updateTotalPrice();
+        });
+
+        //메뉴 아이템 삭제 (UI에서만 숨김)
+        $("#serviceModal").on("click", ".menuRemoveBtn", function () {
+            let menuItemId = $(this).val();
+            deletedMenuItems.push(menuItemId); // 삭제 목록에 추가
+            $(this).closest(".row").hide(); // UI에서 숨김 처리
+            updateTotalPrice();
+        });
+
+        //룸서비스 수량 변경 감지
+        $("#serviceModal").on("input", ".modalCare_count, .modalMenu_count", function () {
+            let quantity = parseInt($(this).val(), 10);
+            if (quantity < 1 || quantity > 100) {
+                alert("주문 수량은 1 이상, 100 이하로 입력해야 합니다.");
+                $(this).val(quantity < 1 ? 1 : 100);
+            }
+
+            updateTotalPrice();
+        });
+
+        //룸서비스 총 가격 계산 함수
+        function updateTotalPrice() {
+            let totalPrice = 0;
+
+            $("#serviceModal .careService .row:visible").each(function () {
+                let carePrice = parseInt($(this).find("p.h5").text().split("|")[1].trim().replace(/[^0-9]/g, ""), 10);
+                let careCount = parseInt($(this).find(".modalCare_count").val(), 10);
+                totalPrice += carePrice * careCount;
+            });
+
+            $("#serviceModal .menuService .row:visible").each(function () {
+                let menuPrice = parseInt($(this).find("p.h5").text().split("|")[1].trim().replace(/[^0-9]/g, ""), 10);
+                let menuCount = parseInt($(this).find(".modalMenu_count").val(), 10);
+                totalPrice += menuPrice * menuCount;
+            });
+
+            $(".serviceTotalPrice").text(totalPrice.toLocaleString());
+
+            if ($("#serviceModal .careService .row").length > 0) {
+                $("#serviceModal h4:contains('룸케어 서비스')").show();
+            } else {
+                $("#serviceModal h4:contains('룸케어 서비스')").hide();
+            }
+
+            if ($("#serviceModal .menuService .row").length > 0) {
+                $("#serviceModal h4:contains('주문 메뉴')").show();
+            } else {
+                $("#serviceModal h4:contains('주문 메뉴')").hide();
+            }
+        }
+
+        //룸예약 수정
         $(".roomReserveModifyBtn").on("click", function () {
             let today = new Date();
             today.setHours(0, 0, 0, 0); // 현재 날짜 (시간 00:00:00으로 설정)
@@ -791,12 +871,13 @@
             })
         })
 
+        //룸서비스 삭제 및 수정
         $(".roomServiceModifyBtn").on("click", function () {
             let serviceNum = $("#serviceModal .roomServiceModifyBtn").val(); // 서비스 번호
             let menuRequest = $("#serviceModal .modalMenu_request").val().trim(); // 요청 사항
 
             let careItemDTOList = [];
-            $("#serviceModal .careService .row").each(function () {
+            $("#serviceModal .careService .row:visible").each(function () {
                 let careItemNum = $(this).find(".careRemoveBtn").val();
                 let careCount = parseInt($(this).find(".modalCare_count").val());
 
@@ -808,10 +889,8 @@
                 }
             });
 
-            console.log(careItemDTOList)
-
             let menuItemDTOList = [];
-            $("#serviceModal .menuService .row").each(function () {
+            $("#serviceModal .menuService .row:visible").each(function () {
                 let menuItemNum = $(this).find(".menuRemoveBtn").val();
                 let menuCount = parseInt($(this).find(".modalMenu_count").val());
 
@@ -822,8 +901,6 @@
                     });
                 }
             });
-
-            console.log(menuItemDTOList)
 
             //요청 사항이 비어 있으면 기본값 설정
             if (!menuRequest) {
@@ -838,21 +915,67 @@
                 menuItemDTOList: menuItemDTOList
             };
 
-            console.log(orderItemDTO);
+            console.log("삭제된 케어 아이템:", deletedCareItems);
+            console.log("삭제된 메뉴 아이템:", deletedMenuItems);
+            console.log("최종 전송 데이터:", orderItemDTO);
 
-            //AJAX 요청
-            $.ajax({
-                url: "/cart/cartOrderReserveModify",
-                type: "POST",
-                data: orderItemDTO,
-                success: function (response) {
-                    alert("룸 서비스 정보가 수정되었습니다.");
-                    $("#serviceModal").modal("hide");
-                    location.reload(); // 페이지 새로 고침
-                },
-                error: function (xhr) {
-                    console.error("에러 발생:", xhr.responseText);
-                    alert("주문 수정에 실패했습니다. 고객센터에 문의해주세요.");
+            let deleteRequests = [];
+
+            deletedCareItems.forEach(careItemId => {
+                deleteRequests.push(
+                    $.ajax({
+                        url: `/cart/careItemDelete/${careItemId}`,
+                        type: "DELETE",
+                    })
+                );
+            });
+
+            deletedMenuItems.forEach(menuItemId => {
+                deleteRequests.push(
+                    $.ajax({
+                        url: `/cart/menuItemDelete/${menuItemId}`,
+                        type: "DELETE",
+                    })
+                );
+            });
+
+            $.when.apply($, deleteRequests).done(function () {
+                let hasCareItems = $("#serviceModal .careService .row:visible").length > 0;
+                let hasMenuItems = $("#serviceModal .menuService .row:visible").length > 0;
+
+                // **(3) 모든 아이템이 삭제되었다면 orderItem도 삭제**
+                if (!hasCareItems && !hasMenuItems) {
+                    $.ajax({
+                        url: `/cart/cartOrderReserveDelete/${serviceNum}`,
+                        type: "DELETE",
+                        success: function () {
+                            alert("주문이 삭제되었습니다.");
+                            $("#serviceModal").modal("hide");
+                            location.reload();
+                        },
+                        error: function (xhr) {
+                            console.error("주문 삭제 오류:", xhr.responseText);
+                            alert("주문을 삭제하는 중 오류가 발생했습니다.");
+                        }
+                    });
+
+                } else {
+
+                    $.ajax({
+                        url: "/cart/cartOrderReserveModify",
+                        type: "POST",
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify(orderItemDTO),
+                        success: function () {
+                            alert("주문 정보가 수정되었습니다.");
+                            $("#serviceModal").modal("hide");
+                            location.reload();
+                        },
+                        error: function (xhr) {
+                            console.error("에러 발생:", xhr.responseText);
+                            alert("주문 수정에 실패했습니다. 고객센터에 문의해주세요.");
+                        }
+                    });
                 }
             });
         });
