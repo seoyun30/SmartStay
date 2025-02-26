@@ -37,19 +37,12 @@ public class ReviewService {
     private final RoomReserveRepository roomReserveRepository; // 호텔예약정보 필요
     private final RoomReserveItemRepository roomReserveItemRepository;
 
-
-    // 관리자 , 유저 , 호텔에서 보이는 리뷰가 다르기에 3개로 나누어 서비스 작성
+    //리뷰의 전체 조회
     //관리자 리뷰 전체 목록 (관리자 리뷰 페이지 치프, 매니저)
-    public List<ReviewDTO> adMyReviewList(Long hotel_num, String email) {
+    public List<ReviewDTO> getAllReview(Long hotel_num, String email) {
 
-//        // 로그인한 사용자 정보 확인 (예: Spring Security 사용) // 사용가능한지 확인 필요
-//        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-//         Member currentUser = memberRepository.findById(member_num)
-//                .orElseThrow(() -> new IllegalArgumentException("사용자 정보를 찾을 수 없습니다."));
-
-        // 호텔 정보 조회
-        Hotel hotel = hotelRepository.findById(hotel_num)
-                .orElseThrow(() -> new IllegalArgumentException("해당 호텔을 찾을 수 없습니다."));
+        //조회: 모든 리뷰
+        List<Review> reviewList = reviewRepository.findAll();
 
         //회원정보 확인
         Member member = memberRepository.findByEmail(email);
@@ -59,12 +52,12 @@ public class ReviewService {
 
         List<Review> reviews;
 
-        // 브랜드 관리자 또는 호텔 관리자 권한 확인
+        // 목록에서
         if (member.getRole().name().equals("CHIEF") ) {
             // 관리자(브랜드): 브랜드에 속한 모든 호텔 리뷰 조회
             reviews = reviewRepository.findByHotelorBrand(member.getBrand().getBrand_num()); // 해당 브랜드에 속한 모든 호텔의 리뷰 조회
         } else if (member.getRole().name().equals("MANAGER")) {
-            // 매니저(호텔): 해당 호텔에 대한 리뷰만 조회
+            // 매니저(호텔): 해당 호텔 리뷰만 조회
             reviews = reviewRepository.findByHotel(member.getHotel().getHotel_num()); //해당 호텔에 대한 리뷰 조회
         } else {
             throw new AccessDeniedException("리뷰를 조회할 권한이 없습니다.");
@@ -83,32 +76,33 @@ public class ReviewService {
         return reviewDTOS;
     }
 
-    //호텔 리뷰 목록(호텔 리뷰 페이지) //호텔정보
+    //호텔에 있는 리뷰 전체 조회
     public List<ReviewDTO> hotelReviewList(Long hotel_num) {
 
-        // 호텔 정보 조회
-        Hotel hotel = hotelRepository.findById(hotel_num)
-                .orElseThrow(() -> new IllegalArgumentException("해당 호텔을 찾을 수 없습니다.")); //해당하는 호텔이 없으면 리뷰를 볼수 없음
+       List<Review> reviews = reviewRepository.findAll();
 
-        //해당 호텔에 대한 리뷰 조회
-        List<Review> hotelReview = reviewRepository.findByHotel(hotel_num);  //해당 호텔 리뷰 조회
+       reviews.forEach(review -> log.info(review));
+       List<ReviewDTO> reviewDTOS = reviews.stream()
+               .map(review -> {
+                   ReviewDTO reviewDTO = modelMapper.map(review, ReviewDTO.class);
+                   HotelDTO hotelDTO = modelMapper.map(review.getHotel(), HotelDTO.class);
+                   reviewDTO.setHotelDTO(hotelDTO);
+                   reviewDTO.setImageDTOList(reviewDTO.getImageDTOList());
+                   return reviewDTO;
+               })
+               .collect(Collectors.toList());
 
-        // 리뷰가 없는 경우 빈 리스트 반환
-        if (hotelReview.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        //리뷰 리스트를 DTO로 변환
-        List<ReviewDTO> reviewDTOS = hotelReview.stream()
-                .map(review -> modelMapper.map(review, ReviewDTO.class))
-                .collect(Collectors.toList());
+//        // 리뷰가 없는 경우 빈 리스트 반환
+//        if (reviewList.isEmpty()) {
+//            return Collections.emptyList();
+//        }
 
         return reviewDTOS;
     }
 
 
     //유저 리뷰 전체 목록 (유저 my 페이지)
-    public List<ReviewDTO> getuserMyReviewList(String email) {
+    public List<ReviewDTO> userMyReviewList(String email) {
 
         //1. 유저 정보 확인
         Member member = memberRepository.findByEmail(email); //회원정보 확인
@@ -168,7 +162,7 @@ public class ReviewService {
         //조인 사용방법
         // 리뷰 객체 생성 및 데이터 설정
         Review review = modelMapper.map(reviewDTO, Review.class);
-
+        //룸 예약 찾기
         RoomReserveItem roomReserveItem = roomReserveItemRepository.findById(reviewDTO.getRoomreserveitem_num())
                         .orElseThrow(EntityNotFoundException::new);
 
