@@ -19,7 +19,7 @@
                 </div>
 
                 <!-- 오류 메시지 출력 -->
-                <div th:if="${msg}" class="alert alert-danger">
+                <div th:if="${msg}" class="alert alert-danger mt-3">
                     <span th:text="${msg}"></span>
                 </div>
 
@@ -47,8 +47,8 @@
                     </div>
 
                     <div class="col text-center d-flex justify-content-center gap-3 mt-4">
+                        <button type="button" class="btn btn-dark" onclick="location.href='/member/changeMove'">다음에변경하기</button>
                         <button type="submit" class="btn btn-primary">저장</button>
-                        <button type="button" class="btn btn-primary" onclick="location.href='/adMain'">홈</button>
                     </div>
                 </form>
             </div>
@@ -85,12 +85,20 @@
                 return false;
             }
             if(password.value.length < 8  || password.value.length > 20){
-                alert("비밀번호는 8~20자 입니다.");
+                alert("비밀번호는 8자리 이상~ 20자리 미만이어야 합니다.");
 
                 newPassword.value = ""
                 rePassword.value = ""
                 password.value = ""
                 password.focus();
+                return false;
+            }
+
+            if(newPassword.value.length < 8 || newPassword.value.length > 20){
+                alert("새 비밀번호는 8자리 이상~ 20자리 미만이어야 합니다.");
+                newPassword.value = ""
+                rePassword.value = ""
+                newPassword.focus();
                 return false;
             }
 

@@ -17,39 +17,41 @@
                     <h1>임시비밀번호 발급</h1>
                 </div>
 
-                <div th:if="${msg != null}" class="alert alert-danger">
+                <div th:if="${msg != null}" class="alert alert-danger mt-3">
                     <span th:text="${msg}"></span>
                 </div>
 
-                <div th:if="${successMsg != null}" class="alert alert-success">
+                <div th:if="${successMsg != null}" class="alert alert-success mt-3">
                     <span th:text="${successMsg}"></span>
                 </div>
 
                 <form  class="row g-3 mt-3" action="/member/findPW" method="post" th:object="${memberDTO}">
-                    <div class="mb-1">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="가입한 이메일을 입력하세요.">
-                    </div>
+                    <div th:if="${successMsg == null}">
+                        <div class="mb-1">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="가입한 이메일을 입력하세요.">
+                        </div>
 
-                    <div class="mb-1">
-                        <label for="name" class="form-label">name</label>
-                        <input type="text" class="form-control" id="name"  name="name" placeholder="가입한 회원정보를 입력하세요.">
-                    </div>
+                        <div class="mb-1">
+                            <label for="name" class="form-label">name</label>
+                            <input type="text" class="form-control" id="name"  name="name" placeholder="가입한 회원정보를 입력하세요.">
+                        </div>
 
-                    <div class="mb-1">
-                        <label for="tel" class="form-label">tel</label>
-                        <input type="phone" class="form-control" id="tel"  name="tel" placeholder="가입한 핸드폰정보를 입력하세요.">
-                    </div>
+                        <div class="mb-1">
+                            <label for="tel" class="form-label">tel</label>
+                            <input type="phone" class="form-control" id="tel"  name="tel" placeholder="가입한 핸드폰정보를 입력하세요.">
+                        </div>
 
 
-                    <div class="text-center d-flex justify-content-center gap-3 mt-4">
-                        <button type="submit" class="btn btn-primary">이메일전송</button>
+                        <div class="text-center d-flex justify-content-center gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary">이메일전송</button>
+                        </div>
                     </div>
 
                 </form>
 
                 <div th:if="${successMsg != null}" class="text-center mt-3">
-                    <a href="/member/loginPW" class="btn btn-success">로그인</a>
+                    <a href="/member/loginPW" class="btn btn-secondary">로그인</a>
                 </div>
 
             </div>

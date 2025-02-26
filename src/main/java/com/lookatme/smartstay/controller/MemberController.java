@@ -332,7 +332,7 @@ public class MemberController {
     }
 
     @PostMapping("/adPowerMember") //권한 승인
-    public String adePowerMember(@RequestParam("email") PageRequestDTO pageRequestDTO, String email, Model model){
+    public String adPowerMember(@RequestParam("email") PageRequestDTO pageRequestDTO, String email, Model model){
 
         try {
             List<MemberDTO> adPowerList = memberService.adPowerList(pageRequestDTO, email).getDtoList();
