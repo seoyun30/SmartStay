@@ -53,7 +53,7 @@
             <hr>
         </div>
 
-        <span class="h4 ms-3 fw-bold">호텔 예약</span>
+        <span class="h4 ms-3 fw-bold">룸 예약</span>
 
         <div class="card-body">
 
@@ -85,12 +85,12 @@
                     </div>
 
                     <div class="row g-0">
-                        <div class="col-md-1 align-self-center">
+                        <div class="col-md-2 align-self-center">
                             <input type="checkbox" class="btn-check" name="roomChkBox" th:value="${roomItem.roomitem_num}" th:id="'roomCheck-' + ${iterStat.index}" autocomplete="off">
                             <label class="btn btn-outline-danger" th:for="'roomCheck-' + ${iterStat.index}"><i class="bi bi-check-lg"></i></label><br>
                         </div>
 
-                        <div class="col-md-2 align-self-center">
+                        <div class="col-md-3 align-self-center">
                             <th:block th:each="img: ${roomItem.imageDTOList}">
                                 <th:block th:if="${img.repimg_yn == 'Y'}">
                                     <div class="col-12 square-image">
@@ -100,7 +100,7 @@
                             </th:block>
                         </div>
 
-                        <div class="col-md-9 align-self-center">
+                        <div class="col-md-7 align-self-center">
                             <div class="card-body reserveinfo" >
                                 <input type="hidden" class="roomItemNumber" name="roomItem_num" th:value="${roomItem.roomitem_num}">
                                 <input type="hidden" class="roomNumber" name="room_num" th:value="${roomItem.roomDTO.room_num}">
@@ -108,22 +108,9 @@
                                 <span class="fs-6 reserveCount">최대 [[${roomItem.roomDTO.room_bed}]]명 / 예약인원 [[${roomItem.count}]]명</span> <br>
                                 <span>룸서비스 신청</span> <br>
                                 <span class="reserveRequest">요청사항 : [[${roomItem.reserve_request}]]</span>
-                                <th:block th:if="${roomItem.day == 1}">
-                                    <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">
-                                    <input type="hidden" class="reserveDay" th:value="${roomItem.day}">
-                                    <h5 class="text-end fw-bold">
-                                        1박
-                                        <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.roomDTO.room_price != null ? (roomItem.day * roomItem.roomDTO.room_price) : 0}">10000</span>원
-                                    </h5>
-                                </th:block>
-                                <th:block th:unless="${roomItem.day == 1}">
-                                    <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">
-                                    <input type="hidden" class="reserveDay" th:value="${roomItem.day}">
-                                    <h5 class="text-end fw-bold">
-                                        연박
-                                        <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.roomDTO.room_price != null ? (roomItem.day * roomItem.roomDTO.room_price) : 0}">10000</span>원
-                                    </h5>
-                                </th:block>
+                                <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">
+                                <input type="hidden" class="reserveDay" th:value="${roomItem.day}">
+                                <h5 class="text-end fw-bold roomreservePrice"></h5>
                             </div>
                         </div>
 
@@ -146,7 +133,7 @@
 
         <hr>
 
-        <span class="h4 ms-3 fw-bold">룸 서비스 예약</span>
+        <span class="h4 ms-3 fw-bold">룸서비스 주문</span>
 
         <div class="card-body">
             <th:block th:if="${orderItemDTOList.isEmpty()}">
@@ -157,20 +144,16 @@
 
             <th:block th:unless="${orderItemDTOList.isEmpty()}" th:each="orderItem, iterStat : ${orderItemDTOList}">
 
-                <!-- 같은 호텔 매장인지 확인 -->
                 <th:block th:if="${iterStat.index == 0
-                or (not #lists.isEmpty(orderItem.menuItemDTOList) and not #lists.isEmpty(orderItemDTOList[iterStat.index - 1].menuItemDTOList)
-                    and orderItem.menuItemDTOList[0].hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].menuItemDTOList[0].hotelDTO.hotel_name)
-                or (not #lists.isEmpty(orderItem.careItemDTOList) and not #lists.isEmpty(orderItemDTOList[iterStat.index - 1].careItemDTOList)
-                    and orderItem.careItemDTOList[0].hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].careItemDTOList[0].hotelDTO.hotel_name)}">
+                or orderItem.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">
                     <div class="p-3">
                     <span class="h4 fw-bold"
-                          th:text="${not #lists.isEmpty(orderItem.menuItemDTOList) ? orderItem.menuItemDTOList[0].hotelDTO.hotel_name : orderItem.careItemDTOList[0].hotelDTO.hotel_name}">
+                          th:text="${orderItem.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">
                         호텔 매장 이름
                     </span>
                         <br>
                         <small class="text-body-secondary"
-                               th:text="${not #lists.isEmpty(orderItem.menuItemDTOList) ? orderItem.menuItemDTOList[0].hotelDTO.address : orderItem.careItemDTOList[0].hotelDTO.address}">
+                               th:text="${orderItem.roomReserveItemDTO.roomDTO.hotelDTO.address}">
                             매장 주소
                         </small>
                         <hr>
@@ -249,10 +232,7 @@
                         </div>
 
                         <th:block th:if="${iterStat.index == 0
-                or (not #lists.isEmpty(orderItem.menuItemDTOList) and not #lists.isEmpty(orderItemDTOList[iterStat.index - 1].menuItemDTOList)
-                    and orderItem.menuItemDTOList[0].hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].menuItemDTOList[0].hotelDTO.hotel_name)
-                or (not #lists.isEmpty(orderItem.careItemDTOList) and not #lists.isEmpty(orderItemDTOList[iterStat.index - 1].careItemDTOList)
-                    and orderItem.careItemDTOList[0].hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].careItemDTOList[0].hotelDTO.hotel_name)}">
+                or orderItem.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">
                             <div>
                                 <hr>
                             </div>
@@ -374,6 +354,25 @@
 
     $(document).ready(function () {
 
+        $('.reserveinfo').each(function() {
+            let roomPrice = parseFloat($(this).find('.roomPrice').val());  // 방 가격
+            let reserveDay = parseInt($(this).find('.reserveDay').val());  // 예약 일수
+            let roomItemNum = $(this).find('.roomItemNumber').val();  // roomitem_num 값 가져오기
+            let roomreservePrice = $(this).find('.roomreservePrice');  // 가격을 삽입할 요소
+
+            // 1박과 연박 구분하여 가격 계산
+            let price = roomPrice * reserveDay;
+            let priceText = '';
+
+            if (reserveDay === 1) {
+                priceText = `1박 <span class="text-danger" id="roomPrice-${roomItemNum}">${price.toLocaleString()}</span>원`;
+            } else {
+                priceText = `연박 <span class="text-danger" id="roomPrice-${roomItemNum}">${price.toLocaleString()}</span>원`;
+            }
+
+            roomreservePrice.html(priceText);
+        });
+
         calculateServiceTotalPrice();
 
         function calculateServiceTotalPrice() {
@@ -414,7 +413,7 @@
             // 룸예약 항목 가격 계산
             $("input[name=roomChkBox]:checked").each(function () {
                     let roomitem_num = $(this).val()
-                    let price = $("#price-" + roomitem_num).text()
+                    let price = $("#roomPrice-" + roomitem_num).text()
                     price = parseInt(price.replace(/[^0-9]/g, ''));
                     orderTotalPrice += price;
                     checkedCount++;
@@ -498,8 +497,8 @@
             let checkInOutText = $(this).find(".reserveDate").text().trim();
             let maxPeopleText = $(this).find(".reserveCount").text().trim();
             let requestText = $(this).find(".reserveRequest").text().trim();
-            let roomPrice = $(this).closest(".col-md-9").find(".roomPrice").val();  // 가격
-            let reserveDay = $(this).closest(".col-md-9").find(".reserveDay").val(); // 숙박일
+            let roomPrice = $(this).find(".roomPrice").val();  // 가격
+            let reserveDay = $(this).find(".reserveDay").val(); // 숙박일
             let hotelName = $(this).closest(".p-3").find(".hotelName").val(); // 호텔 매장 이름
             let roomInfoText = $(this).closest(".p-3").find(".fs-5.fw-bold").text().trim(); // 룸 이름 / 룸 타입
 
@@ -982,31 +981,39 @@
 
         $(".buybtn").on("click", function (e) {
             e.preventDefault(); // 기본 제출 이벤트 방지
-            //차후 서비스도 추가
+
             let roomitem_nums = [];
+            let service_nums = [];
 
             $("input[name=roomChkBox]:checked").each(function () {
                 roomitem_nums.push($(this).val());
             });
 
-            if (roomitem_nums.length === 0) {
+            $("input[name=serviceChkBox]:checked").each(function () {
+                service_nums.push($(this).val());
+            });
+
+            if (roomitem_nums.length === 0 && service_nums.length === 0) {
                 alert("결제할 상품을 선택해주세요.");
                 return;
             }
 
-            // 1. form 태그를 동적으로 생성
             let form = $("<form></form>");
             form.attr("action", "/pay");
             form.attr("method", "get");
 
-            // 2. hidden input 필드 추가 (roomitem_nums 배열을 여러 번 추가)
             for (let i = 0; i < roomitem_nums.length; i++) {
                 let input = $("<input type='hidden' name='roomitem_nums'></input>");
                 input.val(roomitem_nums[i]);
                 form.append(input);
             }
 
-            // 3. body에 form 추가 후 submit
+            for (let i = 0; i < service_nums.length; i++) {
+                let input = $("<input type='hidden' name='service_nums'></input>");
+                input.val(service_nums[i]);
+                form.append(input);
+            }
+
             $("body").append(form);
             form.submit();
         });
