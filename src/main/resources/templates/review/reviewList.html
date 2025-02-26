@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
     <title>호텔리뷰 목록</title>
@@ -7,6 +11,57 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+<th:block layout:fragment="content">
+    <h1 class="text-center mb-3 mt-5">리뷰 목록</h1>
+<!--    <div sec:authorize="hasAnyAuthority('USER')" class="row mt-3">-->
+<!--        <div class="col text-end">-->
+<!--            <button type="button" onclick="location.href='/review/reviewModify'" class="btn btn-dark">수정</button>-->
+<!--        </div>-->
+<!--    </div>-->
 
+    <div class="row mt-5">
+        <div class="col">
+            <table class="table table-striped table-hover text-center">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>작성자</th>
+                    <th>이미지</th>
+                    <th></th>
+                    <th>내용</th>
+                    <th>작성일</th>
+                    <th sec:authorize="hasAnyAuthority('USER')">삭제</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <th:block th:each="review :${reviewDTOList}">
+                    <tr class="align-middle">
+                        <input type="hidden" th:value="${review.rev_num}"></input>
+                        <td>아직 안들어감</td>
+                        <td th:text="${review.create_by}"></td>
+                        <td>
+                            <a href="#" class="increment-view-btn" th:value="${review.imageDTOList}"></a>
+                        </td>
+                        <td>
+                            <td class="increment-view-btn" th:text="${review.content}"></td>
+                        </td>
+                        <td th:text="${review.reg_date}"></td>
+                        <td>  <!--post 방식의 삭제버튼-->
+                            <!--                            <form sec:authorize="hasAnyAuthority('USER')" action="/review/" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">-->
+                            <!--                                <input type="hidden" name="rev_num" th:value="${review.rev_num}"> &lt;!&ndash; 삭제할 qna의 ID를 hidden 필드로 전달 &ndash;&gt;-->
+                            <!--                                <button type="submit" class="btn btn-dark" style="background-color: red;">삭제</button>-->
+                            <!--                            </form>-->
+                        </td>
+
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</th:block>
 </body>
+
 </html>

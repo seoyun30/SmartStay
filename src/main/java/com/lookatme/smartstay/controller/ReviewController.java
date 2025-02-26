@@ -3,6 +3,7 @@ package com.lookatme.smartstay.controller;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.entity.Review;
 import com.lookatme.smartstay.entity.RoomReserve;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.RoomReserveRepository;
@@ -45,21 +46,35 @@ public class ReviewController {
     private final ModelMapper modelMapper;
 
 
-    //관리자 리뷰 목록 페이지
+    //관리자 리뷰 목록 페이지(chief, manager권한)
     @GetMapping("/adMyReviewList")
     public String adMyReviewList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
 
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
+
         return null;
     }
 
-    //호텔 리뷰 목록 페이지
+    //호텔 리뷰 목록
     @GetMapping("/reviewList")
-    public String reviewList(PageRequestDTO pageRequestDTO, Model model) {
+    public String reviewList(Model model, Long hotel_num) {
 
-        return null;
+
+        if (hotel_num == null) {
+            log.error("호텔을 찾아올수 없습니다.");
+        }
+
+        List<ReviewDTO> reviewDTOList = reviewService.hotelReviewList(hotel_num);
+        model.addAttribute("reviewDTOList", reviewDTOList);
+
+        reviewDTOList.forEach(reviewDTO -> {log.info("reviewDTO: " + reviewDTO);});
+        return "review/reviewList";
     }
 
-    //마이 리뷰 목록(유저) 페이지
+    //마이 리뷰 목록(user권한)
     @GetMapping("/myReviewList")
     public String myReviewList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
 
