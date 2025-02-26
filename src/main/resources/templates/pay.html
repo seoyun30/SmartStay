@@ -11,13 +11,21 @@
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
     <link th:href="@{/css/stikysidebar.css}" rel="stylesheet">
     <style layout:fragment="css">
+        #contain {
+            position: relative;
+            width: 75%;
+            margin: 0 auto;
+        }
+
         #aside {
             position: sticky;
+            border: 1px solid #a2aec7;
             background-color: white;
             left: 0;
             right: 0;
             bottom: 0;
-            height: auto;
+            width: 75%;
+            height: 100%;
         }
 
         .square-image {
@@ -52,11 +60,10 @@
         </div>
 
         <th:block th:unless="${roomItemDTOList.isEmpty()}">
-            <span class="h4 ms-3 fw-bold">호텔 예약</span>
-        </th:block>
+            <span class="h4 ms-3 fw-bold">룸 예약</span>
 
             <div class="card-body">
-                <th:block th:unless="${roomItemDTOList.isEmpty()}" th:each="roomItem, iterStat : ${roomItemDTOList}">
+                <th:block th:each="roomItem, iterStat : ${roomItemDTOList}">
 
                     <th:block th:if="${iterStat.index == 0 or roomItem.roomDTO.hotelDTO.hotel_name != roomItemDTOList[iterStat.index - 1].roomDTO.hotelDTO.hotel_name or roomItem.roomDTO.hotelDTO.address != roomItemDTOList[iterStat.index - 1].roomDTO.hotelDTO.address}">
                         <div class="p-3">
@@ -75,15 +82,14 @@
                         </div>
 
                         <div class="row g-0">
-
                             <div class="col-md-3 align-self-center">
-                                    <th:block th:each="img: ${roomItem.imageDTOList}">
-                                        <th:block th:if="${img.repimg_yn == 'Y'}">
-                                            <div class="col-12 square-image">
-                                                <img class="img-fluid" th:src="${img.thumbnail_url}" alt="대표 이미지">
-                                            </div>
-                                        </th:block>
+                                <th:block th:each="img: ${roomItem.imageDTOList}">
+                                    <th:block th:if="${img.repimg_yn == 'Y'}">
+                                        <div class="col-12 square-image">
+                                            <img class="img-fluid" th:src="${img.thumbnail_url}" alt="대표 이미지">
+                                        </div>
                                     </th:block>
+                                </th:block>
                             </div>
 
                             <div class="col-md-9 align-self-center">
@@ -94,24 +100,17 @@
                                     <span class="fs-6 reserveCount">최대 [[${roomItem.roomDTO.room_bed}]]명 / 예약인원 [[${roomItem.count}]]명</span> <br>
                                     <span>룸서비스 신청</span> <br>
                                     <span class="reserveRequest">요청사항 : [[${roomItem.reserve_request}]]</span>
-                                    <th:block th:if="${roomItem.day == 1}">
-                                        <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">
-                                        <input type="hidden" class="reserveDay" th:value="${roomItem.day}">
-                                        <h5 class="text-end fw-bold">숙박 <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.day * roomItem.roomDTO.room_price}">10000</span>원</h5>
-                                    </th:block>
-                                    <th:block th:unless="${roomItem.day == 1}">
-                                        <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">
-                                        <input type="hidden" class="reserveDay" th:value="${roomItem.day}">
-                                        <h5 class="text-end fw-bold">연박 <span class="text-danger" th:id="'price-' + ${roomItem.roomitem_num}" th:text="${roomItem.day * roomItem.roomDTO.room_price}">10000</span>원</h5>
-                                    </th:block>
+                                    <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">
+                                    <input type="hidden" class="reserveDay" th:value="${roomItem.day}">
+                                    <h5 class="text-end fw-bold roomreservePrice"></h5>
                                 </div>
                             </div>
 
                             <th:block th:if="${iterStat.index == 0
-                            or roomItem.roomDTO.room_name != roomItemDTOList[iterStat.index - 1].roomDTO.room_name
-                            or roomItem.in_date != roomItemDTOList[iterStat.index - 1].in_date
-                            or roomItem.out_date != roomItemDTOList[iterStat.index - 1].out_date
-                            or roomItem.reserve_request != roomItemDTOList[iterStat.index - 1].reserve_request}">
+                        or roomItem.roomDTO.room_name != roomItemDTOList[iterStat.index - 1].roomDTO.room_name
+                        or roomItem.in_date != roomItemDTOList[iterStat.index - 1].in_date
+                        or roomItem.out_date != roomItemDTOList[iterStat.index - 1].out_date
+                        or roomItem.reserve_request != roomItemDTOList[iterStat.index - 1].reserve_request}">
                                 <div>
                                     <hr>
                                 </div>
@@ -122,6 +121,108 @@
 
                 </th:block>
             </div>
+        </th:block>
+
+        <th:block th:unless="${roomItemDTOList.isEmpty() and orderItemDTOList.isEmpty()}">
+            <hr>
+        </th:block>
+
+        <th:block th:unless="${orderItemDTOList.isEmpty()}">
+            <span class="h4 ms-3 fw-bold">룸서비스 주문</span>
+            <div class="card-body">
+                <th:block th:each="orderItem, iterStat : ${orderItemDTOList}">
+
+                    <th:block th:if="${iterStat.index == 0
+                or orderItem.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">
+                        <div class="p-3">
+                    <span class="h4 fw-bold"
+                          th:text="${orderItem.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">
+                        호텔 매장 이름
+                    </span>
+                            <br>
+                            <small class="text-body-secondary"
+                                   th:text="${orderItem.roomReserveItemDTO.roomDTO.hotelDTO.address}">
+                                매장 주소
+                            </small>
+                            <hr>
+                        </div>
+                    </th:block>
+
+                    <div class="p-3">
+                        <div class="row mb-2">
+                            <div class="col">
+                                <p class="card-text fs-5 fw-bold roomName"> [[${orderItem.roomReserveItemDTO.roomDTO.room_name}]] / [[${orderItem.roomReserveItemDTO.roomDTO.room_type}]] </p>
+                            </div>
+                        </div>
+
+                        <div class="row g-0">
+
+                            <div class="col-md-12 align-self-center">
+                                <div class="card-body roomServiceInfo">
+
+                                    <h4 class="mb-3 fw-bold">룸케어 서비스</h4>
+                                    <th:block th:each="careItem : ${orderItem.careItemDTOList}">
+                                        <div class="row mb-3">
+                                            <div class="col-md-2 align-self-center">
+                                                <th:block th:each="img: ${careItem.imageDTOList}">
+                                                    <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                        <div class="square-image">
+                                                            <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
+                                                        </div>
+                                                    </th:block>
+                                                </th:block>
+                                            </div>
+                                            <div class="col-md-10 align-self-center">
+                                                <input type="hidden" class="careitem_num" th:value="${careItem.careitem_num}">
+                                                <p class="h5" th:text="${careItem.careDTO.care_name}"></p>
+                                                <p class="h5 care_count" th:text="${careItem.care_count + '개'}"></p>
+                                                <p class="h5 care_price" th:text="${careItem.careDTO.care_price + '원'}"></p>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <h4 class="mb-3 fw-bold">주문 메뉴</h4>
+                                    <th:block th:each="menuItem : ${orderItem.menuItemDTOList}">
+                                        <div class="row">
+                                            <div class="col-md-2 align-self-center">
+                                                <th:block th:each="img: ${menuItem.imageDTOList}">
+                                                    <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                        <div class="square-image">
+                                                            <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
+                                                        </div>
+                                                    </th:block>
+                                                </th:block>
+                                            </div>
+
+                                            <div class="col-md-10 align-self-center">
+                                                <input type="hidden" class="menuitem_num" th:value="${menuItem.menuitem_num}">
+                                                <p class="h5" th:text="${menuItem.menuDTO.menu_name}"></p>
+                                                <p class="h5 menu_count" th:text="${menuItem.menu_count + '개'}"></p>
+                                                <p class="h5 menu_price" th:text="${menuItem.menuDTO.menu_price + '원'}"></p>
+                                            </div>
+
+                                        </div>
+                                    </th:block>
+
+                                    <h5 class="mt-3 fw-bold menu_request">요청사항 : [[${orderItem.menu_request}]]</h5>
+
+                                    <h5 class="mt-3 text-end fw-bold">총 가격 <span class="text-danger" th:id="'servicePrice-' + ${orderItem.service_num}">0</span>원</h5>
+
+                                </div>
+                            </div>
+
+                            <th:block th:if="${iterStat.index == 0
+                or orderItem.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">
+                                <div>
+                                    <hr>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+
+                </th:block>
+            </div>
+        </th:block>
 
     </div>
 
@@ -130,7 +231,7 @@
         <div class="p-3 mb-3">
             <div class="row">
                 <div class="col-md-6 align-self-center">
-                    <span class="card-text fs-5 fw-bold totalCount">총 n건</span>
+                    <span class="card-text fs-5 fw-bold totalCount">총 0건</span>
                 </div>
                 <div class="col-md-6 align-self-center text-end">
                     <span class="card-text fs-5 fw-bold">총 결제 금액</span>
@@ -138,12 +239,10 @@
                 </div>
             </div>
 
-            <div class="d-grid gap-2 text-center mt-2">
+            <div class="d-grid gap-2 col-6 mx-auto text-center mt-2">
                 <button class="btn btn-primary btn-lg payBtn" type="button">구매하기</button>
             </div>
         </div>
-
-        <hr>
 
     </aside>
 
@@ -153,6 +252,50 @@
 
     $(document).ready(function () {
         IMP.init("imp06580770"); //고객사 식별코드
+
+        //룸예약 총 가격 계산
+        $('.reserveinfo').each(function() {
+            let roomPrice = parseFloat($(this).find('.roomPrice').val());  // 방 가격
+            let reserveDay = parseInt($(this).find('.reserveDay').val());  // 예약 일수
+            let roomItemNum = $(this).find('.roomItemNumber').val();  // roomitem_num 값 가져오기
+            let roomreservePrice = $(this).find('.roomreservePrice');  // 가격을 삽입할 요소
+
+            // 1박과 연박 구분하여 가격 계산
+            let price = roomPrice * reserveDay;
+            let priceText = '';
+
+            if (reserveDay === 1) {
+                priceText = `1박 <span class="text-danger" id="roomPrice-${roomItemNum}">${price.toLocaleString()}</span>원`;
+            } else {
+                priceText = `연박 <span class="text-danger" id="roomPrice-${roomItemNum}">${price.toLocaleString()}</span>원`;
+            }
+
+            roomreservePrice.html(priceText);
+        });
+
+        //케어+메뉴 총 가격 계산
+        $(".roomServiceInfo").each(function () {
+                let serviceTotalPrice = 0;
+                let serviceNum = $(this).find("span[id^='servicePrice-']").attr("id").split('-')[1];
+
+                // 룸케어 서비스 가격 합산
+                $(this).find(".care_price").each(function () {
+                    let price = parseInt($(this).text().replace(/[^0-9]/g, '')) || 0;
+                    let count = parseInt($(this).siblings(".care_count").text().replace(/[^0-9]/g, '')) || 1;
+                    serviceTotalPrice += price * count;
+                });
+
+                // 주문 메뉴 가격 합산
+                $(this).find(".menu_price").each(function () {
+                    let price = parseInt($(this).text().replace(/[^0-9]/g, '')) || 0;
+                    let count = parseInt($(this).siblings(".menu_count").text().replace(/[^0-9]/g, '')) || 1;
+                    serviceTotalPrice += price * count;
+                });
+
+                // 총 가격 반영
+                $("#servicePrice-" + serviceNum).text(serviceTotalPrice);
+            })
+
         calculateTotal()
 
         let merchant_uid = `payment-${crypto.randomUUID()}`;
@@ -161,6 +304,7 @@
         let buyer_name = $('.buyer_name').val();
         let buyer_tel = $('.buyer_tel').val();
         let roomItemDTOList  = [];
+        let orderItemDTOList = [];
 
         // roomItemDTOList 생성
         $(".reserveinfo").each(function () {
@@ -174,6 +318,43 @@
                 reserve_request: $(this).find(".reserveRequest").text().replace("요청사항 : ", "").trim()
             };
             roomItemDTOList.push(roomItemDTO);
+        });
+
+        // orderItemDTOList 생성
+        $(".roomServiceInfo").each(function () {
+            let orderItemDTO = {
+                careItemDTOList: [],
+                menuItemDTOList: []
+            };
+
+            // 케어 아이템 추가
+            $(this).find(".careItem").each(function () {
+                let careItemDTO = {
+                    careitem_num: $(this).find(".careitem_num").val(),
+                    careDTO: {
+                        care_name: $(this).find(".careName").text(),
+                        care_price: $(this).find(".carePrice").text().replace("원", "").trim()
+                    },
+                    care_count: $(this).find(".care_count").text().match(/\d+/)[0] // 케어 아이템 개수
+                };
+                orderItemDTO.careItemDTOList.push(careItemDTO);
+            });
+
+            // 메뉴 아이템 추가
+            $(this).find(".menuItem").each(function () {
+                let menuItemDTO = {
+                    menuitem_num: $(this).find(".menuitem_num").val(),
+                    menuDTO: {
+                        menu_name: $(this).find(".menuName").text(),
+                        menu_price: $(this).find(".menuPrice").text().replace("원", "").trim()
+                    },
+                    menu_count: $(this).find(".menu_count").text().match(/\d+/)[0] // 메뉴 아이템 개수
+                };
+                orderItemDTO.menuItemDTOList.push(menuItemDTO);
+            });
+
+            // orderItemDTO를 orderItemDTOList에 추가
+            orderItemDTOList.push(orderItemDTO);
         });
 
         let memberDTO = {
@@ -242,7 +423,8 @@
                                 pay_method : response.card_name,
                                 amount : totalPrice,
                                 memberDTO : memberDTO,
-                                roomItemDTOList : roomItemDTOList
+                                roomItemDTOList : roomItemDTOList,
+                                orderItemDTOList : orderItemDTOList
                             };
 
                             console.log("payDTO : ", payDTO); // 확인용 로그
@@ -296,7 +478,29 @@
                 totalCount++;
             });
 
-            $("#totalPrice").text(totalPrice)
+            $(".roomServiceInfo").each(function () {
+                let serviceTotalPrice = 0;
+
+                // 룸케어 서비스 가격 합산
+                $(this).find(".care_price").each(function () {
+                    let price = parseInt($(this).text().replace(/[^0-9]/g, '')) || 0;
+                    let count = parseInt($(this).siblings(".care_count").text().replace(/[^0-9]/g, '')) || 1;
+                    serviceTotalPrice += price * count;
+                });
+
+                // 주문 메뉴 가격 합산
+                $(this).find(".menu_price").each(function () {
+                    let price = parseInt($(this).text().replace(/[^0-9]/g, '')) || 0;
+                    let count = parseInt($(this).siblings(".menu_count").text().replace(/[^0-9]/g, '')) || 1;
+                    serviceTotalPrice += price * count;
+                });
+
+                // 룸서비스 총 가격을 totalPrice에 합산
+                totalPrice += serviceTotalPrice;
+                totalCount++;
+            });
+
+            $("#totalPrice").text(totalPrice.toLocaleString());
             $(".totalCount").text("총 " + totalCount + "건");
 
         }

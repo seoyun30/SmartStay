@@ -62,7 +62,6 @@ public class CartController {
 
     }
 
-
     //룸서비스 장바구니 등록
     @PostMapping("/cartOrderReserveRegister")
     public ResponseEntity<?> cartOrderReserveRegister(@RequestBody OrderItemDTO orderItemDTO,
@@ -84,6 +83,7 @@ public class CartController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
     //장바구니 전체 목록
     @GetMapping("/cartList")
     public String cartList(Principal principal, Model model) {
@@ -108,6 +108,7 @@ public class CartController {
 
         return "cart/cartList";
     }
+
 
     //룸예약 장바구니 수정
     @PostMapping("/cartRoomReserveModify")
@@ -139,6 +140,7 @@ public class CartController {
         return new ResponseEntity<Long>(roomItemDTO.getRoomitem_num(), HttpStatus.OK);
     }
 
+
     //룸예약 장바구니 삭제
     @DeleteMapping("/cartRoomReserveDelete/{roomitem_num}")
     public ResponseEntity cartRoomReserveDelete (@PathVariable("roomitem_num") Long roomitem_num,
@@ -152,6 +154,7 @@ public class CartController {
 
         return new ResponseEntity<Long>(roomitem_num, HttpStatus.OK);
     }
+
     //룸서비스 장바구니 삭제
     @DeleteMapping("/cartOrderReserveDelete/{service_num}")
     public ResponseEntity cartOrderReserveDelete (@PathVariable("service_num") Long service_num,

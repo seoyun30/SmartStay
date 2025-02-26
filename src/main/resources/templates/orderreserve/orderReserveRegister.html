@@ -35,7 +35,7 @@
 
 <th:block layout:fragment="content">
 
-    <form action="/orderreserve/orderReserveRegister" method="get">
+    <form action="/pay" method="get">
 
         <div class="container-fluid row">
             <div class="col-9 mt-3">
@@ -127,7 +127,7 @@
 
                     <div class="text-center">
                         <button class="btn btn-outline-dark btn-lg cartBtn" type="button"><i class="bi bi-cart"></i></button>
-                        <button type="submit" class="btn btn-primary">주문하기</button>
+                        <button type="submit" class="btn btn-primary payBtn">주문하기</button>
                     </div>
                 </div>
             </div>
@@ -1054,7 +1054,7 @@
             }
         });
 
-        // 🛒 장바구니 추가 AJAX 요청
+        //장바구니 추가 AJAX 요청
         $(document).on("click", ".cartBtn", function () {
             let request = $("#floatingTextarea").val();
             if (request === "") {
@@ -1106,6 +1106,50 @@
                 }
             });
         });
+
+        $(".payBtn").on("click", function (e) {
+            e.preventDefault(); // 기본 제출 이벤트 방지
+
+            let request = $("#floatingTextarea").val();
+            if (request === "") {
+                request = "요청 사항 없음";
+            }
+
+            if (!roomreserveitem_num) {
+                alert("예약된 룸 정보가 없습니다.");
+                return;
+            }
+
+            let orderItemDTO = {
+                'roomreserveitem_num': roomreserveitem_num,
+                'menu_request': request,
+                'menuItemDTOList': [],
+                'careItemDTOList': []
+            };
+
+            $("#orderList .col-12").each(function () {
+                let itemId = $(this).data("id");
+                let count = parseInt($(this).find(".count").val());
+
+                if (itemId.startsWith("menu-")) {
+                    orderItemDTO.menuItemDTOList.push({ menuDTO: { menu_num: parseInt(itemId.replace("menu-", "")) }, menu_count: count });
+                } else if (itemId.startsWith("care-")) {
+                    orderItemDTO.careItemDTOList.push({ careDTO: { care_num: parseInt(itemId.replace("care-", "")) }, care_count: count });
+                }
+            });
+
+            if (orderItemDTO.menuItemDTOList.length === 0 && orderItemDTO.careItemDTOList.length === 0) {
+                alert("결제할 상품이 없습니다.");
+                return;
+            }
+
+            // `GET` 방식으로 `/pay` 페이지 이동 (URL 파라미터 추가)
+            let queryString = Object.keys(orderItemDTO)
+                .map(key => `${key}=${encodeURIComponent(orderItemDTO[key])}`)
+                .join("&");
+
+            window.location.href = `/pay?${queryString}`;
+        })
 
         showCareMenu(1);
         showAllMenu(1);

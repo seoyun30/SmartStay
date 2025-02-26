@@ -211,7 +211,8 @@ public class CartService {
             OrderItemDTO orderItemDTO = orderItemDTOMap.getOrDefault(serviceNum,
                     modelMapper.map(orderItem, OrderItemDTO.class)
                     .setRoomReserveItemDTO(modelMapper.map(orderItem.getRoomReserveItem(), RoomReserveItemDTO.class)
-                            .setRoomDTO(modelMapper.map(orderItem.getRoomReserveItem().getRoom(), RoomDTO.class))
+                            .setRoomDTO(modelMapper.map(orderItem.getRoomReserveItem().getRoom(), RoomDTO.class)
+                                    .setHotelDTO(modelMapper.map(orderItem.getRoomReserveItem().getRoom().getHotel(), HotelDTO.class)))
                     )
             );
             log.info("매핑된 orderItemDTO: {}", orderItemDTO);
@@ -348,12 +349,9 @@ public class CartService {
 
     }
 
-
-
     //장바구니의 룸예약 상품 찾기
     public List<RoomItemDTO> findCartOrderRoomItem(Long[] roomitem_nums) {
 
-        //현재 룸예약만 진행중 차후 수정 필요
         List<RoomItemDTO> roomItemDTOList = new ArrayList<>();
 
         for (Long roomitem_num : roomitem_nums) {
@@ -389,6 +387,87 @@ public class CartService {
         }
 
         return roomItemDTOList;
+    }
+
+    //장바구니의 룸서비스 상품 찾기
+    public List<OrderItemDTO> findCartOrderOrderItem(Long[] service_nums) {
+        List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
+
+        for (Long service_num : service_nums) {
+            // OrderItem(룸서비스 상품) 조회
+            OrderItem orderItem = orderItemRepository.findById(service_num)
+                    .orElseThrow(EntityNotFoundException::new);
+
+            // OrderItemDTO 변환 및 RoomReserveItemDTO 설정
+            OrderItemDTO orderItemDTO = modelMapper.map(orderItem, OrderItemDTO.class)
+                    .setRoomReserveItemDTO(
+                            modelMapper.map(orderItem.getRoomReserveItem(), RoomReserveItemDTO.class)
+                                    .setRoomDTO(modelMapper.map(orderItem.getRoomReserveItem().getRoom(), RoomDTO.class)
+                                            .setHotelDTO(modelMapper.map(orderItem.getRoomReserveItem().getRoom().getHotel(), HotelDTO.class))
+                                    )
+                    );
+
+            // 케어 서비스 조회 및 매핑
+            List<CareItem> careItemList = careItemRepository.findByOrderItemService_num(service_num);
+            if (!careItemList.isEmpty()) {
+                List<CareItemDTO> careItemDTOList = careItemList.stream()
+                        .map(careItem -> modelMapper.map(careItem, CareItemDTO.class)
+                                .setCareDTO(modelMapper.map(careItem.getCare(), CareDTO.class))
+                                .setHotelDTO(modelMapper.map(careItem.getCare().getHotel(), HotelDTO.class)))
+                        .collect(Collectors.toList());
+
+                // 이미지 정보 추가
+                careItemDTOList.forEach(careItemDTO -> {
+                    List<Image> imageList = imageRepository.findByTarget("care", careItemDTO.getCareDTO().getCare_num());
+                    if (!imageList.isEmpty()) {
+                        List<ImageDTO> imageDTOList = imageList.stream()
+                                .map(image -> modelMapper.map(image, ImageDTO.class))
+                                .collect(Collectors.toList());
+                        List<Long> imageIdList = imageDTOList.stream()
+                                .map(ImageDTO::getImage_id)
+                                .collect(Collectors.toList());
+
+                        careItemDTO.setImageDTOList(imageDTOList);
+                        careItemDTO.setImageIdList(imageIdList);
+                    }
+                });
+
+                orderItemDTO.setCareItemDTOList(careItemDTOList);
+            }
+
+            // 메뉴 서비스 조회 및 매핑
+            List<MenuItem> menuItemList = menuItemRepository.findByOrderItemService_num(service_num);
+            if (!menuItemList.isEmpty()) {
+                List<MenuItemDTO> menuItemDTOList = menuItemList.stream()
+                        .map(menuItem -> modelMapper.map(menuItem, MenuItemDTO.class)
+                                .setMenuDTO(modelMapper.map(menuItem.getMenu(), MenuDTO.class))
+                                .setHotelDTO(modelMapper.map(menuItem.getMenu().getHotel(), HotelDTO.class)))
+                        .collect(Collectors.toList());
+
+                // 이미지 정보 추가
+                menuItemDTOList.forEach(menuItemDTO -> {
+                    List<Image> imageList = imageRepository.findByTarget("menu", menuItemDTO.getMenuDTO().getMenu_num());
+                    if (!imageList.isEmpty()) {
+                        List<ImageDTO> imageDTOList = imageList.stream()
+                                .map(image -> modelMapper.map(image, ImageDTO.class))
+                                .collect(Collectors.toList());
+                        List<Long> imageIdList = imageDTOList.stream()
+                                .map(ImageDTO::getImage_id)
+                                .collect(Collectors.toList());
+
+                        menuItemDTO.setImageDTOList(imageDTOList);
+                        menuItemDTO.setImageIdList(imageIdList);
+                    }
+                });
+
+                orderItemDTO.setMenuItemDTOList(menuItemDTOList);
+            }
+
+            // 최종 리스트에 추가
+            orderItemDTOList.add(orderItemDTO);
+        }
+
+        return orderItemDTOList;
     }
 
 }
