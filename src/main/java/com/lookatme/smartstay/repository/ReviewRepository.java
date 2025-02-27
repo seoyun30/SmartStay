@@ -1,8 +1,7 @@
 package com.lookatme.smartstay.repository;
 
-import com.lookatme.smartstay.entity.Brand;
-import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Review;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,5 +24,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
 
     //
+
+    @Query("SELECT r FROM Review r WHERE r.hotel.hotel_num = :hotel_num ORDER BY r.reg_date DESC")
+    List<Review> findTopNByHotelNum(@Param("hotel_num") Long hotel_num, Pageable pageable);
+
+    @Query("SELECT r FROM Review r WHERE r.room.room_num = :room_num ORDER BY r.reg_date DESC")
+    List<Review> findTopNByRoomNum(@Param("room_num") Long room_num, Pageable pageable);
 
 }

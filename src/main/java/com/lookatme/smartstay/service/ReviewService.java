@@ -9,13 +9,15 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -303,7 +305,19 @@ public class ReviewService {
 
 
 
+    public List<ReviewDTO> getLimitedReviews (Long hotel_num, int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        List<Review> reviews = reviewRepository.findTopNByHotelNum(hotel_num, pageable);
 
+        return reviews.stream().map(review -> modelMapper.map(review, ReviewDTO.class)).collect(Collectors.toList());
+    }
+
+    public List<ReviewDTO> getLimitedRoomReviews (Long room_num, int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        List<Review> reviews = reviewRepository.findTopNByRoomNum(room_num, pageable);
+
+        return reviews.stream().map(review -> modelMapper.map(review, ReviewDTO.class)).collect(Collectors.toList());
+    }
 
 
 }

@@ -1,10 +1,5 @@
 package com.lookatme.smartstay.dto;
 
-import com.lookatme.smartstay.entity.BaseEntity;
-import com.lookatme.smartstay.entity.Hotel;
-import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.entity.RoomReserve;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -48,6 +43,8 @@ public class ReviewDTO {
 //    }
 
     private HotelDTO hotelDTO; //호텔 조인
+
+    private RoomDTO roomDTO;
 
     // 호텔 설정
     public ReviewDTO setHotelDTO(HotelDTO hotelDTO) {
