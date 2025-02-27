@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.service.*;
 import com.siot.IamportRestClient.exception.IamportResponseException;
@@ -12,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,10 +31,24 @@ public class PayController {
     private final PayService payService;
 
     @GetMapping("/pay")
-    public String pay(RoomItemDTO roomItemDTO, OrderItemDTO orderItemDTO, Principal principal, Model model) {
+    public String pay(RoomItemDTO roomItemDTO, @RequestParam(value = "orderItemDTO", required = false) String orderItemDTOStr,
+                      @RequestParam(value = "service_nums", required = false) Long[] serviceNums,
+                      Principal principal, Model model) {
 
         MemberDTO memberDTO = memberService.readMember(principal.getName());
         model.addAttribute("memberDTO", memberDTO);
+        OrderItemDTO orderItemDTO = null;
+        if (orderItemDTOStr != null && !orderItemDTOStr.isEmpty()) {
+            try {
+                // URL 인코딩된 JSON을 디코딩 후 객체 변환
+                String decodedJson = URLDecoder.decode(orderItemDTOStr, StandardCharsets.UTF_8);
+                ObjectMapper objectMapper = new ObjectMapper();
+                orderItemDTO = objectMapper.readValue(decodedJson, OrderItemDTO.class);
+                log.info("디코딩된 orderItemDTO: " + orderItemDTO);
+            } catch (Exception e) {
+                log.error("orderItemDTO 디코딩 실패", e);
+            }
+        }
 
         if (roomItemDTO != null && roomItemDTO.getRoom_num() != null || roomItemDTO.getRoomitem_nums() != null) {
             log.info("결제 예정 roomItemDTO : " + roomItemDTO);
@@ -50,22 +67,17 @@ public class PayController {
             model.addAttribute("roomItemDTOList", roomItemDTOList);
         }
 
-        if (orderItemDTO != null && orderItemDTO.getService_num() != null || orderItemDTO.getService_nums() != null) {
-            log.info("결제 예정 orderItemDTO : " + orderItemDTO);
 
-            if (orderItemDTO.getService_num() == null) {
-                List<OrderItemDTO> orderItemDTOList = cartService.findCartOrderOrderItem(orderItemDTO.getService_nums());
-                model.addAttribute("orderItemDTOList", orderItemDTOList);
-            } else {
-                orderItemDTO = orderItemService.findOrderItemDTO(orderItemDTO);
-                log.info(orderItemDTO);
-                List<OrderItemDTO> orderItemDTOList = Collections.singletonList(orderItemDTO);
-                model.addAttribute("orderItemDTOList", orderItemDTOList);
-            }
-        } else {
-            List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
-            model.addAttribute("orderItemDTOList", orderItemDTOList);
+        List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
+        if (serviceNums != null) {
+            orderItemDTOList = cartService.findCartOrderOrderItem(serviceNums);
         }
+        if (orderItemDTO != null) {
+            orderItemDTO = orderItemService.findOrderItemDTO(orderItemDTO);
+            orderItemDTOList = Collections.singletonList(orderItemDTO);
+        }
+        orderItemDTOList.forEach(orderItemDTO1 -> log.info(orderItemDTO1));
+        model.addAttribute("orderItemDTOList", orderItemDTOList);
 
         return "pay";
     }

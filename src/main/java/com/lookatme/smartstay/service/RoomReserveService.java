@@ -1,8 +1,9 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.constant.CheckState;
 import com.lookatme.smartstay.dto.*;
-import com.lookatme.smartstay.entity.*;
+import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.entity.RoomReserve;
+import com.lookatme.smartstay.entity.RoomReserveItem;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.RoomRepository;
 import com.lookatme.smartstay.repository.RoomReserveItemRepository;
@@ -15,8 +16,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,50 +91,4 @@ public class RoomReserveService {
         return roomReserveItemDTO;
     }
 
-
-
-    //주문 진행 차후 삭제
-    public Long order (RoomItemDTO roomItemDTO, String email) {
-        Room room = roomRepository.findById(roomItemDTO.getRoom_num())
-                .orElseThrow(EntityNotFoundException::new);
-
-        Member member = memberRepository.findByEmail(email);
-
-        //예약인원수는 room의 최대인원수보다 작거나 같아야 함
-        //방상태가 예약 가능 상태일 때에만 가능
-        //차후 예약날짜가 다른 경우, 그 방의 예약이 가능하도록 구현
-        if (room.getRoom_bed() >= roomItemDTO.getCount()
-                && room.getRoom_state().name().equals("YES")) {
-
-            RoomItem roomItem = RoomItem.builder()
-                    .room(room)
-                    .count(roomItemDTO.getCount())
-                    .in_date(roomItemDTO.getIn_date())
-                    .out_date(roomItemDTO.getOut_date())
-                    .reserve_request(roomItemDTO.getReserve_request())
-                    .build();
-
-            RoomReserve roomReserve = new RoomReserve();
-            roomReserve.setMember(member);
-
-            String date = LocalDate.now().toString().replace("-","");
-            String num = room.getRoom_num().toString();
-            String reserveId = date + "-" + num + "-" + member.getMember_num().toString();
-            roomReserve.setReserve_id(reserveId); //오늘날짜-방번호-회원번호
-
-            //roomReserve.setRoomItemList(roomItem);
-            roomReserve.setCheck_state(CheckState.RESERVE);
-            roomReserve.setReg_date(LocalDateTime.now());
-
-            //roomItem에도 RoomReserve를 set하여 양방향 등록, pk 자동 참조
-            roomItem.setRoomReserve(roomReserve);
-
-            roomReserve = roomReserveRepository.save(roomReserve);
-
-            return roomReserve.getReserve_num();
-
-        } else {
-            return null;
-        }
-    }
 }

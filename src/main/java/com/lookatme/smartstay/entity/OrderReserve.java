@@ -35,16 +35,4 @@ public class OrderReserve extends BaseEntity {
     @JoinColumn(name = "member_num")
     private Member member; //회원 조인
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_num")
-    private Room room;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_num")
-    private Menu menu;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "care_num")
-    private Care care;
-
 }

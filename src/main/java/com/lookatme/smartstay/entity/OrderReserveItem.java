@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -17,10 +20,6 @@ public class OrderReserveItem extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long serviceitem_num; //서비스 주문 번호
 
-    private Long menu_count; //메뉴 수량
-
-    private Long care_count; //케어 수량
-
     @Size(max=255)
     private String menu_request; //요청사항
 
@@ -28,13 +27,15 @@ public class OrderReserveItem extends BaseEntity {
     @JoinColumn(name = "roomreserveitem_num")
     private RoomReserveItem roomReserveItem; //예약 정보 및 룸 정보 가져오기
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "menu_num")
-    private Menu menu; //메뉴 조인
+    @OneToMany(mappedBy = "orderReserveItem", cascade = CascadeType.REMOVE,
+            orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<MenuReserveItem> menuReserveItemList = new ArrayList<>(); // 주문한 메뉴들
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "care_num")
-    private Care care; //룸 케어 조인
+    @OneToMany(mappedBy = "orderReserveItem", cascade = CascadeType.REMOVE,
+            orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<CareReserveItem> careReserveItemList = new ArrayList<>(); // 주문한 케어 서비스들
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_num")
@@ -43,4 +44,18 @@ public class OrderReserveItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "pay_num")
     private Pay pay;
+
+    public static OrderReserveItem creatOrederReserveItem(List<MenuReserveItem> menuReserveItemList, List<CareReserveItem> careReserveItemList,
+                                                          String menu_request, RoomReserveItem roomReserveItem) {
+
+        OrderReserveItem orderReserveItem = new OrderReserveItem();
+        orderReserveItem.setMenu_request(menu_request);
+        orderReserveItem.setRoomReserveItem(roomReserveItem);
+        orderReserveItem.setMenuReserveItemList(menuReserveItemList);
+        orderReserveItem.setCareReserveItemList(careReserveItemList);
+
+        return orderReserveItem;
+
+    }
+
 }
