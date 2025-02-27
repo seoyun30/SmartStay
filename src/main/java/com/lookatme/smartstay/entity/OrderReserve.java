@@ -24,6 +24,7 @@ public class OrderReserve extends BaseEntity {
 
     private Long total_price; //총 가격
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderState order_state; //진행 상태
 

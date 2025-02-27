@@ -406,6 +406,7 @@ public class CartService {
                                             .setHotelDTO(modelMapper.map(orderItem.getRoomReserveItem().getRoom().getHotel(), HotelDTO.class))
                                     )
                     );
+            orderItemDTO.setRoomreserveitem_num(orderItem.getRoomReserveItem().getRoomreserveitem_num());
 
             // 케어 서비스 조회 및 매핑
             List<CareItem> careItemList = careItemRepository.findByOrderItemService_num(service_num);
