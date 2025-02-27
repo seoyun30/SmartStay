@@ -1,13 +1,7 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.BrandDTO;
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.MemberDTO;
-import com.lookatme.smartstay.dto.RoomDTO;
-import com.lookatme.smartstay.service.BrandService;
-import com.lookatme.smartstay.service.HotelService;
-import com.lookatme.smartstay.service.MemberService;
-import com.lookatme.smartstay.service.RoomService;
+import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +25,7 @@ public class MainController {
     private final MemberService memberService;
     private final BrandService brandService;
     private final RoomService roomService;
+    private final ReviewService reviewService;
 
     @GetMapping("/adMain")
     public String adMain(Model model, Authentication authentication) {
@@ -151,6 +146,9 @@ public class MainController {
         HotelDTO hotelDTO = hotelService.read(hotel_num);
         model.addAttribute("hotelDTO", hotelDTO);
 
+        List<ReviewDTO> reviews = reviewService.getLimitedReviews(hotel_num, 3);
+        model.addAttribute("reviews", reviews);
+
         List<RoomDTO> roomList = roomService.searchRead(hotel_num);
 
         if (order.equalsIgnoreCase("asc")) {
@@ -175,6 +173,9 @@ public class MainController {
 
         RoomDTO roomDTO = roomService.roomRead(room_num);
         model.addAttribute("roomDTO", roomDTO);
+
+        List<ReviewDTO> reviews = reviewService.getLimitedRoomReviews(room_num, 3);
+        model.addAttribute("reviews", reviews);
 
         return "searchRoomRead";
     }

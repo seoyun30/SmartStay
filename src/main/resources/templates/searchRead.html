@@ -73,8 +73,24 @@
         </div>
 
         <div class="card container col-10 mb-5">
-            <div class="mt-5 mb-5 text-center">
-                <a href="review/reviewList">(리뷰)</a>
+            <div class="mt-5 mb-5">
+                <div th:each="hotelDTO : ${hotelDTO}">
+                    <div class="card-body">
+                        <p th:text="${hotelDTO.score}" class="card-text"></p>
+                    </div>
+                </div>
+                <a href="/review/reviewList?hotel_num=${hotel_num}"
+                   class="position-absolute top-0 end-0 m-2">
+                    전체 리뷰 보기
+                </a>
+                <div class="review-list d-flex">
+                    <div th:each="review : ${reviews}" class="review-item card me-2">
+                        <div class="card-body">
+                            <p th:text="${review.content}" class="card-text"></p>
+                            <span th:text="${review.reg_date}" class="text-muted"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

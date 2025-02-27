@@ -31,4 +31,8 @@ public class Review extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_num")
     private Hotel hotel; //호텔
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "room_num")
+    private Room room; //호텔
 }
