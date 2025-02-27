@@ -94,18 +94,16 @@ public class PayService {
     @Transactional
     public void savePayInfo(PayDTO payDTO) {
 
-        // 1. 결제 정보를 Pay 엔티티로 변환
+        //결제 정보를 Pay 엔티티로 변환
         Member member = memberRepository.findByEmail(payDTO.getMemberDTO().getEmail());
         Pay pay = modelMapper.map(payDTO, Pay.class);
         pay.setMember(member);
 
-        // 2. 예약 정보 생성
+        //예약 정보 생성
         List<RoomReserveItem> roomReserveItems = new ArrayList<>();
 
-        log.info("for문 진행");
+        log.info("룸 예약 정보 저장 시작");
         for (RoomItemDTO roomItemDTO : payDTO.getRoomItemDTOList()) {
-
-            // 예약할 방 찾기
             Room room = roomRepository.findById(roomItemDTO.getRoom_num())
                     .orElseThrow(() -> new IllegalArgumentException("해당 방이 존재하지 않습니다. room_num: " + roomItemDTO.getRoom_num()));
 

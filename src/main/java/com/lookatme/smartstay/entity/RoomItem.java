@@ -33,10 +33,6 @@ public class RoomItem extends BaseEntity{
     private Room room; //룸
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reserve_num")
-    private RoomReserve roomReserve;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pay_num")
     private Pay pay;
 

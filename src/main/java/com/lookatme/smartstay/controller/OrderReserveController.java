@@ -1,8 +1,6 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.RoomReserveItemDTO;
-import com.lookatme.smartstay.entity.OrderReserve;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.service.*;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -79,14 +76,15 @@ public class OrderReserveController {
     @GetMapping("/orderReserveList")
     public String orderReserveList(Principal principal, Model model) {
 
-        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
-        model.addAttribute("hotel_name", hotelDTO.getHotel_name());
-
-        String email = principal.getName();
-
-        List<OrderReserve> orders = orderReserveService.getOrdersByMemberEmail(email);
-
-        model.addAttribute("orders", orders);
+        //리스트 추가 필요
+//        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+//        model.addAttribute("hotel_name", hotelDTO.getHotel_name());
+//
+//        String email = principal.getName();
+//
+//        List<OrderReserve> orders = orderReserveService.getOrdersByMemberEmail(email);
+//
+//        model.addAttribute("orders", orders);
 
         return "orderreserve/orderReserveList";
     }

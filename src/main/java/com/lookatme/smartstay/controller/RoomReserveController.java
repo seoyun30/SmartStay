@@ -1,19 +1,18 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.RoomDTO;
-import com.lookatme.smartstay.dto.RoomItemDTO;
 import com.lookatme.smartstay.dto.RoomReserveItemDTO;
 import com.lookatme.smartstay.service.RoomReserveService;
 import com.lookatme.smartstay.service.RoomService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
 import java.util.List;
@@ -35,32 +34,6 @@ public class RoomReserveController {
         model.addAttribute("roomDTO", roomDTO);
 
         return "roomreserve/roomReserveRegister";
-    }
-
-    @PostMapping("/roomReserveRegister")
-    public String roomReserveRegisterPost(@Valid RoomItemDTO roomItemDTO,
-                                                  BindingResult bindingResult, Principal principal) {
-
-        if (bindingResult.hasErrors()) {
-            StringBuffer sb = new StringBuffer();
-
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors(); //각 필드 에러
-            for (FieldError fieldError : fieldErrors) {
-                log.info("필드 : "+ fieldError.getField() + " 메시지 : " + fieldError.getDefaultMessage());
-                sb.append(fieldError.getDefaultMessage());
-            }
-
-            log.info(sb.toString());
-
-            return sb.toString();
-        }
-
-        //받아온 값 체크
-        log.info(roomItemDTO);
-
-        roomReserveService.order(roomItemDTO, principal.getName());
-
-        return "/pay";
     }
 
     //관리자 룸예약 목록
