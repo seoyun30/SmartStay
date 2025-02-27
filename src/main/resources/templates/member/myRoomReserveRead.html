@@ -11,66 +11,55 @@
 
 <th:block layout:fragment="content">
     <div class="row">
-        <div class="col-8 offset-2">
+        <div class="col-6 offset-3">
             <div class="card row mt-3">
 
-                <div class="col-12 mt-3">
-                    <div class="mb-3 text-center">
-                        <h2 th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}"></h2>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="mb-3">
-                        <label for="room_name" class="form-label">룸 이름</label>
-                        <input type="text" class="form-control" th:value="${roomReserveItemDTO.roomDTO.room_name}" required id="room_name" readonly>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="mb-3">
-                        <label for="in_date" class="form-label">체크인</label>
-                        <input type="text" class="form-control" th:value="${roomReserveItemDTO.in_date}" required id="in_date" readonly>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="mb-3">
-                        <label for="out_date" class="form-label">체크아웃</label>
-                        <input type="text" class="form-control" th:value="${roomReserveItemDTO.out_date}" required id="out_date" readonly>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="mb-3">
-                        <label for="room_info" class="form-label">룸 정보</label>
-                        <input type="text" min="0" class="form-control" th:value="${roomReserveItemDTO.roomDTO.room_info}" id="room_info" readonly>
-                        <p th:if="${#fields.hasErrors('roomReserveItemDTO.roomDTO.room_info')}" th:errors="${roomReserveItemDTO.roomDTO.room_info}" class="fieldError"></p>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="mb-3">
-                        <label for="room_type"  class="form-label">룸 타입</label>
-                        <input type="text" min="0" class="form-control" th:value="${roomReserveItemDTO.roomDTO.room_type}" id="room_type" readonly>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="mb-3">
-                        <label for="room_bed" class="form-label">룸 인원수</label>
-                        <input type="number" min="0" class="form-control" th:value="${roomReserveItemDTO.roomDTO.room_bed}" id="room_bed" readonly>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="mb-3">
-                        <label for="room_price" class="form-label">예약 가격</label>
-                        <input type="number" min="0" class="form-control" th:value="${roomReserveItemDTO.payDTO.amount}" id="room_price" readonly>
-                    </div>
-                </div>
+                <div class="container">
 
-                <div class="d-grid gap-2 col-6 mb-3 mx-auto">
-                    <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-dark">내 정보 메인</button>
-                    <button type="button"
-                            th:onclick="|location.href='@{/orderreserve/orderReserveRegister(roomreserveitem_num=${roomReserveItemDTO.roomreserveitem_num})}'|"
-                            class="mt-3 btn btn-dark">룸서비스 주문</button>
-                    <button type="button"
-                            th:onclick="|location.href='@{/review/reviewRegister(reserve_num=${roomReserveItemDTO.roomReserveDTO.reserve_num})}'|"
-                            class="mt-3 btn btn-dark">리뷰 작성</button>
+                    <div class="header mt-5">
+                        <div class="header-date" th:text="${#temporals.format(roomReserveItemDTO.reg_date, 'yyyy.MM.dd')}">
+                        </div>
+                    </div>
+
+                    <div class="section mt-5">
+                        <h2>상품 및 이용정보</h2>
+                        <div class="info-box">
+                            <div class="info-details">
+                                <p><strong th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}"></strong></p>
+                                <p th:text="${roomReserveItemDTO.roomDTO.room_name}"></p>
+                                <p>체크인 : <span th:text="${roomReserveItemDTO.in_date}"></span></p>
+                                <p>체크아웃 : <span th:text="${roomReserveItemDTO.out_date}"></span></p>
+                                <p>숙박 인원 : 기준 /최대 <span th:text="${roomReserveItemDTO.roomDTO.room_bed}">2명</span></p>
+                                <p>가격 : <span th:text="${roomReserveItemDTO.payDTO.amount}"></span></p>
+                                <button type="button"
+                                        th:onclick="|location.href='@{/orderreserve/orderReserveRegister(roomreserveitem_num=${roomReserveItemDTO.roomreserveitem_num})}'|"
+                                        class="mt-3 btn btn-primary">룸서비스 주문</button>
+                                <button type="button"
+                                        th:onclick="|location.href='@{/review/reviewRegister(reserve_num=${roomReserveItemDTO.roomReserveDTO.reserve_num})}'|"
+                                        class="mt-3 btn btn-outline-dark">후기 작성하기</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section mt-5">
+                        <h2>예약자 정보</h2>
+                        <p>이름 : </p>
+                        <p>휴대폰 번호 : </p>
+                    </div>
+
+                    <div class="section mt-5">
+                        <h2>결제 금액</h2>
+                        <p>상품 금액 : <span th:text="${roomReserveItemDTO.payDTO.amount}"></span></p>
+                        <hr/>
+                        <strong>총 결제 금액 :
+                            <span th:text="${roomReserveItemDTO.payDTO.amount}"></span></strong><br/>
+                    </div>
+
+                    <div class="button-group mt-5 mb-5">
+                        <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-dark">내 정보 메인</button>
+                        <button>예약 취소하기</button>
+                    </div>
+
                 </div>
 
             </div>
