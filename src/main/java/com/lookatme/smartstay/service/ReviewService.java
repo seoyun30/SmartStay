@@ -79,36 +79,34 @@ public class ReviewService {
     }
 
     //호텔에 있는 리뷰 전체 조회
-    public List<ReviewDTO> hotelReviewList(Long hotel_num) {
+    public List<ReviewDTO> gethotelReviewList(Long hotel_num) {
 
-       List<Review> reviews = reviewRepository.findAll();
+        List<Review> hotelreviews = reviewRepository.findByHotel(hotel_num);
 
-       reviews.forEach(review -> log.info(review));
-       List<ReviewDTO> reviewDTOS = reviews.stream()
-               .map(review -> {
-                   ReviewDTO reviewDTO = modelMapper.map(review, ReviewDTO.class);
-                   HotelDTO hotelDTO = modelMapper.map(review.getHotel(), HotelDTO.class);
-                   reviewDTO.setHotelDTO(hotelDTO);
-                   reviewDTO.setImageDTOList(reviewDTO.getImageDTOList());
-                   return reviewDTO;
-               })
-               .collect(Collectors.toList());
+        // 리뷰가 없는 경우 빈 리스트 반환
+        if (hotelreviews.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-//        // 리뷰가 없는 경우 빈 리스트 반환
-//        if (reviewList.isEmpty()) {
-//            return Collections.emptyList();
-//        }
+        List<ReviewDTO> reviewDTOList = hotelreviews.stream()
+                        .map(review -> modelMapper.map(review, ReviewDTO.class)
+                                .setRoomDTO(modelMapper.map(review.getRoom(), RoomDTO.class)
+                                        .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class)))
+                        )
+                .collect(Collectors.toList());
 
-        return reviewDTOS;
+        return reviewDTOList;
     }
 
 
     //유저 리뷰 전체 목록 (유저 my 페이지)
     public List<ReviewDTO> userMyReviewList(String email) {
 
+        List<Review> reviews = reviewRepository.findByUser(email);
+
         //1. 유저 정보 확인
         Member member = memberRepository.findByEmail(email); //회원정보 확인
-        if (member ==null) {
+        if (member == null) {
             throw new IllegalArgumentException("해당 이메일의 회원 정보를 찾을 수 없습니다..");
         }
 
@@ -121,14 +119,6 @@ public class ReviewService {
         } else {
             throw new AccessDeniedException("리뷰를 조회할 권한이 없습니다.");
         }
-
-        //이전 거
-//        if (member.getRole().name().equals("USER")) {
-//            throw new AccessDeniedException("리뷰를 조회할 권한이 없습니다.");
-//        }
-
-//        List<Review> userMyReviews = reviewRepository.findByMember(member); // member 객체로 조회하는것이 정확하다고 함..
-//        List<Review> userMyReviews = reviewRepository.findByUser(email);
 
         // 유저 리뷰목록을 DTO로 변환
         List<ReviewDTO> reviewDTOS = userMyReviews.stream()
@@ -170,6 +160,7 @@ public class ReviewService {
 
         review.setRoomReserve(roomReserveItem.getRoomReserve());  // 예약 정보를 세팅
         review.setHotel(roomReserveItem.getRoom().getHotel());  //호텔 정보 설정
+        review.setRoom(roomReserveItem.getRoom()); //룸 정보 설정
         review.setMember(roomReserveItem.getRoomReserve().getMember());  // 회원 정보 설정
 
         //먼저 리뷰 저장

@@ -39,7 +39,34 @@
 
         .blind{position:absolute;clip:rect(0 0 0 0);margin:-1px;width:1px;height: 1px;overflow:hidden;}
     </style>
+    <style>
+        .star-ratings {
+            color: #aaa9a9;
+            position: relative;
+            unicode-bidi: bidi-override;
+            width: max-content;
+            -webkit-text-fill-color: transparent; /* Will override color (regardless of order) */
+            -webkit-text-stroke-width: 1.3px;
+            -webkit-text-stroke-color: #2b2a29;
+        }
 
+        .star-ratings-fill {
+            color: #fff58c;
+            padding: 0;
+            position: absolute;
+            z-index: 1;
+            display: flex;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            -webkit-text-fill-color: gold;
+        }
+
+        .star-ratings-base {
+            z-index: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
 
@@ -73,6 +100,7 @@
                         <span class="starpoint_bg"></span>
                     </div>
                 </div>
+
                 <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}"></div>
                 <!--리뷰 내용-->
                 <div class="card">
@@ -123,6 +151,9 @@
     <div class="col-3"></div>
 </th:block><!--container끝-->
 <script th:inline="javascript" layout:fragment="script">
+
+
+
     //이미지 업로드
     document.addEventListener("DOMContentLoaded", function (){
 
