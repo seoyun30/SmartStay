@@ -17,8 +17,7 @@
                 <div class="container">
 
                     <div class="header mt-5">
-                        <div class="header-date" th:text="${#temporals.format(roomReserveItemDTO.reg_date, 'yyyy.MM.dd')}">
-                        </div>
+                        <p>예약 날짜 : <span th:text="${#temporals.format(roomReserveItemDTO.reg_date, 'yyyy.MM.dd')}"></span></p>
                     </div>
 
                     <div class="section mt-5">
@@ -29,7 +28,7 @@
                                 <p th:text="${roomReserveItemDTO.roomDTO.room_name}"></p>
                                 <p>체크인 : <span th:text="${roomReserveItemDTO.in_date}"></span></p>
                                 <p>체크아웃 : <span th:text="${roomReserveItemDTO.out_date}"></span></p>
-                                <p>숙박 인원 : 기준 /최대 <span th:text="${roomReserveItemDTO.roomDTO.room_bed}">2명</span></p>
+                                <p>인원 : 기준 /최대 <span th:text="${roomReserveItemDTO.roomDTO.room_bed}">2명</span></p>
                                 <p>가격 : <span th:text="${roomReserveItemDTO.payDTO.amount}"></span></p>
                                 <button type="button"
                                         th:onclick="|location.href='@{/orderreserve/orderReserveRegister(roomreserveitem_num=${roomReserveItemDTO.roomreserveitem_num})}'|"
@@ -43,21 +42,20 @@
 
                     <div class="section mt-5">
                         <h2>예약자 정보</h2>
-                        <p>이름 : </p>
-                        <p>휴대폰 번호 : </p>
+                        <p>이름 : <span th:text="${roomReserveItemDTO.roomReserveDTO.memberDTO.name}"></span></p>
+                        <p>번호 : <span th:text="${roomReserveItemDTO.roomReserveDTO.memberDTO.tel}"></span></p>
                     </div>
 
                     <div class="section mt-5">
                         <h2>결제 금액</h2>
                         <p>상품 금액 : <span th:text="${roomReserveItemDTO.payDTO.amount}"></span></p>
                         <hr/>
-                        <strong>총 결제 금액 :
-                            <span th:text="${roomReserveItemDTO.payDTO.amount}"></span></strong><br/>
+                        <strong>총 결제 금액 : <span th:text="${roomReserveItemDTO.payDTO.amount}"></span></strong><br/>
                     </div>
 
                     <div class="button-group mt-5 mb-5">
                         <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-dark">내 정보 메인</button>
-                        <button>예약 취소하기</button>
+                        <button type="button">예약 취소하기</button>
                     </div>
 
                 </div>
