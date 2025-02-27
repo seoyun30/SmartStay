@@ -1067,10 +1067,10 @@
             }
 
             let orderItemDTO = {
-                'roomreserveitem_num': roomreserveitem_num,
-                'menu_request': request,
-                'menuItemDTOList': [],
-                'careItemDTOList': []
+                roomreserveitem_num: roomreserveitem_num,
+                menu_request: request,
+                menuItemDTOList: [],
+                careItemDTOList: []
             };
 
             $("#orderList .col-12").each(function () {
@@ -1121,10 +1121,10 @@
             }
 
             let orderItemDTO = {
-                'roomreserveitem_num': roomreserveitem_num,
-                'menu_request': request,
-                'menuItemDTOList': [],
-                'careItemDTOList': []
+                roomreserveitem_num: roomreserveitem_num,
+                menu_request: request,
+                menuItemDTOList: [],
+                careItemDTOList: []
             };
 
             $("#orderList .col-12").each(function () {
@@ -1143,13 +1143,11 @@
                 return;
             }
 
-            // `GET` 방식으로 `/pay` 페이지 이동 (URL 파라미터 추가)
-            let queryString = Object.keys(orderItemDTO)
-                .map(key => `${key}=${encodeURIComponent(orderItemDTO[key])}`)
-                .join("&");
+            let orderItemDTOJSON = encodeURIComponent(JSON.stringify(orderItemDTO));
 
-            window.location.href = `/pay?${queryString}`;
-        })
+            window.location.href = "/pay?orderItemDTO=" + orderItemDTOJSON;
+
+        });
 
         showCareMenu(1);
         showAllMenu(1);
