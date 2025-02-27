@@ -27,9 +27,9 @@
     <nav class="navbar" id="navbar">
         <div class="navbar-right">
             <div class="search-form">
-                <form method="get" action="/menu/menuList">
+                <form method="get" action="/menu/menuList" onsubmit="saveSearchQuery()">
                     <div class="input-group input-group-sm" id="input-group-search">
-                        <input type="text" autocomplete="off" class="form-control" name="query" placeholder="검색어를 입력하세요" id="search-input">
+                        <input type="text" autocomplete="off" class="form-control" name="query" placeholder="검색어를 입력하세요" id="search-input" th:value="${param.query}">
                         <div class="input-group-append">
                             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
                         </div>
@@ -136,8 +136,19 @@
             </div>
         </th:block>
     </div>
-
 </th:block>
 
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedQuery = localStorage.getItem('searchQuery');
+        if (savedQuery) {
+            document.getElementById('search-input').value = savedQuery;
+        }
+    });
+    function saveSearchQuery() {
+        const query = document.getElementById('search-input').value;
+        localStorage.setItem('searchQuery', query);
+    }
+</script>
 </body>
 </html>

@@ -24,9 +24,9 @@
 
                 <div class="navbar-right">
                     <div class="search-form">
-                        <form action="/searchList" method="get">
+                        <form action="/searchList" method="get" onsubmit="saveSearchQuery()">
                             <div class="input-group input-group-sm" id="input-group-search">
-                                <input type="text" autocomplete="off" name="query" id="search-input" class="form-control" placeholder="호텔 찾기" />
+                                <input type="text" autocomplete="off" name="query" id="search-input" class="form-control" placeholder="호텔 찾기" th:value="${param.query}">
                                 <div class="input-group-append">
                                     <button type="submit" title="Search"><i class="bi bi-search"></i></button>
                                 </div>
@@ -89,5 +89,18 @@
         </header>
     </div>
 </th:block>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedQuery = localStorage.getItem('searchQuery');
+        if (savedQuery) {
+            document.getElementById('search-input').value = savedQuery;
+        }
+    });
+    function saveSearchQuery() {
+        const query = document.getElementById('search-input').value;
+        localStorage.setItem('searchQuery', query);
+    }
+</script>
 </body>
 </html>
