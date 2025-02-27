@@ -131,7 +131,6 @@
             <span class="h4 ms-3 fw-bold">룸서비스 주문</span>
             <div class="card-body">
                 <th:block th:each="orderItem, iterStat : ${orderItemDTOList}">
-
                     <th:block th:if="${iterStat.index == 0
                 or orderItem.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name != orderItemDTOList[iterStat.index - 1].roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">
                         <div class="p-3">
@@ -159,10 +158,11 @@
 
                             <div class="col-md-12 align-self-center">
                                 <div class="card-body roomServiceInfo">
+                                    <input type="hidden" class="roomreserveitem_num" name="roomreserveitem_num" th:value="${orderItem.roomreserveitem_num}">
 
                                     <h4 class="mb-3 fw-bold">룸케어 서비스</h4>
                                     <th:block th:each="careItem : ${orderItem.careItemDTOList}">
-                                        <div class="row mb-3">
+                                        <div class="row mb-3 careItem">
                                             <div class="col-md-2 align-self-center">
                                                 <th:block th:each="img: ${careItem.imageDTOList}">
                                                     <th:block th:if="${img.repimg_yn == 'Y'}">
@@ -174,6 +174,7 @@
                                             </div>
                                             <div class="col-md-10 align-self-center">
                                                 <input type="hidden" class="careitem_num" th:value="${careItem.careitem_num}">
+                                                <input type="hidden" class="care_num" th:value="${careItem.careDTO.care_num}">
                                                 <p class="h5" th:text="${careItem.careDTO.care_name}"></p>
                                                 <p class="h5 care_count" th:text="${careItem.care_count + '개'}"></p>
                                                 <p class="h5 care_price" th:text="${careItem.careDTO.care_price + '원'}"></p>
@@ -183,7 +184,7 @@
 
                                     <h4 class="mb-3 fw-bold">주문 메뉴</h4>
                                     <th:block th:each="menuItem : ${orderItem.menuItemDTOList}">
-                                        <div class="row">
+                                        <div class="row menuItem">
                                             <div class="col-md-2 align-self-center">
                                                 <th:block th:each="img: ${menuItem.imageDTOList}">
                                                     <th:block th:if="${img.repimg_yn == 'Y'}">
@@ -196,6 +197,7 @@
 
                                             <div class="col-md-10 align-self-center">
                                                 <input type="hidden" class="menuitem_num" th:value="${menuItem.menuitem_num}">
+                                                <input type="hidden" class="menu_num" th:value="${menuItem.menuDTO.menu_num}">
                                                 <p class="h5" th:text="${menuItem.menuDTO.menu_name}"></p>
                                                 <p class="h5 menu_count" th:text="${menuItem.menu_count + '개'}"></p>
                                                 <p class="h5 menu_price" th:text="${menuItem.menuDTO.menu_price + '원'}"></p>
@@ -323,6 +325,8 @@
         // orderItemDTOList 생성
         $(".roomServiceInfo").each(function () {
             let orderItemDTO = {
+                roomreserveitem_num : $(this).find(".roomreserveitem_num").val(),
+                menu_request : $(this).find(".menu_request").text().replace("요청사항 : ", "").trim(),
                 careItemDTOList: [],
                 menuItemDTOList: []
             };
@@ -332,6 +336,7 @@
                 let careItemDTO = {
                     careitem_num: $(this).find(".careitem_num").val(),
                     careDTO: {
+                        care_num : $(this).find(".care_num").val(),
                         care_name: $(this).find(".careName").text(),
                         care_price: $(this).find(".carePrice").text().replace("원", "").trim()
                     },
@@ -345,6 +350,7 @@
                 let menuItemDTO = {
                     menuitem_num: $(this).find(".menuitem_num").val(),
                     menuDTO: {
+                        menu_num : $(this).find(".menu_num").val(),
                         menu_name: $(this).find(".menuName").text(),
                         menu_price: $(this).find(".menuPrice").text().replace("원", "").trim()
                     },
