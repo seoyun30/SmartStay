@@ -9,7 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
@@ -38,40 +37,6 @@ public class OrderReserveController {
 
         return "orderreserve/orderReserveRegister";
     }
-
-
-//    @PostMapping("/orderReserveRegister")
-//    public String orederReserveRegisterPost(@Valid OrderItemDTO orderItemDTO, Model model,
-//                                            BindingResult bindingResult, Principal principal) {
-//
-//        if (bindingResult.hasErrors()) {
-//            StringBuffer sb = new StringBuffer();
-//
-//            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-//            for (FieldError fieldError : fieldErrors) {
-//                sb.append(fieldError.getDefaultMessage());
-//            }
-//
-//            return sb.toString();
-//        }
-//
-//        try {
-//            orderItemService.createOrder(orderItemDTO);
-//        }catch (Exception e) {
-//            model.addAttribute("errorMessage", e.getMessage());
-//            return "orderreserve/orderReserveRegister";
-//        }
-//        model.addAttribute("successMessage", "룸서비스 주문 성공");
-//
-//        return "orderreserve/pay";
-//    }
-
-    @PostMapping("/pay")
-    public String pay() {
-
-        return "orderreserve/pay";
-    }
-
 
     @GetMapping("/orderReserveList")
     public String orderReserveList(Principal principal, Model model) {

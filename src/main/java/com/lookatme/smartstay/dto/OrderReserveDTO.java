@@ -34,4 +34,9 @@ public class OrderReserveDTO {
 
     private String modified_by;
 
+    public OrderReserveDTO setMemberDTO(MemberDTO memberDTO) {
+        this.memberDTO = memberDTO;
+        return this;
+    }
+
 }

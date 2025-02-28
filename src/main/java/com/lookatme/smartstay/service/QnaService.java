@@ -41,4 +41,5 @@ public interface QnaService {
     //조회수
     public void incrementViewCount(Long qna_num);
 
+
 }

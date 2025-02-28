@@ -97,6 +97,8 @@ public class ImageService {
                                 .orElseThrow(() -> new IllegalArgumentException("해당 공지사항 정보를 찾을 수 없습니다."));
                         image.setNotice(notice);
                         break;
+                    case "banner":
+                        break;
                     default:
                         throw new IllegalArgumentException("잘못된 targetType입니다.");
                 }
@@ -197,6 +199,8 @@ public class ImageService {
                         Notice notice = noticeRepository.findById(targetId)
                                 .orElseThrow(() -> new IllegalArgumentException("해당 공지사항 정보를 찾을 수 없습니다."));
                         image.setNotice(notice);
+                        break;
+                    case "banner":
                         break;
                     default:
                         throw new IllegalArgumentException("잘못된 targetType입니다.");

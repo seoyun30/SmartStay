@@ -70,19 +70,19 @@
                                     </div>
 
                                     <div class="mt-3 row row-cols-1 row-cols-md-4 g-4">
-                                        <th:block th:if="${roomReserveItemDTOList.isEmpty()}">
+                                        <th:block th:if="${reserveItemDTOPageResponseDTO.dtoList.isEmpty()}">
                                             <span class="h5 fw-bold">최근 예약 내역이 없습니다.</span>
                                         </th:block>
-                                        <th:block th:unless="${roomReserveItemDTOList.isEmpty()}" th:each="roomReserveItem : ${roomReserveItemDTOList}">
+                                        <th:block th:unless="${reserveItemDTOPageResponseDTO.dtoList.isEmpty()}" th:each="roomReserveItemDTO : ${reserveItemDTOPageResponseDTO.dtoList}">
                                             <div class="card mx-auto">
                                                 <div class="card-body px-auto">
-                                                    <h5 class="card-title fw-bold" th:text="${roomReserveItem.roomDTO.hotelDTO.hotel_name}">예약한 호텔</h5>
-                                                    <h5 class="card-title" th:text="${roomReserveItem.roomDTO.room_name}">예약한 방 이름</h5>
+                                                    <h5 class="card-title fw-bold" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">예약한 호텔</h5>
+                                                    <h5 class="card-title" th:text="${roomReserveItemDTO.roomDTO.room_name}">예약한 방 이름</h5>
                                                     <small class="card-text">체크인 : </small>
-                                                    <small class="card-text" th:text="${#temporals.format(roomReserveItem.in_date, 'yyyy.MM.dd HH:mm')}">체크인 시간</small> <br>
+                                                    <small class="card-text" th:text="${#temporals.format(roomReserveItemDTO.in_date, 'yyyy.MM.dd HH:mm')}">체크인 시간</small> <br>
                                                     <small class="card-text">체크아웃 : </small>
-                                                    <small class="card-text" th:text="${#temporals.format(roomReserveItem.out_date, 'yyyy.MM.dd HH:mm')}">체크아웃 시간</small>
-                                                    <a th:href="@{/member/myRoomReserveRead(roomreserveitem_num=${roomReserveItem.roomreserveitem_num})}" class="btn btn-primary">예약 내역 확인</a>
+                                                    <small class="card-text" th:text="${#temporals.format(roomReserveItemDTO.out_date, 'yyyy.MM.dd HH:mm')}">체크아웃 시간</small>
+                                                    <a th:href="@{/member/myRoomReserveRead(roomreserveitem_num=${roomReserveItemDTO.roomreserveitem_num})}" class="btn btn-primary">예약 내역 확인</a>
                                                 </div>
                                             </div>
                                         </th:block>
@@ -92,12 +92,36 @@
                                     <div class="mt-3 row text-start">
                                         <h4 class="col-11">최근 룸서비스 주문 내역</h4>
                                         <p class="col-1 text-end">
-                                            <a href="#">더보기</a>
+                                            <a href="/member/myOrderReserveList">더보기</a>
                                         </p>
                                     </div>
 
                                     <div class="mt-3 row row-cols-1 row-cols-md-4 g-4">
-                                            <span class="h5 fw-bold">최근 예약 내역이 없습니다.</span>
+                                        <th:block th:if="${orderReserveItemDTOPageResponseDTO.dtoList.isEmpty()}">
+                                            <span class="h5 fw-bold">최근 주문 내역이 없습니다.</span>
+                                        </th:block>
+                                        <th:block th:unless="${orderReserveItemDTOPageResponseDTO.dtoList.isEmpty()}" th:each="orderReserveItemDTO : ${orderReserveItemDTOPageResponseDTO.dtoList}">
+                                            <div class="card mx-auto">
+                                                <div class="card-body px-auto">
+                                                    <h5 class="card-title fw-bold" th:text="${'주문 번호 : ' + orderReserveItemDTO.orderReserveDTO.order_id}">주문 번호</h5>
+                                                    <p class="card-title" th:text="${'주문일 : ' + #temporals.format(orderReserveItemDTO.orderReserveDTO.reg_date, 'yyyy.MM.dd HH:mm')}">주문일</p>
+                                                    <p class="card-text mb-1" th:text="${'케어 서비스 주문 건수 : ' + #lists.size(orderReserveItemDTO.careReserveItemDTOList)}"></p>
+                                                    <p class="card-text mb-1" th:text="${'메뉴 주문 건수 : ' + #lists.size(orderReserveItemDTO.menuReserveItemDTOList)}"></p>
+                                                    <p class="card-text mb-1" th:text="${'결제 금액 : ' + orderReserveItemDTO.orderReserveDTO.total_price + '원'}">결제 금액</p>
+                                                    <p class="card-text mb-1" th:text="${'요청 사항 : ' + orderReserveItemDTO.menu_request}">요청사항</p>
+                                                    <p class="card-text mb-1">
+                                                        주문 상태 :
+                                                        <span th:switch="${orderReserveItemDTO.orderReserveDTO.order_state}">
+                                                            <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.ORDER}">주문 접수</span>
+                                                            <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.PREPARE}">주문 준비중</span>
+                                                            <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.COMPLETE}">주문 완료</span>
+                                                            <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.CANCEL}">주문 취소</span>
+                                                            <span th:case="*">알 수 없음</span> <!-- 예외 처리 -->
+                                                        </span>
+                                                    <a th:href="@{/member/myOrderReserveRead(serviceitem_num=${orderReserveItemDTO.serviceitem_num})}" class="btn btn-primary">주문 내역 확인</a>
+                                                </div>
+                                            </div>
+                                        </th:block>
                                     </div>
 
                                 </div>
