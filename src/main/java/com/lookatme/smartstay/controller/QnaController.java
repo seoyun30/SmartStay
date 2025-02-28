@@ -1,17 +1,13 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.dto.QnaDTO;
-import com.lookatme.smartstay.entity.Qna;
+import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.ImageService;
-import com.lookatme.smartstay.service.QnaServcieImpl;
-import com.lookatme.smartstay.service.QnaService;
+import com.lookatme.smartstay.service.QnaServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -21,8 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -32,13 +28,24 @@ import java.util.Map;
 @RequestMapping("/qna")
 public class QnaController {
 
-    private final QnaServcieImpl qnaService;
+    private final QnaServiceImpl qnaService;
     private final ImageService imageService;
+    private final MemberRepository memberRepository;
 
     //등록
     @GetMapping("/qnaRegister")
-    public String qnaRegisterGet(Model model) {
-        model.addAttribute("qnaDTO", new QnaDTO());
+    public String qnaRegisterGet(Model model, Principal principal) {
+        QnaDTO qnaDTO = new QnaDTO();
+
+        if (principal != null) {
+            String loggedInEmail = principal.getName(); // 현재 로그인한 사용자의 이메일
+            log.info("현재 로그인한 사용자 이메일: " + loggedInEmail);
+            Member member = memberRepository.findMemberByEmail(loggedInEmail)
+                    .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+            qnaDTO.setWriter(member.getName()); // 이메일이 아닌 '이름'을 작성자로 설정
+        }
+
+        model.addAttribute("qnaDTO", qnaDTO);
         return "qna/qnaRegister";
     }
 
