@@ -47,7 +47,15 @@
                     </div>
 
                     <div class="col text-center d-flex justify-content-center gap-3 mt-4">
-                        <button type="button" class="btn btn-dark" onclick="location.href='/member/changeMove'">다음에변경하기</button>
+
+                        <th:block sec:authorize="hasAnyAuthority('SUPERADMIN', 'CHIEF', 'MANAGER')">
+                            <button type="button" class="btn btn-dark" onclick="location.href='/adMain'">다음에변경하기</button>
+                        </th:block>
+
+                        <th:block sec:authorize="hasAuthority('USER')">
+                            <button type="button" class="btn btn-dark" onclick="location.href='/'">다음에변경하기</button>
+                        </th:block>
+
                         <button type="submit" class="btn btn-primary">저장</button>
                     </div>
                 </form>
