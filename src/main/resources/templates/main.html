@@ -43,7 +43,7 @@
                     <th:block th:each="image, iterStat : ${banner}">
                         <div th:class="${iterStat.index == 0} ? 'carousel-item active' : 'carousel-item'" class="relative">
                             <img th:src="@{${image.image_url}}" class="d-block w-100" style="height: 600px" alt="배너 이미지">
-                            <button type="button" th:data-image-id="${image.image_id}" class="btn btn-danger delete-image-btn delete-button">삭제</button>
+                            <button sec:authorize="hasAuthority('SUPERADMIN')" type="button" th:data-image-id="${image.image_id}" class="btn btn-danger delete-image-btn delete-button">삭제</button>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
