@@ -315,25 +315,25 @@ public class LoginController {
     }
 
 
-    @GetMapping("/changeMove")
-    public String changeMoveGet(Principal principal, Model model){
-
-        if(principal == null){
-            return "redirect:/member/loginPW";
-        }
-
-        MemberDTO memberDTO = memberService.findbyEmail(principal.getName());
-
-        model.addAttribute("memberDTO", memberDTO);
-
-        String redirectUrl = "/"; // 기본값 (USER는 메인 페이지로 이동)
-        if (memberDTO.getRole() == Role.SUPERADMIN || memberDTO.getRole() == Role.CHIEF || memberDTO.getRole() == Role.MANAGER) {
-            redirectUrl = "/adMain"; // 관리자 계열은 /adMain으로 이동
-        }
-
-        return "redirect:" + redirectUrl;
-
-    }
+//    @GetMapping("/changeMove")
+//    public String changeMoveGet(Principal principal, Model model){
+//
+//        if(principal == null){
+//            return "redirect:/member/loginPW";
+//        }
+//
+//        MemberDTO memberDTO = memberService.findbyEmail(principal.getName());
+//
+//        model.addAttribute("memberDTO", memberDTO);
+//
+//        String redirectUrl = "/"; // 기본값 (USER는 메인 페이지로 이동)
+//        if (memberDTO.getRole() == Role.SUPERADMIN || memberDTO.getRole() == Role.CHIEF || memberDTO.getRole() == Role.MANAGER) {
+//            redirectUrl = "/adMain"; // 관리자 계열은 /adMain으로 이동
+//        }
+//
+//        return "redirect:" + redirectUrl;
+//
+//    }
 
 
 
