@@ -79,7 +79,7 @@
                         <p th:text="${hotelDTO.score}" class="card-text"></p>
                     </div>
                 </div>
-                <a th:href="@{/review/reviewList(hotel_num=${hotelDTO.hotel_num})}"
+                <a th:href="@{'/review/reviewList/'+${hotelDTO.hotel_num}}"
                    class="position-absolute top-0 end-0 m-2">
                     전체 리뷰 보기
                 </a>

@@ -34,26 +34,29 @@
                 <tbody>
                 <th:block th:each="review :${reviewDTOList}">
                     <tr class="align-middle">
-                        <a th:href="@{review/reviewRead(id=${review.rev_num})}" th:text="${review.score}"></a>
-                        <td th:text="${review.create_by}"></td>
+                        <a th:text="${review.create_by}"></a>
+                        <td th:text="${review.roomDTO.hotelDTO.hotel_name}"></td>
+                        <td th:text="${review.score}"></td>
+                        <div class="carousel-inner">
+                            <th:block th:each="img: ${review.imageDTOList}">
+                                <th:block th:if="${img.repimg_yn == 'Y'}">
+                                    <div class="carousel-item active d-flex justify-content-center" data-bs-interval="5000">
+                                        <div class="col-12">
+                                            <img width="100%" th:src="${img.thumbnail_url}" alt="대표 이미지" style="height: 500px;">
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </th:block>
+                        </div>
                         <td>
-                            <a href="#" class="increment-view-btn" th:value="${review.imageDTOList}"></a>
+                        <td class="increment-view-btn" th:text="${review.content}"><td th:text="${review.reg_date}"></td></td>
                         </td>
                         <td>
-                            <td class="increment-view-btn" th:text="${review.content}"></td>
-                        </td>
-                        <td th:text="${review.reg_date}"></td>
-                        <td>  <!--post 방식의 삭제버튼--> <!-- 삭제할 qna의 ID를 hidden 필드로 전달 -->
-<!--                            <form class="delform" sec:authorize="hasAnyAuthority('USER')" action="/review/reviewDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">-->
-<!--                                <input type="hidden" name="rev_num" th:value="${review.rev_num}">-->
-<!--                                <button type="button" class="btn btn-dark" style="background-color: red;">삭제</button>-->
-<!--                            </form>-->
                             <form class="delform " sec:authorize="hasAnyAuthority('USER')" action="/review/reviewDelete"  method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
                                 <input type="hidden" name="rev_num" th:value="${review.rev_num}" class="num">
                                 <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>
                             </form>
                         </td>
-
                     </tr>
                 </th:block>
                 </tbody>
