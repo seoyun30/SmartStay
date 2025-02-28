@@ -1,11 +1,15 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.QnaDTO;
 import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
+import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.ImageService;
 import com.lookatme.smartstay.service.QnaServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.List;
@@ -31,6 +36,8 @@ public class QnaController {
     private final QnaServiceImpl qnaService;
     private final ImageService imageService;
     private final MemberRepository memberRepository;
+    private final HotelRepository hotelRepository;
+    private final HotelService hotelService;
 
     //등록
     @GetMapping("/qnaRegister")
@@ -45,13 +52,16 @@ public class QnaController {
             qnaDTO.setWriter(member.getName()); // 이메일이 아닌 '이름'을 작성자로 설정
         }
 
+        // 호텔 목록을 가져오는 부분
+        List<HotelDTO> hotelList = hotelService.hotelList(); // 모든 호텔을 가져옴
+
         model.addAttribute("qnaDTO", qnaDTO);
+        model.addAttribute("hotelDTOList", hotelList);
         return "qna/qnaRegister";
     }
 
     @PostMapping("/qnaRegister")
-    public String qnaRegisterPost(QnaDTO qnaDTO, BindingResult bindingResult) {
-        //@valid MultipartFile[] multipartFile 추후 사용
+    public String qnaRegisterPost(@Valid QnaDTO qnaDTO, BindingResult bindingResult, MultipartFile[] multipartFiles) {
 
         log.info("컨트롤러로 들어온 값:" + qnaDTO);
         //log.info("컨트롤러로 들어온 값:" + MultipartFile.getOriginalFilename());
@@ -62,8 +72,7 @@ public class QnaController {
 
             return "qna/qnaRegister";
         }
-        qnaService.register(qnaDTO);
-        //파일 추가시 qnaService.register(qnaDTO, multipartFile); 활성
+        qnaService.register(qnaDTO, multipartFiles);
 
         return "redirect:/qna/qnaList";
     }
