@@ -18,7 +18,7 @@ public class ReviewDTO {
 
     private Long rev_num; //리뷰 번호
 
-    @NotBlank(message = "리뷰 내용을 적어주세요")
+    @NotNull(message = "리뷰 내용을 적어주세요")
     private String content; //리뷰 내용
 
     @NotBlank(message = "별점은 0.5점 부터 시작합니다")
@@ -65,8 +65,17 @@ public class ReviewDTO {
 
     private String modified_by;
 
-    //이미지 리스트들..
+    //이미지
     public List<ImageDTO> imageDTOList = new ArrayList<>(); //여러 이미지를 담는 용
     private List<Long> imageIdList = new ArrayList<>(); // 이미지 식별용(이미지 ID를 저장하는 리스트)
+    private ImageDTO imageDTO;
+
+    public ImageDTO getMainImageDTO() {
+        return imageDTO;
+    }
+
+    public void setMainImageDTO(ImageDTO mainImage) {
+        this.imageDTO = mainImage;
+    }
 
 }
