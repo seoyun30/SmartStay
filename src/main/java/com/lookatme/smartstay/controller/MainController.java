@@ -91,7 +91,6 @@ public class MainController {
 
         List<HotelDTO> list = hotelService.activeHotelList();  // 변경된 부분
 
-
         List<HotelDTO> top12Hotels = list.stream().limit(12).collect(Collectors.toList());
 
         model.addAttribute("list", top12Hotels);

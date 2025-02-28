@@ -60,4 +60,6 @@ public class HotelDTO {
     public void setMainImage(ImageDTO mainImage) {
         this.mainImage = mainImage;
     }
+
+    private int review_count;
 }

@@ -33,4 +33,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT r FROM Review r WHERE r.room.room_num = :room_num ORDER BY r.reg_date DESC")
     List<Review> findTopNByRoomNum(@Param("room_num") Long room_num, Pageable pageable);
 
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.hotel.hotel_num = :hotel_num")
+    int countByHotelNum(@Param("hotel_num") Long hotel_num);
 }
