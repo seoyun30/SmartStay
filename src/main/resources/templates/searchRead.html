@@ -13,6 +13,36 @@
             width: 100%;
             object-fit: cover;
         }
+
+        .review-list {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 1rem;
+        }
+
+        .review-item {
+            flex: 1 1 calc(33.33% - 1rem);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-text {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+        }
     </style>
 
 </head>
@@ -66,7 +96,10 @@
                         </div>
                         <span class="text-dark fw-bold" th:text="${hotel.address}">주소</span><br>
                         <span class="text-dark fw-bold" th:text="${hotel.lowestPrice + '원~'}">최저가</span><br>
-                        <span class="text-warning fw-bold" th:text="${hotel.score + '별점'}">별점</span>
+                        <span class="text-warning fw-bold">
+                            <i class="text-warning bi bi-star-fill"></i>
+                            <span th:text="${hotel.score}">별점</span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -75,19 +108,24 @@
         <div class="card container col-10 mb-5">
             <div class="mt-5 mb-5">
                 <div th:each="hotelDTO : ${hotelDTO}">
-                    <div class="card-body">
-                        <p th:text="${hotelDTO.score}" class="card-text"></p>
+                    <div class="d-flex justify-content-between align-items-center mt-0 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="text-warning bi bi-star-fill me-1"></i>
+                            <span th:text="${hotelDTO.score}" class="text-warning fw-bold" me-1></span>
+                            <span th:text="|(${hotelDTO.review_count})|"class="text-warning"></span>
+                        </div>
+                        <a th:href="@{'/review/reviewList/'+${hotelDTO.hotel_num}}"
+                           class="text-decoration-none text-primary fw-bold">
+                            전체 리뷰 보기
+                        </a>
                     </div>
                 </div>
-                <a th:href="@{'/review/reviewList/'+${hotelDTO.hotel_num}}"
-                   class="position-absolute top-0 end-0 m-2">
-                    전체 리뷰 보기
-                </a>
+
                 <div class="review-list d-flex">
                     <div th:each="review : ${reviews}" class="review-item card me-2">
                         <div class="card-body">
-                            <p th:text="${review.content}" class="card-text"></p>
-                            <span th:text="${review.reg_date}" class="text-muted"></span>
+                            <p th:text="${review.content}" class="card-text text-black"></p>
+                            <span th:text="${#temporals.format(review.reg_date, 'yyyy-MM-dd')}" class="small"></span>
                         </div>
                     </div>
                 </div>

@@ -5,10 +5,7 @@ import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.dto.MemberDTO;
-import com.lookatme.smartstay.entity.Brand;
-import com.lookatme.smartstay.entity.Hotel;
-import com.lookatme.smartstay.entity.Image;
-import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -19,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +34,8 @@ public class HotelService {
     private final RoomRepository roomRepository;
     private final EmailService emailService;
     private final ImageRepository imageRepository;
+    private final ReviewRepository reviewRepository;
+    private final ReviewService reviewService;
 
     //hotel 등록
     public void insert(HotelDTO hotelDTO, String email,
@@ -87,8 +87,17 @@ public class HotelService {
                     hotelDTO.setLowestPrice(lowestPrice);
                     ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
                     hotelDTO.setMainImage(mainImage);
+                    Double averageScore = calculateAverageScore(hotel.getHotel_num());
+                    if (averageScore != null) {
+                        hotelDTO.setScore(String.format("%.2f", averageScore));
+                    } else {
+                        hotelDTO.setScore("0.0");
+                    }
+                    int reviewCount = getReviewCount(hotel.getHotel_num());
+                    hotelDTO.setReview_count(reviewCount);
                     return hotelDTO;
                 })
+                .sorted(Comparator.comparingInt(HotelDTO::getReview_count).reversed())
                 .collect(Collectors.toList());
 
         return hotelDTOS;
@@ -138,9 +147,39 @@ public class HotelService {
             hotelDTO.setMainImage(mainImage);
         }
 
+        Double averageScore = calculateAverageScore(hotel.getHotel_num());
+        if (averageScore != null) {
+            hotelDTO.setScore(String.format("%.2f", averageScore));
+        }
+
+        int reviewCount = reviewService.getReviewCountByHotel(hotel.getHotel_num());
+        hotelDTO.setReview_count(reviewCount);
+
         return hotelDTO;
     }
 
+    private Double calculateAverageScore(Long hotel_num) {
+        List<Review> reviews = reviewRepository.findByHotel(hotel_num);
+        if (reviews.isEmpty()) {
+            return null;
+        }
+        return reviews.stream()
+                .filter(review -> {
+                    try {
+                        Double.parseDouble(review.getScore());
+                        return true;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                })
+                .mapToDouble(review -> Double.parseDouble(review.getScore()))
+                .average()
+                .orElse(0.0);
+    }
+
+    private int getReviewCount(Long hotel_num) {
+        return reviewRepository.countByHotelNum(hotel_num);
+    }
 
     public HotelDTO myHotel(String email) {
         Member member = memberRepository.findByEmail(email);

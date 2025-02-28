@@ -310,5 +310,8 @@ public class ReviewService {
         return reviews.stream().map(review -> modelMapper.map(review, ReviewDTO.class)).collect(Collectors.toList());
     }
 
+    public int getReviewCountByHotel (Long hotel_num) {
+        return reviewRepository.countByHotelNum(hotel_num);
+    }
 
 }

@@ -12,6 +12,36 @@
             width: 100%;
             object-fit: cover;
         }
+
+        .review-list {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 1rem;
+        }
+
+        .review-item {
+            flex: 1 1 calc(33.33% - 1rem);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-text {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+        }
     </style>
 
 </head>
@@ -61,15 +91,17 @@
 
             <div class="card container col-10 mb-5">
                 <div class="mt-5 mb-5">
-                    <a href="/review/reviewList?hotel_num=${hotel_num}?room_num=${room_num}"
-                       class="position-absolute top-0 end-0 m-2">
-                        전체 리뷰 보기
-                    </a>
+                    <div class="d-flex justify-content-end mb-3">
+                        <a th:href="@{/review/reviewList(hotel_num=${hotel_num}, room_num=${room_num})}"
+                           class="text-decoration-none text-primary fw-bold">
+                            전체 리뷰 보기
+                        </a>
+                    </div>
                     <div class="review-list d-flex">
                         <div th:each="review : ${reviews}" class="review-item card me-2">
                             <div class="card-body">
-                                <p th:text="${review.content}" class="card-text"></p>
-                                <span th:text="${review.reg_date}" class="text-muted"></span>
+                                <p th:text="${review.content}" class="card-text text-black"></p>
+                                <span th:text="${#temporals.format(review.reg_date, 'yyyy-MM-dd')}" class="small"></span>
                             </div>
                         </div>
                     </div>
