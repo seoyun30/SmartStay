@@ -1,6 +1,6 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.RoomReserveItemDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.service.*;
 import lombok.RequiredArgsConstructor;
@@ -39,17 +39,13 @@ public class OrderReserveController {
     }
 
     @GetMapping("/orderReserveList")
-    public String orderReserveList(Principal principal, Model model) {
+    public String orderReserveList(PageRequestDTO pageRequestDTO, Principal principal, Model model) {
 
-        //리스트 추가 필요
-//        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
-//        model.addAttribute("hotel_name", hotelDTO.getHotel_name());
-//
-//        String email = principal.getName();
-//
-//        List<OrderReserve> orders = orderReserveService.getOrdersByMemberEmail(email);
-//
-//        model.addAttribute("orders", orders);
+        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+        model.addAttribute("hotelDTO", hotelDTO);
+
+        PageResponseDTO<OrderReserveItemDTO> pageResponseDTO = orderReserveService.findOrderReservePage(principal.getName(), pageRequestDTO);
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
 
         return "orderreserve/orderReserveList";
     }

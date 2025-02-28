@@ -52,6 +52,95 @@ public class OrderReserveService {
 
     //룸으로 룸서비스 조회
     //호텔로 룸서비스 조회
+    public PageResponseDTO<OrderReserveItemDTO> findOrderReservePage (String email, PageRequestDTO pageRequestDTO) {
+
+        Member member = memberRepository.findByEmail(email);
+        log.info("현재 로그인한 회원의 호텔 번호: {}", member.getHotel().getHotel_num());
+
+        Pageable pageable = pageRequestDTO.getPageable("serviceitem_num");
+
+        Page<OrderReserveItem> result = orderReserveItemRepository.findByHotelPage(member.getHotel().getHotel_num(), pageable);
+
+        List<OrderReserveItemDTO> orderReserveItemDTOList = result.stream()
+                .map(orderReserveItem -> modelMapper.map(orderReserveItem, OrderReserveItemDTO.class)
+                        .setOrderReserveDTO(modelMapper.map(orderReserveItem.getOrderReserve(), OrderReserveDTO.class)
+                                .setMemberDTO(modelMapper.map(orderReserveItem.getOrderReserve().getMember(), MemberDTO.class)))
+                        .setPayDTO(modelMapper.map(orderReserveItem.getPay(), PayDTO.class))
+                        .setRoomReserveItemDTO(modelMapper.map(orderReserveItem.getRoomReserveItem(), RoomReserveItemDTO.class)
+                                .setRoomDTO(modelMapper.map(orderReserveItem.getRoomReserveItem().getRoom(), RoomDTO.class)
+                                        .setHotelDTO(modelMapper.map(orderReserveItem.getRoomReserveItem().getRoom().getHotel(),HotelDTO.class)
+                                        )
+                                )
+                        )
+                ).collect(Collectors.toList());
+
+        List<MenuReserveItemDTO> menuReserveItemDTOList = new ArrayList<>();
+        List<CareReserveItemDTO> careReserveItemDTOList = new ArrayList<>();
+
+        for (OrderReserveItemDTO orderReserveItemDTO : orderReserveItemDTOList) {
+            List<MenuReserveItem> menuReserveItemList = menuReserveItemRepository.findByOrderReserveItemServiceitem_num(orderReserveItemDTO.getServiceitem_num());
+            menuReserveItemDTOList = menuReserveItemList.stream()
+                    .map(menuReserveItem -> modelMapper.map(menuReserveItem, MenuReserveItemDTO.class)
+                            .setMenuDTO(modelMapper.map(menuReserveItem.getMenu(), MenuDTO.class))
+                    ).collect(Collectors.toList());
+            for (MenuReserveItemDTO menuReserveItemDTO : menuReserveItemDTOList) {
+                List<Image> imageList = imageRepository.findByTarget("menu", menuReserveItemDTO.getMenuDTO().getMenu_num());
+                if (imageList != null && !imageList.isEmpty()) {
+                    List<ImageDTO> imageDTOList = imageList.stream()
+                            .map(image -> modelMapper.map(image, ImageDTO.class))
+                            .collect(Collectors.toList());
+                    menuReserveItemDTO.getMenuDTO().setImageDTOList(imageDTOList);
+
+                    ImageDTO mainImage = imageDTOList.stream()
+                            .filter(image -> "Y".equalsIgnoreCase(image.getRepimg_yn()))
+                            .findFirst()
+                            .orElse(imageDTOList.get(0));
+                    menuReserveItemDTO.getMenuDTO().setMainImage(mainImage);
+                }else {
+                    log.warn("메뉴 번호:{}에 이미지가 없습니다.", menuReserveItemDTO.getMenuDTO().getMenu_num());
+                }
+            }
+
+            List<CareReserveItem> careReserveItemList = careReserveItemRepository.findByOrderReserveItemServiceitem_num(orderReserveItemDTO.getServiceitem_num());
+            careReserveItemDTOList = careReserveItemList.stream()
+                    .map(careReserveItem -> modelMapper.map(careReserveItem, CareReserveItemDTO.class)
+                            .setCareDTO(modelMapper.map(careReserveItem.getCare(), CareDTO.class))
+                    ).collect(Collectors.toList());
+            for (CareReserveItemDTO careReserveItemDTO : careReserveItemDTOList) {
+                List<Image> imageList = imageRepository.findByTarget("care", careReserveItemDTO.getCareDTO().getCare_num());
+                if (imageList != null && !imageList.isEmpty()) {
+                    List<ImageDTO> imageDTOList = imageList.stream()
+                            .map(image -> modelMapper.map(image, ImageDTO.class))
+                            .collect(Collectors.toList());
+                    careReserveItemDTO.getCareDTO().setImageDTOList(imageDTOList);
+
+                    ImageDTO mainImage = imageDTOList.stream()
+                            .filter(image -> "Y".equalsIgnoreCase(image.getRepimg_yn()))
+                            .findFirst()
+                            .orElse(imageDTOList.get(0));
+                    careReserveItemDTO.getCareDTO().setMainImage(mainImage);
+                }else {
+                    log.warn("메뉴 번호:{}에 이미지가 없습니다.", careReserveItemDTO.getCareDTO().getCare_num());
+                }
+            }
+
+            orderReserveItemDTO.setMenuReserveItemDTOList(menuReserveItemDTOList);
+            orderReserveItemDTO.setCareReserveItemDTOList(careReserveItemDTOList);
+        }
+
+        if (orderReserveItemDTOList.isEmpty()) {
+            orderReserveItemDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<OrderReserveItemDTO> orderReserveItemDTOPageResponseDTO = PageResponseDTO.<OrderReserveItemDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(orderReserveItemDTOList)
+                .total((int) result.getTotalElements())
+                .build();
+
+        return orderReserveItemDTOPageResponseDTO;
+    }
+
     //회원의 룸서비스 조회
     public PageResponseDTO<OrderReserveItemDTO> findMyOrderPage (String email, PageRequestDTO pageRequestDTO) {
         Pageable pageable = pageRequestDTO.getPageable("serviceitem_num");
@@ -137,8 +226,73 @@ public class OrderReserveService {
 
         return orderReserveItemDTOPageResponseDTO;
     }
-    //회원의 룸서비스 상세보기
 
+    //회원의 룸서비스 상세보기
+    public OrderReserveItemDTO findOrderReserveItem(Long serviceitem_num, String email) {
+        OrderReserveItem orderReserveItem = orderReserveItemRepository.findByServiceitemNumAndEmail(serviceitem_num, email);
+
+        OrderReserveItemDTO orderReserveItemDTO = modelMapper.map(orderReserveItem, OrderReserveItemDTO.class)
+                .setOrderReserveDTO(modelMapper.map(orderReserveItem.getOrderReserve(), OrderReserveDTO.class)
+                        .setMemberDTO(modelMapper.map(orderReserveItem.getOrderReserve().getMember(), MemberDTO.class)))
+                .setPayDTO(modelMapper.map(orderReserveItem.getPay(), PayDTO.class))
+                .setRoomReserveItemDTO(modelMapper.map(orderReserveItem.getRoomReserveItem(), RoomReserveItemDTO.class)
+                        .setRoomDTO(modelMapper.map(orderReserveItem.getRoomReserveItem().getRoom(), RoomDTO.class)
+                                .setHotelDTO(modelMapper.map(orderReserveItem.getRoomReserveItem().getRoom().getHotel(),HotelDTO.class)
+                                )
+                        )
+                );
+
+        List<MenuReserveItem> menuReserveItemList = menuReserveItemRepository.findByOrderReserveItemServiceitem_num(orderReserveItemDTO.getServiceitem_num());
+        List<MenuReserveItemDTO> menuReserveItemDTOList = menuReserveItemList.stream()
+                .map(menuReserveItem -> modelMapper.map(menuReserveItem, MenuReserveItemDTO.class)
+                        .setMenuDTO(modelMapper.map(menuReserveItem.getMenu(), MenuDTO.class))
+                ).collect(Collectors.toList());
+        for (MenuReserveItemDTO menuReserveItemDTO : menuReserveItemDTOList) {
+            List<Image> imageList = imageRepository.findByTarget("menu", menuReserveItemDTO.getMenuDTO().getMenu_num());
+            if (imageList != null && !imageList.isEmpty()) {
+                List<ImageDTO> imageDTOList = imageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class))
+                        .collect(Collectors.toList());
+                menuReserveItemDTO.getMenuDTO().setImageDTOList(imageDTOList);
+
+                ImageDTO mainImage = imageDTOList.stream()
+                        .filter(image -> "Y".equalsIgnoreCase(image.getRepimg_yn()))
+                        .findFirst()
+                        .orElse(imageDTOList.get(0));
+                menuReserveItemDTO.getMenuDTO().setMainImage(mainImage);
+            }else {
+                log.warn("메뉴 번호:{}에 이미지가 없습니다.", menuReserveItemDTO.getMenuDTO().getMenu_num());
+            }
+        }
+
+        List<CareReserveItem> careReserveItemList = careReserveItemRepository.findByOrderReserveItemServiceitem_num(orderReserveItemDTO.getServiceitem_num());
+        List<CareReserveItemDTO> careReserveItemDTOList = careReserveItemList.stream()
+                .map(careReserveItem -> modelMapper.map(careReserveItem, CareReserveItemDTO.class)
+                        .setCareDTO(modelMapper.map(careReserveItem.getCare(), CareDTO.class))
+                ).collect(Collectors.toList());
+        for (CareReserveItemDTO careReserveItemDTO : careReserveItemDTOList) {
+            List<Image> imageList = imageRepository.findByTarget("care", careReserveItemDTO.getCareDTO().getCare_num());
+            if (imageList != null && !imageList.isEmpty()) {
+                List<ImageDTO> imageDTOList = imageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class))
+                        .collect(Collectors.toList());
+                careReserveItemDTO.getCareDTO().setImageDTOList(imageDTOList);
+
+                ImageDTO mainImage = imageDTOList.stream()
+                        .filter(image -> "Y".equalsIgnoreCase(image.getRepimg_yn()))
+                        .findFirst()
+                        .orElse(imageDTOList.get(0));
+                careReserveItemDTO.getCareDTO().setMainImage(mainImage);
+            }else {
+                log.warn("메뉴 번호:{}에 이미지가 없습니다.", careReserveItemDTO.getCareDTO().getCare_num());
+            }
+        }
+
+        orderReserveItemDTO.setMenuReserveItemDTOList(menuReserveItemDTOList);
+        orderReserveItemDTO.setCareReserveItemDTOList(careReserveItemDTOList);
+
+        return orderReserveItemDTO;
+    }
 
 
 }

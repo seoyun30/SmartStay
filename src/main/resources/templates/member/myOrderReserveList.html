@@ -67,16 +67,19 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <th:block th:if="${pageResponseDTO.dtoList.isEmpty()}">
+                        <th:block th:if="${pageResponseDTO == null or pageResponseDTO.dtoList == null or pageResponseDTO.dtoList.isEmpty()}">
                             <tr>
                                 <td colspan="9" class="text-center align-middle">
                                     <span class="h5 fw-bold">주문 내역이 없습니다.</span>
                                 </td>
                             </tr>
                         </th:block>
-                        <th:block th:unless="${pageResponseDTO.dtoList.isEmpty()}" th:each="orderReserveItemDTO : ${pageResponseDTO.dtoList}">
+                        <th:block th:unless="${pageResponseDTO ==null or pageResponseDTO.dtoList == null or pageResponseDTO.dtoList.isEmpty()}" th:each="orderReserveItemDTO : ${pageResponseDTO.dtoList}">
                             <tr class="text-center align-middle">
-                                <td th:text="${orderReserveItemDTO.orderReserveDTO.order_id}" class="w-10">주문 번호</td>
+                                <td class="w-10">
+                                    <a th:href="@{/member/myOrderReserveRead(serviceitem_num=${orderReserveItemDTO.serviceitem_num})}"
+                                       th:text="${orderReserveItemDTO.orderReserveDTO.order_id}">주문 번호</a>
+                                </td>
                                 <td th:text="${orderReserveItemDTO.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}" class="w-15">주문 호텔</td>
                                 <td class="w-15">
                                     <a th:href="@{/searchRoomRead(room_num=${orderReserveItemDTO.roomReserveItemDTO.roomDTO.room_num})}"
