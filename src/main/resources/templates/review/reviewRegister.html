@@ -110,8 +110,8 @@
                         <div class="mb-3">
                             <input type="hidden" name="roomreserveitem_num" th:value="${roomReserveItemDTO.roomreserveitem_num}">
                             <input type="hidden" name="reserve_num" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">
-                            <label class="form-label">호텔 이름</label>
-                            <input th:value="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">
+<!--                            <label class="form-label">호텔 이름</label>-->
+<!--                            <input th:value="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">-->
                             <h2 class="card-title fw-bold" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}"></h2>
                         </div>
                         <div class="mb-3">
@@ -122,16 +122,16 @@
                         </div>
                         <div class="mb-3 imgA">
                             <!--이미지 업로드 -->
-                            <label for="formFile" class="form-label">대표 이미지</label>
+                            <label for="formFile" class="form-label">이미지</label>
                             <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file" multiple>
-                            <div class="row imgpreviewinput"></div>
+                            <div class="row imgpreview"></div>
                             <button type="button" class="btn btn-secondary" id="removeMainImage" style="display: none;">이미지 삭제</button>
                         </div>
-<!--                        <div class="mb-3 imgA">-->
-<!--                            <label for="formFilede" class="form-label">상세 이미지</label>-->
-<!--                            <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>-->
-<!--                            <div class="row imgpreviewinput"></div>-->
-<!--                        </div>-->
+                        <div class="mb-3 imgA">
+                            <label for="formFilede" class="form-label">상세 이미지</label>
+                            <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
+                            <div class="row imgpreviewinput"></div>
+                        </div>
                     </div>
                     <div class="card-footer d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary">등록</button>
@@ -158,6 +158,9 @@
         const formFile = document.getElementById('imgFile');
         const imgPreview = document.querySelector('.imgpreview');
         const removeMainImage = document.getElementById('removeMainImage');
+
+        const formFilede = document.getElementById('formFilede');
+        const imgPreviewInput = document.querySelector('.imgpreviewinput');
 
         formFile.addEventListener('change', function (event){
             const file = event.target.files[0];
@@ -186,6 +189,55 @@
             removeMainImage.style.display = 'none';
         });
 
+        formFilede.addEventListener('change', function(event) {
+            const files = event.target.files;
+
+            Array.from(files).forEach((file, index) => {
+                if (file) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const imgWrapper = document.createElement('div');
+                        imgWrapper.classList.add('img-wrapper');
+                        imgWrapper.style.position = 'relative';
+                        imgWrapper.style.display = 'inline-block';
+                        imgWrapper.style.marginRight = '10px';
+
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        img.style.width = '200px';
+                        img.style.height = 'auto';
+                        img.style.objectFit = 'cover';
+
+                        const removeButton = document.createElement('button');
+                        removeButton.type = 'button';
+                        removeButton.textContent = '올리지 않기';
+                        removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+                        removeButton.style.top = '5px';
+                        removeButton.style.right = '5px';
+
+                        removeButton.addEventListener('click', function () {
+                            imgWrapper.remove();
+
+                            const dataTransfer = new DataTransfer();
+                            Array.from(formFilede.files).forEach((f, i) => {
+                                if (i !== index) {
+                                    dataTransfer.items.add(f);
+                                }
+                            });
+                            formFilede.files = dataTransfer.files;
+                        });
+
+                        imgWrapper.appendChild(img);
+                        imgWrapper.appendChild(removeButton);
+                        imgPreviewInput.appendChild(imgWrapper);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
     });
 
 

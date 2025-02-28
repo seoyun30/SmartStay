@@ -59,13 +59,14 @@ public class ReviewController {
 
     //호텔 리뷰 목록
     @GetMapping("/reviewList/{hotel_num}")
-    public String reviewList(@RequestParam Long hotel_num, Model model) {
+    public String reviewList(@PathVariable("hotel_num") Long hotel_num, Model model) {
+
+        log.info("hotel_num: " + hotel_num);
 
         List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num);
-
         model.addAttribute("reviewDTOList", reviewDTOList);
 
-        reviewDTOList.forEach(reviewDTO -> {log.info("reviewDTO: " + reviewDTO);});
+        reviewDTOList.forEach(reviewDTO -> log.info("reviewDTO: {}", reviewDTO));
 
         return "review/reviewList";
     }
@@ -140,6 +141,7 @@ public class ReviewController {
         try {
             reviewService.reviewRegister(reviewDTO, principal.getName(), multipartFileList);
             return "redirect:/review/reviewList"; //성공 시 목록 페이지
+
         } catch (Exception e) {
             log.error("Error occurred while registering review: {}", e.getMessage());
             return "redirect:/review/register?error=true"; // 실패 시 다시 등록 페이지

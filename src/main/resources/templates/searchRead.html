@@ -114,12 +114,13 @@
                             <span th:text="${hotelDTO.score}" class="text-warning fw-bold" me-1></span>
                             <span th:text="|(${hotelDTO.review_count})|"class="text-warning"></span>
                         </div>
-                        <a th:href="@{/review/reviewList(hotel_num=${hotelDTO.hotel_num})}"
+                        <a th:href="@{'/review/reviewList/'+${hotelDTO.hotel_num}}"
                            class="text-decoration-none text-primary fw-bold">
                             전체 리뷰 보기
                         </a>
                     </div>
                 </div>
+
                 <div class="review-list d-flex">
                     <div th:each="review : ${reviews}" class="review-item card me-2">
                         <div class="card-body">
