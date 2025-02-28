@@ -1,7 +1,6 @@
 package com.lookatme.smartstay.repository;
 
 import com.lookatme.smartstay.entity.Image;
-import com.lookatme.smartstay.entity.Notice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,5 +20,6 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
             "(:targetType = 'notice' AND i.notice.notice_num = :targetId)")
     List<Image> findByTarget(@Param("targetType") String targetType, @Param("targetId") Long targetId);
 
-
+    @Query("SELECT i FROM Image i WHERE i.targetType = :targetType ORDER BY i.image_id ASC")
+    List<Image> findByTarget(@Param("targetType") String targetType);
 }

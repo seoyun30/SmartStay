@@ -228,4 +228,56 @@ public class ImageService {
         return imageRepository.findByTarget(targetType, targetId);
     }
 
+    public List<Image> getBannerImages() {
+        List<Image> banners = imageRepository.findByTarget("banner");
+        log.info("조회된 배너 이미지 리스트: {}", banners);
+        return banners;
+    }
+
+    public void saveBannerImage(MultipartFile imageFile, Long mainImageIndex) throws Exception {
+
+        if (imageFile == null || imageFile.isEmpty()) {
+            throw new IllegalArgumentException("이미지가 비어 있습니다.");
+        }
+
+        // 기존 배너 이미지 가져오기
+        List<Image> existingBanners = imageRepository.findByTarget("banner");
+
+        // 선택한 위치에 기존 이미지가 있으면 삭제
+        if (mainImageIndex < existingBanners.size()) {
+            Image oldBanner = existingBanners.get(Math.toIntExact(mainImageIndex));
+            deleteImage(oldBanner.getImage_id());
+        }
+
+        String imageName = fileUpload.FileUpload(imageFile);
+        String originalName = imageFile.getOriginalFilename();
+        String imageUrl = "/images/" + imageName; // 모든 이미지를 /images/ 경로로 설정
+        String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
+
+        log.info("New Image URL: {}", imageUrl);
+        log.info("Thumbnail URL: {}", thumbnailUrl);
+
+        Image newImage = Image.builder()
+                .image_name(imageName)
+                .origin_name(originalName)
+                .image_url(imageUrl)
+                .thumbnail_url(thumbnailUrl)
+                .targetType("banner")
+                .repimg_yn(mainImageIndex == 0 ? "Y" : "N")
+                .build();
+
+        imageRepository.save(newImage);
+    }
+
+    public void deleteBannerImage(Long imageId) {
+
+        Image image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이미지를 찾을 수 없습니다: " + imageId));
+
+        fileUpload.FileDelete(image.getImage_name());
+
+        imageRepository.deleteById(imageId);
+
+        log.info("배너 이미지가 성공적으로 삭제되었습니다: {}", imageId);
+    }
 }
