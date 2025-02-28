@@ -1,7 +1,6 @@
 package com.lookatme.smartstay.service;
 
 
-import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.dto.QnaDTO;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.Qna;
@@ -12,11 +11,13 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.juli.logging.Log;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
-public class QnaServcieImpl implements QnaService {
+public class QnaServiceImpl implements QnaService {
     private final QnaRepository qnaRepository;
 
     //reply,이미지 추후사용
@@ -37,15 +38,35 @@ public class QnaServcieImpl implements QnaService {
     private final QnaReplyRepository qnaReplyRepository;
     private final MemberRepository memberRepository;
 
+
+    // ✅ 로그인된 사용자 ID 가져오는 메서드 추가
+    private String getLoggedInUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return "loging"; // 인증되지 않은 경우 기본값 반환
+        }
+        return auth.getName(); // 로그인된 사용자의 이메일 (또는 사용자명) 반환
+    }
+
     @Override
     public void register(QnaDTO qnaDTO) {
-        log.info("등록 서비스 들어온값:"+qnaDTO);
-        // Qna 객체에 title, content 및 member 설정
+        log.info("등록 서비스 들어온 값: " + qnaDTO);
+
+        // 로그인된 사용자 ID 가져오기
+        String loggedInUser = getLoggedInUser();
+        log.info("로그인된 사용자 ID: " + loggedInUser);
+
+        // Member 엔티티 조회
+        Member member = memberRepository.findMemberByEmail(loggedInUser)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // Qna 객체 생성 및 설정
         Qna qna = Qna.builder()
                 .title(qnaDTO.getTitle())
                 .content(qnaDTO.getContent())
-                .writer(qnaDTO.getWriter())
+                .writer(loggedInUser)  // 작성자 ID 설정
                 .build();
+
         qnaRepository.save(qna);
     }
 
@@ -82,10 +103,8 @@ public class QnaServcieImpl implements QnaService {
         }
 
         Optional<Qna> optionalQna =
-               qnaRepository.findById(qna_num);
-
+                qnaRepository.findById(qna_num);
         Qna qna = optionalQna.orElseThrow(EntityNotFoundException::new);
-
         QnaDTO qnaDTO = modelMapper.map( qna, QnaDTO.class );
 
         log.info("서비스에서 컨트롤러로 나간값 :  " +qnaDTO);
@@ -95,7 +114,6 @@ public class QnaServcieImpl implements QnaService {
 
     @Override
     public List<QnaDTO> list() {
-        // 모든 QnA 게시글을 조회
         List<Qna> qnaList = qnaRepository.findAll();
 
         // 조회한 QnA 리스트를 로깅
@@ -111,6 +129,19 @@ public class QnaServcieImpl implements QnaService {
 
         return qnaDTOList;  // DTO 리스트 반환
     }
+
+
+
+    private boolean checkIfManager() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return false; // 인증되지 않은 경우 관리자 아님
+        }
+
+        return auth.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_MANAGER"));
+    }
+
 
     @Override
     public void modify(QnaDTO qnaDTO) {
@@ -128,6 +159,7 @@ public class QnaServcieImpl implements QnaService {
         qna.setTitle(qnaDTO.getTitle());
         qna.setContent(qnaDTO.getContent());
         qna.setWriter(qnaDTO.getWriter());
+    }
 /*---------------------------------------------------
         // 파일 삭제
         if (delino != null && !delino[0].equals("")) {
@@ -169,12 +201,22 @@ public class QnaServcieImpl implements QnaService {
 
 
 
-    }
+
 
     @Override
     public void del(Long qna_num) {
         log.info("삭제로 들어온 값:" + qna_num);
+        // 로그인한 사용자 확인
+        String loggedInUser = getLoggedInUser();
 
+        // 게시글 찾기
+        Qna qna = qnaRepository.findById(qna_num)
+                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
+
+        // 작성자가 일치하지 않으면 예외 발생
+        if (!qna.getWriter().equals(loggedInUser)) {
+            throw new SecurityException("삭제 권한이 없습니다.");
+        }
         //qnaReplyRepository.deleteAllByQna_num(qna_num);
         //imageService.delAll(qna_num);
         qnaRepository.deleteById(qna_num);

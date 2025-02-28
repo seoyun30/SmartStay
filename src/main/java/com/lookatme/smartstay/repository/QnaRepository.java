@@ -5,11 +5,16 @@ import com.lookatme.smartstay.entity.Qna;
 import org.hibernate.query.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.awt.print.Pageable;
+import java.util.List;
 
 public interface QnaRepository extends JpaRepository<Qna, Long> {
     //QnaSearch 검색기능 추후 추가
+
+    @Query("SELECT q FROM Qna q WHERE q.writer = :writer")
+    List<Qna> findByWriter(@Param("writer") String writer);  // 작성자로 QnA 목록 조회
 
     /*
     //제목으로 검색
