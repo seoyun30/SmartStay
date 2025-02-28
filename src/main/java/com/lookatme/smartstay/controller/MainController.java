@@ -5,12 +5,15 @@ import com.lookatme.smartstay.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Comparator;
 import java.util.List;
@@ -26,6 +29,7 @@ public class MainController {
     private final BrandService brandService;
     private final RoomService roomService;
     private final ReviewService reviewService;
+    private final ImageService imageService;
 
     @GetMapping("/adMain")
     public String adMain(Model model, Authentication authentication) {
@@ -86,6 +90,28 @@ public class MainController {
         return "adMain";
     }
 
+    @Secured("ROLE_SUPERADMIN")
+    @PostMapping("/uploadImage")
+    public String uploadImage(@RequestParam("image")List<MultipartFile> images, Model model,
+                              @RequestParam("targetType") String banner, @RequestParam(value = "targetId", required = false) Long targetId) {
+        try {
+            if (images == null || images.isEmpty()) {
+                model.addAttribute("error", "업로드할 이미지를 선택해주세요.");
+                return "main";
+            }
+
+            imageService.saveImage(images, banner, targetId);
+
+            model.addAttribute("success", "이미지가 성공적으로 업로드되었습니다.");
+
+        } catch (Exception e) {
+            model.addAttribute("error", "이미지 업로드 중 오류가 발생했습니다: " + e.getMessage());
+            return "main";
+        }
+
+        return "redirect:/";
+    }
+
     @GetMapping("/")
     public String main(Model model) {
 
@@ -116,6 +142,7 @@ public class MainController {
         if (query == null || query.trim().isEmpty()) {
             results = List.of();
             model.addAttribute("message","검색어를 입력하세요.");
+            results = hotelService.hotelList();
         }else {
             results = hotelService.searchList(query);
         }
