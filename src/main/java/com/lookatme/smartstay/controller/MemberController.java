@@ -1,13 +1,12 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.*;
-import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
+import com.lookatme.smartstay.service.OrderReserveService;
 import com.lookatme.smartstay.service.RoomReserveService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,11 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -34,6 +29,7 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final RoomReserveService roomReserveService;
+    private final OrderReserveService orderReserveService;
     private final HotelRepository hotelRepository;
     private final HotelService hotelService;
 
@@ -78,8 +74,6 @@ public class MemberController {
 
     }
 
-
-
     @GetMapping("/adMypageModify") // 마이페이지 정보수정(관리자)
     public String adMypageModifyGet(Principal principal, HttpSession session, Model model){
 
@@ -95,8 +89,6 @@ public class MemberController {
 
         return "member/adMypageModify";
     }
-
-
 
     @PostMapping("/adMypageModify") // 마이페이지 정보수정
     public String adMypageModifyPost(MemberDTO memberDTO, Model model){
@@ -153,8 +145,15 @@ public class MemberController {
 
 
         //내 룸예약 조회
+        PageRequestDTO pageRequestDTO = new PageRequestDTO();
+        pageRequestDTO.setSize(4);
+        PageResponseDTO<RoomReserveItemDTO> reserveItemDTOPageResponseDTO = roomReserveService.findMyRoomReservePage(principal.getName(), pageRequestDTO);
+
         List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveService.findMyRoomReserve(principal.getName());
-        model.addAttribute("roomReserveItemDTOList", roomReserveItemDTOList);
+        model.addAttribute("reserveItemDTOPageResponseDTO", reserveItemDTOPageResponseDTO);
+
+        PageResponseDTO<OrderReserveItemDTO> orderReserveItemDTOPageResponseDTO = orderReserveService.findMyOrderPage(principal.getName(), pageRequestDTO);
+        model.addAttribute("orderReserveItemDTOPageResponseDTO", orderReserveItemDTOPageResponseDTO);
 
         return "member/userAllMyPage";
     }
@@ -171,8 +170,6 @@ public class MemberController {
         return "member/mypage";
 
     }
-
-
 
     @GetMapping("/mypagePasswordCheck")
     public String mypagePasswordCheck(MemberDTO memberDTO, Principal principal, RedirectAttributes RedirectAttributes){
@@ -218,7 +215,6 @@ public class MemberController {
 
         return "member/mypageModify";
     }
-
 
     @PostMapping("/mypageModify") // 마이페이지 정보수정
     public String mypageModifyPost(MemberDTO memberDTO, Model model){
@@ -303,9 +299,6 @@ public class MemberController {
         return "member/memberList";
     }
 
-
-
-
     @GetMapping("/adPowerList") // 권한승인(총판)
     public String adPowerList(Principal principal, PageRequestDTO pageRequestDTO, Model model, String email) {
 
@@ -378,9 +371,6 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-
-
-
     @GetMapping("/hotelsByBrand") // 브랜드에 속한 호텔 목록 반환
     public ResponseEntity<List<HotelDTO>> getHotelsByBrand( Principal principal) {
 
@@ -407,10 +397,10 @@ public class MemberController {
 
     //회원용 룸 예약 목록
     @GetMapping("/myRoomReserveList")
-    public String myRoomReserveList(Principal principal, Model model){
+    public String myRoomReserveList(PageRequestDTO pageRequestDTO, Principal principal, Model model){
         //내 룸예약 조회
-        List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveService.findMyRoomReserve(principal.getName());
-        model.addAttribute("roomReserveItemDTOList", roomReserveItemDTOList);
+        PageResponseDTO<RoomReserveItemDTO> pageResponseDTO = roomReserveService.findMyRoomReservePage(principal.getName(), pageRequestDTO);
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
 
         return "member/myRoomReserveList";
     }
@@ -424,5 +414,13 @@ public class MemberController {
         return "member/myRoomReserveRead";
     }
 
+    @GetMapping("/myOrderReserveList")
+    public String myOrderReserveList(PageRequestDTO pageRequestDTO, Principal principal, Model model){
+        //내 룸서비스 주문 조회
+        PageResponseDTO<OrderReserveItemDTO> pageResponseDTO = orderReserveService.findMyOrderPage(principal.getName(), pageRequestDTO);
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
+
+        return "member/myOrderReserveList";
+    }
 
 }

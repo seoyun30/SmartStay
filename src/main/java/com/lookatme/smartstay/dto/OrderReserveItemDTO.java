@@ -55,4 +55,9 @@ public class OrderReserveItemDTO {
         this.payDTO = payDTO;
         return this;
     }
+
+    public OrderReserveItemDTO setRoomReserveItemDTO(RoomReserveItemDTO roomReserveItemDTO) {
+        this.roomReserveItemDTO = roomReserveItemDTO;
+        return this;
+    }
 }
