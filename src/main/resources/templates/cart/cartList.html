@@ -183,11 +183,11 @@
 
                                 <h4 class="mb-3 fw-bold">룸케어 서비스</h4>
                                 <th:block th:each="careItem : ${orderItem.careItemDTOList}">
-                                    <div class="row mb-3">
+                                    <div class="row">
                                         <div class="col-md-2 align-self-center">
                                             <th:block th:each="img: ${careItem.imageDTOList}">
                                                 <th:block th:if="${img.repimg_yn == 'Y'}">
-                                                    <div class="square-image">
+                                                    <div class="square-image mb-3">
                                                         <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
                                                     </div>
                                                 </th:block>
@@ -195,9 +195,11 @@
                                         </div>
                                         <div class="col-md-10 align-self-center">
                                             <input type="hidden" class="careitem_num" th:value="${careItem.careitem_num}">
-                                            <p class="h5" th:text="${careItem.careDTO.care_name}"></p>
-                                            <p class="h5 care_count" th:text="${careItem.care_count + '개'}"></p>
-                                            <p class="h5 care_price" th:text="${careItem.careDTO.care_price + '원'}"></p>
+                                            <div class="mb-3">
+                                                <p class="h5" th:text="${careItem.careDTO.care_name}"></p>
+                                                <p class="h5 care_count" th:text="${careItem.care_count + '개'}"></p>
+                                                <p class="h5 care_price" th:text="${careItem.careDTO.care_price + '원'}"></p>
+                                            </div>
                                         </div>
                                     </div>
                                 </th:block>
@@ -208,7 +210,7 @@
                                         <div class="col-md-2 align-self-center">
                                             <th:block th:each="img: ${menuItem.imageDTOList}">
                                                 <th:block th:if="${img.repimg_yn == 'Y'}">
-                                                    <div class="square-image">
+                                                    <div class="square-image mb-3">
                                                         <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
                                                     </div>
                                                 </th:block>
@@ -217,9 +219,11 @@
 
                                         <div class="col-md-10 align-self-center">
                                             <input type="hidden" class="menuitem_num" th:value="${menuItem.menuitem_num}">
-                                            <p class="h5" th:text="${menuItem.menuDTO.menu_name}"></p>
-                                            <p class="h5 menu_count" th:text="${menuItem.menu_count + '개'}"></p>
-                                            <p class="h5 menu_price" th:text="${menuItem.menuDTO.menu_price + '원'}"></p>
+                                            <div class="mb-3">
+                                                <p class="h5" th:text="${menuItem.menuDTO.menu_name}"></p>
+                                                <p class="h5 menu_count" th:text="${menuItem.menu_count + '개'}"></p>
+                                                <p class="h5 menu_price" th:text="${menuItem.menuDTO.menu_price + '원'}"></p>
+                                            </div>
                                         </div>
 
                                     </div>
