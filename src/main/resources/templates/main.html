@@ -43,7 +43,15 @@
                     <th:block th:each="image, iterStat : ${banner}">
                         <div th:class="${iterStat.index == 0} ? 'carousel-item active' : 'carousel-item'" class="relative">
                             <img th:src="@{${image.image_url}}" class="d-block w-100" style="height: 600px" alt="배너 이미지">
-                            <button sec:authorize="hasAuthority('SUPERADMIN')" type="button" th:data-image-id="${image.image_id}" class="btn btn-danger delete-image-btn delete-button">삭제</button>
+                            <button
+                                    sec:authorize="hasAuthority('SUPERADMIN')"
+                                    type="button"
+                                    th:data-image-id="${image.image_id}"
+                                    class="btn btn-danger delete-image-btn delete-button"
+                                    data-banner-count="${#lists.size(banner)}"
+                                    th:disabled="${#lists.size(banner) <= 1}">
+                                삭제
+                            </button>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -107,7 +115,7 @@
 
                     <div class="mb-3">
                         <label for="mainImageIndexSelect" class="form-label">배너 이미지 위치 선택</label>
-                        <select name="mainImageIndex" id="mainImageIndexSelect" class="form-select">
+                        <select name="mainImageIndex" id="mainImageIndexSelect" class="form-select" required>
                             <option value="" disabled selected>배너 위치를 선택하세요</option>
                             <option value="0">첫 번째 배너</option>
                             <option value="1">두 번째 배너</option>

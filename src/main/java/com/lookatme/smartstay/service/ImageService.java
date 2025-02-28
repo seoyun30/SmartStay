@@ -240,15 +240,17 @@ public class ImageService {
             throw new IllegalArgumentException("이미지가 비어 있습니다.");
         }
 
-        // 기존 배너 이미지 가져오기
-        List<Image> existingBanners = imageRepository.findByTarget("banner");
+        // 기존 배너 이미지 가져오기 (order_index로 정렬)
+        List<Image> existingBanners = imageRepository.findByTargetTypeOrderByOrderIndex("banner");
 
-        // 선택한 위치에 기존 이미지가 있으면 삭제
-        if (mainImageIndex < existingBanners.size()) {
-            Image oldBanner = existingBanners.get(Math.toIntExact(mainImageIndex));
-            deleteImage(oldBanner.getImage_id());
+        // 지정된 위치의 기존 이미지 삭제
+        if (mainImageIndex != null && mainImageIndex < existingBanners.size()) {
+            Image oldBanner = existingBanners.get(mainImageIndex.intValue());
+            deleteBannerImage(oldBanner.getImage_id());
+            existingBanners.remove(mainImageIndex.intValue()); // 리스트에서 제거
         }
 
+        // 새 이미지를 저장소에 업로드
         String imageName = fileUpload.FileUpload(imageFile);
         String originalName = imageFile.getOriginalFilename();
         String imageUrl = "/images/" + imageName; // 모든 이미지를 /images/ 경로로 설정
@@ -257,6 +259,7 @@ public class ImageService {
         log.info("New Image URL: {}", imageUrl);
         log.info("Thumbnail URL: {}", thumbnailUrl);
 
+        // 새 이미지 객체 생성
         Image newImage = Image.builder()
                 .image_name(imageName)
                 .origin_name(originalName)
@@ -266,7 +269,22 @@ public class ImageService {
                 .repimg_yn(mainImageIndex == 0 ? "Y" : "N")
                 .build();
 
-        imageRepository.save(newImage);
+        // mainImageIndex가 유효하지 않으면 리스트 맨 뒤에 추가
+        if (mainImageIndex == null || mainImageIndex < 0 || mainImageIndex >= existingBanners.size()) {
+            newImage.setOrderIndex(existingBanners.size()); // 맨 뒤에 추가
+            existingBanners.add(newImage);
+        } else {
+            // 지정된 위치에 새 이미지 삽입
+            newImage.setOrderIndex(mainImageIndex.intValue());
+            existingBanners.add(mainImageIndex.intValue(), newImage);
+        }
+
+        for (int i = 0; i < existingBanners.size(); i++) {
+            Image banner = existingBanners.get(i);
+            banner.setOrderIndex(i);
+            banner.setRepimg_yn(i == 0 ? "Y" : "N"); // 첫 번째 이미지만 대표 이미지로 설정
+            imageRepository.save(banner);
+        }
     }
 
     public void deleteBannerImage(Long imageId) {

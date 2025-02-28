@@ -25,6 +25,8 @@ public class ImageDTO {
 
     private String targetType;
 
+    private Integer orderIndex;
+
     private BrandDTO brandDTO; //브랜드 이미지
 
     private HotelDTO hotelDTO; //호텔 이미지
