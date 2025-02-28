@@ -22,4 +22,6 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
     @Query("SELECT i FROM Image i WHERE i.targetType = :targetType ORDER BY i.image_id ASC")
     List<Image> findByTarget(@Param("targetType") String targetType);
+
+    List<Image> findByTargetTypeOrderByOrderIndex(String targetType);
 }

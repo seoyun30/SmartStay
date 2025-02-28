@@ -306,7 +306,7 @@
         calculateTotal()
 
         let merchant_uid = `payment-${crypto.randomUUID()}`;
-        let totalPrice = parseInt($('#totalPrice').text().replace(/[^0-9]/g, ''), 10);
+        let totalPrice = parseInt($('#totalPrice').text().replace(/[^0-9]/g, ''), 10) || 0; // 총 가격 계산, 없으면 0으로 설정
         let buyer_email = $('.buyer_email').val();
         let buyer_name = $('.buyer_name').val();
         let buyer_tel = $('.buyer_tel').val();
@@ -430,6 +430,7 @@
                             data: JSON.stringify({
                                 imp_uid: response.imp_uid,
                                 merchant_uid: merchant_uid,
+                                amount: totalPrice // 총 결제 금액 추가
                             }),
                         }).done(function (data) {
                             console.log("결제 검증 성공: ", data);

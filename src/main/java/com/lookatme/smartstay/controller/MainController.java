@@ -2,6 +2,7 @@ package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Image;
+import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -30,6 +31,7 @@ public class MainController {
     private final RoomService roomService;
     private final ReviewService reviewService;
     private final ImageService imageService;
+    private final ImageRepository imageRepository;
 
     @GetMapping("/adMain")
     public String adMain(Model model, Authentication authentication) {
@@ -112,6 +114,10 @@ public class MainController {
     @DeleteMapping("/deleteImage/{imageId}")
     public ResponseEntity<String> deleteImage(@PathVariable Long imageId) {
         try {
+            List<Image> bannerImages = imageService.getBannerImages();
+            if (bannerImages.size() <= 1) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("배너 이미지는 최소 1개 이상이어야 합니다.");
+            }
             imageService.deleteBannerImage(imageId);
             return ResponseEntity.ok("이미지가 성공적으로 삭제되었습니다.");
         } catch (Exception e) {
@@ -127,7 +133,7 @@ public class MainController {
 
         List<HotelDTO> top12Hotels = list.stream().limit(12).collect(Collectors.toList());
 
-        List<Image> banner = imageService.getBannerImages();
+        List<Image> banner = imageRepository.findByTargetTypeOrderByOrderIndex("banner");
 
         if (banner == null || banner.isEmpty()) {
             log.warn("배너 이미지 데이터가 비어 있습니다.");
