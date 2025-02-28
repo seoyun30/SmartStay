@@ -12,7 +12,7 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-    <h1 class="text-center mb-3 mt-5">리뷰 목록</h1>
+    <h1 class="text-center mb-3 mt-5"></h1>
 <!--    <div sec:authorize="hasAnyAuthority('USER')" class="row mt-3">-->
 <!--        <div class="col text-end">-->
 <!--            <button type="button" onclick="location.href='/review/reviewModify'" class="btn btn-dark">수정</button>-->
@@ -24,21 +24,19 @@
             <table class="table table-striped table-hover text-center">
                 <thead>
                 <tr>
-                    <th>번호</th>
-                    <th>작성자</th>
-                    <th>이미지</th>
-                    <th></th>
-                    <th>내용</th>
-                    <th>작성일</th>
+<!--                    <th>번호</th>-->
+<!--                    <th>작성자</th>-->
+<!--                    <th>이미지</th>-->
+<!--                    <th></th>-->
+<!--                    <th>내용</th>-->
+<!--                    <th>작성일</th>-->
                     <th sec:authorize="hasAnyAuthority('USER')">삭제</th>
                 </tr>
                 </thead>
                 <tbody>
-
                 <th:block th:each="review :${reviewDTOList}">
                     <tr class="align-middle">
-                        <input type="hidden" th:value="${review.rev_num}"></input>
-                        <td>아직 안들어감</td>
+                        <a th:href="@{review/reviewRead(id=${review.rev_num})}" th:text="${review.score}"></a>
                         <td th:text="${review.create_by}"></td>
                         <td>
                             <a href="#" class="increment-view-btn" th:value="${review.imageDTOList}"></a>
@@ -47,11 +45,15 @@
                             <td class="increment-view-btn" th:text="${review.content}"></td>
                         </td>
                         <td th:text="${review.reg_date}"></td>
-                        <td>  <!--post 방식의 삭제버튼-->
-                            <!--                            <form sec:authorize="hasAnyAuthority('USER')" action="/review/" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">-->
-                            <!--                                <input type="hidden" name="rev_num" th:value="${review.rev_num}"> &lt;!&ndash; 삭제할 qna의 ID를 hidden 필드로 전달 &ndash;&gt;-->
-                            <!--                                <button type="submit" class="btn btn-dark" style="background-color: red;">삭제</button>-->
-                            <!--                            </form>-->
+                        <td>  <!--post 방식의 삭제버튼--> <!-- 삭제할 qna의 ID를 hidden 필드로 전달 -->
+<!--                            <form class="delform" sec:authorize="hasAnyAuthority('USER')" action="/review/reviewDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">-->
+<!--                                <input type="hidden" name="rev_num" th:value="${review.rev_num}">-->
+<!--                                <button type="button" class="btn btn-dark" style="background-color: red;">삭제</button>-->
+<!--                            </form>-->
+                            <form class="delform " sec:authorize="hasAnyAuthority('USER')" action="/review/reviewDelete"  method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <input type="hidden" name="rev_num" th:value="${review.rev_num}" class="num">
+                                <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>
+                            </form>
                         </td>
 
                     </tr>
@@ -62,6 +64,23 @@
     </div>
 
 </th:block>
-</body>
+<script th:inline="javascript" layout:fragment="script">
 
+    $(document).ready(function (){
+        let removeBtn = $(".removeBtn"); // 삭제 버튼
+        let form = $(".delform");
+        let rev_num = $(".num").val()
+
+        removeBtn.on("click", function () {
+            console.log("클릭")
+            console.log(rev_num)
+            form.action = "/review/reviewDelete";
+            form.method = "post";
+            form.submit();
+        });
+    })
+
+
+</script>
+</body>
 </html>

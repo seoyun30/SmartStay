@@ -52,6 +52,11 @@ public class ReviewDTO {
         return this;
     }
 
+    public ReviewDTO setRoomDTO(RoomDTO roomDTO) {
+        this.roomDTO = roomDTO;
+        return this;
+    }
+
     private LocalDateTime reg_date;
 
     private LocalDateTime modi_date;

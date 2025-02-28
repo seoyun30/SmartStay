@@ -5,6 +5,7 @@ import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.Review;
 import com.lookatme.smartstay.entity.RoomReserve;
+import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.RoomReserveRepository;
 import com.lookatme.smartstay.service.HotelService;
@@ -18,10 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -41,6 +39,7 @@ public class ReviewController {
     private final RoomReserveRepository roomReserveRepository;
     //호텔
     private final HotelService hotelService;
+    private final HotelRepository hotelRepository;
     //리뷰
     private final ReviewService reviewService;
     private final ModelMapper modelMapper;
@@ -59,24 +58,30 @@ public class ReviewController {
     }
 
     //호텔 리뷰 목록
-    @GetMapping("/reviewList")
-    public String reviewList(Model model, Long hotel_num) {
+    @GetMapping("/reviewList/{hotel_num}")
+    public String reviewList(@RequestParam Long hotel_num, Model model) {
 
+        List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num);
 
-        if (hotel_num == null) {
-            log.error("호텔을 찾아올수 없습니다.");
-        }
-
-        List<ReviewDTO> reviewDTOList = reviewService.hotelReviewList(hotel_num);
         model.addAttribute("reviewDTOList", reviewDTOList);
 
         reviewDTOList.forEach(reviewDTO -> {log.info("reviewDTO: " + reviewDTO);});
+
         return "review/reviewList";
     }
 
     //마이 리뷰 목록(user권한)
     @GetMapping("/myReviewList")
     public String myReviewList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
+        log.info("My 리뷰");
+        log.info("principal: " + principal);
+
+
+
+
+
+
+
 
         return null;
     }
@@ -141,44 +146,44 @@ public class ReviewController {
         }
     }
 //
-//    //상세 보기 페이지
-//    @GetMapping("/reviewRead")
-//    public String reviewRead(Long review_num,
-//                             PageRequestDTO pageRequestDTO, Model model){
-//        log.info("개별읽기...");
-//        ReviewDTO reviewDTO = reviewService.reviewRead(review_num);
-//
-//        log.info("개별정보를 페이지에 전달...");
-//        model.addAttribute("review", reviewDTO);
-//
-//        return "review/reviewRead";
-//    }
-//
-//    //수정 페이지
-//    @GetMapping("/reviewModify")
-//    public String reviewModifyGet(Principal principal,
-//            PageRequestDTO pageRequestDTO){
-//
-//        return "review/reviewModify";
-//    }
-//
-//    @PostMapping("/reviewModify")
-//    public String reviewModifyPost(ReviewDTO reviewDTO,
-//                                   MemberDTO memberDTO, List<Long> delnumList,
-//                                   List<MultipartFile> multipartFileList,
-//                                   ImageDTO imageDTO,
-//                                   PageRequestDTO pageRequestDTO){
-//
-//
-//        return "redirect:/review/reviewList";
-//    }
-//
-//    //삭제
-//    @PostMapping("reviewDelete")
-//    public String reviewDelete(Long review_num){
-//        log.info("삭제 처리...");
-//
-//        return "redirect:/review/reviewList";
-//    }
+    //상세 보기 페이지
+    @GetMapping("/reviewRead")
+    public String reviewRead(Long review_num,
+                             PageRequestDTO pageRequestDTO, Model model){
+        log.info("개별읽기...");
+        ReviewDTO reviewDTO = reviewService.reviewRead(review_num);
+
+        log.info("개별정보를 페이지에 전달...");
+        model.addAttribute("review", reviewDTO);
+
+        return "review/reviewRead";
+    }
+
+    //수정 페이지
+    @GetMapping("/reviewModify")
+    public String reviewModifyGet(Principal principal,
+            PageRequestDTO pageRequestDTO){
+
+        return "review/reviewModify";
+    }
+
+    @PostMapping("/reviewModify")
+    public String reviewModifyPost(ReviewDTO reviewDTO,
+                                   MemberDTO memberDTO, List<Long> delnumList,
+                                   List<MultipartFile> multipartFileList,
+                                   ImageDTO imageDTO,
+                                   PageRequestDTO pageRequestDTO){
+
+
+        return "redirect:/review/reviewList";
+    }
+
+    //삭제
+    @PostMapping("reviewDelete")
+    public String reviewDelete(Long review_num){
+        log.info("삭제 처리...");
+
+        return "redirect:/review/reviewList";
+    }
 
 }
