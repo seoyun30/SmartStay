@@ -101,7 +101,8 @@ public class RoomController {
     public String roomList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                            @RequestParam(defaultValue = "room_num") String sortField,
                            @RequestParam(defaultValue = "asc") String sortDir,
-                           @RequestParam(value = "query", required = false) String query) {
+                           @RequestParam(value = "query", required = false) String query,
+                           @RequestParam(value = "searchType", defaultValue = "room_name") String searchType) {
 
         if (principal == null) {
             return "redirect:/member/login";
@@ -122,9 +123,10 @@ public class RoomController {
             model.addAttribute("isSearch", false);
 
         }else {
-            List<RoomDTO> results = roomService.searchList(query, sortField, sortDir);
+            List<RoomDTO> results = roomService.searchList(hotelDTO, query, sortField, sortDir, searchType);
             model.addAttribute("results", results != null ? results : Collections.emptyList());
             model.addAttribute("query", query);
+            model.addAttribute("searchType", searchType);
             model.addAttribute("isSearch", true);
             model.addAttribute("pageResponseDTO", null);
         }

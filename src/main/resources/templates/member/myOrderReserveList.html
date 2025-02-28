@@ -12,6 +12,167 @@
 
 <th:block layout:fragment="content">
 
+    <div class="row w-75">
+        <h1 class="text-center fw-bold my-3">내 룸서비스 주문 이력</h1>
+        <div class="col-12 mb-3">
+            <div class="card">
+                <form action="#" method="get">
+                    <h3 class="text-center fw-bold mt-3">검색 조건</h3>
+                    <div class="input-group p-3">
+                        <span class="input-group-text">호텔 이름</span>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="input-group p-3">
+                        <span class="input-group-text">방 이름</span>
+                        <input type="text" class="form-control">
+                    </div>
+
+                    <div class="input-group p-3">
+                        <span class="input-group-text">시작일</span>
+                        <input type="date" class="form-control" name="sdate"
+                        > <!--예약시작일-->
+
+                        <span class="input-group-text">종료일</span>
+                        <input type="date" class="form-control" name="edate"
+                        > <!--예약종료일-->
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
+                        <button type="submit" class="btn btn-primary">검색</button>
+                        <button type="reset" class="btn btn-secondary">초기화</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="col-12 text-end mb-3">
+            <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-primary">메인 마이페이지</button>
+        </div>
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <table class="table table-hover table-fixed">
+                        <thead>
+                        <tr class="text-center">
+                            <th scope="col" class="w-10 text-nowrap">주문 번호</th>
+                            <th scope="col" class="w-15 text-nowrap">주문 호텔</th>
+                            <th scope="col" class="w-15 text-nowrap">주문 방</th>
+                            <th scope="col" class="w-12 text-nowrap">주문일</th>
+                            <th scope="col" class="w-12 text-nowrap">주문 내역</th>
+                            <th scope="col" class="w-8 text-nowrap">요청 사항</th>
+                            <th scope="col" class="w-12 text-nowrap">결제 금액</th>
+                            <th scope="col" class="w-12 text-nowrap">주문 상태</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:if="${pageResponseDTO.dtoList.isEmpty()}">
+                            <tr>
+                                <td colspan="9" class="text-center align-middle">
+                                    <span class="h5 fw-bold">주문 내역이 없습니다.</span>
+                                </td>
+                            </tr>
+                        </th:block>
+                        <th:block th:unless="${pageResponseDTO.dtoList.isEmpty()}" th:each="orderReserveItemDTO : ${pageResponseDTO.dtoList}">
+                            <tr class="text-center align-middle">
+                                <td th:text="${orderReserveItemDTO.orderReserveDTO.order_id}" class="w-10">주문 번호</td>
+                                <td th:text="${orderReserveItemDTO.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}" class="w-15">주문 호텔</td>
+                                <td class="w-15">
+                                    <a th:href="@{/searchRoomRead(room_num=${orderReserveItemDTO.roomReserveItemDTO.roomDTO.room_num})}"
+                                       th:text="${orderReserveItemDTO.roomReserveItemDTO.roomDTO.room_name}">주문 방</a>
+                                </td>
+                                <td th:text="${#temporals.format(orderReserveItemDTO.orderReserveDTO.reg_date, 'yyyy.MM.dd HH:mm')}" class="w-12">주문일</td>
+                                <td class="w-12">
+                                    <!--주문 내역-->
+                                    <div class="row">
+                                        <th:block th:unless="${orderReserveItemDTO.careReserveItemDTOList.isEmpty()}">
+                                            <p class="h5 col-12 text-start fw-bold mb-3">케어 서비스</p>
+                                            <th:block th:each="careItemDTO : ${orderReserveItemDTO.careReserveItemDTOList}">
+                                                <div class="col-3 align-self-center">
+                                                    <th:block th:each="img: ${careItemDTO.careDTO.imageDTOList}">
+                                                        <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                            <div class="square-image mb-3">
+                                                                <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
+                                                            </div>
+                                                        </th:block>
+                                                    </th:block>
+                                                </div>
+                                                <div class="col-9 align-self-center">
+                                                    <div class="mb-3">
+                                                        <span class="h5" th:text="${careItemDTO.careDTO.care_name}"></span> |
+                                                        <span class="h5 care_count" th:text="${careItemDTO.care_count + '개'}"></span> |
+                                                        <span class="h5 care_price" th:text="${careItemDTO.careDTO.care_price + '원'}"></span>
+                                                    </div>
+                                                </div>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block th:unless="${orderReserveItemDTO.menuReserveItemDTOList.isEmpty()}">
+                                            <p class="h5 col-12 text-start fw-bold mb-3">메뉴</p>
+                                            <th:block th:each="menuItemDTO : ${orderReserveItemDTO.menuReserveItemDTOList}">
+                                                <div class="col-3 align-self-center">
+                                                    <th:block th:each="img: ${menuItemDTO.menuDTO.imageDTOList}">
+                                                        <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                            <div class="square-image mb-3">
+                                                                <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
+                                                            </div>
+                                                        </th:block>
+                                                    </th:block>
+                                                </div>
+                                                <div class="col-9 align-self-center">
+                                                    <div class="mb-3">
+                                                        <span class="h5" th:text="${menuItemDTO.menuDTO.menu_name}"></span> |
+                                                        <span class="h5 care_count" th:text="${menuItemDTO.menu_count + '개'}"></span> |
+                                                        <span class="h5 care_price" th:text="${menuItemDTO.menuDTO.menu_price + '원'}"></span>
+                                                    </div>
+                                                </div>
+                                            </th:block>
+                                        </th:block>
+                                    </div>
+                                </td>
+                                <td th:text="${orderReserveItemDTO.menu_request}" class="w-12 text-truncate">요청 사항</td>
+                                <td th:text="${orderReserveItemDTO.orderReserveDTO.total_price + '원'}" class="w-12">결제 금액</td>
+                                <td th:switch="${orderReserveItemDTO.orderReserveDTO.order_state}" class="w-12"> <!--주문 상태-->
+                                    <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.ORDER}">주문 접수</span>
+                                    <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.PREPARE}">주문 준비중</span>
+                                    <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.COMPLETE}">주문 완료</span>
+                                    <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.CANCEL}">주문 취소</span>
+                                    <span th:case="*">알 수 없음</span> <!-- 예외 처리 -->
+                                </td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+
+                    <div class="row mt-3">
+                        <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
+                            <div class="row">
+                                <div class="col-12">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-center">
+                                            <th:block th:if="${pageResponseDTO.prev}">
+                                                <li class="page-item"><a class="page-link" th:href="|@{'/member/myRoomReserveList(page=${pageResponseDTO.start-1})'}|">이전</a></li>
+                                            </th:block>
+
+                                            <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+                                                <li class="page-item"><a class="page-link" th:href="|@{'/member/myRoomReserveList?page=' +${num}}|">[[${num}]]</a></li>
+                                            </th:block>
+
+                                            <th:block th:if="${pageResponseDTO.next}">
+                                                <li class="page-item"><a class="page-link" th:href="|@{'/member/myRoomReserveList(${pageResponseDTO.end+1}'}|">다음</a></li>
+                                            </th:block>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </th:block>
 
 

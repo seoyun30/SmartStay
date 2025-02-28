@@ -13,9 +13,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,6 +80,34 @@ public class RoomReserveService {
                 .collect(Collectors.toList());
 
         return roomReserveItemDTOList;
+    }
+
+    public PageResponseDTO<RoomReserveItemDTO> findMyRoomReservePage (String email, PageRequestDTO pageRequestDTO) {
+
+        Pageable pageable = pageRequestDTO.getPageable("roomreserveitem_num");
+
+        Page<RoomReserveItem> result = roomReserveItemRepository.findByEmailPage(email, pageable);
+
+        List<RoomReserveItemDTO> roomReserveItemDTOList = result.stream()
+                .map(roomReserveItem -> modelMapper.map(roomReserveItem, RoomReserveItemDTO.class)
+                        .setRoomDTO(modelMapper.map(roomReserveItem.getRoom(), RoomDTO.class)
+                                .setHotelDTO(modelMapper.map(roomReserveItem.getRoom().getHotel(),HotelDTO.class)))
+                        .setRoomReserveDTO(modelMapper.map(roomReserveItem.getRoomReserve(), RoomReserveDTO.class)
+                                .setMemberDTO(modelMapper.map(roomReserveItem.getRoomReserve().getMember(), MemberDTO.class)))
+                        .setPayDTO(modelMapper.map(roomReserveItem.getPay(), PayDTO.class))
+                ).collect(Collectors.toList());
+
+        if (roomReserveItemDTOList.isEmpty()) {
+            roomReserveItemDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<RoomReserveItemDTO> reserveItemDTOPageResponseDTO = PageResponseDTO.<RoomReserveItemDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(roomReserveItemDTOList)
+                .total((int) result.getTotalElements())
+                .build();
+
+        return reserveItemDTOPageResponseDTO;
     }
 
     //회원 룸예약 상세보기

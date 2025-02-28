@@ -12,8 +12,8 @@
 
 <th:block layout:fragment="content">
 
-    <div class="row">
-        <h1 class="text-center fw-bold mb-3">내 룸예약 이력</h1>
+    <div class="row w-75">
+        <h1 class="text-center fw-bold my-3">내 룸예약 이력</h1>
         <div class="col-12 mb-3">
             <div class="card">
                 <form action="#" method="get">
@@ -46,6 +46,10 @@
             </div>
         </div>
 
+        <div class="col-12 text-end mb-3">
+            <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-primary">메인 마이페이지</button>
+        </div>
+
         <div class="col-12">
             <div class="card">
                 <div class="card-body table-responsive">
@@ -64,14 +68,14 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <th:block th:if="${roomReserveItemDTOList.isEmpty()}">
+                        <th:block th:if="${pageResponseDTO.dtoList.isEmpty()}">
                             <tr>
                                 <td colspan="9" class="text-center align-middle">
-                                    <span class="h5 fw-bold">최근 예약 내역이 없습니다.</span>
+                                    <span class="h5 fw-bold">예약 내역이 없습니다.</span>
                                 </td>
                             </tr>
                         </th:block>
-                        <th:block th:unless="${roomReserveItemDTOList.isEmpty()}" th:each="roomReserveItem : ${roomReserveItemDTOList}">
+                        <th:block th:unless="${pageResponseDTO.dtoList.isEmpty()}" th:each="roomReserveItem : ${pageResponseDTO.dtoList}">
                             <tr class="text-center align-middle">
                                 <td th:text="${roomReserveItem.roomReserveDTO.reserve_id}" class="w-10">예약 번호</td>
                                 <td th:text="${roomReserveItem.roomDTO.hotelDTO.hotel_name}" class="w-15">예약 호텔</td>
@@ -89,11 +93,33 @@
                         </th:block>
                         </tbody>
                     </table>
+
+                    <div class="row mt-3">
+                        <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
+                            <div class="row">
+                                <div class="col-12">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-center">
+                                            <th:block th:if="${pageResponseDTO.prev}">
+                                                <li class="page-item"><a class="page-link" th:href="|@{'/member/myRoomReserveList(page=${pageResponseDTO.start-1})'}|">이전</a></li>
+                                            </th:block>
+
+                                            <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+                                                <li class="page-item"><a class="page-link" th:href="|@{'/member/myRoomReserveList?page=' +${num}}|">[[${num}]]</a></li>
+                                            </th:block>
+
+                                            <th:block th:if="${pageResponseDTO.next}">
+                                                <li class="page-item"><a class="page-link" th:href="|@{'/member/myRoomReserveList(${pageResponseDTO.end+1}'}|">다음</a></li>
+                                            </th:block>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
                 </div>
             </div>
-            <div class="text-center mt-3">
-                <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-primary">마이페이지 메인</button>
-            </div>
+
         </div>
     </div>
 
