@@ -31,7 +31,7 @@ public class Image extends BaseEntity {
     @Column
     private String thumbnail_url; // 썸네일 URL
 
-    @Column(nullable = false)
+    @Column
     private String targetType;
 
     // 부모 테이블인 Brand와의 관계에서 자식 테이블인 Image에서 'ManyToOne'으로 관계 설정) 모두 삭제
