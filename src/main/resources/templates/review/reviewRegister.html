@@ -37,34 +37,6 @@
 
         .blind{position:absolute;clip:rect(0 0 0 0);margin:-1px;width:1px;height: 1px;overflow:hidden;}
     </style>
-    <style>
-        .star-ratings {
-            color: #aaa9a9;
-            position: relative;
-            unicode-bidi: bidi-override;
-            width: max-content;
-            -webkit-text-fill-color: transparent; /* Will override color (regardless of order) */
-            -webkit-text-stroke-width: 1.3px;
-            -webkit-text-stroke-color: #2b2a29;
-        }
-
-        .star-ratings-fill {
-            color: #fff58c;
-            padding: 0;
-            position: absolute;
-            z-index: 1;
-            display: flex;
-            top: 0;
-            left: 0;
-            overflow: hidden;
-            -webkit-text-fill-color: gold;
-        }
-
-        .star-ratings-base {
-            z-index: 0;
-            padding: 0;
-        }
-    </style>
 </head>
 <body>
 
@@ -134,7 +106,9 @@
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-center">
-                        <button type="submit" class="btn btn-primary">등록</button>
+                        <form class="review info" action="/review/reviewList/{hotel_num}">
+                            <button type="submit" class="btn btn-primary">등록</button>
+                        </form>
                         <button type="reset" class="btn btn-secondary">초기화</button>
 <!--                        <span th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">-->
 <!--                            <button type="button" class="btn btn-danger"-->
@@ -149,6 +123,20 @@
     <div class="col-3"></div>
 </th:block><!--container끝-->
 <script th:inline="javascript" layout:fragment="script">
+
+    $(document).ready(function (){
+        let removeBtn = $(".removeBtn"); // 삭제 버튼
+        let form = $(".review info");
+        let rev_num = $(".num").val()
+
+        removeBtn.on("click", function () {
+            console.log("클릭")
+            console.log(rev_num)
+            form.action = "/review/reviewDelete";
+            form.method = "post";
+            form.submit();
+        });
+    })
 
 
 

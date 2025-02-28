@@ -1,10 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+<th:block layout:fragment="content">
+    <h1 class="text-center mb-3 mt-5"></h1>
+    <!--    <div sec:authorize="hasAnyAuthority('USER')" class="row mt-3">-->
+    <!--        <div class="col text-end">-->
+    <!--            <button type="button" onclick="location.href='/review/reviewModify'" class="btn btn-dark">수정</button>-->
+    <!--        </div>-->
+    <!--    </div>-->
 
+    <div class="row mt-5">
+        <div class="col">
+            <table class="table table-striped table-hover text-center">
+                <thead>
+                <tr>
+                                        <th>번호</th>
+                                        <th>작성자</th>
+                                        <th>이미지</th>
+                                        <th></th>
+                                        <th>내용</th>
+                                        <th>작성일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="review :${reviewDTOList}">
+                    <tr class="align-middle">
+                        <div class="card" style="width: 18rem;">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <input type="hidden" th:value="${review.hotelDTO.brand_num}" >
+                                    <a th:text="${review.create_by}"></a>
+                                    <p th:text="${review.roomDTO.hotelDTO.hotel_name}">
+                                        <p class="score" th:text="${review.score}"></p>
+                                    </p>
+                                </li>
+                            </ul>
+                            <img src="..." class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <p class="card-text" th:text="${review.content}"></p>
+                            </div>
+
+                            <div class="card" style="width: 18rem;">
+                                <div class="carousel-inner">
+                                    <th:block th:each="img: ${review.imageDTOList}">
+                                        <th:block th:if="${img.repimg_yn == 'Y'}">
+                                            <div class="carousel-item active d-flex justify-content-center"  data-bs-interval="5000">
+                                                <div class="col-12">
+                                                    <img width="100%" th:src="${img.thumbnail_url}" class="card-img-top" alt="대표 이미지" style="height: 500px;">
+                                                </div>
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+                                </div>
+                                <img src="..." class="card-img-top" alt="...">
+                                <div class="card-body">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                </div>
+                            </div>
+                            <div class="card" style="width: 18rem;">
+                                <td th:text="${review.reg_date}">
+                                    <a href="" class="text-center-xxl-end"> <p class="fs-6">>>자세히 보기<< </p></a>
+
+
+                                    <div class="card-body">
+
+                                    </div>
+                            </div>
+                        </div>
+
+                        <!--                        <td>-->
+                        <!--                            <form class="delform " sec:authorize="hasAnyAuthority('USER')" action="/review/reviewDelete"  method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">-->
+                        <!--                                <input type="hidden" name="rev_num" th:value="${review.rev_num}" class="num">-->
+                        <!--                                <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>-->
+                        <!--                            </form>-->
+                        <!--                        </td>-->
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</th:block>
+<script th:inline="javascript" layout:fragment="script">
+
+    $(document).ready(function (){
+        let removeBtn = $(".removeBtn"); // 삭제 버튼
+        let form = $(".delform");
+        let rev_num = $(".num").val()
+
+
+
+        removeBtn.on("click", function () {
+            console.log("클릭")
+            console.log(rev_num)
+            form.action = "/review/reviewDelete";
+            form.method = "post";
+            form.submit();
+        });
+    })
+
+
+</script>
 </body>
 </html>

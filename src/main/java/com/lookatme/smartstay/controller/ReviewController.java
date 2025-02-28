@@ -1,10 +1,7 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.*;
-import com.lookatme.smartstay.entity.Hotel;
-import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.entity.Review;
-import com.lookatme.smartstay.entity.RoomReserve;
+import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.ReviewRepository;
@@ -17,12 +14,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.List;
 
@@ -49,19 +48,39 @@ public class ReviewController {
 
     //관리자 리뷰 목록 페이지(chief, manager권한)
     @GetMapping("/adMyReviewList")
-    public String adMyReviewList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
+    public String adMyReviewList(Principal principal,
+                                 @RequestParam("brand_num") Long brand_num,
+                                 @RequestParam("hotel_num") Long hotel_num, PageRequestDTO pageRequestDTO, Model model) {
 
         if (principal == null) {
             return "redirect:/member/login";
+            //권한 : Chief(브랜드 별 리뷰목록)
         }
 
+        Member member = memberRepository.findByEmail(principal.getName());
+        if (member.getRole().name().equals("CHIEF")) {
+            List<ReviewDTO> reviewDTOList = reviewService.getBrandReviewList(brand_num, principal.getName());
+            model.addAttribute("reviewDTOList", reviewDTOList);
+            reviewDTOList.forEach(reviewDTO -> log.info("reviewDTO: {}", reviewDTO));
+            return "redirect:/review/adMyReviewList";
 
-        return null;
+            //권한 : 매니저(호텔 별 리뷰목록)
+        } else if (member.getRole().name().equals("MANAGER")) {
+            List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num);
+            model.addAttribute("reviewDTOList", reviewDTOList);
+            reviewDTOList.forEach(reviewDTO -> log.info("reviewDTO: {}", reviewDTO));
+            return "redirect:/review/adMyReviewList";
+        }
+
+        //권한이 없는 경우 에러
+        model.addAttribute("errorMessage", "접근 권한이 없습니다.");
+        return "redirect:/member/login";
     }
 
     //호텔 리뷰 목록
     @GetMapping("/reviewList/{hotel_num}")
-    public String reviewList(@PathVariable("hotel_num") Long hotel_num, Model model) {
+    public String reviewList(@PathVariable("hotel_num") Long hotel_num, Model model,
+                             PageRequestDTO pageRequestDTO, @RequestParam(value = "query", required = false) String query, Sort sort) {
 
         log.info("hotel_num: " + hotel_num);
 
@@ -72,6 +91,7 @@ public class ReviewController {
 
         return "review/reviewList";
     }
+
 
     //마이 리뷰 목록(user권한)
     @GetMapping("/myReviewList")
@@ -115,8 +135,9 @@ public class ReviewController {
     }
 
     //등록 내용저장
-    @PostMapping("/reviewRegister")
+    @PostMapping("/reviewRegister/{hotel_num}")
     public String reviewRegisterPost(@Valid ReviewDTO reviewDTO,
+                                     @PathVariable("hotel_num") Long hotel_num,
                                      BindingResult bindingResult,
                                      Long reserve_num,
                                      Principal principal,
@@ -138,12 +159,14 @@ public class ReviewController {
         //리뷰 등록 처리
         try {
             reviewService.reviewRegister(reviewDTO, principal.getName(), multipartFileList);
-            return "redirect:/review/reviewList"; //성공 시 목록 페이지
+            log.info("호텔 : {}", hotel_num);
+            return "redirect:/reviewList/"+hotel_num; //성공 시 목록 페이지
 
         } catch (Exception e) {
             log.error("Error occurred while registering review: {}", e.getMessage());
             return "redirect:/review/register?error=true"; // 실패 시 다시 등록 페이지
         }
+
     }
 //
     //상세 보기 페이지

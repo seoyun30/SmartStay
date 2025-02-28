@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -28,6 +29,9 @@ public class ReviewDTO {
     private Long roomreserveitem_num;
 
     private RoomReserveDTO roomReserveDTO; //룸 예약 조인
+
+    @NotNull
+    private Long brand_num;
 
     // 룸 예약 설정
     public ReviewDTO setRoomReserveDTO(RoomReserveDTO roomReserveDTO) {

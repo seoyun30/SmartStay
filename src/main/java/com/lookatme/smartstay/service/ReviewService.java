@@ -41,41 +41,24 @@ public class ReviewService {
 
     //리뷰의 전체 조회
     //관리자 리뷰 전체 목록 (관리자 리뷰 페이지 치프, 매니저)
-    public List<ReviewDTO> getAllReview(Long hotel_num, String email) {
+    public List<ReviewDTO> getBrandReviewList (Long brand_num, String email) {
 
-        //조회: 모든 리뷰
-        List<Review> reviewList = reviewRepository.findAll();
-
-        //회원정보 확인
-        Member member = memberRepository.findByEmail(email);
-        if (member == null) {
-            throw new IllegalArgumentException("해당 이메일의 회원 정보를 찾을 수 없습니다.");
-        }
-
-        List<Review> reviews;
-
-        // 목록에서
-        if (member.getRole().name().equals("CHIEF") ) {
-            // 관리자(브랜드): 브랜드에 속한 모든 호텔 리뷰 조회
-            reviews = reviewRepository.findByHotelorBrand(member.getBrand().getBrand_num()); // 해당 브랜드에 속한 모든 호텔의 리뷰 조회
-        } else if (member.getRole().name().equals("MANAGER")) {
-            // 매니저(호텔): 해당 호텔 리뷰만 조회
-            reviews = reviewRepository.findByHotel(member.getHotel().getHotel_num()); //해당 호텔에 대한 리뷰 조회
-        } else {
-            throw new AccessDeniedException("리뷰를 조회할 권한이 없습니다.");
-        }
+        List<Review> brandReviews = reviewRepository.findByHotelorBrand(brand_num);
 
         // 리뷰가 없는 경우 빈 리스트 반환
-        if (reviews.isEmpty()) {
+        if (brandReviews.isEmpty()) {
             return Collections.emptyList();
         }
 
         // 리뷰(entity) 목록을 ReviewDTO 목록으로 변환
-        List<ReviewDTO> reviewDTOS = reviews.stream()
-                .map(review -> modelMapper.map(review, ReviewDTO.class))
+        List<ReviewDTO> reviewDTOList = brandReviews.stream()
+                .map(review -> modelMapper.map(review, ReviewDTO.class)
+                        .setRoomDTO(modelMapper.map(review.getRoom(), RoomDTO.class)
+                                .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class)))
+                )
                 .collect(Collectors.toList());
 
-        return reviewDTOS;
+        return reviewDTOList;
     }
 
     //호텔에 있는 리뷰 전체 조회
@@ -197,6 +180,10 @@ public class ReviewService {
 
         return reviewDTO;
     }
+
+//    private Double ratingAvg(Long review_num) {
+//
+//    }
 
 
     //리뷰 수정(리뷰를 등록한 유저만 가능)
