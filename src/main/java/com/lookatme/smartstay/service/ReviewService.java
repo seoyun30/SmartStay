@@ -102,30 +102,20 @@ public class ReviewService {
     //유저 리뷰 전체 목록 (유저 my 페이지)
     public List<ReviewDTO> userMyReviewList(String email) {
 
-        List<Review> reviews = reviewRepository.findByUser(email);
-
-        //1. 유저 정보 확인
-        Member member = memberRepository.findByEmail(email); //회원정보 확인
-        if (member == null) {
-            throw new IllegalArgumentException("해당 이메일의 회원 정보를 찾을 수 없습니다..");
+        List<Review> MyReviews = reviewRepository.findByUser(email);
+        if (MyReviews.isEmpty()) {
+            return Collections.emptyList();
         }
 
-        // 권한 확인: 유저만 가능
-        List<Review> userMyReviews;
-
-        if (member.getRole() == Role.USER) {
-            userMyReviews = reviewRepository.findByUser(email);
-            // userMyReviews = reviewRepository.findByMember(member);
-        } else {
-            throw new AccessDeniedException("리뷰를 조회할 권한이 없습니다.");
-        }
-
-        // 유저 리뷰목록을 DTO로 변환
-        List<ReviewDTO> reviewDTOS = userMyReviews.stream()
-                .map(review -> modelMapper.map(review, ReviewDTO.class))
+        List<ReviewDTO> reviewDTOList = MyReviews.stream()
+                .map(review -> modelMapper.map(review, ReviewDTO.class)
+                        .setRoomDTO(modelMapper.map(review.getRoom(), RoomDTO.class)
+                                .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class)))
+                )
                 .collect(Collectors.toList());
+        // 이미지
 
-        return reviewDTOS;
+        return reviewDTOList;
     }
 
 
