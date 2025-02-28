@@ -2,6 +2,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layouts/userlayout}"
 >
 <head>
@@ -16,18 +17,31 @@
         <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
 
             <div class="bnr_wrapper carousel-inner">
-                <div class="carousel-item active">
-                    <img src="/assets/img/main1.jpg" class="d-block w-100" style="height: 600px" alt="배너 이미지">
-                </div>
-                <div class="carousel-item active">
-                    <img src="/assets/img/main2.jpg" class="d-block w-100" style="height: 600px" alt="배너 이미지">
-                </div>
-                <div class="carousel-item active">
-                    <img src="/assets/img/main4.jpg" class="d-block w-100" style="height: 600px" alt="배너 이미지">
-                </div>
-                <div class="carousel-item active">
-                    <img src="/assets/img/main3.jpg" class="d-block w-100" style="height: 600px" alt="배너 이미지">
-                </div>
+                <!-- 업로드된 이미지가 없으면 기본 이미지 표시 -->
+                <th:block th:if="${bannerImages == null || bannerImages.isEmpty()}">
+                    <div class="carousel-item active">
+                        <img src="/assets/img/main1.jpg" class="d-block w-100" style="height: 600px" alt="배너 이미지">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/assets/img/main2.jpg" class="d-block w-100" style="height: 600px" alt="배너 이미지">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/assets/img/main3.jpg" class="d-block w-100" style="height: 600px" alt="배너 이미지">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/assets/img/main4.jpg" class="d-block w-100" style="height: 600px" alt="배너 이미지">
+                    </div>
+                </th:block>
+
+                <!-- 업로드된 이미지가 있으면 해당 이미지 표시 -->
+                <th:block th:if="${bannerImages != null && !bannerImages.isEmpty()}">
+                    <th:block th:each="image, iterStat : ${bannerImages}">
+                        <div th:class="${iterStat.index == 0} ? 'carousel-item active' : 'carousel-item'">
+                            <img th:src="@{'/uploads/' + ${image.fileName}}" class="d-block w-100"
+                                 style="height: 600px" th:alt="${image.bannerType}">
+                        </div>
+                    </th:block>
+                </th:block>
             </div>
 
             <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
@@ -45,6 +59,34 @@
                 <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
                 <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
             </div>
+        </div>
+
+        <div sec:authorize="hasAuthority('SUPERADMIN')" class="container mt-5">
+            <form action="/uploadImage" method="post" enctype="multipart/form-data">
+                <!-- CSRF Token -->
+                <input type="hidden" name="_csrf" value="${_csrf.token}">
+
+                <!-- 업로드할 이미지 선택 -->
+                <div class="mb-3">
+                    <label for="imageUpload" class="form-label">이미지 선택</label>
+                    <input type="file" name="image" id="imageUpload" multiple accept=".jpg,.jpeg,.png,.gif"
+                           class="form-control">
+                </div>
+
+                <!-- 배너 타입 선택 -->
+                <div class="mb-3">
+                    <label for="targetTypeSelect" class="form-label">배너 타입</label>
+                    <select name="targetType" id="targetTypeSelect" class="form-select">
+                        <option value="" disabled selected>배너 타입을 선택하세요</option>
+                        <option value="banner1">첫 번째 배너</option>
+                        <option value="banner2">두 번째 배너</option>
+                        <option value="banner3">세 번째 배너</option>
+                        <option value="banner4">네 번째 배너</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">배너 이미지 변경하기</button>
+            </form>
         </div>
     </section>
 
