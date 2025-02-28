@@ -29,6 +29,9 @@
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-center">
+                        <input type="hidden" name="hotel_num" th:value="${hotel_num}" />
+
+
                         <button type="submit" class="btn btn-primary mr-2">확인</button>
                         <button type="reset" class="btn btn-secondary mr-2">초기화</button>
                         <button type="button" class="btn btn-danger"
@@ -43,7 +46,7 @@
 </div><!--container끝-->
 </div>
 <script th:inline="javascript" layout:fragment="script">
-
+    console.log("Hotel Data: ", [[${hotel}]]);
 </script>
 </body>
 </html>

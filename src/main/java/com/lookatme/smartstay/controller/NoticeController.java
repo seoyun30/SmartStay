@@ -3,20 +3,15 @@ package com.lookatme.smartstay.controller;
 import com.lookatme.smartstay.Util.PagenationUtil;
 import com.lookatme.smartstay.dto.*;
 
-import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.entity.Notice;
 import com.lookatme.smartstay.service.ImageService;
 import com.lookatme.smartstay.service.MemberService;
-import com.lookatme.smartstay.service.NoticeServiceImpl;
-import jakarta.persistence.EntityNotFoundException;
+import com.lookatme.smartstay.service.NoticeService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.tomcat.websocket.AuthenticationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,11 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.xml.transform.Result;
 import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,7 +32,7 @@ import java.util.Map;
 @RequestMapping("/notice")
 public class NoticeController {
 
-    private final NoticeServiceImpl noticeService;
+    private final NoticeService noticeService;
     private final MemberService memberService;
     private final PagenationUtil pagenationUtil; //페이지번호 처리 클래스
     private final ImageService imageService;
@@ -62,52 +55,74 @@ public class NoticeController {
 
     //등록 페이지 이동
     @GetMapping("/noticeRegister")
-    public String noticeRegisterGet(Principal principal, Model model, RedirectAttributes redirectAttributes){
+    public String noticeRegisterGet(Principal principal, Model model, RedirectAttributes redirectAttributes, HttpSession session){
         log.info("입력폼 페이지 이동..." );
 
 
-        // 1. 로그인 확인 **: Principal이 null이면 로그인 페이지로 이동 //로그인 창에서 오류가 확인되어야 출력..
+        // 로그인 확인
         if (principal == null) {
-            log.info("로그인 후 이용 가능합니다.");
             return "redirect:/member/login";
         }
 
-        //현재 로그인한 사용자의 정보 조회(성공)// 등록 버튼을 권한이 없을 시 안보이게 가려놓음
+        // 현재 로그인한 사용자의 정보 조회
         MemberDTO memberDTO = memberService.readMember(principal.getName());
-        // 2. 권한확인**: chief || Manager가 아닐 경우 페이지 이동 오류
+
+        // 권한 확인
         if (memberDTO != null && memberDTO.getRole().name().equals("USER")) {
             redirectAttributes.addFlashAttribute("errorMessage", "작성 권한이 없습니다.");
-            return "redirect:/notice/noticeList";   //목록으로
+            return "redirect:/notice/noticeList";
         }
+
+        log.info(memberDTO);
+        log.info(principal.getName());
+        log.info("정보를 보여줘");
+        log.info("정보를 보여줘");
+        log.info("정보를 보여줘");
+
+        // 세션에서 호텔 번호 가져오기
+        Long hotelNum = (Long) session.getAttribute("hotel_num"); // 세션에서 'hotel_num'을 가져옵니다.
+
+        log.info(hotelNum);
+        log.info(hotelNum);
+        log.info(hotelNum);
+
+        // 만약 세션에 hotel_num이 없다면 오류 처리
+        if (hotelNum == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "호텔 정보를 찾을 수 없습니다.");
+            return "redirect:/notice/noticeList";
+        }
+
+        // hotel_num을 모델에 추가하여 템플릿에서 사용하도록 전달
+        model.addAttribute("hotel_num", hotelNum);
 
         return "notice/noticeRegister";
     }
 
     //등록 내용 저장
     @PostMapping("/noticeRegister")
-    public String noticeRegisterPost(@Valid NoticeDTO noticeDTO,Long hotel_num, BindingResult result, Principal principal, List<MultipartFile> multipartFileList, Model model) throws Exception {
+    public String noticeRegisterPost(@Valid NoticeDTO noticeDTO, Long hotel_num, BindingResult result, Principal principal, List<MultipartFile> multipartFileList, Model model) throws Exception {
         log.info("입력폼 내용을 저장..." + noticeDTO);
-        System.out.println("저장된 내용"+ noticeDTO);
+        System.out.println("저장된 내용" + noticeDTO);
 
-        //폼 유효성 검사
+        // 폼 유효성 검사
         if (result.hasErrors()) {
             System.out.println(result.hasErrors());
             model.addAttribute("registerErrorMessage", "제목과 내용을 모두 입력해주세요.");
-            return "redirect:/notice/noticeRegister";  // 유효성 검사 실패시 오류
+            return "notice/noticeRegister";  // 유효성 검사 실패시 오류 페이지로 이동
         }
-
 
         try {
             // 공지사항 등록 서비스 호출
-            noticeService.noticeRegister(noticeDTO, principal.getName(),hotel_num, multipartFileList);
+            noticeService.noticeRegister(noticeDTO, principal.getName(), hotel_num, multipartFileList);
             return "redirect:/notice/noticeList";  // 등록 성공 시 목록 페이지로 이동
+        } catch (AccessDeniedException e) {
+            model.addAttribute("registerErrorMessage", "공지사항을 작성할 권한이 없습니다.");
+            return "notice/noticeRegister";  // 권한 문제 발생 시 입력 폼 페이지로 리다이렉트
         } catch (Exception e) {
-            // 기타 예외
-            model.addAttribute("registerErrorMessage","공지사항 등록 중 오류가 발생했습니다." );
-            return "redirect:/notice/noticeList";  // 오류 발생 시 목록 페이지로 이동
+            log.error("공지사항 등록 중 오류 발생: " + e.getMessage(), e);  // 로그에 오류 출력
+            model.addAttribute("registerErrorMessage", "공지사항 등록 중 오류가 발생했습니다.");
+            return "notice/noticeRegister";  // 일반적인 예외 발생 시 입력 폼 페이지로 리다이렉트
         }
-
-
     }
 
     //상세 보기 페이지
