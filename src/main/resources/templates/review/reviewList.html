@@ -6,7 +6,8 @@
       layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>호텔리뷰 목록</title>
+    <title>My 리뷰목록</title>
+
 </head>
 <body>
 <th:block layout:fragment="content">
@@ -34,26 +35,54 @@
                 <tbody>
                 <th:block th:each="review :${reviewDTOList}">
                     <tr class="align-middle">
-                        <a th:href="@{review/reviewRead(id=${review.rev_num})}" th:text="${review.score}"></a>
-                        <td th:text="${review.create_by}"></td>
-                        <td>
-                            <a href="#" class="increment-view-btn" th:value="${review.imageDTOList}"></a>
-                        </td>
-                        <td>
-                            <td class="increment-view-btn" th:text="${review.content}"></td>
-                        </td>
-                        <td th:text="${review.reg_date}"></td>
-                        <td>  <!--post 방식의 삭제버튼--> <!-- 삭제할 qna의 ID를 hidden 필드로 전달 -->
-<!--                            <form class="delform" sec:authorize="hasAnyAuthority('USER')" action="/review/reviewDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">-->
-<!--                                <input type="hidden" name="rev_num" th:value="${review.rev_num}">-->
-<!--                                <button type="button" class="btn btn-dark" style="background-color: red;">삭제</button>-->
-<!--                            </form>-->
-                            <form class="delform " sec:authorize="hasAnyAuthority('USER')" action="/review/reviewDelete"  method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                <input type="hidden" name="rev_num" th:value="${review.rev_num}" class="num">
-                                <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>
-                            </form>
-                        </td>
+                        <div class="card" style="width: 18rem;">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <a th:text="${review.create_by}"></a>
+                                    <p th:text="${review.roomDTO.hotelDTO.hotel_name}"><p th:text="${review.score}"></p></p>
+                                </li>
+                            </ul>
+                            <img src="..." class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <p class="card-text" th:text="${review.content}"></p>
+                            </div>
 
+                            <div class="card" style="width: 18rem;">
+                                <div class="carousel-inner">
+                                    <th:block th:each="img: ${review.imageDTOList}">
+                                        <th:block th:if="${img.repimg_yn == 'Y'}">
+                                            <div class="carousel-item active d-flex justify-content-center"  data-bs-interval="5000">
+                                                <div class="col-12">
+                                                    <img width="100%" th:src="${img.thumbnail_url}" class="card-img-top" alt="대표 이미지" style="height: 500px;">
+                                                </div>
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+                                </div>
+                                <img src="..." class="card-img-top" alt="...">
+                                <div class="card-body">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                </div>
+                            </div>
+                            <div class="card" style="width: 18rem;">
+                                <td th:text="${review.reg_date}">
+                                    <a href="" class="text-center-xxl-end"> <p class="fs-6">>>자세히 보기<< </p></a>
+
+
+                                    <div class="card-body">
+
+                                    </div>
+                            </div>
+                        </div>
+
+<!--                        <td>-->
+<!--                            <form class="delform " sec:authorize="hasAnyAuthority('USER')" action="/review/reviewDelete"  method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">-->
+<!--                                <input type="hidden" name="rev_num" th:value="${review.rev_num}" class="num">-->
+<!--                                <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>-->
+<!--                            </form>-->
+<!--                        </td>-->
                     </tr>
                 </th:block>
                 </tbody>

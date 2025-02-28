@@ -76,6 +76,9 @@ public class PayService {
     private MemberRepository memberRepository;
 
     @Autowired
+    private CartService cartService;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     private IamportClient api;
@@ -184,6 +187,11 @@ public class PayService {
         List<CareReserveItem> allCareReserveItems = new ArrayList<>();
 
         for (OrderItemDTO orderItemDTO : payDTO.getOrderItemDTOList()) {
+
+            if (orderItemDTO.getService_num() != null){
+                cartService.deleteCartOrderItem(orderItemDTO.getService_num());
+            }
+
             OrderReserveItem orderReserveItem = new OrderReserveItem();
             orderReserveItem.setMenu_request(orderItemDTO.getMenu_request());
 
@@ -207,13 +215,6 @@ public class PayService {
                 Menu menu = menuRepository.findById(menuItemDTO.getMenuDTO().getMenu_num())
                         .orElseThrow(() -> new IllegalArgumentException("해당 메뉴가 존재하지 않습니다. menu_num: " + menuItemDTO.getMenuDTO().getMenu_num()));
 
-                if (menuItemDTO.getMenuitem_num() != null) {
-                    MenuItem menuItem = menuItemRepository.findById(menuItemDTO.getMenuitem_num())
-                            .orElseThrow(EntityNotFoundException::new);
-                    menuItemRepository.delete(menuItem);
-                    menuItemRepository.flush();
-
-                }
 
                 MenuReserveItem menuReserveItem = new MenuReserveItem();
                 menuReserveItem.setMenu(menu);
@@ -231,15 +232,6 @@ public class PayService {
                 Care care = careRepository.findById(careItemDTO.getCareDTO().getCare_num())
                         .orElseThrow(() -> new IllegalArgumentException("해당 케어 서비스가 존재하지 않습니다. care_num: " + careItemDTO.getCareDTO().getCare_num()));
 
-                if (careItemDTO.getCareitem_num() != null) {
-                    CareItem careItem = careItemRepository.findById(careItemDTO.getCareitem_num())
-                            .orElseThrow(EntityNotFoundException::new);
-
-                    careItemRepository.delete(careItem);
-                    careItemRepository.flush();
-
-                }
-
 
                 CareReserveItem careReserveItem = new CareReserveItem();
                 careReserveItem.setCare(care);
@@ -251,23 +243,30 @@ public class PayService {
             }
             allCareReserveItems.addAll(careReserveItems);
 
-            orderReserveItem.setMenuReserveItemList(menuReserveItems);
-            orderReserveItem.setCareReserveItemList(careReserveItems);
+            orderReserveItem.getMenuReserveItemList().clear();
+            orderReserveItem.getMenuReserveItemList().addAll(menuReserveItems);
+            orderReserveItem.getCareReserveItemList().clear();
+            orderReserveItem.getCareReserveItemList().addAll(careReserveItems);
         }
 
         menuReserveItemRepository.saveAll(allMenuReserveItems);
         careReserveItemRepository.saveAll(allCareReserveItems);
 
         orderReserve.setTotal_price(totalPrice);
-        orderReserve.setOrderReserveItemList(orderReserveItems);
+
+        orderReserve.getOrderReserveItemList().clear();
+        orderReserveItemRepository.flush();
+        orderReserve.getOrderReserveItemList().addAll(orderReserveItems);
         orderReserveRepository.save(orderReserve);
 
         roomReserveItemRepository.saveAll(roomReserveItems);
         orderReserveItemRepository.saveAll(orderReserveItems);
 
         // 결제 정보에 예약 정보 추가 후 저장
-        pay.setRoomReserveItemList(roomReserveItems);
-        pay.setOrderReserveItemList(orderReserveItems);
+        pay.getRoomReserveItemList().clear();
+        pay.getRoomReserveItemList().addAll(roomReserveItems);
+        pay.getOrderReserveItemList().clear();
+        pay.getOrderReserveItemList().addAll(orderReserveItems);
         payRepository.save(pay);
 
     }

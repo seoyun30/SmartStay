@@ -7,6 +7,7 @@ import com.lookatme.smartstay.entity.Review;
 import com.lookatme.smartstay.entity.RoomReserve;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
+import com.lookatme.smartstay.repository.ReviewRepository;
 import com.lookatme.smartstay.repository.RoomReserveRepository;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
@@ -43,6 +44,7 @@ public class ReviewController {
     //리뷰
     private final ReviewService reviewService;
     private final ModelMapper modelMapper;
+    private final ReviewRepository reviewRepository;
 
 
     //관리자 리뷰 목록 페이지(chief, manager권한)
@@ -59,13 +61,14 @@ public class ReviewController {
 
     //호텔 리뷰 목록
     @GetMapping("/reviewList/{hotel_num}")
-    public String reviewList(@RequestParam Long hotel_num, Model model) {
+    public String reviewList(@PathVariable("hotel_num") Long hotel_num, Model model) {
+
+        log.info("hotel_num: " + hotel_num);
 
         List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num);
-
         model.addAttribute("reviewDTOList", reviewDTOList);
 
-        reviewDTOList.forEach(reviewDTO -> {log.info("reviewDTO: " + reviewDTO);});
+        reviewDTOList.forEach(reviewDTO -> log.info("reviewDTO: {}", reviewDTO));
 
         return "review/reviewList";
     }
@@ -74,16 +77,12 @@ public class ReviewController {
     @GetMapping("/myReviewList")
     public String myReviewList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
         log.info("My 리뷰");
-        log.info("principal: " + principal);
+        log.info("principal: " + principal.getName());
 
+        List<ReviewDTO> reviewDTOList = reviewService.userMyReviewList(principal.getName());
+        model.addAttribute("reviewDTOList", reviewDTOList);
 
-
-
-
-
-
-
-        return null;
+        return "review/myReviewList";
     }
 
     //등록 페이지 이동(유저)
@@ -140,6 +139,7 @@ public class ReviewController {
         try {
             reviewService.reviewRegister(reviewDTO, principal.getName(), multipartFileList);
             return "redirect:/review/reviewList"; //성공 시 목록 페이지
+
         } catch (Exception e) {
             log.error("Error occurred while registering review: {}", e.getMessage());
             return "redirect:/review/register?error=true"; // 실패 시 다시 등록 페이지
