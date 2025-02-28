@@ -2,6 +2,7 @@ package com.lookatme.smartstay.service;
 
 
 import com.lookatme.smartstay.dto.QnaDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
@@ -9,10 +10,7 @@ import java.util.List;
 public interface QnaService {
 
     //등록
-    public void register(QnaDTO qnaDTO);
-
-    //사진을 추가한 등록 나중에
-    //public void register(QnaDTO qnaDTO, MultipartFile[] multipartFiles);
+    public void register(QnaDTO qnaDTO, MultipartFile[] multipartFiles);
 
     //읽기
     public QnaDTO read(Long qna_num);

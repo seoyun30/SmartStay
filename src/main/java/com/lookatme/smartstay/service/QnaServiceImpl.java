@@ -1,12 +1,14 @@
 package com.lookatme.smartstay.service;
 
 
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.dto.QnaDTO;
+import com.lookatme.smartstay.entity.Hotel;
+import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.Qna;
-import com.lookatme.smartstay.repository.MemberRepository;
-import com.lookatme.smartstay.repository.QnaReplyRepository;
-import com.lookatme.smartstay.repository.QnaRepository;
+import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +18,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.AccessDeniedException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,16 +31,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class QnaServiceImpl implements QnaService {
+
     private final QnaRepository qnaRepository;
-
-    //reply,이미지 추후사용
-    //private final QnaReplyRepository qnaReplyRepository;
-    //private final ImageRepository imageRepository;
-
+    private final ImageRepository imageRepository;
     private final ModelMapper modelMapper = new ModelMapper();
     private final ImageService imageService;
     private final QnaReplyRepository qnaReplyRepository;
     private final MemberRepository memberRepository;
+    private final HotelRepository  hotelRepository;
 
 
     // ✅ 로그인된 사용자 ID 가져오는 메서드 추가
@@ -49,8 +51,9 @@ public class QnaServiceImpl implements QnaService {
     }
 
     @Override
-    public void register(QnaDTO qnaDTO) {
+    public void register(QnaDTO qnaDTO, MultipartFile[] multipartFiles) {
         log.info("등록 서비스 들어온 값: " + qnaDTO);
+        log.info("등록된 서비스 들어온 파일 목록: " + Arrays.toString(multipartFiles));
 
         // 로그인된 사용자 ID 가져오기
         String loggedInUser = getLoggedInUser();
@@ -60,41 +63,37 @@ public class QnaServiceImpl implements QnaService {
         Member member = memberRepository.findMemberByEmail(loggedInUser)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
+        // Hotel 엔티티 조회 (호텔 번호로 호텔 찾기)
+        Hotel hotel = hotelRepository.findById(qnaDTO.getHotel_num())
+                .orElseThrow(() -> new EntityNotFoundException("호텔을 찾을 수 없습니다."));
+
         // Qna 객체 생성 및 설정
         Qna qna = Qna.builder()
                 .title(qnaDTO.getTitle())
                 .content(qnaDTO.getContent())
-                .writer(loggedInUser)  // 작성자 ID 설정
+                .writer(loggedInUser)// 작성자 설정
+                .hotel(hotel)
                 .build();
 
-        qnaRepository.save(qna);
-    }
+        // Qna 저장
+        qna = qnaRepository.save(qna);
+        log.info("저장 후 Qna 정보: " + qna);
 
-    /*이미지 추후
-    @Override
-    public void register(QnaDTO qnaDTO, MultipartFile[] multipartFiles){
-        log.info("등록된 서비스 들어온 값 :"+qnaDTO);
-        log.info("등로된 서비스 들어온 값 :"+multipartFiles);
-
-        Qna qna = modelMapper.map(qnaDTO, Qna.class);
-        log.info("저장 전에 qnaDTO를 qna로 변환함 :"+qna);
-
-        Qna=qnaRepository.save(qna);
-        log.info("저장 후에 결과를 가지고 있는 qna :"+qna);
-
-        if (multipartFiles != null){
-            for (MultipartFile file: multipartFiles) {
-                if (!file.isEmpty()){
-                    log.info("사진이 저장됩니다.");
-                    imageService.imageregister(qna.getQna_num(), file);
-                }
+        // 이미지가 있다면 저장
+        if (multipartFiles != null && multipartFiles.length > 0) {
+            List<MultipartFile> imageFileList = Arrays.asList(multipartFiles);
+            try {
+                imageService.saveImage(imageFileList, "qna", qna.getQna_num());
+            } catch (Exception e) {
+                log.error("이미지 저장 중 오류 발생: ", e);
+                throw new RuntimeException("이미지 저장 실패", e);
             }
         }
-    } */
+    }
 
     @Override
     public QnaDTO read(Long qna_num) {
-        log.info("서비스 읽기로 들어온값 : " +  qna_num);
+        log.info("서비스 읽기로 들어온값 : " + qna_num);
 
         // qna_num이 null이거나 유효하지 않으면 예외 처리
         if (qna_num == null || qna_num <= 0) {
@@ -102,12 +101,27 @@ public class QnaServiceImpl implements QnaService {
             throw new EntityNotFoundException("잘못된 게시글 번호입니다.");
         }
 
-        Optional<Qna> optionalQna =
-                qnaRepository.findById(qna_num);
-        Qna qna = optionalQna.orElseThrow(EntityNotFoundException::new);
-        QnaDTO qnaDTO = modelMapper.map( qna, QnaDTO.class );
+        Qna qna = qnaRepository.findById(qna_num)
+                .orElseThrow(() -> {
+                    log.error("게시글을 찾을 수 없음: " + qna_num);
+                    return new EntityNotFoundException("게시글을 찾을 수 없습니다.");
+                });
 
-        log.info("서비스에서 컨트롤러로 나간값 :  " +qnaDTO);
+        QnaDTO qnaDTO = modelMapper.map(qna, QnaDTO.class);
+
+        // 이미지 리스트 추가
+        List<Image> imageList = imageService.findImagesByTarget("qna", qna_num);
+        List<ImageDTO> imageDTOList = imageList.stream()
+                .map(image -> {
+                    ImageDTO imageDTO = modelMapper.map(image, ImageDTO.class);
+                    imageDTO.setThumbnail_url(image.getThumbnail_url()); // 썸네일 URL 설정
+                    return imageDTO;
+                })
+                .collect(Collectors.toList());
+
+        qnaDTO.setImageDTOList(imageDTOList);
+
+        log.info("서비스에서 컨트롤러로 나간값 : " + qnaDTO);
 
         return qnaDTO;
     }
@@ -119,10 +133,29 @@ public class QnaServiceImpl implements QnaService {
         // 조회한 QnA 리스트를 로깅
         qnaList.forEach(qna -> log.info(qna.toString()));
 
-        // QnA 엔티티 리스트를 QnA DTO로 변환
         List<QnaDTO> qnaDTOList = qnaList.stream()
-                .map(qna -> modelMapper.map(qna, QnaDTO.class))  // 괄호가 빠져있었음
+                .map(qna -> {
+                    // Qna 엔티티를 QnaDTO로 변환
+                    QnaDTO qnaDTO = modelMapper.map(qna, QnaDTO.class);
+
+                    // 명시적으로 매핑 규칙을 추가
+                    modelMapper.typeMap(Qna.class, QnaDTO.class).addMappings(mapper -> {
+                        // Hotel 객체의 hotel_num을 QnaDTO의 hotel_num에 매핑
+                        mapper.map(src -> src.getHotel().getHotel_num(), QnaDTO::setHotel_num);
+                    });
+
+                    // Qna의 Hotel 객체를 HotelDTO로 변환하여 setHotelDTO에 설정
+                    qnaDTO.setHotelDTO(modelMapper.map(qna.getHotel(), HotelDTO.class));
+
+                    return qnaDTO;
+                })
                 .collect(Collectors.toList()); // 리스트로 변환
+
+       /* // QnA 엔티티 리스트를 QnA DTO로 변환
+        List<QnaDTO> qnaDTOList = qnaList.stream()
+                .map(qna -> modelMapper.map(qna, QnaDTO.class)
+                        .setHotelDTO(modelMapper.map(qna.getHotel(), HotelDTO.class))
+                ).collect(Collectors.toList()); // 리스트로 변환*/
 
         // 변환된 DTO 리스트 로깅
         qnaDTOList.forEach(qnaDTO -> log.info(qnaDTO.toString()));
