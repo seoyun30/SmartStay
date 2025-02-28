@@ -7,6 +7,7 @@ import com.lookatme.smartstay.entity.Review;
 import com.lookatme.smartstay.entity.RoomReserve;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
+import com.lookatme.smartstay.repository.ReviewRepository;
 import com.lookatme.smartstay.repository.RoomReserveRepository;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
@@ -43,6 +44,7 @@ public class ReviewController {
     //리뷰
     private final ReviewService reviewService;
     private final ModelMapper modelMapper;
+    private final ReviewRepository reviewRepository;
 
 
     //관리자 리뷰 목록 페이지(chief, manager권한)
@@ -75,16 +77,12 @@ public class ReviewController {
     @GetMapping("/myReviewList")
     public String myReviewList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
         log.info("My 리뷰");
-        log.info("principal: " + principal);
+        log.info("principal: " + principal.getName());
 
+        List<ReviewDTO> reviewDTOList = reviewService.userMyReviewList(principal.getName());
+        model.addAttribute("reviewDTOList", reviewDTOList);
 
-
-
-
-
-
-
-        return null;
+        return "review/myReviewList";
     }
 
     //등록 페이지 이동(유저)
