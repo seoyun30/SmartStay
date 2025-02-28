@@ -23,6 +23,8 @@ public class ImageDTO {
 
     private String thumbnail_url; // 썸네일 URL
 
+    private String targetType;
+
     private BrandDTO brandDTO; //브랜드 이미지
 
     private HotelDTO hotelDTO; //호텔 이미지
