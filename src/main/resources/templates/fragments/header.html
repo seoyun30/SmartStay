@@ -43,21 +43,21 @@
 
                             <ul class="dropdown-menu dropdown-menu-right">
 
-                                <li class="mt-2" sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF', 'MANAGER')">
+                                <li class="mt-2 mb-1" sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF', 'MANAGER')">
                                     <a class="dropdown-link-item" href="/adMain">
                                         <i class="bi bi-house btn-outline-dark"></i>
                                         <span class="nav-text text-dark">관리자 홈</span>
                                     </a>
                                 </li>
 
-                                <li class="mb-2" sec:authorize="isAuthenticated()">
+                                <li class="mb-2 mt-1" sec:authorize="isAuthenticated()">
                                     <a class="dropdown-link-item" href="/member/userAllMyPage">
                                         <i class="mdi mdi-account-outline btn-outline-dark"></i>
                                         <span class="nav-text text-dark">마이 페이지</span>
                                     </a>
                                 </li>
 
-                                <li class="dropdown-footer mb-2" sec:authorize="isAuthenticated()">
+                                <li class="dropdown-footer mt-1 mb-2" sec:authorize="isAuthenticated()">
                                     <a class="dropdown-link-item" href="/member/logout">
                                         <i class="mdi mdi-logout btn-outline-danger"></i>
                                         <span class="nav-text text-danger">로그아웃</span>

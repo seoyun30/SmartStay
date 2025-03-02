@@ -91,7 +91,7 @@ public class HotelService {
                     if (averageScore != null) {
                         hotelDTO.setScore(String.format("%.2f", averageScore));
                     } else {
-                        hotelDTO.setScore("0.0");
+                        hotelDTO.setScore("(0)");
                     }
                     int reviewCount = getReviewCount(hotel.getHotel_num());
                     hotelDTO.setReview_count(reviewCount);
