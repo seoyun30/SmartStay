@@ -1,7 +1,6 @@
 package com.lookatme.smartstay.dto;
 
 import com.lookatme.smartstay.constant.MenuSort;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -29,7 +28,6 @@ public class MenuDTO {
     private String menu_detail; //메뉴 상세
 
     @NotNull(message = "메뉴 가격을 입력해주세요.")
-    @Min(value = 100, message = "메뉴 최소 가격은 100원입니다.")
     private Long menu_price; //메뉴 가격
 
     private HotelDTO hotelDTO; //호텔

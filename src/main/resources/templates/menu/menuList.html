@@ -29,7 +29,7 @@
             <div class="search-form">
                 <form method="get" action="/menu/menuList" onsubmit="saveSearchQuery()">
                     <div class="input-group input-group-sm" id="input-group-search">
-                        <input type="text" autocomplete="off" class="form-control" name="query" placeholder="검색어를 입력하세요" id="search-input" th:value="${param.query}">
+                        <input type="text" autocomplete="off" class="form-control" name="query" placeholder="메뉴 명 혹은 메뉴 상세로 검색하세요." id="search-input" th:value="${param.query}">
                         <div class="input-group-append">
                             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
                         </div>

@@ -123,10 +123,9 @@ public class RoomController {
             model.addAttribute("isSearch", false);
 
         }else {
-            List<RoomDTO> results = roomService.searchList(hotelDTO, query, sortField, sortDir, searchType);
+            List<RoomDTO> results = roomService.searchList(hotelDTO, query, sortField, sortDir);
             model.addAttribute("results", results != null ? results : Collections.emptyList());
             model.addAttribute("query", query);
-            model.addAttribute("searchType", searchType);
             model.addAttribute("isSearch", true);
             model.addAttribute("pageResponseDTO", null);
         }

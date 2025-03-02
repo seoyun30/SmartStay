@@ -81,7 +81,7 @@
                                     <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="has-sub">
                                         <a class="sidenav-item-link" data-bs-target="#brand-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
                                             <i class="bi bi-circle"></i>
-                                            <span class="nav-text">총판 관리</span>
+                                            <span class="nav-text">브랜드 관리</span>
                                             <i class="bi bi-chevron-down ms-auto"></i>
                                         </a>
                                         <ul id="brand-nav" class="collapse" data-bs-parent="#sidebar-menu">
@@ -89,13 +89,13 @@
                                                 <li sec:authorize="hasAuthority('SUPERADMIN')">
                                                     <a href="/brand/brandList" class="sidenav-item-link">
                                                         <i class="bi bi-circle mr-1"></i>
-                                                        <span class="nav-text">총판 목록</span>
+                                                        <span class="nav-text">브랜드 목록</span>
                                                     </a>
                                                 </li>
                                                 <li sec:authorize="hasAuthority('CHIEF')">
                                                     <a href="/brand/brandRegister" class="sidenav-item-link">
                                                         <i class="bi bi-circle mr-1"></i>
-                                                        <span class="nav-text">총판 등록</span>
+                                                        <span class="nav-text">브랜드 등록</span>
                                                     </a>
                                                 </li>
                                             </div>
@@ -338,7 +338,7 @@
 
                                     <div class="sidebar-footer ml-5 mt-8 mb-3">
                                         <p th:if="${adminRole == 'CHIEF'}" style="color: white; font-weight: bold;">
-                                            <strong>소속 : </strong><span th:text="${brandName}">총판 없음</span>
+                                            <strong>소속 : </strong><span th:text="${brandName}">브랜드 없음</span>
                                         </p>
 
                                         <p th:if="${adminRole == 'MANAGER'}" style="color: white; font-weight: bold;">
@@ -350,7 +350,7 @@
                                         </p>
 
                                         <p style="color: white; font-weight: bold;">
-                                            <strong>아이디 : </strong><span th:text="${adminEmail}">아이디 없음</span>
+                                            <strong>ID : </strong><span th:text="${adminEmail}">아이디 없음</span>
                                         </p>
                                     </div>
 
