@@ -12,7 +12,7 @@
 
     <form action="/care/careModify" method="post" th:object="${careDTO}" enctype="multipart/form-data">
         <div class="row">
-            <div class="col-8 offset-2">
+            <div class="col-6 offset-3">
                 <div class="row">
                     <input type="hidden" th:field="*{care_num}">
                     <div class="col-12">
@@ -23,7 +23,7 @@
 
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="care_name" class="form-label">룸 케어 명</label>
+                            <label for="care_name" class="form-label">룸 케어 이름</label>
                             <input type="text" class="form-control" th:field="*{care_name}" required id="care_name" >
                             <p th:if="${#fields.hasErrors('care_name')}" th:errors="*{care_name}" class="fieldError"></p>
                         </div>
@@ -65,9 +65,9 @@
                                 <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
                             </div>
 
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-dark">저장</button>
+                            <div class="col-12 text-center">
                                 <button type="button" class="btn btn-primary" onclick="location.href='/care/careList'">목록</button>
+                                <button type="submit" class="btn btn-dark">저장</button>
                                 <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
                             </div>
                         </div>

@@ -45,7 +45,7 @@
                                         <div class="card-body">
                                             <input id="hotel_num" type="hidden" th:value="${hotelDTO.hotel_num}">
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">호텔명</span>
+                                                <span class="input-group-text">호텔 이름</span>
                                                 <input type="text" class="form-control" th:value="${hotelDTO.hotel_name}" readonly>
                                             </div>
                                             <div class="input-group mb-3">
@@ -102,9 +102,9 @@
                                 </div>
 
 
-                                <div class="col-12 mt-3">
-                                    <button type="button" class="btn btn-dark Modbtn">수정</button>
+                                <div class="col-12 mt-3 text-center">
                                     <button type="button" class="btn btn-primary Listbtn">목록</button>
+                                    <button type="button" class="btn btn-dark Modbtn">수정</button>
                                     <script>
                                         let hotel_num = document.getElementById("hotel_num").value;
 

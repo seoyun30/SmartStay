@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-12">
                     <div class="mb-3">
-                        <label for="menu_name" class="form-label">메뉴 명</label>
+                        <label for="menu_name" class="form-label">메뉴 이름</label>
                         <input type="text" class="form-control" th:field="*{menu_name}" required id="menu_name" >
                         <p th:if="${#fields.hasErrors('menu_name')}" th:errors="*{menu_name}" class="fieldError"></p>
                     </div>
@@ -79,9 +79,9 @@
                             <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
                         </div>
 
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-dark">저장</button>
+                        <div class="col-12 text-center mt-3">
                             <button type="button" class="btn btn-primary" onclick="location.href='/menu/menuList'">목록</button>
+                            <button type="submit" class="btn btn-dark">저장</button>
                             <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
                         </div>
                     </div>

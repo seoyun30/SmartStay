@@ -137,7 +137,11 @@
             </div>
             <div class="row" id="hotel-list"></div> <!--추가-->
 
-            <div class="row row-cols-1 row-cols-md-4 g-4">
+            <div th:if="${#lists.isEmpty(list)}" class="text-center my-5">
+                <h1 class="text-muted">등록된 호텔이 없습니다.</h1>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(list)}" class="row row-cols-1 row-cols-md-4 g-4">
                 <div th:each="hotel : ${list}" class="col">
                     <div class="card h-100 shadow-sm">
                         <div>

@@ -33,7 +33,7 @@
                                                 <input type="text" class="form-control" th:value="${menuDTO.menu_sort}">
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text" style="width: 120px">메뉴 명</span>
+                                                <span class="input-group-text" style="width: 120px">메뉴 이름</span>
                                                 <input type="text" class="form-control" th:value="${menuDTO.menu_name}">
                                             </div>
                                             <div class="input-group mb-3">
@@ -62,9 +62,9 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12">
-                                    <button type="button" th:onclick="|location.href='@{/menu/menuModify(menu_num=${menuDTO.menu_num})}'|" class="btn btn-dark">수정</button>
+                                <div class="col-12 text-center">
                                     <button type="button" onclick="location.href='/menu/menuList'"class="btn btn-primary">목록</button>
+                                    <button type="button" th:onclick="|location.href='@{/menu/menuModify(menu_num=${menuDTO.menu_num})}'|" class="btn btn-dark">수정</button>
                                     <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
 
                                 </div>

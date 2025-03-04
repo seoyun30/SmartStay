@@ -9,7 +9,7 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-    <h1 class="text-center mt-5 mb-3">브랜드 등록</h1>
+    <h1 class="text-center mt-5 mb-3">총판 등록</h1>
 
     <!-- 에러 메시지 출력 -->
     <div th:if="${error}" class="alert alert-danger text-center">
@@ -23,8 +23,8 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="brand_name" class="form-label">브랜드명</label>
-                            <input type="text" class="form-control" th:field="*{brand_name}" id="brand_name" placeholder="브랜드명을 입력하세요." required >
+                            <label for="brand_name" class="form-label">총판 이름</label>
+                            <input type="text" class="form-control" th:field="*{brand_name}" id="brand_name" placeholder="총판 이름을 입력하세요." required >
                             <p th:if="${#fields.hasErrors('brand_name')}" th:errors="*{brand_name}" class="fieldError"></p>
                         </div>
                     </div>
@@ -70,9 +70,9 @@
                         </div>
                     </div>
 
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-dark">등록</button>
+                    <div class="col-12 text-center">
                         <button type="button" class="btn btn-primary Listbtn">목록</button>
+                        <button type="submit" class="btn btn-dark">등록</button>
                         <script>
                             $(".Listbtn").on("click", function () {
                                 location.href = "/brand/brandList";

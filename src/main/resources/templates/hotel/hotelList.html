@@ -13,33 +13,32 @@
 <th:block layout:fragment="content">
   <h1 class="text-center mt-5">호텔 목록</h1>
 
-
   <div th:if="${hotelDTOList.isEmpty() or #lists.size(hotelDTOList) == 0}" class="alert alert-success text-center">
     <p>호텔정보가 존재하지 않습니다.</p>
   </div>
-  <th:block th:unless="${hotelDTOList.isEmpty() or #lists.size(hotelDTOList) == 0}">
+  
     <div class="row mt-3">
       <div sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="col text-end">
         <button type="button" onclick="location.href='/hotel/hotelRegister'" class="btn btn-dark">호텔 등록</button>
       </div>
     </div>
-
-    <div class="row mt-3">
-      <div class="col">
-        <table class="table table-striped table-hover">
-          <thead>
-          <tr class="text-center">
-            <th>번호</th>
-            <th>호텔명</th>
-            <th>사업자번호</th>
-            <th>대표자</th>
-            <th>주소</th>
-            <th>전화번호</th>
-            <th>별점</th>
-            <th>상태</th>
-          </tr>
-          </thead>
-
+  
+  <div class="row mt-3">
+    <div class="col">
+      <table class="table table-striped table-hover">
+        <thead>
+        <tr class="text-center">
+          <th>번호</th>
+          <th>호텔 이름</th>
+          <th>사업자번호</th>
+          <th>대표자</th>
+          <th>주소</th>
+          <th>전화번호</th>
+          <th>별점</th>
+          <th>상태</th>
+        </tr>
+        </thead>
+        
           <tbody>
           <th:block th:each="hotel : ${hotelDTOList}">
             <tr class="text-center">

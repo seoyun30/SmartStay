@@ -50,7 +50,7 @@
                                                 <input type="text" class="form-control" th:value="${roomDTO.room_num}">
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text" style="width: 140px">룸 명</span>
+                                                <span class="input-group-text" style="width: 140px">룸 이름</span>
                                                 <input type="text" class="form-control" th:value="${roomDTO.room_name}">
                                             </div>
                                             <div class="input-group mb-3">
@@ -114,9 +114,9 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12">
-                                    <button type="button" th:onclick="|location.href='@{/room/roomModify(room_num=${roomDTO.room_num})}'|" class="btn btn-dark">수정</button>
+                                <div class="col-12 text-center">
                                     <button type="button" onclick="location.href='/room/roomList'"class="btn btn-primary">목록</button>
+                                    <button type="button" th:onclick="|location.href='@{/room/roomModify(room_num=${roomDTO.room_num})}'|" class="btn btn-dark">수정</button>
                                     <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
                                 </div>
                             </div>
