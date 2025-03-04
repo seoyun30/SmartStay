@@ -12,7 +12,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -132,6 +134,8 @@ public class NoticeService {
         return noticeDTO;
     }
 
+
+
     //공지 사항 목록
     public PageResponseDTO<NoticeDTO> noticeList(PageRequestDTO pageRequestDTO, String email) {
 
@@ -175,6 +179,57 @@ public class NoticeService {
 
                                 return  noticeDTO;
                             } )
+                    .collect(Collectors.toList());
+
+            log.info("DTO변환");
+
+            noticeDTOList.forEach(dto -> log.info(dto));
+
+            return PageResponseDTO.<NoticeDTO>withAll()
+                    .pageRequestDTO(pageRequestDTO)
+                    .dtoList(noticeDTOList)
+                    .total((int) noticePage.getTotalElements())
+                    .build();
+        }
+    }
+
+    public PageResponseDTO<NoticeDTO> userNoticeList(PageRequestDTO pageRequestDTO) {
+
+        log.info(pageRequestDTO);
+
+
+        Pageable pageable = PageRequest.of( pageRequestDTO.getPage() - 1,
+                pageRequestDTO.getSize(),
+                Sort.by("notice_num").descending());
+
+        Page<Notice> noticePage;
+        if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
+            noticePage = noticeRepository.userSearchNotice(pageRequestDTO.getKeyword(), pageable);
+        } else {
+            noticePage = noticeRepository.AllNotice(pageable);
+        }
+
+
+
+        List<Notice> noticeList = noticePage.getContent();
+
+        noticeList.forEach(notice -> log.info(notice));
+
+        if (noticeList == null  || noticeList.isEmpty()) {
+            log.info("공지사항 없음");
+            return null;
+
+        } else {
+            List<NoticeDTO> noticeDTOList = noticeList.stream()
+                    .map(notice ->{
+                        NoticeDTO noticeDTO = modelMapper.map(notice, NoticeDTO.class);
+
+                        noticeDTO.setBrandDTO( modelMapper.map(notice.getBrand(), BrandDTO.class));
+
+                        noticeDTO.setHotelDTO(modelMapper.map(notice.getHotel(), HotelDTO.class));
+
+                        return  noticeDTO;
+                    } )
                     .collect(Collectors.toList());
 
             log.info("DTO변환");

@@ -45,6 +45,7 @@ public class SecurityConfig {
             //회원관련(모든 사용자)-로그인, 회원가입, 임시비밀번호발급
            /* auth.requestMatchers("/login", "/logout", "/register", "/password").permitAll();*/
             auth.requestMatchers( "/member/login", "/member/loginPW","/register", "/password").permitAll();
+            auth.requestMatchers("/notice/userNoticeList", "/notice/userNoticeRead").permitAll();
             //인증된 사용자만 접근 가능
             auth.requestMatchers("/modify", "/member/logout").permitAll(); //수정,로그아웃
             //매핑명을 작업이름/매핑명
@@ -67,10 +68,12 @@ public class SecurityConfig {
         //csrf 변조방지
         http.csrf(AbstractHttpConfigurer::disable);
 
+
+
         //로그아웃 정보
         http.logout(logout -> logout
                         .logoutUrl("/member/logout")
-                                .logoutSuccessHandler(new LogoutSeccessHandler())
+                                .logoutSuccessHandler(new LogoutSuccessHandler())
 
         )
                 .exceptionHandling(

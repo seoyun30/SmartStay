@@ -111,6 +111,26 @@ public class NoticeController {
         return "notice/noticeList";
     }
 
+    @GetMapping("/userNoticeList")
+    public String userNoticeList(PageRequestDTO pageRequestDTO, Model model) {
+
+
+        log.info("모든 데이터를 읽어온다..." + pageRequestDTO);
+
+        PageResponseDTO<NoticeDTO> pageResponseDTO = noticeService.userNoticeList(pageRequestDTO);
+
+        log.info("전달되는 DTO" + pageResponseDTO);
+        log.info("전달되는 DTO리스트 " + pageResponseDTO);
+
+
+
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
+
+
+        return "notice/userNoticeList";
+    }
+
+
 
     //상세 보기 페이지
     @GetMapping("/noticeRead")
@@ -144,6 +164,36 @@ public class NoticeController {
 
         }
         return "notice/noticeRead";
+
+    }
+
+    @GetMapping("/userNoticeRead")
+    public String userNoticeRead(Long notice_num, Model model, PageRequestDTO pageRequestDTO, RedirectAttributes redirectAttributes) {
+
+        log.info("컨트롤러 읽기로 들어온 게시글" + notice_num);
+        log.info("컨트롤러 읽기로 들어온 페이징 " + pageRequestDTO);
+
+        if (notice_num == null || notice_num.equals("")) {
+            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 글입니다.");
+            log.info("들어온 게시글번호 이상함");
+
+            return "redirect:/notice/userNoticeList";
+        }
+
+
+        try {
+            NoticeDTO noticeDTO = noticeService.noticeRead(notice_num);
+            log.info("컨트롤러에서 서비스 read() 불러온 값 " + noticeDTO);
+            model.addAttribute("noticeDTO", noticeDTO);
+
+        } catch (EntityNotFoundException e) {
+            log.info("id로 값을 찾지 못함");
+            log.info("데이터 없음");
+
+            return "redirect:/notice/userNoticeList";
+
+        }
+        return "notice/userNoticeRead";
 
     }
 
@@ -191,7 +241,7 @@ public class NoticeController {
 
         try {
             if(multipartFileList != null && !multipartFileList.isEmpty()){
-                log.info("엽로드된 이미지 파일: " + multipartFileList.size());
+                log.info("업로드된 이미지 파일: " + multipartFileList.size());
             }else {
                 log.info("이미지 파일이 없습니다.");
             }
