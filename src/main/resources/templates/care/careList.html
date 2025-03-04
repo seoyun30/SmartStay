@@ -29,7 +29,7 @@
             <div class="search-form">
                 <form method="get" action="/care/careList" onsubmit="saveSearchQuery()">
                     <div class="input-group input-group-sm" id="input-group-search">
-                        <input type="text" autocomplete="off" class="form-control" name="query" placeholder="케어 명 혹은 케어 상세로 검색하세요." id="search-input" th:value="${param.query}">
+                        <input type="text" autocomplete="off" class="form-control" name="query" placeholder="케어 이름 또는 케어 상세로 검색하세요." id="search-input" th:value="${param.query}">
                         <div class="input-group-append">
                             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
                         </div>
@@ -47,7 +47,7 @@
                     <div class="card col-8 offset-2 shadow-sm">
                         <div class="card-body d-flex flex-column align-items-center">
                             <h5 class="card-title text-center text-primary font-weight-bold">
-                                <a th:href="@{/care/careRead(care_num=${care.care_num})}" th:text="${care.care_name}" class="text-decoration-none">룸 케어 명</a>
+                                <a th:href="@{/care/careRead(care_num=${care.care_num})}" th:text="${care.care_name}" class="text-decoration-none">룸 케어 이름</a>
                             </h5>
                             <img th:src="${care.mainImage.thumbnail_url}" style="height: 200px; width: 300px;" class="rounded-top" mt-2/>
                         </div>
@@ -65,7 +65,7 @@
                     <thead>
                     <tr class="text-center text-black fw-bold">
                         <td>룸 케어 번호</td>
-                        <td>룸 케어 명</td>
+                        <td>룸 케어 이름</td>
                         <td>룸 케어 상세</td>
                         <td>
                             <a th:href="@{/care/careList(sortField='care_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
