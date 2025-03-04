@@ -29,7 +29,7 @@
             <div class="search-form">
                 <form method="get" action="/menu/menuList" onsubmit="saveSearchQuery()">
                     <div class="input-group input-group-sm" id="input-group-search">
-                        <input type="text" autocomplete="off" class="form-control" name="query" placeholder="메뉴 명 혹은 메뉴 상세로 검색하세요." id="search-input" th:value="${param.query}">
+                        <input type="text" autocomplete="off" class="form-control" name="query" placeholder="메뉴 이름 또는 메뉴 상세로 검색하세요." id="search-input" th:value="${param.query}">
                         <div class="input-group-append">
                             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
                         </div>
@@ -47,7 +47,7 @@
                     <div class="card col-8 offset-2 shadow-sm">
                         <div class="card-body d-flex flex-column align-items-center">
                             <h5 class="card-title text-center text-primary font-weight-bold">
-                                <a th:href="@{/menu/menuRead(menu_num=${menu.menu_num})}" th:text="${menu.menu_name}" class="text-decoration-none">메뉴 명</a>
+                                <a th:href="@{/menu/menuRead(menu_num=${menu.menu_num})}" th:text="${menu.menu_name}" class="text-decoration-none">메뉴 이름</a>
                             </h5>
                             <img th:src="${menu.mainImage.thumbnail_url}" style="height: 200px; width: 300px;" class="rounded-top" mt-2/>
                         </div>
@@ -71,7 +71,7 @@
                                 <span th:if="${sortField == 'menu_sort'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                             </a>
                         </td>
-                        <td>메뉴 명</td>
+                        <td>메뉴 이름</td>
                         <td>메뉴 상세</td>
                         <td>
                             <a th:href="@{/menu/menuList(sortField='menu_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">

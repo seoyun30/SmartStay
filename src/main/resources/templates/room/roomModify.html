@@ -21,7 +21,7 @@
                 </div>
                 <div class="col-12">
                     <div class="mb-3">
-                        <label for="room_name" class="form-label">룸 명</label>
+                        <label for="room_name" class="form-label">룸 이름</label>
                         <input type="text" class="form-control" th:field="*{room_name}" required id="room_name">
                         <p th:if="${#fields.hasErrors('room_name')}" th:errors="*{room_name}" class="fieldError"></p>
                     </div>

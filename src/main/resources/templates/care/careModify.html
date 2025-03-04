@@ -23,7 +23,7 @@
 
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="care_name" class="form-label">룸 케어 명</label>
+                            <label for="care_name" class="form-label">룸 케어 이름</label>
                             <input type="text" class="form-control" th:field="*{care_name}" required id="care_name" >
                             <p th:if="${#fields.hasErrors('care_name')}" th:errors="*{care_name}" class="fieldError"></p>
                         </div>

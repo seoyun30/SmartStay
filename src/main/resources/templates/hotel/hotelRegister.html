@@ -17,8 +17,8 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="hotel_name" class="form-label">호텔명</label>
-                            <input type="text" class="form-control" th:field="*{hotel_name}" id="hotel_name" placeholder="호텔 명을 입력하세요." required>
+                            <label for="hotel_name" class="form-label">호텔 이름</label>
+                            <input type="text" class="form-control" th:field="*{hotel_name}" id="hotel_name" placeholder="호텔 이름을 입력하세요." required>
                             <p th:if="${#fields.hasErrors('hotel_name')}" th:errors="*{hotel_name}" class="fieldError"></p>
                         </div>
                     </div>
