@@ -11,27 +11,83 @@
     <div id="row" class="row">
 
         <div class="col-8 offset-2">
-            <form th:action="@{/notice/noticeRegister}" method="post" class="position: 0;">
+            <form th:action="@{/notice/noticeRegister}" method="post" th:object="${noticeDTO}" enctype="multipart/form-data">
                 <h2 class="mb-3 mt-5 text-center">공지사항 등록</h2>
                 <div class="card">
                     <!--제목-->
                     <div class="card-header bg-white">
                         <div class="input-group mt-2 my-3">
                             <label for="validationDefault01" class="form-label mr-2">제목</label>
-                            <input type="text" class="form-control" id="validationDefault01" name="title" required placeholder="제목을 입력하세요">
+                            <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></span>
+                            <input type="text" th:field="*{title}" class="form-control" id="validationDefault01" name="title" required placeholder="제목을 입력하세요">
                         </div>
                     </div>
                     <div class="card-body" style="height: 500px;"><!--공지사항글 제품-->
                         <!--id와 name은 DTO에 변수명으로 작업-->
                         <div class="input-group mt-1 my-3" style="height: 88%">
                             <label for="validationDefault01" class="form-label mr-2">내용</label>
-                            <textarea type="text" class="form-control" id="validationDefault02" name="content" required placeholder="내용을 입력하세요"></textarea>
+                            <span th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></span>
+                            <textarea type="text" th:field="*{content}" class="form-control" id="validationDefault02" name="content" required placeholder="내용을 입력하세요"></textarea>
                         </div>
                     </div>
+
+                        <div class="aa">
+                            <input type="file" name="multipartFileList" class="imgpreviewinput" ><br>
+
+                        </div>
+                        <script>
+                            $(".imgpreviewinput").on("change", function () {
+                                readURL(this)
+                            })
+                            $(".aa").on("click", "button", function () {
+
+                                $(this).parent().remove("")
+                            })
+                            function readURL(input) {
+                                if (input.files && input.files[0]) {
+
+
+                                    var reader = new FileReader();
+                                    reader.onload = function(e) {
+
+                                        let inputtag = document.createElement("input")
+
+                                        inputtag.type = "file"
+                                        inputtag.name = "multipartFileList"
+
+                                        const dataTranster = new DataTransfer();
+                                        const $fileDatas = Array.from(input.files);
+                                        $fileDatas.forEach(file =>  dataTranster.items.add(file) );
+                                        inputtag.files = dataTranster.files;
+
+                                        let str = `<div class="preview">
+                                                <img width="300px"  src="${e.target.result}">
+                                                <button type='button' class='bb'>올리지 않기</button>
+                                              </div>`
+                                        $(".imgpreviewinput").val("")
+                                        $(".aa").append(str)
+                                        document.querySelector(".aa").lastChild.appendChild(inputtag)
+                                        inputtag.style.display = 'none'
+                                        // document.getElementById('preview').src = e.target.result;
+                                        // document.querySelector(".aa").innerHTML = "<button type='button' class='bb'>올리지 않기</button>"
+                                    };
+                                    reader.readAsDataURL(input.files[0]);
+                                }
+                            }
+
+
+
+                        </script>
+
                     <div class="card-footer d-flex justify-content-center">
+                        <input type="hidden" name="hotel_name" th:value="${hotel_name}" />
+
+
+
+
                         <button type="submit" class="btn btn-primary mr-2">확인</button>
                         <button type="reset" class="btn btn-secondary mr-2">초기화</button>
-                        <button type="button" class="btn btn-danger"
+                        <button type="button" class="btn btn-dark"
                                 th:onclick="|location.href='@{/notice/noticeList}'|">취소</button>
                         <!--@{주소}, 문자열+주소 |문자열@{주소}|-->
                     </div>
@@ -42,8 +98,6 @@
     </div><!--row끝-->
 </div><!--container끝-->
 </div>
-<script th:inline="javascript" layout:fragment="script">
 
-</script>
 </body>
 </html>

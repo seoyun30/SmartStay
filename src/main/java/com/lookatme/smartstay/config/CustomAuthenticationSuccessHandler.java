@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.config;
 
+import com.lookatme.smartstay.entity.Member;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,6 +26,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         //로그인에 사용한 정보를 읽어와서 저장
         //UserDetails을 사용자가 오버라이딩 변경을 하면 해당정보를 전달
         UserDetails user = (UserDetails) authentication.getPrincipal();
+
+//        Member member = (Member) user;  // 만약 UserDetails가 Member 객체라면
+//        Long hotelNum = member.getHotel().getHotel_num();  // Member에서 hotel_num을 얻음
+//
+//        // 세션에 hotel_num 저장
+//        session.setAttribute("hotel_num", hotelNum);
 
         // 요청 URI에 따라 다른 페이지로 리다이렉트
 //            String requestURI = request.getRequestURI();

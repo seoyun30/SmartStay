@@ -1,11 +1,32 @@
 package com.lookatme.smartstay.repository;
 
+import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.Notice;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface NoticeRepository extends JpaRepository<Notice, Long>  {
 
+    @Query("SELECT n FROM Notice n " +
+            "LEFT JOIN Brand b on n.brand.brand_num = b.brand_num " +
+            "WHERE n.brand.brand_num = :brand_num")
+    Page<Notice> noticeBrandList(@Param("brand_num") Long brand_num, Pageable pageable);
+
+    @Query("SELECT n FROM Notice n " +
+            "LEFT JOIN Brand b on n.brand.brand_num = b.brand_num " +
+            "WHERE (b.brand_num = :brand_num) " +
+            "AND (" +
+            "     n.title LIKE CONCAT('%', :keyword, '%') " +
+            "  OR n.brand.brand_name LIKE CONCAT('%', :keyword, '%')" +
+            "  OR n.hotel.hotel_name LIKE CONCAT('%', :keyword, '%')" +
+            ")")
+    Page<Notice> searchNotice(@Param("brand_num")Long brand_num, @Param("keyword") String keyword, Pageable pageable);
 
 
 //    //제목
