@@ -64,5 +64,16 @@ public class GlobalControllerAdvice {
         return "";
     }
 
-
+    @ModelAttribute("brandNum")
+    public Long brandNum() {
+        String email = adminEmail();
+        if (email == null || email.isEmpty()) {
+            return null;
+        }
+        Member member = memberRepository.findByEmail(email);
+        if (member != null && member.getBrand() != null) {
+            return member.getBrand().getBrand_num();
+        }
+        return null;
+    }
 }

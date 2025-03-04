@@ -78,7 +78,7 @@
                                         </a>
                                     </li>
 
-                                    <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="has-sub">
+                                    <li th:if="${brandNum == null}" sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="has-sub">
                                         <a class="sidenav-item-link" data-bs-target="#brand-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
                                             <i class="bi bi-circle"></i>
                                             <span class="nav-text">총판 관리</span>
@@ -102,7 +102,7 @@
                                         </ul>
                                     </li>
 
-                                    <li sec:authorize="hasAuthority('CHIEF')" class="has-sub">
+                                    <li th:if="${brandNum != null}" sec:authorize="hasAuthority('CHIEF')" class="has-sub">
                                         <a class="sidenav-item-link" data-bs-target="#hotel-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
                                             <i class="bi bi-circle"></i>
                                             <span class="nav-text">호텔 관리</span>
@@ -309,7 +309,7 @@
                                         <ul id="qna-nav" class="collapse" data-bs-parent="#sidebar-menu">
                                             <div class="sub-menu">
                                                 <li>
-                                                    <a href="/qna/qnaList" class="sidenav-item-link">
+                                                    <a href="/qna/cmQnaList" class="sidenav-item-link">
                                                         <i class="bi bi-question-circle mr-1"></i>
                                                         <span class="nav-text">문의사항 목록</span>
                                                     </a>
