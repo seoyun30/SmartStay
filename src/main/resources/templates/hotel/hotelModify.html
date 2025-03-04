@@ -41,7 +41,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="address" class="form-label">주소</label>
-                            <input type="text" class="form-control" th:field="*{address}" id="address" placeholder="주소를 입력하세요." required readonly>
+                            <input type="text" class="form-control" th:field="*{address}" id="address" placeholder="주소를 입력하세요." required>
 
                             <div class="d-flex">
                                 <input type="text" id="sample6_postcode" class="form-control me-2" placeholder="우편번호" readonly>
@@ -93,18 +93,35 @@
                                     document.getElementById("sample6_detailAddress").focus();
 
                                     // 최종 주소를 address 필드에 자동 입력 (상세주소는 아직 없음)
+                                    const fullAddress = addr + ' ' + extraAddr;
                                     document.getElementById("address").value = addr + ' ' + extraAddr;
+
+                                    // 🔹 콘솔에서 값 확인 (디버깅용)
+                                    console.log("기본 주소:", addr);
+                                    console.log("추가 주소:", extraAddr);
+                                    console.log("최종 주소:", fullAddress);
                                 }
                             }).open();
                         }
 
                         // 상세주소 입력시 최종 주소 갱신
                         document.addEventListener("DOMContentLoaded", function() {
-                            document.getElementById("sample6_detailAddress").addEventListener("input", function() {
+                            document.getElementById("sample6_detailAddress").addEventListener("input", function () {
                                 const addr = document.getElementById("sample6_address").value;
                                 const extraAddr = document.getElementById("sample6_extraAddress").value;
                                 const detailAddr = this.value;
+
+                                const fullAddress = addr + ' ' + extraAddr + ' ' + detailAddr;
                                 document.getElementById("address").value = addr + ' ' + extraAddr + ' ' + detailAddr;
+                                // 🔹 콘솔에서 값 확인 (디버깅용)
+                                console.log("최종 주소 (상세주소 포함):", fullAddress);
+                            });
+
+                            // 🔹 폼 제출 시 `readonly` 해제하여 값이 서버로 전송되도록 처리
+                            document.addEventListener("DOMContentLoaded", function () {
+                                document.querySelector("form").addEventListener("submit", function () {
+                                    document.getElementById("address").removeAttribute("readonly");
+                                });
                             });
                         });
                     </script>

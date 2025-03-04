@@ -1,9 +1,7 @@
 package com.lookatme.smartstay.service;
 
 
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.ImageDTO;
-import com.lookatme.smartstay.dto.QnaDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.entity.Member;
@@ -16,6 +14,10 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.juli.logging.Log;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -128,7 +130,7 @@ public class QnaServiceImpl implements QnaService {
     }
 
     @Override
-    public List<QnaDTO> list() {
+    public List<QnaDTO> list(PageRequestDTO pageRequestDTO) {
         List<Qna> qnaList = qnaRepository.findAll();
 
         // 조회한 QnA 리스트를 로깅
@@ -172,48 +174,6 @@ public class QnaServiceImpl implements QnaService {
         qna.setContent(qnaDTO.getContent());
         qna.setWriter(qnaDTO.getWriter());
     }
-/*---------------------------------------------------
-        // 파일 삭제
-        if (delino != null && !delino[0].equals("")) {
-            log.info("업데이트포스" + Arrays.toString(delino));
-            for (Long ino : delino) {
-                boardImgService.del(ino);
-            }
-        }
-
-        // 파일 등록
-
-        if (multipartFiles != null && multipartFiles.length > 0) {
-
-            for (MultipartFile multipartFile : multipartFiles) {
-                if (multipartFile != null) {
-                    log.info("여기 사진이 있어요.");
-                    log.info("업데이트 서비스 새로 등록하는 파일 : " + multipartFile.getOriginalFilename());
-
-                    boardImgService.boardImgregister(boardDTO.getBno(), multipartFile);
-                }
-            }
-        }
-------------------------------------------------------*/
-//        if (multipartFile != null && !multipartFile.getOriginalFilename().equals("")) {
-//                log.info("여기 사진이 있어요");
-//                log.info("업데이트포스" + multipartFile.getOriginalFilename());
-//
-//                boardImgService.boardImgregister(boardDTO.getBno(), multipartFile);
-//            }
-//
-//            if (delino != null && !delino[0].equals("")){
-//                log.info("업데이트포스" + Arrays.toString(delino));
-//
-//                //사진삭제
-//                for (Long ino : delino) {
-//                    boardImgService.del(ino);
-//                }
-//            }
-
-
-
-
 
     @Override
     public void del(Long qna_num) {
@@ -248,64 +208,64 @@ public class QnaServiceImpl implements QnaService {
         log.info("조회수 증가 후 QnA:" + qna);
     }
 
-/*--------------------------추후 페이징 처리 사용
     @Override
-    public PageResponseDTO<BoardDTO> pagelist(PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<QnaDTO> pagelist(PageRequestDTO pageRequestDTO) {
 
-//        Pageable pageable = PageRequest
-//                .of(page-1, size, Sort.by("bno").descending());
+        log.info("진입 : "+ pageRequestDTO);
 
+        Page<Qna> qnaPage = null;
+        int currentPage = pageRequestDTO.getPage()-1;
+        int guestLimits = 10;
+        Pageable qnaPageable = PageRequest.of(currentPage, guestLimits,
+                Sort.by(Sort.Direction.DESC,"qna_num"));  //위의 주석 내용과 같은 개념(PageRequestDTO에 사용)
 
-        log.info(pageRequestDTO);
-        Page<Board> boardPage = null;
-        Pageable pageable = pageRequestDTO.getPageable("bno");  //위의 주석 내용과 같은 개념(PageRequestDTO에 사용)
-        log.info(pageRequestDTO);
+        log.info("페이저블 : " + pageRequestDTO);
 
         if(pageRequestDTO.getType() == null || pageRequestDTO.getKeyword()==null || pageRequestDTO.getKeyword().equals("")){
-            boardPage =  boardRepository.findAll(pageable);
-
-        }else if(pageRequestDTO.getType().equals("t")){
+            qnaPage =  qnaRepository.selcetAll(qnaPageable);
+        } else if(pageRequestDTO.getType().equals("t")){
             log.info( "제목으로 검색 검색키워드는"  +pageRequestDTO.getKeyword() );
-            boardPage =  boardRepository.findByTitleContaining(pageRequestDTO.getKeyword(), pageable);
+            qnaPage =  qnaRepository.findByTitleContaining(pageRequestDTO.getKeyword(), qnaPageable);
 
         }else if(pageRequestDTO.getType().equals("c")){
             log.info( "내용으로 검색 검색키워드는"  +pageRequestDTO.getKeyword() );
-            boardPage =  boardRepository.findByContentContaining(pageRequestDTO.getKeyword(), pageable);
+            qnaPage =  qnaRepository.findByContentContaining(pageRequestDTO.getKeyword(), qnaPageable);
 
         }else if(pageRequestDTO.getType().equals("w")){
             log.info( "작성자로 검색으로  검색키워드는"  +pageRequestDTO.getKeyword() );
-            boardPage =  boardRepository.selectlikeWriter(pageRequestDTO.getKeyword(), pageable);
+            qnaPage =  qnaRepository.selectlikeWriter(pageRequestDTO.getKeyword(), qnaPageable);
 
         }else if(pageRequestDTO.getType().equals("tc")){
             log.info( "제목 + 내용중에 검색  검색키워드는"  +pageRequestDTO.getKeyword() );
-            boardPage =  boardRepository.titleOrCon(pageRequestDTO.getKeyword(), pageable);
+            qnaPage =  qnaRepository.titleOrCon(pageRequestDTO.getKeyword(), qnaPageable);
 
         }else if(pageRequestDTO.getType().equals("cw")){
             log.info( "내용 + 작성자으로  검색키워드는"  +pageRequestDTO.getKeyword() );
-            boardPage =  boardRepository.findByContentContainingOrWriterContaining(pageRequestDTO.getKeyword(),pageRequestDTO.getKeyword(), pageable);
+            qnaPage =  qnaRepository.findByContentContainingOrWriterContaining(pageRequestDTO.getKeyword(),pageRequestDTO.getKeyword(), qnaPageable);
 
         }else if(pageRequestDTO.getType().equals("tw")){
             log.info( "제목 + 작성자 검색 검색키워드는"  +pageRequestDTO.getKeyword() );
-            boardPage =  boardRepository.findByTitleContainingOrWriterContaining(pageRequestDTO.getKeyword(),pageRequestDTO.getKeyword(), pageable);
+            qnaPage =  qnaRepository.findByTitleContainingOrWriterContaining(pageRequestDTO.getKeyword(),pageRequestDTO.getKeyword(), qnaPageable);
 
         }else if(pageRequestDTO.getType().equals("tcw")){
             log.info( "제목 + 내용 + 작성자으로 검색 검색키워드는"  +pageRequestDTO.getKeyword() );
-            boardPage =  boardRepository.titleOrConOrWr(pageRequestDTO.getKeyword(), pageable);
+            qnaPage =  qnaRepository.titleOrConOrWr(pageRequestDTO.getKeyword(), qnaPageable);
 
         }
 
         //변환
-        List<Board> boardList = boardPage.getContent();
+        List<Qna> qnaList = qnaPage.getContent();
+        qnaList.forEach(qna -> log.info(qna));
         //dto변환
-        List<BoardDTO> boardDTOList=
-                boardList.stream().map(board -> modelMapper.map(board, BoardDTO.class))
+        List<QnaDTO> boardDTOList=
+                qnaList.stream().map(qna -> modelMapper.map(qna, QnaDTO.class))
                         .collect(Collectors.toList());
 
-        PageResponseDTO<BoardDTO> boardDTOPageResponseDTO
-                = PageResponseDTO.<BoardDTO>withAll()
+        PageResponseDTO<QnaDTO> qnaDTOPageResponseDTO
+                = PageResponseDTO.<QnaDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
                 .dtoList(boardDTOList)
-                .total((int)boardPage.getTotalElements())
+                .total((int)qnaPage.getTotalElements())
                 .build();
 
 
@@ -316,41 +276,38 @@ public class QnaServiceImpl implements QnaService {
         //RequestPageDTO를 이용해서 사용
 
 
-        return boardDTOPageResponseDTO;
+        return qnaDTOPageResponseDTO;
     }
 
-        @Override
-    public PageResponseDTO<BoardDTO> pageListsearchdsl(PageRequestDTO pageRequestDTO) {
+    @Override
+    public PageResponseDTO<QnaDTO> pageListsearchdsl(PageRequestDTO pageRequestDTO) {
 
         log.info(pageRequestDTO);
 
-        Pageable pageable = pageRequestDTO.getPageable("bno");  //위의 주석 내용과 같은 개념(PageRequestDTO에 사용)
+        Pageable pageable = pageRequestDTO.getPageable("qna_num");  //위의 주석 내용과 같은 개념(PageRequestDTO에 사용)
         String[] types = pageRequestDTO.getTypes();
         String keyword = pageRequestDTO.getKeyword();
 
-
-        Page<Board> boardPage = boardRepository.searchAll(types, keyword, pageable);
+        Page<Qna> qnaPage = qnaRepository.selcetAll(pageable);
 
         log.info(pageRequestDTO);
 
         //변환
-        List<Board> boardList = boardPage.getContent();
+        List<Qna> qnaList = qnaPage.getContent();
         //dto변환
-        List<BoardDTO> boardDTOList=
-                boardList.stream().map(board -> modelMapper.map(board, BoardDTO.class))
+        List<QnaDTO> qnaDTOList=
+                qnaList.stream().map(qna -> modelMapper.map(qna, QnaDTO.class))
                         .collect(Collectors.toList());
 
 
-        PageResponseDTO<BoardDTO> boardDTOPageResponseDTO
-                = PageResponseDTO.<BoardDTO>withAll()
+        PageResponseDTO<QnaDTO> qnaDTOPageResponseDTO
+                = PageResponseDTO.<QnaDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
-                .dtoList(boardDTOList)
-                .total((int)boardPage.getTotalElements())
+                .dtoList(qnaDTOList)
+                .total((int)qnaPage.getTotalElements())
                 .build();
 
-        return boardDTOPageResponseDTO;
+        return qnaDTOPageResponseDTO;
     }
----------------------------------------------------------------*/
-
 
 }
