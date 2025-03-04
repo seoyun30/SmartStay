@@ -88,6 +88,16 @@ public class QnaController {
         return "qna/qnaList";
     }
 
+    @GetMapping("/cmQnaList")
+    public String cmQnaList(Model model) {
+        log.info("pageRequestDTO");
+        List<QnaDTO> qnaDTOList = qnaService.list();
+        model.addAttribute("qnaDTOList", qnaDTOList);
+
+        qnaDTOList.forEach(qnaDTO -> {log.info("qnaDTO: " + qnaDTO);});
+        return "qna/cmQnaList";
+    }
+
     //상세
     @GetMapping("/qnaRead")
     public String qnaRead(Long qna_num, Model model) {
