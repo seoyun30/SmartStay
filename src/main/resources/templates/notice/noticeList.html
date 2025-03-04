@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/userlayout}">
+      layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
     <title>공지사항 목록</title>
@@ -60,14 +60,17 @@
                 <th:block th:each="noticeDTO : ${pageResponseDTO.dtoList}">
                     <tr class="text-center">
                         <td th:text="${noticeDTO.notice_num}"></td>
-                        <td th:text="${noticeDTO.title}"></td>
+                        <td>
+                            <a th:href="@{/notice/noticeRead(notice_num=${noticeDTO.notice_num})}" th:text="${noticeDTO.title}"></a>
+                        </td>
+
                         <th:block th:if="${noticeDTO.hotelDTO != null}">
                             <td th:text="${noticeDTO.hotelDTO.hotel_name}"></td>
                         </th:block>
                         <th:block th:if="${noticeDTO.hotelDTO == null}">
                             <td th:text="${noticeDTO.brandDTO.brand_name}"></td>
                         </th:block>
-                        <td th:text="${#temporals.format(noticeDTO.reg_date, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${noticeDTO.reg_date != null ? #temporals.format(noticeDTO.reg_date, 'yyyy-MM-dd') : ''}"></td>
                     </tr>
                 </th:block>
                 </tbody>

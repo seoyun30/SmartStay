@@ -86,9 +86,9 @@
                                         <div class="col-6">
                                             <div class="mb-2">
 
-                                                <label for="brand" class="form-label">브랜드</label>
+                                                <label for="brand" class="form-label">총판</label>
                                                 <select name="brand_num" id="brand" class="form-select" aria-label="Default select example">
-                                                    <option value = ""> ---브랜드선택--- </option>
+                                                    <option value = ""> ---총판선택--- </option>
                                                     <th:block th:each="brand : ${brandDTOList}">
                                                         <option  th:value="${brand.brand_num}" th:text="${brand.brand_name}"></option>
                                                     </th:block>
@@ -107,9 +107,9 @@
                                     <div class="row mt-4 mb-3">
                                         <div class="col-6">
                                             <div class="mb-2" th:object="${brandDTO}">
-                                                <label for="brand1" class="form-label">브랜드</label>
+                                                <label for="brand1" class="form-label">총판</label>
                                                 <select name="brand_num" id="brand1" class="form-select brand1" aria-label="Default select example">
-                                                        <option value = ""> ---브랜드선택--- </option>
+                                                        <option value = ""> ---총판선택--- </option>
                                                         <th:block th:each="brand : ${brandDTOList}">
                                                             <option  th:value="${brand.brand_num}" th:text="${brand.brand_name}"></option>
                                                         </th:block>

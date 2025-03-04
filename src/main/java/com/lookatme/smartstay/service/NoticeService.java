@@ -2,10 +2,7 @@ package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.*;
-import com.lookatme.smartstay.entity.Brand;
-import com.lookatme.smartstay.entity.Hotel;
-import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.entity.Notice;
+import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -104,9 +101,35 @@ public class NoticeService {
     }
 
     //공지 사항 상세보기
-    public NoticeDTO noticeRead(Long id){
+    public NoticeDTO noticeRead(Long notice_num){
 
-        return null;
+        Notice notice = noticeRepository.findById(notice_num).orElseThrow(EntityNotFoundException::new);
+
+        NoticeDTO noticeDTO = modelMapper.map(notice, NoticeDTO.class);
+
+        noticeDTO.setBrandDTO( modelMapper.map(notice.getBrand(), BrandDTO.class));
+
+        noticeDTO.setHotelDTO(modelMapper.map(notice.getHotel(), HotelDTO.class));
+
+        List<Image> imageList = imageRepository.findByTarget("notice", notice_num);
+
+        if (imageList != null && !imageList.isEmpty()) {
+            List<ImageDTO> imageDTOList = imageList.stream()
+                    .map(image -> modelMapper.map(image, ImageDTO.class))
+                    .collect(Collectors.toList());
+            List<Long> imageIdList = imageDTOList.stream()
+                    .map(ImageDTO::getImage_id)
+                    .collect(Collectors.toList());
+
+            noticeDTO.setImageDTOList(imageDTOList);
+            noticeDTO.setImageIdList(imageIdList);
+        }
+
+
+
+        log.info("서비스에서 컨트롤러로 나간 값  : " + noticeDTO);
+
+        return noticeDTO;
     }
 
     //공지 사항 목록
@@ -171,103 +194,72 @@ public class NoticeService {
     //공지 사항 수정
     public void noticeModify(NoticeDTO noticeDTO, String email, List<MultipartFile> multipartFileList, List<Long> delnumList)   {
 
-        Member member = memberRepository.findByEmail(email);
-        //이메일 유효성 검증
-        if (email == null) {
-            throw new IllegalArgumentException("이메일이 비어 있습니다.");
+       Notice notice = noticeRepository.findById(noticeDTO.getNotice_num()).orElseThrow(EntityNotFoundException::new);
+
+        Member member =
+                memberRepository.findByEmail(email);
+
+
+        if(member.getRole() != Role.MANAGER && member.getRole() != Role.CHIEF){
+            throw new SecurityException("수정 권한이 없습니다.");
         }
 
-        //데이터베이스에서 회원 일치여부 확인
-        log.info("찾아온 email: " + email);
-        if (member == null) {
-            throw new AccessDeniedException("해당 이메일로 회원정보를 찾을 수 없습니다.");
+        if (!notice.getBrand().getBrand_num().equals(member.getBrand().getBrand_num()) &&
+                !notice.getHotel().getHotel_num().equals(member.getHotel().getHotel_num())) {
+            throw new SecurityException("수정할 수 있는 권한이 없습니다.");
         }
 
-        //권한 확인
-        if (!member.getRole().name().equals("CHIEF") && !member.getRole().name().equals("MANAGER")) {
-            throw new AccessDeniedException("공지사항을 작성할 권한이 없습니다.");
-        }
+        notice.setTitle(noticeDTO.getTitle());
+        notice.setContent(noticeDTO.getContent());
+        notice.setModi_date(noticeDTO.getModi_date());
 
+        noticeRepository.save(notice);
 
-        //DTO->Entity변환
-        Notice notice = modelMapper.map(noticeDTO, Notice.class);
+        boolean hasNewImages = multipartFileList != null && multipartFileList.stream().anyMatch(file -> !file.isEmpty());
+        boolean hasDeletedImages = delnumList != null && !delnumList.isEmpty();
 
-        //데이터베이스에서 기존 공지사항을 조회
-        Optional<Notice> noticeRead = noticeRepository.findById(noticeDTO.getNotice_num());
-        log.info("있니?");
-
-        if (noticeRead.isPresent()) { //전달받은 레코드에 내용(수정사항)이 있으면
-            Notice existingNotice = noticeRead.get();
-            boolean hasChanges = false;
-
-            // 제목 변경 여부 확인
-            if (!existingNotice.getTitle().equals(noticeDTO.getTitle())) {
-                existingNotice.setTitle(noticeDTO.getTitle());
-                hasChanges = true;
+        if (hasNewImages || hasDeletedImages) {
+            log.info("이미지 업데이트 실행");
+            try {
+                imageService.updateImage(
+                        hasNewImages ? multipartFileList : null,
+                        hasDeletedImages ? delnumList : null,
+                        "notice",
+                        notice.getNotice_num()
+                );
+            } catch (IndexOutOfBoundsException e) {
+                log.error("이미지 업데이트 중 인덱스 오류 발생: {}", e.getMessage());
+                throw new IllegalArgumentException("업로드된 파일이나 삭제 요청이 잘못되었습니다.");
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                throw new RuntimeException(e);
             }
-
-            // 내용 변경 여부 확인
-            if (!existingNotice.getContent().equals(noticeDTO.getContent())) {
-                existingNotice.setContent(noticeDTO.getContent());
-                hasChanges = true;
-            }
-
-//            //이미지 변경 확인
-//            boolean hasNewImages = multipartFileList != null && multipartFileList.stream().anyMatch(file -> !file.isEmpty());
-//            boolean hasDeletedImages = delnumList != null && !delnumList.isEmpty();
-//
-//            if (hasNewImages || hasDeletedImages) {
-//                log.info("이미지 업데이트 실행");
-//                hasChanges = true;
-//                try {
-//                    // 이미지 업데이트
-//                    imageService.updateImage(
-//                            hasNewImages ? multipartFileList : null,
-//                            hasDeletedImages ? delnumList : null,
-//                            "notice",
-//                            notice.getNotice_num()
-//                    );
-//                } catch (IndexOutOfBoundsException e) {
-//                    log.error("이미지 업데이트 중 인덱스 오류 발생: {}", e.getMessage());
-//                    throw new IllegalArgumentException("업로드된 파일이나 삭제 요청이 잘못되었습니다.");
-//                } catch (Exception e) {
-//                    throw new RuntimeException("이미지 업데이트 중 오류 발생", e);
-//                }
-//            } else {
-//                log.info("이미지 업데이트 없이 텍스트 정보만 수정");
-//            }
-//
-//            if (!multipartFileList.isEmpty()) { //수정할 이미지파일이 존재하면
-//                // 기존에 존재하는 이미지파일이 있는지 확인 후 삭제
-//            }
-
-            // 변경 사항이 없으면 예외 발생
-            if (!hasChanges) {
-                throw new IllegalArgumentException("변경된 내용이 없습니다.");
-            }
-
-            //변경 사항이 있으면 저장
-            noticeRepository.save(existingNotice);
-
+        } else {
+            log.info("이미지 업데이트 없이 텍스트 정보만 수정");
         }
 
 
     }
 
     //공지 사항 삭제
-    public void noticeDelete(Long notice_num){
+    public void noticeDelete(Long notice_num, String email) {
+
+        Notice notice = noticeRepository.findById(notice_num).orElseThrow(() -> new IllegalArgumentException("해당 공지사항이 존재하지 않습니다."));
+
+        Member member = memberRepository.findByEmail(email);
+
+        if (member.getRole() != Role.MANAGER && member.getRole() != Role.CHIEF) {
+            throw new SecurityException("삭제 권한이 없습니다.");
+        }
+
+        if (!notice.getBrand().getBrand_num().equals(member.getBrand().getBrand_num()) &&
+                !notice.getHotel().getHotel_num().equals(member.getHotel().getHotel_num())) {
+            throw new SecurityException("삭제할 수 있는 권한이 없습니다.");
+        }
 
         noticeRepository.deleteById(notice_num);
 
-//        //삭제된 레코드를 조회
-//        Optional<Notice> read = noticeRepository.findById(notice_num);
-//
-//        if (read.isPresent()) {
-//
-//
-//        }
     }
-
 }
 
 
