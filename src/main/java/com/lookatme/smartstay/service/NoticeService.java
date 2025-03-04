@@ -1,19 +1,19 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.dto.NoticeDTO;
+import com.lookatme.smartstay.constant.Role;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.Notice;
-import com.lookatme.smartstay.repository.HotelRepository;
-import com.lookatme.smartstay.repository.ImageRepository;
-import com.lookatme.smartstay.repository.MemberRepository;
-import com.lookatme.smartstay.repository.NoticeRepository;
+import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -35,176 +35,137 @@ public class NoticeService {
     private final ModelMapper modelMapper;
     //권한 설정 시 필요
     private final MemberRepository memberRepository;
+    private final BrandRepository brandRepository;
     private final HotelRepository hotelRepository;
 
     //이미지 구현 시 필요
     private final ImageRepository imageRepository;
     private final ImageService imageService;
+    private final FileService fileService;
+
+    @Value("${imgUploadLocation}")
+    private String imgUploadLocation;
 
     //공지 사항 등록
-    public void noticeRegister(NoticeDTO noticeDTO, String email, Long hotel_num, List<MultipartFile> multipartFiles) throws Exception {
+    public void noticeRegister(NoticeDTO noticeDTO , Principal principal){
+
+        log.info("등록서비스 들어온값 " + noticeDTO);
+
+        Notice notice = modelMapper.map(noticeDTO, Notice.class);
+        Member member =
+                memberRepository.findByEmail(principal.getName());
+        notice.setBrand(member.getBrand());
+        notice.setMember(member);
+
+        noticeRepository.save(notice);
+
+    }
+    public void noticeRegister(NoticeDTO noticeDTO, List<MultipartFile> multipartFiles , Principal principal) throws Exception {
+        log.info("등록 서비스 들어온 값 : " + noticeDTO);
+        log.info("등록 서비스 들어온 값 : " + multipartFiles);
 
 
-        //데이터베이스에서 회원 일치여부 확인
-        log.info("서비스 email: " + email);
 
-        // 1. Member (email) 가져오기
-        Member member = memberRepository.findByEmail(email);
 
-        if (member == null) {
-            log.info("회원정보를 찾을 수 없습니다.");
-            throw new AccessDeniedException("회원정보를 찾을 수 없습니다.");
+        Notice notice = modelMapper.map(noticeDTO, Notice.class);
+        log.info("noticeDTO를 notice로 변경" + notice);
+
+        Member member =
+                memberRepository.findByEmail(principal.getName());
+        notice.setBrand(member.getBrand());
+        if(member.getRole() == Role.MANAGER){
+            notice.setHotel(member.getHotel());
         }
 
-
-        //권한 확인
-        if (member.getRole().name().equals("USER")) {
-            log.info("공지사항을 작성할 권한이 없습니다.");
-            throw new AccessDeniedException("공지사항을 작성할 권한이 없습니다.");
+        notice.setMember(member);
 
 
-        }
+        notice = noticeRepository.save(notice);
+        log.info("저장후 결과를 가지고 있는 notice" + notice);
 
-        Brand brand = member.getBrand(); // member에서 brand 가져오기
-        if (brand == null) {
-            throw new EntityNotFoundException("해당 회원의 브랜드 정보가 없습니다.");
-        }
-            // 호텔 정보 가져오기
-            List<Hotel> hotels = hotelRepository.findByMyBrand(brand);
+        if(multipartFiles != null) {
 
-            if (hotels.isEmpty()) {
-                throw new EntityNotFoundException("해당 브랜드에 속한 호텔을 찾을 수 없습니다.");
-            }
+            for(MultipartFile multipartFile : multipartFiles){
+                if(!multipartFile.isEmpty()) {
+                    //물리적인 저장
+                    String savedFileName =
+                    fileService.uploadFile(imgUploadLocation, multipartFile);
+                    //db저장
+                    imageService.saveImageOne(savedFileName, multipartFile, notice  );
 
-            log.info("hotel : " + hotels);
 
-            // 공지사항 생성 및 정보 세팅
-            Notice notice = modelMapper.map(noticeDTO, Notice.class);  //DTO-> Entity 변환
-
-            log.info("notice : " + notice);
-
-            Hotel selectedHotel = hotels.stream()
-                    .filter(h -> h.getHotel_num().equals(hotel_num))
-                    .findFirst()
-                    .orElseThrow(() -> new EntityNotFoundException("해당 hotel_num의 호텔을 찾을 수 없습니다."));
-
-            // 호텔 & 브랜드 정보 세팅
-            notice.setHotel(selectedHotel);
-
-            //작성자 & 작성일
-            notice.setMember(member);  // member 객체 설정
-
-            log.info("세팅 notice : " + notice);
-
-            //저장
-            noticeRepository.save(notice);
-
-            // 이미지가 없다면 저장
-            if (multipartFiles != null && !multipartFiles.isEmpty()) {
-                try {
-                    imageService.saveImage(multipartFiles, "notice", notice.getNotice_num());
-                } catch (Exception e) {
-                    log.error("이미지 저장 중 오류 발생: " + e.getMessage(), e);
-                    throw new Exception("이미지 저장 중 오류가 발생했습니다.");  // 이미지 저장 오류 처리
                 }
             }
 
+
         }
 
-//    //사진을 추가한 등록
-//    public void register(NoticeDTO noticeDTO, List<MultipartFile> multipartFileList) throws Exception {
-//
-//        log.info("등록 서비스 들어온값: "+noticeDTO);
-//        log.info("등록 서비스 들어온값: "+multipartFileList);
-//        //글을 컨트롤러로부터 받아 entity변환헤서 저장
-//        Notice notice = modelMapper.map(noticeDTO, Notice.class);
-//        log.info("저장전에 noticeDTO를 notice로 변경한" + notice);
-//
-//        notice = noticeRepository.save(notice);
-//        log.info("저장후에 결과를 가지고 있는notice" + notice);
-//        //본문을 저장하고 나서
-//        //사진 등록
-//        if (multipartFileList != null) {
-//            for (MultipartFile file : multipartFileList) {
-//                if ( !multipartFileList.isEmpty()) {
-//                    log.info("사진이 등록되었습니다.");
-//
-//                    // 이미지 등록
-//                    imageService.saveImage(multipartFileList,"notice", notice.getNotice_num());
-//                }
-//
-//            }
-//        }
-//
-//    }
 
-
+    }
 
     //공지 사항 상세보기
     public NoticeDTO noticeRead(Long id){
 
-        log.info("읽기로 들어온 값: "+id);
-
-//        if (id == null || id <= 0) {
-//            log.error("값이 유효하지 않습니다." + id);
-//            throw new EntityNotFoundException("잘못된 게시글");
-//        }
-        //번호에 해당하는 내용을 조회
-        Optional<Notice> noticeList = noticeRepository.findById(id);
-
-        NoticeDTO noticeDTO = modelMapper.map(noticeList, NoticeDTO.class);
-
-
-
-//        List<Image> imageList = imageRepository.findByTarget("notice", id);
-//
-//        if (imageList != null && imageList.isEmpty()) {
-//            List<ImageDTO> imageDTOList = imageList.stream()
-//                    .map(image -> modelMapper.map(image, ImageDTO.class))
-//                    .collect(Collectors.toList());
-//
-//            List<Long> imageIdList = imageDTOList.stream()
-//                    .map(ImageDTO::getImage_id).
-//                    collect(Collectors.toList());
-//
-//            noticeDTO.setImageDTOList(imageDTOList);
-//            noticeDTO.setImageIdList(imageIdList);
-//
-//        }
-
-        System.out.println("나오니?" + noticeDTO);
-        return noticeDTO;
+        return null;
     }
 
     //공지 사항 목록
-    public List<NoticeDTO> noticeList(){
+    public PageResponseDTO<NoticeDTO> noticeList(PageRequestDTO pageRequestDTO, String email) {
 
-        //공지사항 전체 조회
-        List<Notice> noticeList = noticeRepository.findAll();  //모든 공지사항 조회
+        Member member = memberRepository.findByEmail(email);
 
-        List<NoticeDTO> noticeDTOList = noticeList.stream()
-                .map(notice -> modelMapper.map(notice, NoticeDTO.class))
-                .collect(Collectors.toList());
+        if (member == null || member.getBrand() == null) {
+            log.info("사용자의 브랜드를 찾을수 없음" + email);
+            return null;
+        }
 
-//        //화면페이지번호 1,2,3,4 .. 데이터베이스에서 페이지번호 0,1,2,3...
-//        int currentPage = page.getPageNumber()-1; // 화면에 출력할 페이지번호를 데이터베이스 페이지번호
-//        int blockLimit = 10; //한페이지를 구성하는 레코드의 수(페이지 번호의 수)
-//
-//        //지정된 내용으로 페이지정보를 재생산(정렬 생략시 기본키로 오름차순(ASC), 내림차순(DESC))
-//        //해당페이지에서 10개의 레코드를 기본키로 내림차순해서 페이지 구성(최신순)
-//        Pageable pageable = PageRequest.of(currentPage, blockLimit,
-//               Sort.by(Sort.Direction.DESC, "title"));
-//
-//        //페이지 정보에 해당하는 모든 데이터를 읽어온다
-//        Page<Notice> notices = noticeRepository.findAll(pageable);
-//
-//        //List<Notice> notices = noticeRepository.findAll();
-//
-//        System.out.println("khjkhjkj:"+notices);
-//        Page<NoticeDTO> noticeDTOPage = notices.map(data->modelMapper.map(data, NoticeDTO.class));
+        Long brandNum = member.getBrand().getBrand_num();
+        log.info("조회된 브랜드넘" + brandNum);
 
-        return noticeDTOList;
+        Pageable pageable = pageRequestDTO.getPageable("notice_num");
+
+        log.info(pageable);
+        log.info("서비스진입");
+
+        Page<Notice> noticePage;
+        if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
+            noticePage = noticeRepository.searchNotice(brandNum, pageRequestDTO.getKeyword(), pageable);
+        } else {
+            log.info("해당브랜드의 리스트 적용");
+            noticePage = noticeRepository.noticeBrandList(brandNum, pageable);
+        }
+        List<Notice> noticeList = noticePage.getContent();
+
+        noticeList.forEach(notice -> log.info(notice));
+
+        if (noticeList == null  || noticeList.isEmpty()) {
+            log.info("공지사항 없음");
+            return null;
+        } else {
+            List<NoticeDTO> noticeDTOList = noticeList.stream()
+                    .map(notice ->{
+                                NoticeDTO noticeDTO = modelMapper.map(notice, NoticeDTO.class);
+
+                                noticeDTO.setBrandDTO( modelMapper.map(notice.getBrand(), BrandDTO.class));
+
+                                noticeDTO.setHotelDTO(modelMapper.map(notice.getHotel(), HotelDTO.class));
+
+                                return  noticeDTO;
+                            } )
+                    .collect(Collectors.toList());
+
+            log.info("DTO변환");
+
+            noticeDTOList.forEach(dto -> log.info(dto));
+
+            return PageResponseDTO.<NoticeDTO>withAll()
+                    .pageRequestDTO(pageRequestDTO)
+                    .dtoList(noticeDTOList)
+                    .total((int) noticePage.getTotalElements())
+                    .build();
+        }
     }
+
 
 
     //공지 사항 수정

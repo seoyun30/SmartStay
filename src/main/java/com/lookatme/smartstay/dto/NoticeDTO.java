@@ -26,8 +26,11 @@ public class NoticeDTO {
     private String content; //내용
 
     private Long hotel_num;
+    private Long brand_num;
 
-    private HotelDTO hotelDTO; //호텔(매장)
+    private BrandDTO brandDTO; //호텔(매장)
+
+    private HotelDTO hotelDTO;
 
     private MemberDTO memberDTO; //회원 조인
 
@@ -35,9 +38,12 @@ public class NoticeDTO {
 
     private LocalDateTime modi_date; //수정 시간
 
+    private String hotel_name;
+
     private String create_by; //작성자
 
     private String modified_by; //수정한 사람
+
 
     //이미지 리스트들..
     public List<ImageDTO> imageDTOList = new ArrayList<ImageDTO>(); // 여러 이미지를 담는 용
