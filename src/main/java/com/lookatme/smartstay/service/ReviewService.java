@@ -103,7 +103,7 @@ public class ReviewService {
 
 
     //리뷰 등록<작성>(룸 예약을 한 유저만 등록 가능)
-    public void reviewRegister(ReviewDTO reviewDTO, String email, List<MultipartFile> multipartFiles) throws Exception {
+    public void reviewRegister(ReviewDTO reviewDTO, String email, List<MultipartFile> multipartFiles, Long mainImageIndex) throws Exception {
         log.info("리뷰 등록 요청 :{}" , reviewDTO);
         log.info("ReviewDTO: {}", reviewDTO);
 
@@ -135,9 +135,8 @@ public class ReviewService {
         review.setHotel(roomReserveItem.getRoom().getHotel());  //호텔 정보 설정
         review.setRoom(roomReserveItem.getRoom()); //룸 정보 설정
         review.setMember(roomReserveItem.getRoomReserve().getMember());  // 회원 정보 설정
-
         //먼저 리뷰 저장
-        reviewRepository.save(review);
+        review = reviewRepository.save(review);
 
         // 저장된 리뷰의 `rev_num`을 target_id로 사용하여 이미지 저장
         if (multipartFiles != null && multipartFiles.isEmpty()) {
