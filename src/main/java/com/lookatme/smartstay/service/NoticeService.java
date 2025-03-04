@@ -198,9 +198,7 @@ public class NoticeService {
         log.info(pageRequestDTO);
 
 
-        Pageable pageable = PageRequest.of( pageRequestDTO.getPage() - 1,
-                pageRequestDTO.getSize(),
-                Sort.by("notice_num").descending());
+        Pageable pageable = pageRequestDTO.getPageable("notice_num");
 
         Page<Notice> noticePage;
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
@@ -213,6 +211,7 @@ public class NoticeService {
 
         List<Notice> noticeList = noticePage.getContent();
 
+        log.info("엔티티 리스트");
         noticeList.forEach(notice -> log.info(notice));
 
         if (noticeList == null  || noticeList.isEmpty()) {
