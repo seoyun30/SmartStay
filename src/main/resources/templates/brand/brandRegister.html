@@ -31,7 +31,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="business_num" class="form-label">법인사업자번호</label>
-                            <input type="number" min="0" class="form-control" th:field="*{business_num}" id="business_num" placeholder="번호만 입력하세요." required>
+                            <input type="text" min="0" class="form-control" th:field="*{business_num}" id="business_num" placeholder="번호만 입력하세요." required>
                             <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
                         </div>
                     </div>
@@ -45,7 +45,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="tel" class="form-label">연락처</label>
-                            <input type="number" min="0" class="form-control" th:field="*{tel}" id="tel" placeholder="숫자만 입력하세요.">
+                            <input type="text" class="form-control" th:field="*{tel}" id="tel" placeholder="전화번호 입력 (예: 031-123-4567)">
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
                     </div>
@@ -77,12 +77,39 @@
 
                             document.addEventListener("DOMContentLoaded", function() {
 
+                                const businessNumInput = document.getElementById('business_num');
+                                const telInput = document.getElementById('tel');
                                 const formFile = document.getElementById('formFile');
                                 const imgPreview = document.querySelector('.imgpreview');
                                 const removeMainImage = document.getElementById('removeMainImage');
-
                                 const formFilede = document.getElementById('formFilede');
                                 const imgPreviewInput = document.querySelector('.imgpreviewinput');
+
+                                // 숫자만 입력 가능하도록 설정
+                                businessNumInput.addEventListener('input', function () {
+                                    this.value = this.value.replace(/[^0-9]/g, '');
+                                });
+
+                                // 전화번호 자동 하이픈 추가 (지역번호 & 휴대폰 포함)
+                                telInput.addEventListener('input', function () {
+                                    let value = this.value.replace(/[^0-9]/g, '');
+
+                                    if (value.startsWith("02")) {
+                                        if (value.length > 2) {
+                                            value = value.replace(/(\d{2})(\d{3,4})(\d{4})/, '$1-$2-$3');
+                                        }
+                                    } else if (value.startsWith("010") || value.startsWith("011") || value.startsWith("016") || value.startsWith("017") || value.startsWith("018") || value.startsWith("019")) {
+                                        if (value.length > 3) {
+                                            value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                                        }
+                                    } else {
+                                        if (value.length > 3) {
+                                            value = value.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3');
+                                        }
+                                    }
+
+                                    this.value = value;
+                                });
 
                                 formFile.addEventListener('change', function(event) {
                                     const file = event.target.files[0];

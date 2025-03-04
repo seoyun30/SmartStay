@@ -27,7 +27,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="business_num" class="form-label">법인사업자번호</label>
-                            <input type="number" min="0" class="form-control" th:field="*{business_num}" id="business_num">
+                            <input type="text" class="form-control" th:field="*{business_num}" id="business_num">
                             <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="tel" class="form-label">연락처</label>
-                            <input type="number" min="0" class="form-control" th:field="*{tel}" id="tel">
+                            <input type="text" min="0" class="form-control" th:field="*{tel}" id="tel">
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
                     </div>
@@ -92,6 +92,36 @@
                                 <button type="submit" class="btn btn-dark">저장</button>
                                 <button type="button" class="btn btn-primary Listbtn">목록</button>
                                 <script>
+                                    document.addEventListener("DOMContentLoaded", function() {
+                                        const businessNumInput = document.getElementById("business_num");
+                                        const telInput = document.getElementById("tel");
+
+                                        // 숫자만 입력 가능하도록 설정 (법인사업자번호)
+                                        businessNumInput.addEventListener('input', function () {
+                                            this.value = this.value.replace(/[^0-9]/g, '');
+                                        });
+
+                                        // 전화번호 입력 시 자동 하이픈 추가
+                                        telInput.addEventListener('input', function () {
+                                            let value = this.value.replace(/[^0-9]/g, '');
+
+                                            if (value.startsWith("02")) {
+                                                if (value.length > 2) {
+                                                    value = value.replace(/(\d{2})(\d{3,4})(\d{4})/, '$1-$2-$3');
+                                                }
+                                            } else if (value.startsWith("010") || value.startsWith("011") || value.startsWith("016") || value.startsWith("017") || value.startsWith("018") || value.startsWith("019")) {
+                                                if (value.length > 3) {
+                                                    value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                                                }
+                                            } else {
+                                                if (value.length > 3) {
+                                                    value = value.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3');
+                                                }
+                                            }
+
+                                            this.value = value;
+                                        });
+                                    });
                                     $(".Listbtn").on("click", function () {
                                         location.href = "/brand/brandList";
                                     })
