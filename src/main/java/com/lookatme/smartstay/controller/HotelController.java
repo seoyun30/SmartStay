@@ -1,11 +1,13 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.Util.PagenationUtil;
+import com.lookatme.smartstay.dto.BrandDTO;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
+import com.lookatme.smartstay.service.BrandService;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -34,6 +37,7 @@ public class HotelController {
     private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
     private final ModelMapper modelMapper;
+    private final BrandService brandService;
     private PagenationUtil pagenation;
     private final PagenationUtil pagenationUtil;
 
@@ -61,6 +65,10 @@ public class HotelController {
         log.info("목록진입");
 
         List<HotelDTO> hotelDTOList =  hotelService.myHotelList(principal.getName());
+        if (hotelDTOList.isEmpty()) {
+            hotelDTOList = new ArrayList<>();
+        }
+
         model.addAttribute("hotelDTOList", hotelDTOList);
         return "hotel/hotelList";
     }
@@ -134,21 +142,4 @@ public class HotelController {
         return ResponseEntity.ok(hotelDTO);
     }
 
-           /*
-                   // 기존 삭제 처리
-        for (Long delNum : delnumList) {
-            imageService.deleteImage(delNum);
-        }
-           // 새로운 이미지 저장
-        if (multi != null && !multi.isEmpty()) {
-            imageService.saveImage(multi, "hotel", hotelDTO.getHotel_num());
-        }
-
-        // 저장된 이미지 리스트를 다시 불러와서 DTO에 설정
-        List<Image> updatedImages = imageService.findImagesByTarget("hotel", hotelDTO.getHotel_num());
-        List<ImageDTO> imageDTOList = updatedImages.stream()
-                .map(image -> modelMapper.map(image, ImageDTO.class))
-                .collect(Collectors.toList());
-        hotelDTO.setImageDTOList(imageDTOList);
-*/
 }

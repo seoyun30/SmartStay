@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -107,8 +108,10 @@ public class HotelService {
     public List<HotelDTO> myHotelList(String email){
         Member member = memberRepository.findByEmail(email);
         if (member == null || member.getBrand() == null) {
-            throw new IllegalArgumentException("브랜드 정보를 찾을 수 없습니다.");
+            List<HotelDTO> hotelDTOList = new ArrayList<>();
+            return hotelDTOList;
         }
+
         Brand brand = member.getBrand();
 
         List<Hotel> hotels = hotelRepository.findByMyBrand(brand);
