@@ -1,6 +1,8 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.dto.QnaDTO;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.HotelRepository;
@@ -79,22 +81,28 @@ public class QnaController {
 
     //목록
     @GetMapping("/qnaList")
-    public String qnaList(Model model) {
-        log.info("pageRequestDTO");
-        List<QnaDTO> qnaDTOList = qnaService.list();
-        model.addAttribute("qnaDTOList", qnaDTOList);
+    public String qnaList(Model model, PageRequestDTO pageRequestDTO) {
+        log.info("pageRequestDTO: " + pageRequestDTO);
 
-        qnaDTOList.forEach(qnaDTO -> {log.info("qnaDTO: " + qnaDTO);});
-        return "qna/qnaList";
+        // 페이징 처리된 QnA 목록을 반환받음
+        PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagelist(pageRequestDTO);
+
+        // 페이지 응답 DTO를 모델에 추가
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
+
+        // 추가로, 페이지 관련 정보나 다른 데이터를 넘길 수 있음
+        // 예: 현재 페이지, 총 페이지 수, 이전/다음 페이지 상태 등
+        return "qna/qnaList";  // qnaList.html 또는 jsp 등으로 반환
     }
 
+    //cm목록
     @GetMapping("/cmQnaList")
-    public String cmQnaList(Model model) {
-        log.info("pageRequestDTO");
-        List<QnaDTO> qnaDTOList = qnaService.list();
-        model.addAttribute("qnaDTOList", qnaDTOList);
+    public String cmQnaList(Model model,  PageRequestDTO pageRequestDTO) {
+        log.info("pageRequestDTO" + pageRequestDTO);
 
-        qnaDTOList.forEach(qnaDTO -> {log.info("qnaDTO: " + qnaDTO);});
+        PageResponseDTO<QnaDTO> pageResponseDTO1 = qnaService.pagelist(pageRequestDTO);
+        model.addAttribute("pageResponseDTO1", pageResponseDTO1);
+
         return "qna/cmQnaList";
     }
 

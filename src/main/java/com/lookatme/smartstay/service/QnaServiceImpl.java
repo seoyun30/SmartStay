@@ -268,14 +268,6 @@ public class QnaServiceImpl implements QnaService {
                 .total((int)qnaPage.getTotalElements())
                 .build();
 
-
-        //문제발생
-        //페이징 처리는 내부적으로 되었으나
-        //사용자에게 보여주려면 1~10까지 버튼과 혹은
-        //21~30까지의 버튼을 알아야한다. 그 값 또한 같이 넘겨야해서
-        //RequestPageDTO를 이용해서 사용
-
-
         return qnaDTOPageResponseDTO;
     }
 
