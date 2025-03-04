@@ -39,11 +39,75 @@
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="address"  class="form-label">주소</label>
-                            <input type="text" min="0" class="form-control" th:field="*{address}" id="address">
+                            <label for="address" class="form-label">주소</label>
+                            <input type="text" class="form-control" th:field="*{address}" id="address" placeholder="주소를 입력하세요." required readonly>
+
+                            <div class="d-flex">
+                                <input type="text" id="sample6_postcode" class="form-control me-2" placeholder="우편번호" readonly>
+                                <button type="button" class="btn btn-secondary" onclick="sample6_execDaumPostcode()">우편번호 찾기</button>
+                            </div>
+
+                            <input type="text" id="sample6_address" class="form-control mt-2" placeholder="주소" readonly>
+                            <input type="text" id="sample6_detailAddress" class="form-control mt-2" placeholder="상세주소">
+                            <input type="text" id="sample6_extraAddress" class="form-control mt-2" placeholder="참고항목" readonly>
+
                             <p th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="fieldError"></p>
                         </div>
                     </div>
+                    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+                    <script>
+                        function sample6_execDaumPostcode() {
+                            new daum.Postcode({
+                                oncomplete: function(data) {
+                                    let addr = ''; // 기본 주소
+                                    let extraAddr = ''; // 참고 항목
+
+                                    // 사용자가 선택한 주소 타입에 따라 주소값 설정
+                                    if (data.userSelectedType === 'R') {
+                                        addr = data.roadAddress; // 도로명 주소
+                                    } else {
+                                        addr = data.jibunAddress; // 지번 주소
+                                    }
+
+                                    // 참고항목 추가 (법정동/건물명)
+                                    if (data.userSelectedType === 'R') {
+                                        if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                                            extraAddr += data.bname;
+                                        }
+                                        if (data.buildingName !== '' && data.apartment === 'Y') {
+                                            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                                        }
+                                        if (extraAddr !== '') {
+                                            extraAddr = ' (' + extraAddr + ')';
+                                        }
+                                    }
+
+                                    // 필드에 값 삽입
+                                    document.getElementById('sample6_postcode').value = data.zonecode;
+                                    document.getElementById("sample6_address").value = addr;
+                                    document.getElementById("sample6_extraAddress").value = extraAddr;
+
+                                    // 상세주소 입력 필드 활성화 및 포커스 이동
+                                    document.getElementById("sample6_detailAddress").value = "";  // 초기화하여 사용자가 입력하도록
+                                    document.getElementById("sample6_detailAddress").focus();
+
+                                    // 최종 주소를 address 필드에 자동 입력 (상세주소는 아직 없음)
+                                    document.getElementById("address").value = addr + ' ' + extraAddr;
+                                }
+                            }).open();
+                        }
+
+                        // 상세주소 입력시 최종 주소 갱신
+                        document.addEventListener("DOMContentLoaded", function() {
+                            document.getElementById("sample6_detailAddress").addEventListener("input", function() {
+                                const addr = document.getElementById("sample6_address").value;
+                                const extraAddr = document.getElementById("sample6_extraAddress").value;
+                                const detailAddr = this.value;
+                                document.getElementById("address").value = addr + ' ' + extraAddr + ' ' + detailAddr;
+                            });
+                        });
+                    </script>
+
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="tel" class="form-label">연락처</label>

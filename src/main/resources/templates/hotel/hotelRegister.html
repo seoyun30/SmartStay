@@ -89,8 +89,14 @@
                                     // 상세주소 입력 필드 활성화 및 포커스 이동
                                     document.getElementById("sample6_detailAddress").focus();
 
-                                    // 최종 주소를 address 필드에 자동 입력
+                                    // 최종 주소를 초기화 (상세주소 없이)
                                     document.getElementById("address").value = addr + ' ' + extraAddr;
+
+                                    // 상세주소 입력 필드에 이벤트 추가
+                                    document.getElementById("sample6_detailAddress").addEventListener("input", function() {
+                                        let detailAddress = this.value; // 사용자가 입력한 상세주소 값
+                                        document.getElementById("address").value = addr + ' ' + extraAddr + ' ' + detailAddress;
+                                    });
                                 }
                             }).open();
                         }
