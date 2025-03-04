@@ -25,18 +25,12 @@
                             <h2 th:text="${review.memberDTO.getEmail()}"></h2>
                         </div>
                     </div>
-<!--                    <div class="col-12">-->
-<!--                        <div class="mb-3">  &lt;!&ndash;메인 이미지&ndash;&gt;-->
-<!--                            <label for="" class="form-label"></label>-->
-<!--                            <input type="text" class="form-control" th:value="${}" required id="room_name" readonly>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="col-12">-->
-<!--                        <div class="mb-3"> &lt;!&ndash;이미지&ndash;&gt;-->
-<!--                            <label for="in_date" class="form-label"></label>-->
-<!--                            <input type="text" class="form-control" th:value="${}" required id="in_date" readonly>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <div class="col-12">
+                        <div class="mb-3"> <!--별점-->
+                            <label for="room_price" class="form-label">별점</label>
+                            <input type="number" min="0" class="form-control" th:value="${review.score}" id="room_price" readonly>
+                        </div>
+                    </div>
                     <div class="col-12">
                         <div class="mb-3">  <!--내용-->
                             <label for="out_date" class="form-label">리뷰 내용</label>
@@ -61,12 +55,7 @@
                             <input type="number" min="0" class="form-control" th:value="${review.hotelDTO.hotel_name}" id="room_bed" readonly>
                         </div>
                     </div>
-                    <div class="col-12">
-                        <div class="mb-3"> <!--별점-->
-                            <label for="room_price" class="form-label">별점</label>
-                            <input type="number" min="0" class="form-control" th:value="${review.score}" id="room_price" readonly>
-                        </div>
-                    </div>
+
 
                     <div class="d-grid gap-2 col-6 mb-3 mx-auto">
                         <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-dark">내 정보 메인</button>

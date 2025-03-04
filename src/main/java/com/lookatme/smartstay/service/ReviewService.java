@@ -77,7 +77,6 @@ public class ReviewService {
                                         .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class)))
                         )
                 .collect(Collectors.toList());
-
         // 이미지
         for (ReviewDTO reviewDTO : reviewDTOList) {
             List<Image> reviewImageList = imageRepository.findByTarget("review", reviewDTO.getRev_num());
@@ -171,29 +170,29 @@ public class ReviewService {
     public ReviewDTO reviewRead(Long rev_num) {
 
         Review review = reviewRepository.findById(rev_num)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 리뷰입니다."));  //작성회원이 리뷰를 삭제했을 시
-//        Optional<Review> review = reviewRepository.findById(rev_num); // findById가 Optional<>을 반환하여 필요없음
+                .orElseThrow(EntityNotFoundException::new);  //작성회원이 리뷰를 삭제했을 시
 
         ReviewDTO reviewDTO = modelMapper.map(review, ReviewDTO.class);
-
         //호텔 정보연결용
         Hotel hotel = review.getHotel();
         if (hotel != null) { //호텔이 null이 아니라면 호텔 정보 set
             HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
-
             reviewDTO.setHotelDTO(hotelDTO);
+        }
+        Room room = review.getRoom();
+        if (room != null) {
+            RoomDTO roomDTO = modelMapper.map(room, RoomDTO.class);
+            reviewDTO.setRoomDTO(roomDTO);
         }
 
         List<Image> imageList = imageRepository.findByTarget("review", rev_num);
 
         if (imageList != null && !imageList.isEmpty()) {
             List<ImageDTO> imageDTOList = imageList.stream()
-                    .map(image -> modelMapper.map(image, ImageDTO.class))
-                    .collect(Collectors.toList());
+                    .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
 
             List<Long> imageIdList = imageDTOList.stream()
-                    .map(ImageDTO::getImage_id)
-                    .collect(Collectors.toList());
+                    .map(ImageDTO::getImage_id).collect(Collectors.toList());
 
             reviewDTO.setImageDTOList(imageDTOList);
             reviewDTO.setImageIdList(imageIdList);
@@ -202,10 +201,6 @@ public class ReviewService {
 
         return reviewDTO;
     }
-
-//    private Double ratingAvg(Long review_num) {
-//
-//    }
 
 
     //리뷰 수정(리뷰를 등록한 유저만 가능)

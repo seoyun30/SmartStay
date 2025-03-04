@@ -10,6 +10,7 @@ import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.ReviewService;
 import com.lookatme.smartstay.service.RoomReserveService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -146,9 +147,9 @@ public class ReviewController {
                                      Principal principal) throws Exception {
 
         System.out.println("받은 reserve_num: " + reserve_num);
-        //log.info("리뷰 등록 :{}", reviewDTO); // reviewDTO상태 확인
+        log.info("리뷰 등록 :{}", reviewDTO); // reviewDTO상태 확인
         log.info("principal: {}", principal);
-//        return "review/reviewRegister";
+
 
 //        if (bindingResult.hasErrors()) {
 //            log.error("Binding errors: {}", bindingResult.getAllErrors());
@@ -179,15 +180,35 @@ public class ReviewController {
 //
     //상세 보기 페이지
     @GetMapping("/reviewRead")
-    public String reviewRead(Long review_num,
-                             PageRequestDTO pageRequestDTO, Model model){
-        log.info("개별읽기...");
-        ReviewDTO reviewDTO = reviewService.reviewRead(review_num);
+    public String reviewRead(@RequestParam(required = false) Long review_num, Long hotel_num,
+                             Model model, RedirectAttributes redirectAttributes) {
 
-        log.info("개별정보를 페이지에 전달...");
-        model.addAttribute("review", reviewDTO);
+        if (hotel_num == null) {
+            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 호텔입니다.");
+            return "redirect:/errorPage";
+        }
 
-        return "review/reviewRead";
+        if (review_num == null) {
+            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 리뷰입니다.");
+            return "redirect:/review/reviewList/" + hotel_num;
+        }
+
+        try {
+            log.info("개별읽기...");
+            ReviewDTO reviewDTO = reviewService.reviewRead(review_num);
+            log.info("개별정보를 페이지에 전달...");
+            model.addAttribute("review", reviewDTO);
+
+            if (reviewDTO.getHotelDTO() != null) {
+                model.addAttribute("hotel_name", reviewDTO.getHotelDTO().getHotel_name());
+            } else {
+                model.addAttribute("hotel_name", "호텔 없음");
+            }
+            return "review/reviewRead";
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("msg", "리뷰가 없습니다.");
+            return "redirect:/review/reviewList/" + hotel_num;
+        }
     }
 
     //수정 페이지
