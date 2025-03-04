@@ -17,7 +17,6 @@
                 <div class="text-center">
                     <h1>마이페이지</h1>
 
-
                     <div class="text-end" style="padding-right: 25px; margin-top: 20px;">
                         <span th:text="${#strings.concat(memberDTO.name, ' 님')}">이름</span>
                     </div>
@@ -69,11 +68,13 @@
                                         </p>
                                     </div>
 
-                                    <div class="mt-3 row row-cols-1 row-cols-md-4 g-4">
-                                        <th:block th:if="${reserveItemDTOPageResponseDTO.dtoList.isEmpty()}">
-                                            <span class="h5 fw-bold">최근 예약 내역이 없습니다.</span>
+                                    <div class="mt-3 row row-cols-1 row-cols-md-4 justify-content-center g-4">
+                                        <th:block th:if="${reserveItemDTOPageResponseDTO == null or reserveItemDTOPageResponseDTO.dtoList == null or reserveItemDTOPageResponseDTO.dtoList.isEmpty()}">
+                                            <div class="col-12 d-flex justify-content-center align-items-center">
+                                                <span class="h5 fw-bold">최근 예약 내역이 없습니다.</span>
+                                            </div>
                                         </th:block>
-                                        <th:block th:unless="${reserveItemDTOPageResponseDTO.dtoList.isEmpty()}" th:each="roomReserveItemDTO : ${reserveItemDTOPageResponseDTO.dtoList}">
+                                        <th:block th:unless="${reserveItemDTOPageResponseDTO == null or reserveItemDTOPageResponseDTO.dtoList == null or reserveItemDTOPageResponseDTO.dtoList.isEmpty()}" th:each="roomReserveItemDTO : ${reserveItemDTOPageResponseDTO.dtoList}">
                                             <div class="card mx-auto">
                                                 <div class="card-body px-auto">
                                                     <h5 class="card-title fw-bold" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">예약한 호텔</h5>
@@ -96,11 +97,14 @@
                                         </p>
                                     </div>
 
-                                    <div class="mt-3 row row-cols-1 row-cols-md-4 g-4">
-                                        <th:block th:if="${orderReserveItemDTOPageResponseDTO.dtoList.isEmpty()}">
-                                            <span class="h5 fw-bold">최근 주문 내역이 없습니다.</span>
+                                    <div class="mt-3 row row-cols-1 row-cols-md-4 justify-content-center g-4">
+                                        <th:block th:if="${orderReserveItemDTOPageResponseDTO == null or orderReserveItemDTOPageResponseDTO.dtoList == null or orderReserveItemDTOPageResponseDTO.dtoList.isEmpty()}">
+                                            <div class="col-12 d-flex justify-content-center align-items-center">
+                                                <span class="h5 fw-bold">최근 주문 내역이 없습니다.</span>
+                                            </div>
+
                                         </th:block>
-                                        <th:block th:unless="${orderReserveItemDTOPageResponseDTO.dtoList.isEmpty()}" th:each="orderReserveItemDTO : ${orderReserveItemDTOPageResponseDTO.dtoList}">
+                                        <th:block th:unless="${orderReserveItemDTOPageResponseDTO == null or orderReserveItemDTOPageResponseDTO.dtoList == null or orderReserveItemDTOPageResponseDTO.dtoList.isEmpty()}" th:each="orderReserveItemDTO : ${orderReserveItemDTOPageResponseDTO.dtoList}">
                                             <div class="card mx-auto">
                                                 <div class="card-body px-auto">
                                                     <h5 class="card-title fw-bold" th:text="${'주문 번호 : ' + orderReserveItemDTO.orderReserveDTO.order_id}">주문 번호</h5>

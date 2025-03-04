@@ -25,8 +25,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByUser(@Param("email") String email);
 
 
-
-
+    //
     @Query("SELECT r FROM Review r WHERE r.hotel.hotel_num = :hotel_num ORDER BY r.reg_date DESC")
     List<Review> findTopNByHotelNum(@Param("hotel_num") Long hotel_num, Pageable pageable);
 

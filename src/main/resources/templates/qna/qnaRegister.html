@@ -47,6 +47,19 @@
                         </div>
                     </div>
 
+                    <!--문의 호텔 선택-->
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="hotel" class="form-label">문의 호텔 선택</label>
+                            <select name="hotel_num" id="hotel" class="form-select hotelselect" required>
+                                <option value=""> --- 호텔 선택 --- </option>
+                                <th:block th:each="hotel : ${hotelDTOList}">
+                                    <option th:value="${hotel.hotel_num}" th:text="${hotel.hotel_name}"></option>
+                                </th:block>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary" style="float:right; margin-left: 10px;">등록</button>
                         <button type="button" class="btn btn-dark Listbtn" style="float:right; margin-right: 10px;">목록</button>
@@ -94,6 +107,15 @@
                                     imgPreview.innerHTML = '';
                                     removeMainImage.style.display = 'none';
                                 });
+                            });
+
+                            //문의 호텔 선택
+                            document.querySelector("form").addEventListener("submit", function(event) {
+                                const hotelSelect = document.getElementById("hotel").value;
+                                if (!hotelSelect) {
+                                    alert("호텔을 선택해주세요!");
+                                    event.preventDefault();
+                                }
                             });
                         </script>
                     </div>

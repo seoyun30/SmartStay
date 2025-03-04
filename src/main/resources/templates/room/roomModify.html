@@ -69,7 +69,7 @@
                 <div class="col-12">
                     <div class="mb-3">
                         <label for="room_price" class="form-label">룸 가격</label>
-                        <input type="number" min="100" class="form-control" th:field="*{room_price}" id="room_price">
+                        <input type="number" min="0" class="form-control" th:field="*{room_price}" id="room_price">
                         <p th:if="${#fields.hasErrors('room_price')}" th:errors="*{room_price}" class="fieldError"></p>
                     </div>
                 </div>

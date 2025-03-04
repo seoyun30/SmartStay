@@ -4,6 +4,8 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,6 +26,17 @@ public class QnaDTO {
     //private String category; //카테고리
 
     private int viewCount; // 조회수 추가
+
+    private Long hotel_num;
+
+    private HotelDTO hotelDTO;
+
+    public QnaDTO setHotelDTO(HotelDTO hotelDTO) {
+        this.hotelDTO = hotelDTO;
+        return this;
+    }
+
+    public List<ImageDTO> imageDTOList = new ArrayList<>();
 
     private LocalDateTime reg_date;
 

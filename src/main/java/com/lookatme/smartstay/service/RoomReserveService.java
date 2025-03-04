@@ -82,6 +82,7 @@ public class RoomReserveService {
         return roomReserveItemDTOList;
     }
 
+    //회원의 룸예약 페이징처리 전체 조회
     public PageResponseDTO<RoomReserveItemDTO> findMyRoomReservePage (String email, PageRequestDTO pageRequestDTO) {
 
         Pageable pageable = pageRequestDTO.getPageable("roomreserveitem_num");
