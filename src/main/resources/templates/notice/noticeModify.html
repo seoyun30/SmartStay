@@ -4,46 +4,249 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>공지사항 수정</title>
 </head>
 <body>
-<div layout:fragment="content">
-    <div id="row" class="row justify-content-center">
 
-        <div class="col">
-            <form th:action="@{/notice/noticeModify}" method="post" class="position: 0;">
-                <h2 class="text-center mb-3 mt-5">공지사항 수정</h2>
-                <div class="card" style="width: 100%; height: 90%;">
-                    <input type="hidden" name="notice_num" th:value="${notice.notice_num}">
-                    <!--제목-->
-                    <div class="card-header bg-white">
-                        <div class="input-group mt-2 my-3">
-                            <span class="input-group-text bg-white border border-0 fw-bold"
-                                  id="basic-addon1">제목: </span>
-                            <input type="text" class="form-control bg-white" id="title" th:value="${notice.title}" name="title" placeholder="제목을 입력하세요">
+<th:block layout:fragment="content">
+
+    <form action="/notice/noticeModify" method="post" th:object="${noticeDTO}" enctype="multipart/form-data">
+        <div class="row mt-5">
+            <div class="col-8 offset-2">
+                <div class="row">
+                    <div class="mb-3 text-center">
+                        <h2>공지사항 상세페이지</h2>
+                    </div>
+                    <div class="col text-center">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" style="width: 140px">번호</span>
+                                    <input type="text" class="form-control" th:value="${noticeDTO.notice_num}" name="notice_num">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" style="width: 140px">제목</span>
+                                    <input type="text" class="form-control" th:value="${noticeDTO.title}" name="title">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" style="width: 140px">내용</span>
+                                    <input type="text" class="form-control" th:value="${noticeDTO.content}" name="content">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" style="width: 140px">호텔명</span>
+                                    <input type="text" class="form-control"
+                                           th:value="${noticeDTO.hotelDTO != null ? noticeDTO.hotelDTO.hotel_name : (noticeDTO.brandDTO != null ? noticeDTO.brandDTO.brand_name : '정보 없음')}" name="hotel">
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" style="width: 140px">작성날짜</span>
+                                    <input type="text" class="form-control" th:value="${#temporals.format(noticeDTO.reg_date, 'yyyy-MM-dd')}" name="reg_date">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body" style="height: 500px;"><!--공지사항글 제품-->
-                        <!--id와 name은 DTO에 변수명으로 작업-->
-                        <div class="input-group mt-1 my-3" style="height: 88%">
-                            <span class="input-group-text bg-white border border-0 fw-bold"
-                                  id="basic-addon2">내용: </span>
-                            <textarea type="text" class="form-control bg-white" id="content" th:text="${notice.content}" name="content" placeholder="내용을 입력하세요"></textarea>
+
+                    <div class="col-12">
+                        <div class="mt-5 mb-3 imgA">
+                            <div class="row">
+                                <th:block th:each="img: ${noticeDTO.imageDTOList}">
+                                    <th:block th:if="${img.repimg_yn == 'N'}">
+                                        <label class="col-12 form-label">
+                                            <img class="main-image mt-3" th:src="${img.image_url}">
+                                        </label>
+                                    </th:block>
+                                </th:block>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-footer d-flex justify-content-center">
-                        <button type="submit" class="btn btn-primary">확인</button>
-                        <button type="reset" class="btn btn-secondary">초기화</button>
-                        <button type="button" class="btn btn-danger"
-                                th:onclick="|location.href='@{/notice/noticeList}'|">취소</button>
-                        <!--@{주소}, 문자열+주소 |문자열@{주소}|-->
+
+                            <div id="detail-images">
+                                <label class="form-label">
+                                    상세 이미지<br>
+                                    <th:block th:each="img : ${noticeDTO.imageDTOList}">
+                                        <th:block th:unless="${img.repimg_yn == 'N'}">
+                                            <div th:id="'image-' + ${img.image_id}">
+                                                <img th:src="${img.image_url}" alt="Detail Image" class="mb-1" width="200px">
+                                                <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 imgA">
+                            <label for="formFile" class="form-label">이미지 변경</label>
+                            <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file">
+                            <div class="row main imgpreview"></div>
+                            <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
+
+                            <label for="formFilede" class="form-label">상세 이미지 추가</label>
+                            <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
+                            <div class="row imgpreviewinput"></div>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-dark">저장</button>
+                            <button type="button" class="btn btn-primary" onclick="location.href='/notice/noticeList'">목록</button>
+                            <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
+                        </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
-        <div class="col-3"></div>
-    </div><!--row끝-->
-</div><!--container끝-->
-</div>
+    </form>
+
+    <form id="deleteForm" action="/notice/noticeDelete" method="post" style="display:none;">
+        <input type="hidden" name="id" th:value="${noticeDTO.notice_num}">
+    </form>
+
+</th:block>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteButtons = document.querySelectorAll('.delete-image-btn');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const imageId = this.getAttribute('data-image-id');
+
+                    if (!imageId) {
+                        alert('이미지 ID가 유효하지 않습니다.');
+                        return;
+                    }
+
+                    if (confirm('이미지를 삭제하시겠습니까?')) {
+                        fetch(`/notice/deleteImage/${imageId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    const isMainImage = this.closest('#image-main') !== null;
+
+                                    if (isMainImage) {
+                                        const mainImageContainer = document.getElementById('image-main');
+                                        mainImageContainer.innerHTML = '<p>대표 이미지가 없습니다. 대표 이미지를 추가해 주세요.</p>';
+                                    } else {
+                                        const imageElement = document.getElementById(`image-${imageId}`);
+                                        if (imageElement) {
+                                            imageElement.remove();
+                                        }
+                                    }
+                                    alert('이미지가 성공적으로 삭제되었습니다.');
+                                } else {
+                                    alert('이미지 삭제에 실패했습니다.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('오류가 발생했습니다. 다시 시도해주세요.');
+                            });
+                    }
+                });
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const formFile = document.getElementById('formFile');
+            const removeMainImage = document.getElementById('removeMainImage');
+            const imgPreview = document.querySelector('.imgpreview');
+
+            const formFilede = document.getElementById('formFilede');
+            const imgPreviewInput = document.querySelector('.imgpreviewinput');
+
+            formFile.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        img.style.width = '350px';
+                        img.style.height = 'auto';
+                        img.style.objectFit = 'cover';
+
+                        imgPreview.innerHTML = '';
+                        imgPreview.appendChild(img);
+
+                        removeMainImage.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            removeMainImage.addEventListener('click', function() {
+                formFile.value = '';
+                imgPreview.innerHTML = '';
+                removeMainImage.style.display = 'none';
+            });
+
+            formFilede.addEventListener('change', function(event) {
+                const files = event.target.files;
+
+                Array.from(files).forEach((file, index) => {
+                    if (file) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            const imgWrapper = document.createElement('div');
+                            imgWrapper.classList.add('img-wrapper');
+                            imgWrapper.style.position = 'relative';
+                            imgWrapper.style.display = 'inline-block';
+                            imgWrapper.style.marginRight = '10px';
+
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = file.name;
+                            img.style.width = '200px';
+                            img.style.height = 'auto';
+                            img.style.objectFit = 'cover';
+
+                            const removeButton = document.createElement('button');
+                            removeButton.type = 'button';
+                            removeButton.textContent = '올리지 않기';
+                            removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+                            removeButton.style.top = '5px';
+                            removeButton.style.right = '5px';
+
+                            removeButton.addEventListener('click', function () {
+                                imgWrapper.remove();
+
+                                const dataTransfer = new DataTransfer();
+                                Array.from(formFilede.files).forEach((f, i) => {
+                                    if (i !== index) {
+                                        dataTransfer.items.add(f);
+                                    }
+                                });
+                                formFilede.files = dataTransfer.files;
+                            });
+
+                            imgWrapper.appendChild(img);
+                            imgWrapper.appendChild(removeButton);
+                            imgPreviewInput.appendChild(imgWrapper);
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+            document.querySelectorAll('.removeImage').forEach(button => {
+                button.addEventListener('click', function () {
+                    const imageId = this.getAttribute('data-id');
+                    if (confirm('이미지를 삭제하시겠습니까?')) {
+                        alert(`Deleting image with ID: ${imageId}`);
+                    }
+                });
+            });
+        });
+    </script>
+</th:block>
 </body>
 </html>

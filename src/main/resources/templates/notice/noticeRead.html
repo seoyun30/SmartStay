@@ -5,95 +5,86 @@
       layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>공지사항</title>
 </head>
 <body>
 
-<!--오류 메시지 처리-->
-<div layout:fragment="content">
-    <div id="row" class="row justify-content-center">
-            <div class="col">
-                <h2 class="text-center mb-3 mt-5">공지사항</h2>
-                <div class="card">
-                    <!-- 제목 -->
-                    <div class="card-header bg-white">
-                        <div>
 
-                                <div class="input-group my-3">
-                                    <span class="input-group-text bg-white border border-0 fw-bold" id="basic-addon1">제목ㅤ</span>
-                                    <input type="text" class="form-control" th:value="${noticeDTO.title}"  placeholder="제목" disabled>
+<th:block layout:fragment="content">
+
+    <div class="d-flex">
+        <div class="container my-auto">
+            <div class=" row justify-content-center">
+                <form th:object="${noticeDTO}" action="" method="">
+                    <div class="row mt-5">
+                        <div class="col-8 offset-2">
+                            <div class="row">
+                                <div class="mb-3 text-center">
+                                    <h2>공지사항 상세페이지</h2>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">번호</span>
+                                                <input type="text" class="form-control" th:value="${noticeDTO.notice_num}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">제목</span>
+                                                <input type="text" class="form-control" th:value="${noticeDTO.title}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">내용</span>
+                                                <input type="text" class="form-control" th:value="${noticeDTO.content}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">호텔명</span>
+                                                <input type="text" class="form-control"
+                                                       th:value="${noticeDTO.hotelDTO != null ? noticeDTO.hotelDTO.hotel_name : (noticeDTO.brandDTO != null ? noticeDTO.brandDTO.brand_name : '정보 없음')}">
+                                            </div>
+
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">작성날짜</span>
+                                                <input type="text" class="form-control" th:value="${#temporals.format(noticeDTO.reg_date, 'yyyy-MM-dd')}">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="input-group my-3">
-                                    <span class="input-group-text bg-white border border-0 fw-bold" id="basic-addon2">작성자</span>
-                                    <input type="text" class="form-control" th:value="${noticeDTO.create_by}" placeholder="작성자" disabled>
+                                <div class="col-12">
+                                    <div class="mt-5 mb-3 imgA">
+                                        <div class="row">
+                                            <th:block th:each="img: ${noticeDTO.imageDTOList}">
+                                                <th:block th:if="${img.repimg_yn == 'N'}">
+                                                    <label class="col-12 form-label">
+                                                        <img class="main-image mt-3" th:src="${img.image_url}">
+                                                    </label>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+                                    </div>
                                 </div>
 
-
-                        </div>
-                    </div>  <!-- 제목 -->
-
-                    <div class="card-body mt-4">
-                        <div style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; width: 100%; text-align: left; min-height: 150px; box-sizing: border-box; white-space: pre-wrap;">
-                            <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
-                                <span type="text" th:text="${noticeDTO.content}"></span>
+                                <div class="col-12">
+                                    <button type="button" th:onclick="|location.href='@{/notice/noticeModify(notice_num=${noticeDTO.notice_num})}'|" class="btn btn-dark">수정</button>
+                                    <button type="button" onclick="location.href='/notice/noticeList'"class="btn btn-primary">목록</button>
+                                    <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="card-footer bg-white">
-                        <div>
-                            <p class="text-end">수정자: <span th:value="${noticeDTO.modified_by}"></span></p>
-                            <p class="text-end">수정일: <span th:value="${noticeDTO.modi_date}"></span>
-                            </p>
-                        </div>
-
-                        <div class="text-center d-flex justify-content-center" id="table_search">
-                            <div sec:authorize="hasAnyAuthority('CHIEF', 'MANAGER')" class="row mt-3">
-                                <button type="button" class="btn btn-info fw-bold"
-                                        th:onclick="|location.href='@{/notice/noticeModify(notice_num=${noticeDTO.notice_num})}'|">수정</button>
-                            </div>
-
-                            <div sec:authorize="hasAnyAuthority('CHIEF', 'MANAGER')" class="row mt-3">
-                                <form class="delform " action="/notice/noticeDelete"  method="post">
-                                    <input type="hidden" name="notice_num" th:value="${noticeDTO.notice_num}" class="num">
-                                    <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>
-                                </form>
-                            </div>
-
-                            <button type="button" class="btn btn-outline-success fw-bold row mt-3"
-                                    th:onclick="|location.href='@{/notice/noticeList}'|">목록</button>
-<!--                            @{주소}, 문자열+주소 |문자열@{주소}|-->
-                        </div>
-
-
-                    </div>
-                </div><!--card 끝-->
-
+                </form>
+            </div>
         </div>
-
     </div>
 
+    <form id="deleteForm" action="/notice/noticeDelete" method="post" style="display:none;">
+        <input type="hidden" name="id" th:value="${noticeDTO.notice_num}" />
+    </form>
 
+</th:block>
 
-</div><!--container끝-->
-<script th:inline="javascript" layout:fragment="script">
-
-    $(document).ready(function (){
-        let removeBtn = $(".removeBtn"); // 삭제 버튼
-        let form = $(".delform");
-        let notice_num = $(".num").val()
-
-        removeBtn.on("click", function () {
-            console.log("클릭")
-            console.log(notice_num)
-            form.action = "/notice/noticeDelete";
-            form.method = "post";
-            form.submit();
-        });
-    })
-
-
-</script>
+<th:block layout:fragment="script">
+</th:block>
 </body>
 </html>
