@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.juli.logging.Log;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class QnaServiceImpl implements QnaService {
 
     private final QnaRepository qnaRepository;
     private final ImageRepository imageRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper;
     private final ImageService imageService;
     private final QnaReplyRepository qnaReplyRepository;
     private final MemberRepository memberRepository;
@@ -133,37 +134,14 @@ public class QnaServiceImpl implements QnaService {
         // 조회한 QnA 리스트를 로깅
         qnaList.forEach(qna -> log.info(qna.toString()));
 
-        List<QnaDTO> qnaDTOList = qnaList.stream()
-                .map(qna -> {
-                    // Qna 엔티티를 QnaDTO로 변환
-                    QnaDTO qnaDTO = modelMapper.map(qna, QnaDTO.class);
-
-                    // 명시적으로 매핑 규칙을 추가
-                    modelMapper.typeMap(Qna.class, QnaDTO.class).addMappings(mapper -> {
-                        // Hotel 객체의 hotel_num을 QnaDTO의 hotel_num에 매핑
-                        mapper.map(src -> src.getHotel().getHotel_num(), QnaDTO::setHotel_num);
-                    });
-
-                    // Qna의 Hotel 객체를 HotelDTO로 변환하여 setHotelDTO에 설정
-                    qnaDTO.setHotelDTO(modelMapper.map(qna.getHotel(), HotelDTO.class));
-
-                    return qnaDTO;
-                })
-                .collect(Collectors.toList()); // 리스트로 변환
-
-       /* // QnA 엔티티 리스트를 QnA DTO로 변환
-        List<QnaDTO> qnaDTOList = qnaList.stream()
-                .map(qna -> modelMapper.map(qna, QnaDTO.class)
-                        .setHotelDTO(modelMapper.map(qna.getHotel(), HotelDTO.class))
-                ).collect(Collectors.toList()); // 리스트로 변환*/
+        List<QnaDTO> qnaDTOList =
+                qnaList.stream().map( qna ->  modelMapper.map(qna , QnaDTO.class) ).collect(Collectors.toList());
 
         // 변환된 DTO 리스트 로깅
         qnaDTOList.forEach(qnaDTO -> log.info(qnaDTO.toString()));
 
         return qnaDTOList;  // DTO 리스트 반환
     }
-
-
 
     private boolean checkIfManager() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -174,6 +152,7 @@ public class QnaServiceImpl implements QnaService {
         return auth.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_MANAGER"));
     }
+
 
 
     @Override

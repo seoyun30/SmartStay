@@ -55,12 +55,18 @@
 </th:block>
 
 <script th:inline="javascript" layout:fragment="script">
-  let messages = [[${msg}]];
-  if (messages != null && messages.trim() !== "") {
+    let messages = [[${msg} ?: '']];
+    if (messages.trim() !== "") {
     alert(messages);
   }
+      /* 기존 방법 (목록 불러오는 오류 떄문에)
+      let messages = [[${msg}]];
+    if (messages != null && messages.trim() !== "") {
+      alert(messages);
+    }*/
 
-  let togglebtn = $(".togglebtn");
+
+let togglebtn = $(".togglebtn");
 
   togglebtn.on("click", function () {
     let brand_num = $(this).val();
@@ -74,8 +80,8 @@
         console.log(data)
         location.reload(true);
       },
-      errors: function (data, status, err) {
-        console.log(errorMsg)
+      error: function (data, status, err) {
+        console.log(err)
       }
 
     })
