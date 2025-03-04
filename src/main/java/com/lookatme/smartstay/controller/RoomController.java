@@ -101,8 +101,8 @@ public class RoomController {
     public String roomList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                            @RequestParam(defaultValue = "room_num") String sortField,
                            @RequestParam(defaultValue = "asc") String sortDir,
-                           @RequestParam(value = "query", required = false) String query,
-                           @RequestParam(value = "searchType", defaultValue = "room_name") String searchType) {
+                           @RequestParam(value = "roomName", required = false) String roomName,
+                           @RequestParam(value = "roomInfo", required = false) String roomInfo) {
 
         if (principal == null) {
             return "redirect:/member/login";
@@ -116,16 +116,16 @@ public class RoomController {
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
 
-        if (query == null || query.trim().isEmpty()) {
+        if ((roomName == null || roomName.trim().isEmpty()) && (roomInfo == null || roomInfo.trim().isEmpty())) {
             PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotelDTO, pageRequestDTO, sortField, sortDir);
             log.info("PageResponseDTO: " + pageResponseDTO);
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("isSearch", false);
-
-        }else {
-            List<RoomDTO> results = roomService.searchList(hotelDTO, query, sortField, sortDir);
+        } else {
+            List<RoomDTO> results = roomService.searchList(hotelDTO, roomName, roomInfo, sortField, sortDir);
             model.addAttribute("results", results != null ? results : Collections.emptyList());
-            model.addAttribute("query", query);
+            model.addAttribute("roomName", roomName);
+            model.addAttribute("roomInfo", roomInfo);
             model.addAttribute("isSearch", true);
             model.addAttribute("pageResponseDTO", null);
         }

@@ -24,20 +24,26 @@
         <button type="button" onclick="location.href='/room/roomRegister'" class="btn btn-dark">룸 등록</button>
     </div>
 
-    <nav class="navbar" id="navbar">
-        <div class="navbar-right">
-            <div class="search-form">
-                <form method="get" action="/room/roomList" onsubmit="saveSearchQuery()">
-                    <div class="input-group input-group-sm" id="input-group-search">
-                        <input type="text" autocomplete="off" class="form-control" name="query" placeholder="룸 이름 또는 룸 정보로 검색하세요." id="search-input" th:value="${param.query}">
-                        <div class="input-group-append">
-                            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+    <div class="col-12 mt-3">
+        <div class="card search-form">
+            <form action="/room/roomList" method="get"  onsubmit="saveSearchQuery()">
+                <h3 class="text-center fw-bold mt-3 mb-1">검색 조건</h3>
+                <div class="input-group p-2">
+                    <span class="input-group-text">룸 이름</span>
+                    <input type="text" name="roomName" class="form-control" th:value="${param.roomName}">
+                </div>
+                <div class="input-group p-2">
+                    <span class="input-group-text">룸 정보</span>
+                    <input type="text" name="roomInfo" class="form-control" th:value="${param.roomInfo}">
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
+                    <button type="submit" class="btn btn-primary">검색</button>
+                    <button type="reset" class="btn btn-secondary">초기화</button>
+                    <button type="button" class="btn btn-success" onclick="location.href='/room/roomList'">목록으로 돌아가기</button>
+                </div>
+            </form>
         </div>
-    </nav>
+    </div>
 
     <div th:if="${isSearch}">
         <table class="table" th:if="${results != null && results.size() > 0}">
