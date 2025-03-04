@@ -12,24 +12,27 @@
 
     <h1 class="text-center mb-3 mt-5">문의사항 목록</h1>
 
-    <div class="col-12 mb-3">
-        <div class="card">
-            <form action="#" method="get">
-                <h3 class="text-center fw-bold mt-3">검색 조건</h3>
-                <div class="input-group p-3">
+    <div class="col-12 mt-3">
+        <div class="card search-form">
+            <form action="/qna/qnaList" method="get"  onsubmit="saveSearchQuery()">
+                <h3 class="text-center fw-bold mt-3 mb-1">검색 조건</h3>
+                <div class="input-group p-2">
+                    <span class="input-group-text">작성자</span>
+                    <input type="text" name="writer" class="form-control" th:value="${param.writer}">
+                </div>
+                <div class="input-group p-2">
                     <span class="input-group-text">제목</span>
-                    <input type="text" class="form-control">
+                    <input type="text" name="title" class="form-control" th:value="${param.title}">
                 </div>
-                <div class="input-group p-3">
+                <div class="input-group p-2">
                     <span class="input-group-text">내용</span>
-                    <input type="text" class="form-control">
+                    <input type="text" name="content" class="form-control" th:value="${param.content}">
                 </div>
-
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
                     <button type="submit" class="btn btn-primary">검색</button>
                     <button type="reset" class="btn btn-secondary">초기화</button>
+                    <button type="button" class="btn btn-success" onclick="location.href='/room/roomList'">목록으로 돌아가기</button>
                 </div>
-
             </form>
         </div>
     </div>
@@ -165,6 +168,17 @@
         console.log("클릭함")
         formObj.submit()     //전송
     })
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedQuery = localStorage.getItem('searchQuery');
+        if (savedQuery) {
+            document.getElementById('search-input').value = savedQuery;
+        }
+    });
+    function saveSearchQuery() {
+        const query = document.getElementById('search-input').value;
+        localStorage.setItem('searchQuery', query);
+    }
 
 </script>
 
