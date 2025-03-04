@@ -96,9 +96,10 @@
                         </div>
                         <span class="text-dark fw-bold" th:text="${hotel.address}">주소</span><br>
                         <span class="text-dark fw-bold" th:text="${hotel.lowestPrice + '원~'}">최저가</span><br>
-                        <span class="text-warning fw-bold">
-                            <i class="text-warning bi bi-star-fill"></i>
+                        <span class="text-black">
+                            <i class="text-black fw-bold bi bi-star-fill"></i>
                             <span th:text="${hotel.score}">별점</span>
+                            <span th:text="|(${hotelDTO.review_count})|"class="text-black"></span>
                         </span>
                     </div>
                 </div>
@@ -110,9 +111,9 @@
                 <div th:each="hotelDTO : ${hotelDTO}">
                     <div class="d-flex justify-content-between align-items-center mt-0 mb-3">
                         <div class="d-flex align-items-center">
-                            <i class="text-warning bi bi-star-fill me-1"></i>
-                            <span th:text="${hotelDTO.score}" class="text-warning fw-bold" me-1></span>
-                            <span th:text="|(${hotelDTO.review_count})|"class="text-warning"></span>
+                            <i class="text-black bi bi-star-fill me-1"></i>
+                            <span th:text="${hotelDTO.score}" class="text-black fw-bold" me-1></span>
+                            <span th:text="|(${hotelDTO.review_count})|"class="text-black"></span>
                         </div>
                         <a th:href="@{'/review/reviewList/'+${hotelDTO.hotel_num}}"
                            class="text-decoration-none text-primary fw-bold">

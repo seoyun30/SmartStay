@@ -1,19 +1,20 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.entity.Image;
+import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Comparator;
 import java.util.List;
@@ -30,6 +31,7 @@ public class MainController {
     private final RoomService roomService;
     private final ReviewService reviewService;
     private final ImageService imageService;
+    private final ImageRepository imageRepository;
 
     @GetMapping("/adMain")
     public String adMain(Model model, Authentication authentication) {
@@ -60,13 +62,13 @@ public class MainController {
                 if (brandDTO != null) {
                     model.addAttribute("brandName", brandDTO.getBrand_name());
                     model.addAttribute("brandDTO", brandDTO);
-                    log.info("CHIEF 브랜드 정보: {}", brandDTO);
+                    log.info("CHIEF 총판 정보: {}", brandDTO);
                 } else {
-                    log.warn("브랜드 정보를 찾을 수 없습니다.");
-                    model.addAttribute("brandName", "브랜드 없음");
+                    log.warn("총판 정보를 찾을 수 없습니다.");
+                    model.addAttribute("brandName", "총판 없음");
                 }
             } else {
-                log.warn("CHIEF의 브랜드 정보가 설정되어 있지 않습니다.");
+                log.warn("CHIEF의 총판 정보가 설정되어 있지 않습니다.");
                 model.addAttribute("brandName", "");
             }
 
@@ -92,24 +94,36 @@ public class MainController {
 
     @Secured("ROLE_SUPERADMIN")
     @PostMapping("/uploadImage")
-    public String uploadImage(@RequestParam("image")List<MultipartFile> images, Model model,
-                              @RequestParam("targetType") String banner, @RequestParam(value = "targetId", required = false) Long targetId) {
-        try {
-            if (images == null || images.isEmpty()) {
-                model.addAttribute("error", "업로드할 이미지를 선택해주세요.");
-                return "main";
-            }
-
-            imageService.saveImage(images, banner, targetId);
-
-            model.addAttribute("success", "이미지가 성공적으로 업로드되었습니다.");
-
-        } catch (Exception e) {
-            model.addAttribute("error", "이미지 업로드 중 오류가 발생했습니다: " + e.getMessage());
-            return "main";
+    public String uploadImage(Model model, RedirectAttributes redirectAttributes,
+                              @RequestParam("image") MultipartFile image,
+                              @RequestParam(value = "mainImageIndex", required = false, defaultValue = "0") Long mainImageIndex) {
+        if (image.isEmpty()) {
+            redirectAttributes.addFlashAttribute("msg", "이미지를 업로드해주세요.");
+            return "redirect:/";
         }
-
+        try {
+            imageService.saveBannerImage(image, mainImageIndex);
+            redirectAttributes.addFlashAttribute("msg", "이미지가 성공적으로 업로드되었습니다.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("msg", "이미지 업로드 중 오류가 발생했습니다: " + e.getMessage());
+        }
         return "redirect:/";
+    }
+
+    @Secured("ROLE_SUPERADMIN")
+    @DeleteMapping("/deleteImage/{imageId}")
+    public ResponseEntity<String> deleteImage(@PathVariable Long imageId) {
+        try {
+            List<Image> bannerImages = imageService.getBannerImages();
+            if (bannerImages.size() <= 1) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("배너 이미지는 최소 1개 이상이어야 합니다.");
+            }
+            imageService.deleteBannerImage(imageId);
+            return ResponseEntity.ok("이미지가 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            log.error("이미지 삭제 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
+        }
     }
 
     @GetMapping("/")
@@ -119,7 +133,16 @@ public class MainController {
 
         List<HotelDTO> top12Hotels = list.stream().limit(12).collect(Collectors.toList());
 
+        List<Image> banner = imageRepository.findByTargetTypeOrderByOrderIndex("banner");
+
+        if (banner == null || banner.isEmpty()) {
+            log.warn("배너 이미지 데이터가 비어 있습니다.");
+        } else {
+            log.info("배너 이미지 리스트: {}", banner);
+        }
+
         model.addAttribute("list", top12Hotels);
+        model.addAttribute("banner", banner);
 
         return "main";
     }

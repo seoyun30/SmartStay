@@ -2,7 +2,6 @@ package com.lookatme.smartstay.entity;
 
 import com.lookatme.smartstay.constant.MenuSort;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Entity
@@ -29,7 +28,6 @@ public class Menu extends BaseEntity {
     private String menu_detail; //메뉴 상세
 
     @Column(nullable = false)
-    @Min(value = 100, message = "메뉴 최소 가격은 100원입니다.")
     private Long menu_price; //메뉴 가격
 
     @ManyToOne(fetch = FetchType.LAZY)

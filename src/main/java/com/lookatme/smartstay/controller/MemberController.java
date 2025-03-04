@@ -423,4 +423,13 @@ public class MemberController {
         return "member/myOrderReserveList";
     }
 
+    @GetMapping("/myOrderReserveRead")
+    public String myOrderReserveRead(Long serviceitem_num, Principal principal, Model model){
+        //내 룸서비스 상세조회
+        OrderReserveItemDTO orderReserveItemDTO = orderReserveService.findOrderReserveItem(serviceitem_num, principal.getName());
+        model.addAttribute("orderReserveItemDTO", orderReserveItemDTO);
+
+        return "member/myOrderReserveRead";
+    }
+
 }

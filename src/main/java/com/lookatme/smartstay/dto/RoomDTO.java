@@ -38,7 +38,6 @@ public class RoomDTO {
     private Long room_bed = 2L; //룸 인원수
 
     @NotNull(message = "룸 가격을 입력해주세요.")
-    @Min(value = 100, message = "룸 최소 가격은 100원입니다.")
     private Long room_price; //룸 가격
 
     @NotNull(message = "룸 상태를 설정해주세요.")

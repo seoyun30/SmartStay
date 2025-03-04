@@ -28,8 +28,12 @@ public class Image extends BaseEntity {
     @Column(nullable = false)
     private String repimg_yn; //대표 이미지 여부
 
-    @Column
     private String thumbnail_url; // 썸네일 URL
+
+    private String targetType;
+
+    @Column(name = "order_index")
+    private Integer orderIndex;
 
     // 부모 테이블인 Brand와의 관계에서 자식 테이블인 Image에서 'ManyToOne'으로 관계 설정) 모두 삭제
     @ManyToOne(fetch = FetchType.LAZY)

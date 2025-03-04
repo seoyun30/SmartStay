@@ -96,6 +96,17 @@
                                     </div>
                                 </div>
 
+                                <div class="row form-row">
+                                    <label class="col-sm-2 col-form-label form-label">이미지</label>
+                                    <div class="col-sm-10">
+                                        <div class="d-flex flex-wrap">
+                                            <th:block th:each="image : ${qnaDTO.imageDTOList}">
+                                                <img th:src="@{${image.thumbnail_url}}" class="img-thumbnail m-2" style="width: 150px; height: 150px;" />
+                                            </th:block>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- 버튼 영역 -->
                                 <div class="button-container">
                                     <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>

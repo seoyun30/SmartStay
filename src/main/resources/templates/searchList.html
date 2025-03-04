@@ -47,16 +47,15 @@
                                     </h5>
                                     <img th:src="${hotel.mainImage.thumbnail_url}" style="height: 200px; width: 300px;" class="rounded-top mt-2"/>
                                     <div class="mt-1">
-                                        <span class="font-weight-bold text-secondary">주소 </span>
-                                        <span class="text-dark" th:text="${hotel.address}">주소</span><br>
+                                        <span class="text-black" th:text="${hotel.address}">주소</span><br>
                                     </div>
                                     <div class="mt-1">
-                                        <span class="font-weight-bold text-secondary">가격 </span>
-                                        <span class="text-dark" th:text="${hotel.lowestPrice != null ? hotel.lowestPrice + '원' : '정보 없음'}">최저가</span><br>
+                                        <span class="text-black" th:text="${hotel.lowestPrice != null ? hotel.lowestPrice + '원~' : '정보 없음'}">최저가</span><br>
                                     </div>
                                     <div class="mt-1">
-                                        <span class="font-weight-bold text-secondary">별점 </span>
-                                        <span class="text-dark" th:text="${hotel.score}">별점</span>
+                                        <span><i class="text-black bi bi-star-fill"></i></span>
+                                        <span th:text="${hotel.score}">별점</span>
+                                        <span th:text="|(${hotel.review_count})|"class="text-black"></span>
                                     </div>
                                 </div>
                             </div>

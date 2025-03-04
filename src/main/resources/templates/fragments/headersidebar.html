@@ -22,7 +22,7 @@
 
                     <div>
                         <a href="/">
-                            <img src="/assets/img/logo2.png" width="260px" style="margin-left: 30px" alt="">
+                            <img src="/assets/img/logo3.png" width="270px" style="margin-left: 30px" alt="">
                             <span class="d-none d-lg-block"></span>
                         </a>
                     </div>
@@ -81,28 +81,28 @@
                                     <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="has-sub">
                                         <a class="sidenav-item-link" data-bs-target="#brand-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
                                             <i class="bi bi-circle"></i>
-                                            <span class="nav-text">브랜드 관리</span>
+                                            <span class="nav-text">총판 관리</span>
                                             <i class="bi bi-chevron-down ms-auto"></i>
                                         </a>
                                         <ul id="brand-nav" class="collapse" data-bs-parent="#sidebar-menu">
                                             <div class="sub-menu">
-                                                <li sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" >
+                                                <li sec:authorize="hasAuthority('SUPERADMIN')">
                                                     <a href="/brand/brandList" class="sidenav-item-link">
-                                                        <i class="bi bi-circle"></i>
-                                                        <span class="nav-text">브랜드 목록</span>
+                                                        <i class="bi bi-circle mr-1"></i>
+                                                        <span class="nav-text">총판 목록</span>
                                                     </a>
                                                 </li>
                                                 <li sec:authorize="hasAuthority('CHIEF')">
                                                     <a href="/brand/brandRegister" class="sidenav-item-link">
-                                                        <i class="bi bi-circle"></i>
-                                                        <span class="nav-text">브랜드 등록</span>
+                                                        <i class="bi bi-circle mr-1"></i>
+                                                        <span class="nav-text">총판 등록</span>
                                                     </a>
                                                 </li>
                                             </div>
                                         </ul>
                                     </li>
 
-                                    <li sec:authorize="hasAnyAuthority('CHIEF','MANAGER')" class="has-sub">
+                                    <li sec:authorize="hasAuthority('CHIEF')" class="has-sub">
                                         <a class="sidenav-item-link" data-bs-target="#hotel-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
                                             <i class="bi bi-circle"></i>
                                             <span class="nav-text">호텔 관리</span>
@@ -112,13 +112,13 @@
                                             <div class="sub-menu">
                                                 <li>
                                                     <a href="/hotel/hotelList" class="sidenav-item-link">
-                                                        <i class="bi bi-circle"></i>
+                                                        <i class="bi bi-circle mr-1"></i>
                                                         <span class="nav-text">호텔 목록</span>
                                                     </a>
                                                 </li>
-                                                <li sec:authorize="hasAuthority('CHIEF')">
+                                                <li>
                                                     <a href="/hotel/hotelRegister" class="sidenav-item-link">
-                                                        <i class="bi bi-circle"></i>
+                                                        <i class="bi bi-circle mr-1"></i>
                                                         <span class="nav-text">호텔 등록</span>
                                                     </a>
                                                 </li>
@@ -136,14 +136,14 @@
                                             <div class="sub-menu">
                                                 <li sec:authorize="hasAuthority('SUPERADMIN')">
                                                     <a href="/member/adPowerList" class="sidenav-item-link">
-                                                        <i class="bi bi-layout-text-window-reverse"></i>
-                                                        <span class="nav-text">권한 승인 목록 (치프)</span>
+                                                        <i class="bi bi-layout-text-window-reverse mr-1"></i>
+                                                        <span class="nav-text">권한 승인 목록</span>
                                                     </a>
                                                 </li>
                                                 <li sec:authorize="hasAuthority('CHIEF')">
                                                     <a href="/member/cmPowerList" class="sidenav-item-link">
-                                                        <i class="bi bi-layout-text-window-reverse"></i>
-                                                        <span class="nav-text">권한 승인 목록 (매니저)</span>
+                                                        <i class="bi bi-layout-text-window-reverse mr-1"></i>
+                                                        <span class="nav-text">권한 승인 목록</span>
                                                     </a>
                                                 </li>
                                             </div>
@@ -160,7 +160,7 @@
                                             <div class="sub-menu">
                                                 <li>
                                                     <a href="/roomreserve/roomReserveList" class="sidenav-item-link">
-                                                        <i class="bi bi-cart"></i>
+                                                        <i class="bi bi-cart mr-1"></i>
                                                         <span class="nav-text">룸 예약 목록</span>
                                                     </a>
                                                 </li>
@@ -178,7 +178,7 @@
                                             <div class="sub-menu">
                                                 <li>
                                                     <a href="/orderreserve/orderReserveList" class="sidenav-item-link">
-                                                        <i class="bi bi-balloon"></i>
+                                                        <i class="bi bi-balloon mr-1"></i>
                                                         <span class="nav-text">룸 서비스 신청 목록</span>
                                                     </a>
                                                 </li>
@@ -197,13 +197,13 @@
                                                 <li>
                                                     <a href="/room/roomList" class="sidenav-item-link">
                                                         <i class="bi bi-door-closed"></i>
-                                                        <span class="nav-text">룸 목록</span>
+                                                        <span class="nav-text mr-1">룸 목록</span>
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a href="/room/roomRegister" class="sidenav-item-link">
                                                         <i class="bi bi-door-closed"></i>
-                                                        <span class="nav-text">룸 등록</span>
+                                                        <span class="nav-text mr-1">룸 등록</span>
                                                     </a>
                                                 </li>
                                             </div>
@@ -220,13 +220,13 @@
                                             <div class="sub-menu">
                                                 <li>
                                                     <a href="/menu/menuList" class="sidenav-item-link">
-                                                        <i class="bi bi-list"></i>
+                                                        <i class="bi bi-list mr-1"></i>
                                                         <span class="nav-text">메뉴 목록</span>
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a href="/menu/menuRegister" class="sidenav-item-link">
-                                                        <i class="bi bi-list"></i>
+                                                        <i class="bi bi-list mr-1"></i>
                                                         <span class="nav-text">메뉴 등록</span>
                                                     </a>
                                                 </li>
@@ -244,13 +244,13 @@
                                             <div class="sub-menu">
                                                 <li>
                                                     <a href="/care/careList" class="sidenav-item-link">
-                                                        <i class="bi bi-heart"></i>
+                                                        <i class="bi bi-heart mr-1"></i>
                                                         <span class="nav-text">룸 케어 목록</span>
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a href="/care/careRegister" class="sidenav-item-link">
-                                                        <i class="bi bi-heart"></i>
+                                                        <i class="bi bi-heart mr-1"></i>
                                                         <span class="nav-text">룸 케어 등록</span>
                                                     </a>
                                                 </li>
@@ -258,7 +258,7 @@
                                         </ul>
                                     </li>
 
-                                    <li sec:authorize="hasAuthority('MANAGER')" class="has-sub">
+                                    <li sec:authorize="hasAnyAuthority('CHIEF','MANAGER')" class="has-sub">
                                         <a class="sidenav-item-link" data-bs-target="#notice-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
                                             <i class="bi bi-bell"></i>
                                             <span class="nav-text">공지사항 관리</span>
@@ -268,13 +268,13 @@
                                             <div class="sub-menu">
                                                 <li>
                                                     <a href="/notice/noticeList" class="sidenav-item-link">
-                                                        <i class="bi bi-bell"></i>
+                                                        <i class="bi bi-bell mr-1"></i>
                                                         <span class="nav-text">공지사항 목록</span>
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a href="/notice/noticeRegister" class="sidenav-item-link">
-                                                        <i class="bi bi-bell"></i>
+                                                        <i class="bi bi-bell mr-1"></i>
                                                         <span class="nav-text">공지사항 등록</span>
                                                     </a>
                                                 </li>
@@ -292,7 +292,7 @@
                                             <div class="sub-menu">
                                                 <li>
                                                     <a href="/member/memberList" class="sidenav-item-link">
-                                                        <i class="bi bi-person"></i>
+                                                        <i class="bi bi-person mr-1"></i>
                                                         <span class="nav-text">회원 목록</span>
                                                     </a>
                                                 </li>
@@ -310,7 +310,7 @@
                                             <div class="sub-menu">
                                                 <li>
                                                     <a href="/qna/qnaList" class="sidenav-item-link">
-                                                        <i class="bi bi-question-circle"></i>
+                                                        <i class="bi bi-question-circle mr-1"></i>
                                                         <span class="nav-text">문의사항 목록</span>
                                                     </a>
                                                 </li>
@@ -327,8 +327,8 @@
                                         <ul id="review-nav" class="collapse" data-bs-parent="#sidebar-menu">
                                             <div class="sub-menu">
                                                 <li>
-                                                    <a href="/review/reviewList" class="sidenav-item-link">
-                                                        <i class="bi bi-menu-button-wide"></i>
+                                                    <a href="/review/adMyReviewList" class="sidenav-item-link">
+                                                        <i class="bi bi-menu-button-wide mr-1"></i>
                                                         <span class="nav-text">리뷰 목록</span>
                                                     </a>
                                                 </li>
@@ -338,15 +338,15 @@
 
                                     <div class="sidebar-footer ml-5 mt-8 mb-3">
                                         <p th:if="${adminRole == 'CHIEF'}" style="color: white; font-weight: bold;">
-                                            <strong>BRAND : </strong><span th:text="${brandName}">브랜드 없음</span>
+                                            <strong>소속 : </strong><span th:text="${brandName}">총판 없음</span>
                                         </p>
 
                                         <p th:if="${adminRole == 'MANAGER'}" style="color: white; font-weight: bold;">
-                                            <strong>HOTEL : </strong><span th:text="${hotelName}">호텔 없음</span>
+                                            <strong>소속 : </strong><span th:text="${hotelName}">호텔 없음</span>
                                         </p>
 
                                         <p style="color: white; font-weight: bold;">
-                                            <strong>ROLE : </strong><span th:text="${adminRole}">권한 없음</span>
+                                            <strong>권한 : </strong><span th:text="${adminRole}">권한 없음</span>
                                         </p>
 
                                         <p style="color: white; font-weight: bold;">
