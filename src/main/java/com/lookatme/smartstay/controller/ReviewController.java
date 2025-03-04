@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.file.AccessDeniedException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 @Controller

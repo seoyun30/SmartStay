@@ -78,6 +78,18 @@ public class ReviewService {
                         )
                 .collect(Collectors.toList());
 
+        // 이미지
+        for (ReviewDTO reviewDTO : reviewDTOList) {
+            List<Image> reviewImageList = imageRepository.findByTarget("review", reviewDTO.getRev_num());
+            if (!reviewImageList.isEmpty()) {
+                List<ImageDTO> reviewImageDTOList = reviewImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                reviewDTO.setImageDTOList(reviewImageDTOList);
+            } else {
+                reviewDTO.setImageDTOList(null);
+            }
+        }
+
         return reviewDTOList;
     }
 
@@ -97,6 +109,16 @@ public class ReviewService {
                 )
                 .collect(Collectors.toList());
         // 이미지
+        for (ReviewDTO reviewDTO : reviewDTOList) {
+            List<Image> reviewImageList = imageRepository.findByTarget("review", reviewDTO.getRev_num());
+            if (!reviewImageList.isEmpty()) {
+                List<ImageDTO> reviewImageDTOList = reviewImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                reviewDTO.setImageDTOList(reviewImageDTOList);
+            } else {
+                reviewDTO.setImageDTOList(null);
+            }
+        }
 
         return reviewDTOList;
     }
@@ -106,6 +128,7 @@ public class ReviewService {
     public void reviewRegister(ReviewDTO reviewDTO, String email, List<MultipartFile> multipartFiles, Long mainImageIndex) throws Exception {
         log.info("리뷰 등록 요청 :{}" , reviewDTO);
         log.info("ReviewDTO: {}", reviewDTO);
+        multipartFiles.forEach(multipartFile -> log.info("multipartFile: {}", multipartFile));
 
         //4. 별점 유효성 체크(0.1~ 5) / 따로 validateScore private로 빼야하는지 확인중
         String scoreStr = reviewDTO.getScore();
@@ -139,7 +162,7 @@ public class ReviewService {
         review = reviewRepository.save(review);
 
         // 저장된 리뷰의 `rev_num`을 target_id로 사용하여 이미지 저장
-        if (multipartFiles != null && multipartFiles.isEmpty()) {
+        if (multipartFiles != null && !multipartFiles.isEmpty()) {
             imageService.saveImage(multipartFiles, "review", review.getRev_num());
         }
     }

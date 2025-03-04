@@ -39,39 +39,19 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-    <h1 class="text-center mb-3 mt-5"></h1>
-<!--    <div sec:authorize="hasAnyAuthority('USER')" class="row mt-3">-->
-<!--        <div class="col text-end">-->
-<!--            <button type="button" onclick="location.href='/review/reviewModify'" class="btn btn-dark">수정</button>-->
-<!--        </div>-->
-<!--    </div>-->
-
+    <h1 class="text-center mb-3 mt-5">호텔 리뷰</h1>
     <div class="row mt-5">
-        <div class="col">
-            <table class="table table-striped table-hover text-center">
-                <thead>
-                <tr>
-<!--                    <th>번호</th>-->
-<!--                    <th>작성자</th>-->
-<!--                    <th>이미지</th>-->
-<!--                    <th></th>-->
-<!--                    <th>내용</th>-->
-<!--                    <th>작성일</th>-->
-                    <th sec:authorize="hasAnyAuthority('USER')">삭제</th>
-                </tr>
-                </thead>
-                <tbody>
+        <div class="row"> <!--여기부터 카드 시작-->
+            <table class="col-12">
                 <th:block th:each="review :${reviewDTOList}">
-                    <tr class="align-middle">
-                        <div class="card" style="width: 18rem;">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">
-                                    <a th:text="${review.create_by}"></a>
-                                    <p th:text="${review.roomDTO.hotelDTO.hotel_name}">
-                                        <p class="score" th:text="${review.score}"></p>
-                                    </p>
-                                </li>
-                            </ul>
+                    <div class="container d-flex flex-column align-items-center">
+                        <!-- 리뷰 카드 -->
+                        <div class="mb-3 p-3" style="width: 18rem;">
+                            <a th:text="${review.create_by}"></a>
+                            <p th:text="${review.roomDTO.hotelDTO.hotel_name}">
+                            <p class="score" th:text="${review.score}"></p>
+                            </p>
+
                             <img src="..." class="card-img-top" alt="...">
                             <div class="card-body">
                                 <p class="card-text" th:text="${review.content}"></p>
@@ -113,9 +93,8 @@
 <!--                                <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>-->
 <!--                            </form>-->
 <!--                        </td>-->
-                    </tr>
+                    </div>
                 </th:block>
-                </tbody>
             </table>
         </div>
     </div>
