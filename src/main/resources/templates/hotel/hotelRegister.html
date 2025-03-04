@@ -9,7 +9,7 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-    <h1 class="text-center mt-5 mb-3">매장 등록</h1>
+    <h1 class="text-center mt-5 mb-3">호텔 등록</h1>
     <form action="/hotel/hotelRegister" method="post" th:object="${hotelDTO}" enctype="multipart/form-data">
 
         <div class="row">
@@ -127,9 +127,9 @@
                         </div>
                     </div>
 
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-dark" style="float:right; margin-left: 10px;">등록</button>
-                        <button type="button" class="btn btn-primary Listbtn" style="float:right">목록</button>
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-primary Listbtn">목록</button>
+                        <button type="submit" class="btn btn-dark">등록</button>
                         <script>
                             $(".Listbtn").on("click", function () {
                                 location.href = "/hotel/hotelList";
