@@ -18,9 +18,9 @@
                 <div class="row">
                     <div class="card">
                         <div class="card-body">
-                            <img th:src="${brandDTO.mainImage.thumbnail_url}" class="mb-5 img-fluid" alt="브랜드 이미지" />
+                            <img th:src="${brandDTO.mainImage.thumbnail_url}" class="mb-5 img-fluid" alt="총판 이미지" />
                             <h5 class="card-title">
-                                <a th:href="@{/brand/brandRead(brand_num=${brandDTO.brand_num})}" th:text="${brandDTO.brand_name}">브랜드 이름</a>
+                                <a th:href="@{/brand/brandRead(brand_num=${brandDTO.brand_num})}" th:text="${brandDTO.brand_name}">총판 이름</a>
                             </h5>
                         </div>
                     </div>
