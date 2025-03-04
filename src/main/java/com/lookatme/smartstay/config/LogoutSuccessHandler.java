@@ -1,6 +1,5 @@
 package com.lookatme.smartstay.config;
 
-import com.lookatme.smartstay.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
@@ -13,7 +12,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class LogoutSeccessHandler extends SimpleUrlLogoutSuccessHandler {
+public class LogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 
 
 

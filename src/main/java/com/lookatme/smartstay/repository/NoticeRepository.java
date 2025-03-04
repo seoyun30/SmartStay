@@ -28,6 +28,15 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>  {
             ")")
     Page<Notice> searchNotice(@Param("brand_num")Long brand_num, @Param("keyword") String keyword, Pageable pageable);
 
+    @Query("SELECT n FROM Notice n " +
+            "WHERE n.title LIKE CONCAT('%', :keyword, '%') " +
+            "  OR n.brand.brand_name LIKE CONCAT('%', :keyword, '%')" +
+            "  OR n.hotel.hotel_name LIKE CONCAT('%', :keyword, '%')")
+    Page<Notice> userSearchNotice(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("select n from  Notice  n")
+    Page<Notice> AllNotice(Pageable pageable);
+
 
 //    //제목
 //    public Page<Notice> findByTitleContaining(String keyword, Pageable pageable);

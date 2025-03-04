@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/userlayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항</title>
+</head>
+<body>
+
+
+<th:block layout:fragment="content">
+
+    <div class="d-flex">
+        <div class="container my-auto">
+            <div class=" row justify-content-center">
+                <form th:object="${noticeDTO}" action="" method="">
+                    <div class="row mt-5">
+                        <div class="col-8 offset-2">
+                            <div class="row">
+                                <div class="mb-3 text-center">
+                                    <h2>공지사항 상세페이지</h2>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">제목</span>
+                                                <input type="text" class="form-control" th:value="${noticeDTO.title}">
+                                            </div>
+
+                                            <div class="input-group mb-3">
+
+                                                <input type="text" class="form-control"
+                                                       th:value="${noticeDTO.hotelDTO != null ? noticeDTO.hotelDTO.hotel_name : (noticeDTO.brandDTO != null ? noticeDTO.brandDTO.brand_name : '정보 없음')}">
+                                            </div>
+
+                                            <div class="input-group mb-3">
+
+                                                <input type="text" class="form-control" th:value="${#temporals.format(noticeDTO.reg_date, 'yyyy-MM-dd')}">
+                                            </div>
+
+                                            <div class="card mt-4 mb-3">
+                                                <div class="card-body">
+                                                    <!-- 텍스트 내용 -->
+                                                    <div class="card-text">
+                                                        <p th:text="${noticeDTO.content}"></p>
+                                                    </div>
+
+                                                    <!-- 이미지들 -->
+                                                    <div class="row">
+                                                        <th:block th:each="img: ${noticeDTO.imageDTOList}">
+                                                            <th:block th:if="${img.repimg_yn == 'N'}">
+                                                                <div class="col-12 mt-3">
+                                                                    <img class="img-fluid" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                </div>
+                                                            </th:block>
+                                                        </th:block>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="script">
+</th:block>
+</body>
+</html>
