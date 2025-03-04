@@ -41,8 +41,9 @@
 <body>
 
 <th:block layout:fragment="content">
-    <h1 class="text-center mt-5">리뷰 등록</h1>
-    <form action="/review/reviewRegister" method="post" enctype="multipart/form-data" th:object="${reviewDTO}" >
+
+    <form th:action="@{'/review/reviewRegister/' + ${roomReserveItemDTO.roomReserveDTO.reserve_num}}" method="post" th:object="${reviewDTO}" enctype="multipart/form-data">
+
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="starpoint_wrap">
@@ -70,10 +71,10 @@
                         <span class="starpoint_bg"></span>
                     </div>
                 </div>
-
                 <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}"></div>
                 <!--리뷰 내용-->
                 <div class="card">
+
                     <div class="card-body" style="height: 500px;"><!--공지사항글 제품-->
 <!--                        <div class="mb-3">-->
 <!--                            <label class="form-label">예약 번호</label>-->
@@ -82,8 +83,8 @@
                         <div class="mb-3">
                             <input type="hidden" name="roomreserveitem_num" th:value="${roomReserveItemDTO.roomreserveitem_num}">
                             <input type="hidden" name="reserve_num" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">
-<!--                            <label class="form-label">호텔 이름</label>-->
-<!--                            <input th:value="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">-->
+
+                            <input type="hidden" name="hotel_num" th:value="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_num}">
                             <h2 class="card-title fw-bold" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}"></h2>
                         </div>
                         <div class="mb-3">
@@ -95,15 +96,11 @@
                         <div class="mb-3 imgA">
                             <!--이미지 업로드 -->
                             <label for="formFile" class="form-label">이미지</label>
-                            <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file" multiple>
+                            <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file" required>
                             <div class="row imgpreview"></div>
                             <button type="button" class="btn btn-secondary" id="removeMainImage" style="display: none;">이미지 삭제</button>
                         </div>
-                        <div class="mb-3 imgA">
-                            <label for="formFilede" class="form-label">상세 이미지</label>
-                            <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
-                            <div class="row imgpreviewinput"></div>
-                        </div>
+
                     </div>
                     <div class="card-footer d-flex justify-content-center">
                         <form class="review info" action="/review/reviewList/{hotel_num}">
@@ -122,113 +119,45 @@
     </form>
     <div class="col-3"></div>
 </th:block><!--container끝-->
-<script th:inline="javascript" layout:fragment="script">
 
-    $(document).ready(function (){
-        let removeBtn = $(".removeBtn"); // 삭제 버튼
-        let form = $(".review info");
-        let rev_num = $(".num").val()
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
 
-        removeBtn.on("click", function () {
-            console.log("클릭")
-            console.log(rev_num)
-            form.action = "/review/reviewDelete";
-            form.method = "post";
-            form.submit();
-        });
-    })
+        //이미지 업로드
+        document.addEventListener("DOMContentLoaded", function (){
 
+            const formFile = document.getElementById('formFile');
+            const imgPreview = document.querySelector('.imgpreview');
+            const removeMainImage = document.getElementById('removeMainImage');
 
-
-    //이미지 업로드
-    document.addEventListener("DOMContentLoaded", function (){
-
-        const formFile = document.getElementById('imgFile');
-        const imgPreview = document.querySelector('.imgpreview');
-        const removeMainImage = document.getElementById('removeMainImage');
-
-        const formFilede = document.getElementById('formFilede');
-        const imgPreviewInput = document.querySelector('.imgpreviewinput');
-
-        formFile.addEventListener('change', function (event){
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.alt = file.name;
-                    img.style.width = '350px';
-                    img.style.height = 'auto';
-                    img.style.objectFit = 'cover';
-
-                    imgPreview.innerHTML = '';
-                    imgPreview.appendChild(img);
-
-                    removeMainImage.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        removeMainImage.addEventListener('click', function() {
-            formFile.value = '';
-            imgPreview.innerHTML = '';
-            removeMainImage.style.display = 'none';
-        });
-
-        formFilede.addEventListener('change', function(event) {
-            const files = event.target.files;
-
-            Array.from(files).forEach((file, index) => {
+            formFile.addEventListener('change', function(event) {
+                const file = event.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        const imgWrapper = document.createElement('div');
-                        imgWrapper.classList.add('img-wrapper');
-                        imgWrapper.style.position = 'relative';
-                        imgWrapper.style.display = 'inline-block';
-                        imgWrapper.style.marginRight = '10px';
-
+                    reader.onload = function(e) {
                         const img = document.createElement('img');
                         img.src = e.target.result;
                         img.alt = file.name;
-                        img.style.width = '200px';
+                        img.style.width = '250px';
                         img.style.height = 'auto';
                         img.style.objectFit = 'cover';
 
-                        const removeButton = document.createElement('button');
-                        removeButton.type = 'button';
-                        removeButton.textContent = '올리지 않기';
-                        removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
-                        removeButton.style.top = '5px';
-                        removeButton.style.right = '5px';
+                        imgPreview.innerHTML = '';
+                        imgPreview.appendChild(img);
 
-                        removeButton.addEventListener('click', function () {
-                            imgWrapper.remove();
-
-                            const dataTransfer = new DataTransfer();
-                            Array.from(formFilede.files).forEach((f, i) => {
-                                if (i !== index) {
-                                    dataTransfer.items.add(f);
-                                }
-                            });
-                            formFilede.files = dataTransfer.files;
-                        });
-
-                        imgWrapper.appendChild(img);
-                        imgWrapper.appendChild(removeButton);
-                        imgPreviewInput.appendChild(imgWrapper);
+                        removeMainImage.style.display = 'block';
                     };
-
                     reader.readAsDataURL(file);
                 }
             });
+
+            removeMainImage.addEventListener('click', function() {
+                formFile.value = '';
+                imgPreview.innerHTML = '';
+                removeMainImage.style.display = 'none';
+            });
         });
-    });
-
-
-</script>
+    </script>
+</th:block>
 </body>
 </html>

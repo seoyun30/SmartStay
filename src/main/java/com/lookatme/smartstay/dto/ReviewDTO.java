@@ -30,8 +30,7 @@ public class ReviewDTO {
 
     private RoomReserveDTO roomReserveDTO; //룸 예약 조인
 
-    @NotNull
-    private Long brand_num;
+//    private Long brand_num;
 
     // 룸 예약 설정
     public ReviewDTO setRoomReserveDTO(RoomReserveDTO roomReserveDTO) {
@@ -71,15 +70,19 @@ public class ReviewDTO {
 
     //이미지
     public List<ImageDTO> imageDTOList = new ArrayList<>(); //여러 이미지를 담는 용
-    private List<Long> imageIdList = new ArrayList<>(); // 이미지 식별용(이미지 ID를 저장하는 리스트)
-    private ImageDTO imageDTO;
 
-    public ImageDTO getMainImageDTO() {
-        return imageDTO;
+    private List<Long> imageIdList = new ArrayList<>(); // 이미지 식별용(이미지 ID를 저장하는 리스트)
+
+    private ImageDTO mainImage;
+
+    public ImageDTO getMainImage() {
+        return mainImage;
     }
 
     public void setMainImageDTO(ImageDTO mainImage) {
-        this.imageDTO = mainImage;
+        this.mainImage = mainImage;
     }
+
+
 
 }

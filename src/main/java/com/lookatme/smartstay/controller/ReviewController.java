@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.file.AccessDeniedException;
 import java.security.Principal;
@@ -107,7 +108,7 @@ public class ReviewController {
 
     //등록 페이지 이동(유저)
     @GetMapping("/reviewRegister")
-    public String reviewRegisterFrom(@RequestParam Long reserve_num,
+    public String reviewRegisterGet(@RequestParam("reserve_num") Long reserve_num,
                                     Principal principal, Model model) {
         log.info("입력폼 페이지 이동...");
 
@@ -124,43 +125,49 @@ public class ReviewController {
         };
 
         RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(reserve_num, principal.getName());
-
         log.info(roomReserveItemDTO);
 
         //모델에 세팅한 reviewDTO와 roomReserveItemDTO를 전달
         model.addAttribute("roomReserveItemDTO", roomReserveItemDTO); //룸예약 정보
         model.addAttribute("reviewDTO", new ReviewDTO());
+        log.info(new ReviewDTO());
 
         return "review/reviewRegister"; // 로그인한 사용자만 볼수 있음
     }
 
     //등록 내용저장
-    @PostMapping("/reviewRegister/{hotel_num}")
-    public String reviewRegisterPost(@Valid ReviewDTO reviewDTO,
-                                     @PathVariable("hotel_num") Long hotel_num,
-                                     BindingResult bindingResult,
-                                     Long reserve_num,
-                                     Principal principal,
-                                     List<MultipartFile> multipartFileList) throws Exception {
+    @PostMapping("/reviewRegister/{reserve_num}")
+    public String reviewRegisterPost(@Valid ReviewDTO reviewDTO, RedirectAttributes redirectAttributes,
+                                     @PathVariable("reserve_num") Long reserve_num, Long hotel_num,
+                                     @RequestParam(value = "multipartFiles", required = false) List<MultipartFile> multipartFiles,
+                                     @RequestParam(value = "mainImageIndex", required = false, defaultValue = "0") Long mainImageIndex,
+                                     //BindingResult bindingResult,
+                                     Principal principal) throws Exception {
 
-        log.info("리뷰 등록 :{}", reviewDTO); // reviewDTO상태 확인
+        System.out.println("받은 reserve_num: " + reserve_num);
+        //log.info("리뷰 등록 :{}", reviewDTO); // reviewDTO상태 확인
         log.info("principal: {}", principal);
+//        return "review/reviewRegister";
 
-        if (bindingResult.hasErrors()) {
-            log.error("Binding errors: {}", bindingResult.getAllErrors());
-            return "review/reviewRegister"; //오류가 있을 경우 등록페이지로 이동
-        }
-
+//        if (bindingResult.hasErrors()) {
+//            log.error("Binding errors: {}", bindingResult.getAllErrors());
+//            return "review/reviewRegister"; //오류가 있을 경우 등록페이지로 이동
+//        }
         if (!roomReserveService.validateroomResereve(reserve_num, principal.getName())) {
             log.error("예약 회원의 이메일과 로그인 이메일이 일치하지 앟습니다.");
             return "redirect:/member/myRoomReserveRead"; //
         };
 
+        if (multipartFiles != null && multipartFiles.stream().allMatch(MultipartFile::isEmpty)) {
+            multipartFiles = null;
+        }
+
         //리뷰 등록 처리
         try {
-            reviewService.reviewRegister(reviewDTO, principal.getName(), multipartFileList);
+            reviewService.reviewRegister(reviewDTO, principal.getName(), multipartFiles, mainImageIndex);
+            redirectAttributes.addFlashAttribute("msg", "등록이 완료 되었습니다.");
             log.info("호텔 : {}", hotel_num);
-            return "redirect:/reviewList/"+hotel_num; //성공 시 목록 페이지
+            return "redirect:/review/reviewList/" +hotel_num; // "문자열" + id = "redirect:/reviewList/" +hotel_num
 
         } catch (Exception e) {
             log.error("Error occurred while registering review: {}", e.getMessage());
