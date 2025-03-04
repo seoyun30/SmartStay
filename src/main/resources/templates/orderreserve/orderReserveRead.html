@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/userlayout}">
+      layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -10,6 +10,104 @@
 <body>
 
 <th:block layout:fragment="content">
+<!--레이아웃 수정 예정-->
+    <div class="row">
+        <div class="col-6 offset-3">
+            <div class="card row mt-3">
+
+                <div class="container">
+
+                    <div class="header mt-5">
+                        <p>주문 번호 : <span th:text="${orderReserveItemDTO.orderReserveDTO.order_id}"></span></p>
+                        <p>주문 날짜 : <span th:text="${#temporals.format(orderReserveItemDTO.orderReserveDTO.reg_date, 'yyyy.MM.dd')}"></span></p>
+                    </div>
+
+                    <div class="section mt-5">
+                        <h2>상품 및 이용정보</h2>
+                        <div class="info-box">
+                            <div class="info-details">
+                                <p><strong th:text="${orderReserveItemDTO.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}"></strong></p>
+                                <p th:text="${orderReserveItemDTO.roomReserveItemDTO.roomDTO.room_name}"></p>
+                                <div class="row">
+                                    <th:block th:unless="${orderReserveItemDTO.careReserveItemDTOList.isEmpty()}">
+                                        <p class="h5 col-12 text-start fw-bold mb-3">케어 서비스</p>
+                                        <th:block th:each="careItemDTO : ${orderReserveItemDTO.careReserveItemDTOList}">
+                                            <div class="col-3 align-self-center">
+                                                <th:block th:each="img: ${careItemDTO.careDTO.imageDTOList}">
+                                                    <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                        <div class="square-image mb-3">
+                                                            <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
+                                                        </div>
+                                                    </th:block>
+                                                </th:block>
+                                            </div>
+                                            <div class="col-9 align-self-center">
+                                                <div class="mb-3">
+                                                    <span class="h5" th:text="${careItemDTO.careDTO.care_name}"></span> |
+                                                    <span class="h5 care_count" th:text="${careItemDTO.care_count + '개'}"></span> |
+                                                    <span class="h5 care_price" th:text="${careItemDTO.careDTO.care_price + '원'}"></span>
+                                                </div>
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+                                    <th:block th:unless="${orderReserveItemDTO.menuReserveItemDTOList.isEmpty()}">
+                                        <p class="h5 col-12 text-start fw-bold mb-3">메뉴</p>
+                                        <th:block th:each="menuItemDTO : ${orderReserveItemDTO.menuReserveItemDTOList}">
+                                            <div class="col-3 align-self-center">
+                                                <th:block th:each="img: ${menuItemDTO.menuDTO.imageDTOList}">
+                                                    <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                        <div class="square-image mb-3">
+                                                            <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
+                                                        </div>
+                                                    </th:block>
+                                                </th:block>
+                                            </div>
+                                            <div class="col-9 align-self-center">
+                                                <div class="mb-3">
+                                                    <span class="h5" th:text="${menuItemDTO.menuDTO.menu_name}"></span> |
+                                                    <span class="h5 care_count" th:text="${menuItemDTO.menu_count + '개'}"></span> |
+                                                    <span class="h5 care_price" th:text="${menuItemDTO.menuDTO.menu_price + '원'}"></span>
+                                                </div>
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+                                </div>
+                                <p th:text="${orderReserveItemDTO.menu_request}">요청 사항</p>
+                                <p th:text="${orderReserveItemDTO.orderReserveDTO.total_price + '원'}">결제 금액</p>
+                                <p th:switch="${orderReserveItemDTO.orderReserveDTO.order_state}"> <!--주문 상태-->
+                                    <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.ORDER}">주문 접수</span>
+                                    <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.PREPARE}">주문 준비중</span>
+                                    <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.COMPLETE}">주문 완료</span>
+                                    <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.CANCEL}">주문 취소</span>
+                                    <span th:case="*">알 수 없음</span> <!-- 예외 처리 -->
+                                </p>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section mt-5">
+                        <h2>예약자 정보</h2>
+                        <p>이름 : <span th:text="${orderReserveItemDTO.orderReserveDTO.memberDTO.name}"></span></p>
+                        <p>번호 : <span th:text="${orderReserveItemDTO.orderReserveDTO.memberDTO.tel}"></span></p>
+                    </div>
+
+                    <div class="section mt-5">
+                        <h2>결제 금액</h2>
+                        <p>상품 금액 : <span th:text="${orderReserveItemDTO.payDTO.amount}"></span></p>
+                        <hr/>
+                        <strong>총 결제 금액 : <span th:text="${orderReserveItemDTO.payDTO.amount}"></span></strong><br/>
+                    </div>
+
+                    <div class="button-group mt-5 mb-5">
+                        <button type="button" onclick="location.href='/orderreserve/orderReserveList'"class="btn btn-primary">목록</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 </th:block>
 

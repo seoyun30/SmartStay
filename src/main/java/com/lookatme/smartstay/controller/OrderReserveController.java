@@ -6,10 +6,13 @@ import com.lookatme.smartstay.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
 
@@ -45,13 +48,26 @@ public class OrderReserveController {
         model.addAttribute("hotelDTO", hotelDTO);
 
         PageResponseDTO<OrderReserveItemDTO> pageResponseDTO = orderReserveService.findOrderReservePage(principal.getName(), pageRequestDTO);
+        pageResponseDTO.getDtoList().forEach(orderReserveItemDTO -> log.info(orderReserveItemDTO));
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
         return "orderreserve/orderReserveList";
     }
 
     @GetMapping("/orderReserveRead")
-    public String orderReserveRead() {
+    public String orderReserveRead(Long serviceitem_num, Model model) {
+        OrderReserveItemDTO orderReserveItemDTO = orderReserveService.findOrderReserveItemAd(serviceitem_num);
+        model.addAttribute("orderReserveItemDTO", orderReserveItemDTO);
         return "orderreserve/orderReserveRead";
     }
+
+    //주문 상태 변경
+    @PostMapping("/state")
+    @ResponseBody
+    public ResponseEntity<?> stateChange(OrderReserveDTO orderReserveDTO) {
+
+        OrderReserveDTO result = orderReserveService.stateChange(orderReserveDTO);
+        return ResponseEntity.ok(result);
+    }
+
 }

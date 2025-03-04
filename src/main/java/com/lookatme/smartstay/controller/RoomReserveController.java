@@ -1,5 +1,7 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.dto.RoomDTO;
 import com.lookatme.smartstay.dto.RoomReserveItemDTO;
 import com.lookatme.smartstay.service.RoomReserveService;
@@ -38,10 +40,13 @@ public class RoomReserveController {
 
     //관리자 룸예약 목록
     @GetMapping("/roomReserveList")
-    public String roomReserveList(Principal principal, Model model) {
+    public String roomReserveList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
 
         List<RoomDTO> roomDTOList = roomService.findmyRoom(principal.getName());
         model.addAttribute("roomDTOList", roomDTOList);
+
+        PageResponseDTO<RoomReserveItemDTO> pageResponseDTO = roomReserveService.findRoomReservePage(principal.getName(), pageRequestDTO);
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
 
         return "roomreserve/roomReserveList";
     }
@@ -55,7 +60,11 @@ public class RoomReserveController {
     }
 
     @GetMapping("/roomReserveRead")
-    public String roomReserveRead() {
+    public String roomReserveRead(Long roomreserveitem_num, Model model) {
+
+        RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItemAd(roomreserveitem_num);
+        model.addAttribute("roomReserveItemDTO", roomReserveItemDTO);
+
         return "roomreserve/roomReserveRead";
     }
 
