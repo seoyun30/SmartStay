@@ -111,9 +111,54 @@ public class RoomReserveService {
         return reserveItemDTOPageResponseDTO;
     }
 
+    //관리자 전체보기
+    //회원의 룸예약 페이징처리 전체 조회
+    public PageResponseDTO<RoomReserveItemDTO> findRoomReservePage (String email, PageRequestDTO pageRequestDTO) {
+
+        Pageable pageable = pageRequestDTO.getPageable("roomreserveitem_num");
+
+        Member member = memberRepository.findByEmail(email);
+
+        Page<RoomReserveItem> result = roomReserveItemRepository.findByHotelPage(member.getHotel().getHotel_num(), pageable);
+
+        List<RoomReserveItemDTO> roomReserveItemDTOList = result.stream()
+                .map(roomReserveItem -> modelMapper.map(roomReserveItem, RoomReserveItemDTO.class)
+                        .setRoomDTO(modelMapper.map(roomReserveItem.getRoom(), RoomDTO.class)
+                                .setHotelDTO(modelMapper.map(roomReserveItem.getRoom().getHotel(),HotelDTO.class)))
+                        .setRoomReserveDTO(modelMapper.map(roomReserveItem.getRoomReserve(), RoomReserveDTO.class)
+                                .setMemberDTO(modelMapper.map(roomReserveItem.getRoomReserve().getMember(), MemberDTO.class)))
+                        .setPayDTO(modelMapper.map(roomReserveItem.getPay(), PayDTO.class))
+                ).collect(Collectors.toList());
+
+        if (roomReserveItemDTOList.isEmpty()) {
+            roomReserveItemDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<RoomReserveItemDTO> reserveItemDTOPageResponseDTO = PageResponseDTO.<RoomReserveItemDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(roomReserveItemDTOList)
+                .total((int) result.getTotalElements())
+                .build();
+
+        return reserveItemDTOPageResponseDTO;
+    }
+
     //회원 룸예약 상세보기
     public RoomReserveItemDTO findRoomReserveItem(Long roomreserveitem_num, String email) {
         RoomReserveItem roomReserveItem = roomReserveItemRepository.findByReserveItemNumAndEmail(roomreserveitem_num, email);
+        RoomReserveItemDTO roomReserveItemDTO = modelMapper.map(roomReserveItem, RoomReserveItemDTO.class)
+                .setRoomDTO(modelMapper.map(roomReserveItem.getRoom(), RoomDTO.class)
+                        .setHotelDTO(modelMapper.map(roomReserveItem.getRoom().getHotel(),HotelDTO.class)))
+                .setRoomReserveDTO(modelMapper.map(roomReserveItem.getRoomReserve(), RoomReserveDTO.class)
+                        .setMemberDTO(modelMapper.map(roomReserveItem.getRoomReserve().getMember(), MemberDTO.class)))
+                .setPayDTO(modelMapper.map(roomReserveItem.getPay(), PayDTO.class));
+        return roomReserveItemDTO;
+    }
+
+    //관리자 룸예약 상세보기
+    public RoomReserveItemDTO findRoomReserveItemAd (Long roomreserveitem_num) {
+        RoomReserveItem roomReserveItem = roomReserveItemRepository.findById(roomreserveitem_num)
+                .orElseThrow(EntityNotFoundException::new);
         RoomReserveItemDTO roomReserveItemDTO = modelMapper.map(roomReserveItem, RoomReserveItemDTO.class)
                 .setRoomDTO(modelMapper.map(roomReserveItem.getRoom(), RoomDTO.class)
                         .setHotelDTO(modelMapper.map(roomReserveItem.getRoom().getHotel(),HotelDTO.class)))

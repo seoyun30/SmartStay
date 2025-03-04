@@ -22,6 +22,9 @@ public interface RoomReserveItemRepository extends JpaRepository<RoomReserveItem
 
     @Query("select r from RoomReserveItem r where r.roomReserve.member.email = :email")
     Page<RoomReserveItem> findByEmailPage (String email, Pageable pageable);
+
+    @Query("select r from RoomReserveItem r where r.room.hotel.hotel_num = :hotel_num")
+    Page<RoomReserveItem> findByHotelPage (Long hotel_num, Pageable pageable);
     
     @Query("select r from RoomReserveItem r where r.room.room_num = :room_num")
     List<RoomReserveItem> findByRoomRoom_num(Long room_num);
