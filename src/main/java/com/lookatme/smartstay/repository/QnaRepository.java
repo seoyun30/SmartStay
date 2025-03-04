@@ -2,8 +2,10 @@ package com.lookatme.smartstay.repository;
 
 import com.lookatme.smartstay.entity.Cart;
 import com.lookatme.smartstay.entity.Qna;
+import com.lookatme.smartstay.entity.Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -45,5 +47,11 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
 
     @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') or q.writer like concat('%', :str, '%') ")
     public Page<Qna> titleOrConOrWr(String str, Pageable pageable);
+
+   /* @Query("SELECT r FROM Room r WHERE LOWER(r.room_name) LIKE LOWER(CONCAT('%', :roomName, '%'))")
+    List<Room> findByRoomNameContainingIgnoreCase(@Param("roomName") String roomName, Sort sort);
+
+    @Query("SELECT r FROM Room r WHERE LOWER(r.room_info) LIKE LOWER(CONCAT('%', :roomInfo, '%'))")
+    List<Room> findByRoomInfoContainingIgnoreCase(@Param("roomInfo") String roomInfo, Sort sort);*/
 
 }
