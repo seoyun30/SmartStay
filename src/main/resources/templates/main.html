@@ -146,8 +146,8 @@
                         <div class="card-body text-center d-flex flex-column">
                             <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none text-primary fw-bold"></a>
                             <p class="text-black mt-3" th:text="${hotel.lowestPrice + '원~'}"></p>
-                            <span class="text-warning mt-auto">
-                                <i class="text-warning bi bi-star-fill"></i>
+                            <span class="text-black mt-auto">
+                                <i class="text-black bi bi-star-fill"></i>
                                 <span th:text="${hotel.score}">별점</span>
                             </span>
                         </div>
@@ -309,7 +309,7 @@
                                         ${hotel.hotel_name}
                                     </a>
                                     <p class="text-muted mt-2">${hotel.lowestPrice ? hotel.lowestPrice + '원~' : '가격 정보 없음'}</p>
-                                    <p class="text-warning">별점 : ${hotel.score ? hotel.score : '정보 없음'}</p>
+                                    <p class="text-black">별점 : ${hotel.score ? hotel.score : '정보 없음'}</p>
                                 </div>
                             </div>
                         `;

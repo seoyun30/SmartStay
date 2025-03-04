@@ -62,13 +62,13 @@ public class MainController {
                 if (brandDTO != null) {
                     model.addAttribute("brandName", brandDTO.getBrand_name());
                     model.addAttribute("brandDTO", brandDTO);
-                    log.info("CHIEF 브랜드 정보: {}", brandDTO);
+                    log.info("CHIEF 총판 정보: {}", brandDTO);
                 } else {
-                    log.warn("브랜드 정보를 찾을 수 없습니다.");
-                    model.addAttribute("brandName", "브랜드 없음");
+                    log.warn("총판 정보를 찾을 수 없습니다.");
+                    model.addAttribute("brandName", "총판 없음");
                 }
             } else {
-                log.warn("CHIEF의 브랜드 정보가 설정되어 있지 않습니다.");
+                log.warn("CHIEF의 총판 정보가 설정되어 있지 않습니다.");
                 model.addAttribute("brandName", "");
             }
 

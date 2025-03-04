@@ -52,15 +52,16 @@
   box-sizing: border-box;
 }
 
-.gowun-dodum-regular {
-  font-family: "Gowun Dodum", serif;
+.noto-sans-kr-regular {
+  font-family: "Noto Sans KR", sans-serif, serif;
+  font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
 }
 
 
 html {
-  font-family: "Gowun Dodum", serif;
+  font-family: "Noto Sans KR", serif;
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -74,7 +75,7 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 body {
   margin: 0;
   padding: 0;
-  font-family: "Gowun Dodum", serif;
+  font-family: "Noto Sans KR", serif;
   font-size: 1.2rem;
   font-weight: 400;
   line-height: 1.5;
