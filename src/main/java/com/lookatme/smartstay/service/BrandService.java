@@ -7,6 +7,7 @@ import com.lookatme.smartstay.dto.ImageDTO;
 import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.entity.RoomReserve;
 import com.lookatme.smartstay.repository.BrandRepository;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.ImageRepository;
@@ -18,6 +19,7 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +66,7 @@ public class BrandService {
     // 모든 브랜드 목록을 가져오는 메소드
     public List<BrandDTO> brandList() {
         List<Brand> brands = brandRepository.findAll();  // 모든 브랜드를 가져옴
+        if (brands.isEmpty()) { return new ArrayList<>(); }
         List<BrandDTO> brandDTOS = brands.stream()
                 .map(brand -> modelMapper.map(brand, BrandDTO.class))
                 .collect(Collectors.toList());

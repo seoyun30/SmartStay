@@ -31,7 +31,8 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="business_num" class="form-label">법인사업자번호</label>
-                            <input type="number" min="0" class="form-control" th:field="*{business_num}" id="business_num" placeholder="번호만 입력하세요." required>
+                            <input type="text" min="0" class="form-control" th:field="*{business_num}" id="business_num" placeholder="번호만 입력하세요." required>
+                            <p id="businessNumError" class="text-danger" style="display: none;">유효한 사업자번호를 입력하세요.</p>
                             <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
                         </div>
                     </div>
@@ -45,11 +46,13 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="tel" class="form-label">연락처</label>
-                            <input type="number" min="0" class="form-control" th:field="*{tel}" id="tel" placeholder="숫자만 입력하세요.">
+                            <input type="text" class="form-control" th:field="*{tel}" id="tel" placeholder="전화번호 입력 (예: 031-123-4567)">
+                            <p id="telError" class="text-danger" style="display: none;">유효한 전화번호를 입력하세요.</p>
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
                     </div>
 
+                    <!--이미지-->
                     <div class="col-12">
                         <div class="mb-3 imgA">
                             <label for="formFile" class="form-label">대표 이미지</label>
@@ -77,12 +80,56 @@
 
                             document.addEventListener("DOMContentLoaded", function() {
 
+                                const businessNumInput = document.getElementById('business_num');
+                                const businessNumError = document.getElementById("businessNumError");
+                                const telInput = document.getElementById('tel');
+                                const telError = document.getElementById("telError");
                                 const formFile = document.getElementById('formFile');
                                 const imgPreview = document.querySelector('.imgpreview');
                                 const removeMainImage = document.getElementById('removeMainImage');
-
                                 const formFilede = document.getElementById('formFilede');
                                 const imgPreviewInput = document.querySelector('.imgpreviewinput');
+
+                                // 법인사업자번호: 숫자만 입력 가능 + 유효성 검사
+                                businessNumInput.addEventListener('input', function () {
+                                    let value = this.value;
+                                    const numericValue = value.replace(/[^0-9]/g, ''); // 숫자만 남기기
+                                    if (value !== numericValue) {
+                                        businessNumError.style.display = "block"; // 유효하지 않으면 경고 메시지 표시
+                                    } else {
+                                        businessNumError.style.display = "none"; // 유효하면 경고 메시지 숨김
+                                    }
+                                    this.value = numericValue; // 숫자가 아닌 문자는 자동 제거
+                                });
+
+                                // 전화번호 자동 하이픈 추가 + 유효성 검사
+                                telInput.addEventListener('input', function () {
+                                    let value = this.value.replace(/[^0-9]/g, '');  // 숫자 이외의 문자 제거
+                                    const phoneRegex = /^(010|011|016|017|018|019)(\d{4})(\d{4})$/;  // 휴대폰 번호 패턴
+                                    const areaCodeRegex = /^(02)(\d{3,4})(\d{4})$|^(0[3-9][0-9])(\d{3,4})(\d{4})$/;  // 지역번호 패턴
+                                    // 전화번호 형식 변환
+                                    if (value.startsWith("02")) {
+                                        if (value.length > 2) {
+                                            value = value.replace(/(\d{2})(\d{3,4})(\d{4})/, '$1-$2-$3');
+                                        }
+                                    } else if (value.startsWith("010") || value.startsWith("011") || value.startsWith("016") || value.startsWith("017") || value.startsWith("018") || value.startsWith("019")) {
+                                        if (value.length > 3) {
+                                            value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                                        }
+                                    } else {
+                                        if (value.length > 3) {
+                                            value = value.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3');
+                                        }
+                                    }
+                                    this.value = value;
+                                    // 유효성 검사: 휴대폰 또는 지역번호 형식만 허용
+                                    const numericValue = value.replace(/-/g, '');  // 하이픈 제거 후 숫자만 남기기
+                                    if (!phoneRegex.test(numericValue) && !areaCodeRegex.test(numericValue)) {
+                                        telError.style.display = "block";  // 유효하지 않은 경우 경고 메시지 표시
+                                    } else {
+                                        telError.style.display = "none";  // 유효하면 경고 메시지 숨김
+                                    }
+                                });
 
                                 formFile.addEventListener('change', function(event) {
                                     const file = event.target.files[0];

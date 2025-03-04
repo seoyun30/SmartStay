@@ -46,23 +46,23 @@
                                             <input id="hotel_num" type="hidden" th:value="${hotelDTO.hotel_num}">
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text">호텔 이름</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.hotel_name}">
+                                                <input type="text" class="form-control" th:value="${hotelDTO.hotel_name}" readonly>
                                             </div>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-text">사업자번호</span>
-                                                <input type="number" class="form-control" th:value="${hotelDTO.business_num}">
+                                                <span class="input-group-text">법인사업자번호</span>
+                                                <input type="text" class="form-control" th:value="${hotelDTO.business_num}" readonly>
                                             </div>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text">대표자</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.owner}">
+                                                <input type="text" class="form-control" th:value="${hotelDTO.owner}" readonly>
                                             </div>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text">주소</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.address}">
+                                                <input type="text" class="form-control" th:value="${hotelDTO.address}" readonly>
                                             </div>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text">전화번호</span>
-                                                <input type="number" class="form-control" th:value="${hotelDTO.tel}">
+                                                <input type="text" class="form-control" th:value="${hotelDTO.tel}" readonly>
                                             </div>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text">별점</span>

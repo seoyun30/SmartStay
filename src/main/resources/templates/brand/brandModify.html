@@ -27,7 +27,8 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="business_num" class="form-label">법인사업자번호</label>
-                            <input type="number" min="0" class="form-control" th:field="*{business_num}" id="business_num">
+                            <input type="text" class="form-control" th:field="*{business_num}" id="business_num">
+                            <p id="businessNumError" class="text-danger" style="display: none;">유효한 사업자번호를 입력하세요.</p>
                             <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
                         </div>
                     </div>
@@ -41,7 +42,8 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="tel" class="form-label">연락처</label>
-                            <input type="number" min="0" class="form-control" th:field="*{tel}" id="tel">
+                            <input type="text" min="0" class="form-control" th:field="*{tel}" id="tel">
+                            <p id="telError" class="text-danger" style="display: none;">유효한 전화번호를 입력하세요.</p>
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
                     </div>
@@ -92,149 +94,195 @@
                                 <button type="button" class="btn btn-primary Listbtn">목록</button>
                                 <button type="submit" class="btn btn-dark">저장</button>
                                 <script>
-                                    $(".Listbtn").on("click", function () {
-                                        location.href = "/brand/brandList";
-                                    })
-                                    document.addEventListener('DOMContentLoaded', function () {
-                                        const deleteButtons = document.querySelectorAll('.delete-image-btn');
+                                        $(".Listbtn").on("click", function () {
+                                            location.href = "/brand/brandList";
+                                        })
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            const businessNumInput = document.getElementById("business_num");
+                                            const businessNumError = document.getElementById("businessNumError");
+                                            const telInput = document.getElementById("tel");
+                                            const telError = document.getElementById("telError");
 
-                                        deleteButtons.forEach(button => {
-                                            button.addEventListener('click', function () {
-                                                const imageId = this.getAttribute('data-image-id');
-
-                                                if (!imageId) {
-                                                    alert('이미지 ID가 유효하지 않습니다.');
-                                                    return;
+                                            // 법인사업자번호: 숫자만 입력 가능 + 유효성 검사
+                                            businessNumInput.addEventListener('input', function () {
+                                                let value = this.value;
+                                                const numericValue = value.replace(/[^0-9]/g, ''); // 숫자만 남기기
+                                                if (value !== numericValue) {
+                                                    businessNumError.style.display = "block"; // 유효하지 않으면 경고 메시지 표시
+                                                } else {
+                                                    businessNumError.style.display = "none"; // 유효하면 경고 메시지 숨김
                                                 }
+                                                this.value = numericValue; // 숫자가 아닌 문자는 자동 제거
+                                            });
 
-                                                if (confirm('이미지를 삭제하시겠습니까?')) {
-                                                    fetch(`/brand/deleteImage/${imageId}`, {
-                                                        method: 'DELETE',
-                                                        headers: {
-                                                            'Content-Type': 'application/json'
-                                                        }
-                                                    })
-                                                        .then(response => {
-                                                            if (response.ok) {
-                                                                const isMainImage = this.closest('#image-main') !== null;
-
-                                                                if (isMainImage) {
-                                                                    const mainImageContainer = document.getElementById('image-main');
-                                                                    mainImageContainer.innerHTML = '<p>대표 이미지가 없습니다. 대표 이미지를 추가해 주세요.</p>';
-                                                                } else {
-                                                                    const imageElement = document.getElementById(`image-${imageId}`);
-                                                                    if (imageElement) {
-                                                                        imageElement.remove();
-                                                                    }
-                                                                }
-                                                                alert('이미지가 성공적으로 삭제되었습니다.');
-                                                            } else {
-                                                                alert('이미지 삭제에 실패했습니다.');
-                                                            }
-                                                        })
-                                                        .catch(error => {
-                                                            console.error('Error:', error);
-                                                            alert('오류가 발생했습니다. 다시 시도해주세요.');
-                                                        });
+                                            // 전화번호 입력 시 자동 하이픈 추가 + 유효성 검사
+                                            telInput.addEventListener('input', function () {
+                                                let value = this.value.replace(/[^0-9]/g, '');  // 숫자 이외의 문자 제거
+                                                const phoneRegex = /^(010|011|016|017|018|019)(\d{4})(\d{4})$/;  // 휴대폰 번호 패턴
+                                                const areaCodeRegex = /^(02)(\d{3,4})(\d{4})$|^(0[3-9][0-9])(\d{3,4})(\d{4})$/;  // 지역번호 패턴
+                                                // 전화번호 형식 변환
+                                                if (value.startsWith("02")) {
+                                                    if (value.length > 2) {
+                                                        value = value.replace(/(\d{2})(\d{3,4})(\d{4})/, '$1-$2-$3');
+                                                    }
+                                                } else if (value.startsWith("010") || value.startsWith("011") || value.startsWith("016") || value.startsWith("017") || value.startsWith("018") || value.startsWith("019")) {
+                                                    if (value.length > 3) {
+                                                        value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                                                    }
+                                                } else {
+                                                    if (value.length > 3) {
+                                                        value = value.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3');
+                                                    }
+                                                }
+                                                this.value = value;
+                                                // 유효성 검사: 휴대폰 또는 지역번호 형식만 허용
+                                                const numericValue = value.replace(/-/g, '');  // 하이픈 제거 후 숫자만 남기기
+                                                if (!phoneRegex.test(numericValue) && !areaCodeRegex.test(numericValue)) {
+                                                    telError.style.display = "block";  // 유효하지 않으면 경고 메시지 표시
+                                                } else {
+                                                    telError.style.display = "none";  // 유효하면 경고 메시지 숨김
                                                 }
                                             });
                                         });
-                                    });
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            const deleteButtons = document.querySelectorAll('.delete-image-btn');
 
-                                    document.addEventListener("DOMContentLoaded", function() {
+                                            deleteButtons.forEach(button => {
+                                                button.addEventListener('click', function () {
+                                                    const imageId = this.getAttribute('data-image-id');
 
-                                        const formFile = document.getElementById('formFile');
-                                        const removeMainImage = document.getElementById('removeMainImage');
-                                        const imgPreview = document.querySelector('.imgpreview');
+                                                    if (!imageId) {
+                                                        alert('이미지 ID가 유효하지 않습니다.');
+                                                        return;
+                                                    }
 
-                                        const formFilede = document.getElementById('formFilede');
-                                        const imgPreviewInput = document.querySelector('.imgpreviewinput');
+                                                    if (confirm('이미지를 삭제하시겠습니까?')) {
+                                                        fetch(`/brand/deleteImage/${imageId}`, {
+                                                            method: 'DELETE',
+                                                            headers: {
+                                                                'Content-Type': 'application/json'
+                                                            }
+                                                        })
+                                                            .then(response => {
+                                                                if (response.ok) {
+                                                                    const isMainImage = this.closest('#image-main') !== null;
 
-                                        formFile.addEventListener('change', function(event) {
-                                            const file = event.target.files[0];
-                                            if (file) {
-                                                const reader = new FileReader();
-                                                reader.onload = function(e) {
-                                                    const img = document.createElement('img');
-                                                    img.src = e.target.result;
-                                                    img.alt = file.name;
-                                                    img.style.width = '350px';
-                                                    img.style.height = 'auto';
-                                                    img.style.objectFit = 'cover';
-
-                                                    imgPreview.innerHTML = '';
-                                                    imgPreview.appendChild(img);
-
-                                                    removeMainImage.style.display = 'block';
-                                                };
-                                                reader.readAsDataURL(file);
-                                            }
+                                                                    if (isMainImage) {
+                                                                        const mainImageContainer = document.getElementById('image-main');
+                                                                        mainImageContainer.innerHTML = '<p>대표 이미지가 없습니다. 대표 이미지를 추가해 주세요.</p>';
+                                                                    } else {
+                                                                        const imageElement = document.getElementById(`image-${imageId}`);
+                                                                        if (imageElement) {
+                                                                            imageElement.remove();
+                                                                        }
+                                                                    }
+                                                                    alert('이미지가 성공적으로 삭제되었습니다.');
+                                                                } else {
+                                                                    alert('이미지 삭제에 실패했습니다.');
+                                                                }
+                                                            })
+                                                            .catch(error => {
+                                                                console.error('Error:', error);
+                                                                alert('오류가 발생했습니다. 다시 시도해주세요.');
+                                                            });
+                                                    }
+                                                });
+                                            });
                                         });
 
-                                        removeMainImage.addEventListener('click', function() {
-                                            formFile.value = '';
-                                            imgPreview.innerHTML = '';
-                                            removeMainImage.style.display = 'none';
-                                        });
+                                        document.addEventListener("DOMContentLoaded", function() {
 
-                                        formFilede.addEventListener('change', function(event) {
-                                            const files = event.target.files;
+                                            const formFile = document.getElementById('formFile');
+                                            const removeMainImage = document.getElementById('removeMainImage');
+                                            const imgPreview = document.querySelector('.imgpreview');
+                                            const formFilede = document.getElementById('formFilede');
+                                            const imgPreviewInput = document.querySelector('.imgpreviewinput');
 
-                                            Array.from(files).forEach((file, index) => {
+                                            formFile.addEventListener('change', function(event) {
+                                                const file = event.target.files[0];
                                                 if (file) {
                                                     const reader = new FileReader();
-
-                                                    reader.onload = function (e) {
-                                                        const imgWrapper = document.createElement('div');
-                                                        imgWrapper.classList.add('img-wrapper');
-                                                        imgWrapper.style.position = 'relative';
-                                                        imgWrapper.style.display = 'inline-block';
-                                                        imgWrapper.style.marginRight = '10px';
-
+                                                    reader.onload = function(e) {
                                                         const img = document.createElement('img');
                                                         img.src = e.target.result;
                                                         img.alt = file.name;
-                                                        img.style.width = '200px';
+                                                        img.style.width = '350px';
                                                         img.style.height = 'auto';
                                                         img.style.objectFit = 'cover';
 
-                                                        const removeButton = document.createElement('button');
-                                                        removeButton.type = 'button';
-                                                        removeButton.textContent = '올리지 않기';
-                                                        removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
-                                                        removeButton.style.top = '5px';
-                                                        removeButton.style.right = '5px';
+                                                        imgPreview.innerHTML = '';
+                                                        imgPreview.appendChild(img);
 
-                                                        removeButton.addEventListener('click', function () {
-                                                            imgWrapper.remove();
-
-                                                            const dataTransfer = new DataTransfer();
-                                                            Array.from(formFilede.files).forEach((f, i) => {
-                                                                if (i !== index) {
-                                                                    dataTransfer.items.add(f);
-                                                                }
-                                                            });
-                                                            formFilede.files = dataTransfer.files;
-                                                        });
-
-                                                        imgWrapper.appendChild(img);
-                                                        imgWrapper.appendChild(removeButton);
-                                                        imgPreviewInput.appendChild(imgWrapper);
+                                                        removeMainImage.style.display = 'block';
                                                     };
-
                                                     reader.readAsDataURL(file);
                                                 }
                                             });
-                                        });
-                                        document.querySelectorAll('.removeImage').forEach(button => {
-                                            button.addEventListener('click', function () {
-                                                const imageId = this.getAttribute('data-id');
-                                                if (confirm('이미지를 삭제하시겠습니까?')) {
-                                                    alert(`Deleting image with ID: ${imageId}`);
-                                                }
+
+                                            removeMainImage.addEventListener('click', function() {
+                                                formFile.value = '';
+                                                imgPreview.innerHTML = '';
+                                                removeMainImage.style.display = 'none';
+                                            });
+
+                                            formFilede.addEventListener('change', function(event) {
+                                                const files = event.target.files;
+
+                                                Array.from(files).forEach((file, index) => {
+                                                    if (file) {
+                                                        const reader = new FileReader();
+
+                                                        reader.onload = function (e) {
+                                                            const imgWrapper = document.createElement('div');
+                                                            imgWrapper.classList.add('img-wrapper');
+                                                            imgWrapper.style.position = 'relative';
+                                                            imgWrapper.style.display = 'inline-block';
+                                                            imgWrapper.style.marginRight = '10px';
+
+                                                            const img = document.createElement('img');
+                                                            img.src = e.target.result;
+                                                            img.alt = file.name;
+                                                            img.style.width = '200px';
+                                                            img.style.height = 'auto';
+                                                            img.style.objectFit = 'cover';
+
+                                                            const removeButton = document.createElement('button');
+                                                            removeButton.type = 'button';
+                                                            removeButton.textContent = '올리지 않기';
+                                                            removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+                                                            removeButton.style.top = '5px';
+                                                            removeButton.style.right = '5px';
+
+                                                            removeButton.addEventListener('click', function () {
+                                                                imgWrapper.remove();
+
+                                                                const dataTransfer = new DataTransfer();
+                                                                Array.from(formFilede.files).forEach((f, i) => {
+                                                                    if (i !== index) {
+                                                                        dataTransfer.items.add(f);
+                                                                    }
+                                                                });
+                                                                formFilede.files = dataTransfer.files;
+                                                            });
+
+                                                            imgWrapper.appendChild(img);
+                                                            imgWrapper.appendChild(removeButton);
+                                                            imgPreviewInput.appendChild(imgWrapper);
+                                                        };
+
+                                                        reader.readAsDataURL(file);
+                                                    }
+                                                });
+                                            });
+                                            document.querySelectorAll('.removeImage').forEach(button => {
+                                                button.addEventListener('click', function () {
+                                                    const imageId = this.getAttribute('data-id');
+                                                    if (confirm('이미지를 삭제하시겠습니까?')) {
+                                                        alert(`Deleting image with ID: ${imageId}`);
+                                                    }
+                                                });
                                             });
                                         });
-                                    });
                                 </script>
                             </div>
                         </div>

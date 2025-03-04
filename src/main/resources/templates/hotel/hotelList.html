@@ -13,12 +13,16 @@
 <th:block layout:fragment="content">
   <h1 class="text-center mt-5">호텔 목록</h1>
 
-  <div class="row mt-3">
-    <div sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="col text-end">
-      <button type="button" onclick="location.href='/hotel/hotelRegister'" class="btn btn-dark">호텔 등록</button>
-    </div>
+  <div th:if="${hotelDTOList.isEmpty() or #lists.size(hotelDTOList) == 0}" class="alert alert-success text-center">
+    <p>호텔정보가 존재하지 않습니다.</p>
   </div>
-
+  
+    <div class="row mt-3">
+      <div sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="col text-end">
+        <button type="button" onclick="location.href='/hotel/hotelRegister'" class="btn btn-dark">호텔 등록</button>
+      </div>
+    </div>
+  
   <div class="row mt-3">
     <div class="col">
       <table class="table table-striped table-hover">
@@ -34,34 +38,36 @@
           <th>상태</th>
         </tr>
         </thead>
-
-        <tbody>
-        <th:block th:each="hotel : ${hotelDTOList}">
-          <tr class="text-center">
-            <td th:text="${hotel.hotel_num}"></td>
-            <td>
-              <a th:href="@{/hotel/hotelRead(hotel_num=${hotel.hotel_num})}">
-                [[${hotel.hotel_name}]]
-              </a>
-            </td>
-            <td th:text="${hotel.business_num}"></td>
-            <td th:text="${hotel.owner}"></td>
-            <td th:text="${hotel.address}"></td>
-            <td th:text="${hotel.tel}"></td>
-            <td th:text="${hotel.score}"></td>
-            <td>
-              <button class="btn btn-danger togglebtn" th:value="${hotel.hotel_num}"
-                      th:data-num="${hotel.hotel_num}">
-                <th:block th:if="${hotel.active_state.name().equals('ACTIVE')}">활성화</th:block>
-                <th:block th:if="${hotel.active_state.name().equals('INACTIVE')}">비활성화</th:block>
-              </button>
-            </td>
-          </tr>
-        </th:block>
-        </tbody>
-      </table>
+        
+          <tbody>
+          <th:block th:each="hotel : ${hotelDTOList}">
+            <tr class="text-center">
+              <td th:text="${hotel.hotel_num}"></td>
+              <td>
+                <a th:href="@{/hotel/hotelRead(hotel_num=${hotel.hotel_num})}">
+                  [[${hotel.hotel_name}]]
+                </a>
+              </td>
+              <td th:text="${hotel.business_num}"></td>
+              <td th:text="${hotel.owner}"></td>
+              <td th:text="${hotel.address}"></td>
+              <td th:text="${hotel.tel}"></td>
+              <td th:text="${hotel.score}"></td>
+              <td>
+                <button class="btn btn-danger togglebtn" th:value="${hotel.hotel_num}"
+                        th:data-num="${hotel.hotel_num}">
+                  <th:block th:if="${hotel.active_state.name().equals('ACTIVE')}">활성화</th:block>
+                  <th:block th:if="${hotel.active_state.name().equals('INACTIVE')}">비활성화</th:block>
+                </button>
+              </td>
+            </tr>
+          </th:block>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+  </th:block>
+
 </th:block>
 
 <script th:inline="javascript" layout:fragment="script">
