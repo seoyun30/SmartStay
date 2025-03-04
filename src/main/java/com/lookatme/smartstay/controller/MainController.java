@@ -163,8 +163,6 @@ public class MainController {
         List<HotelDTO> results;
 
         if (query == null || query.trim().isEmpty()) {
-            results = List.of();
-            model.addAttribute("message","검색어를 입력하세요.");
             results = hotelService.hotelList();
         }else {
             results = hotelService.searchList(query);
