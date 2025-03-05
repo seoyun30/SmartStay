@@ -46,4 +46,5 @@ public class Qna extends BaseEntity{
     @OneToMany(mappedBy = "qna", cascade = CascadeType.ALL)
     private List<Image> imageList = new ArrayList<>(); //이미지
 
+
 }

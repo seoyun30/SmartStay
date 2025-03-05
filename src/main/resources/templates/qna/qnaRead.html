@@ -61,6 +61,7 @@
                 <form action="/qna/qnaRead" method="post" th:object="${qnaDTO}">
                     <!-- 큰 박스를 감싸는 컨테이너 div -->
                     <div class="form-container mt-5">
+                        <input type="hidden" id="loggedInUser" th:value="${loggedInEmail}">
                         <div class="row">
                             <div class="col text-center">
                                 <div class="row form-row">
@@ -79,6 +80,13 @@
                                     <label for="content" class="col-sm-2 col-form-label form-label">내용</label>
                                     <div class="col-sm-10">
                                         <textarea readonly class="form-control" id="content" th:text="${qnaDTO.content}"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row form-row">
+                                    <label for="hotel" class="col-sm-2 col-form-label form-label">호텔명</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" readonly class="form-control" id="hotel" th:value="${qnaDTO.hotelDTO != null ? qnaDTO.hotelDTO.hotel_name : '정보 없음'}">
                                     </div>
                                 </div>
 
@@ -109,7 +117,7 @@
 
                                 <!-- 버튼 영역 -->
                                 <div class="button-container">
-                                    <button type="button" class="btn btn-dark Modbtn" style="float:right">수정</button>
+                                    <button type="button" class="btn btn-dark Modbtn" style="float:right" th:if="${qnaDTO.writer.equals(loggedInEmail)}">수정</button>
                                     <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
                                 </div>
 
@@ -170,30 +178,36 @@
 <script th:inline="javascript" layout:fragment="script">
     let qna_num = document.getElementById("qna_num").value;
 
-    /*
-    // 댓글 관련 버튼들
-    let registerBtn = $(".registerBtn");  // 댓글 등록 버튼
-    let replyText = $(".replyText"); // 댓글 내용
-    let saveBtn = $(".saveBtn"); // 저장 버튼
-    let delBtn = $(".delBtn"); // 삭제 버튼
-    let modBtn = $(".modBtn"); // 수정 버튼
-    let cbtn = $(".cbtn");
-    let regDate = $("#regDate");
-    let modDate = $("#modDate");
 
-    let qnaReplyDTO = {
-        qna_num: qna_num, // qna_num을 전달
-        qnaReply_num: "", // 댓글 번호
-        qnaReply_text: "" // 댓글 내용
-    };*/
+
+        /*
+        // 댓글 관련 버튼들
+        let registerBtn = $(".registerBtn");  // 댓글 등록 버튼
+        let replyText = $(".replyText"); // 댓글 내용
+        let saveBtn = $(".saveBtn"); // 저장 버튼
+        let delBtn = $(".delBtn"); // 삭제 버튼
+        let modBtn = $(".modBtn"); // 수정 버튼
+        let cbtn = $(".cbtn");
+        let regDate = $("#regDate");
+        let modDate = $("#modDate");
+
+        let qnaReplyDTO = {
+            qna_num: qna_num, // qna_num을 전달
+            qnaReply_num: "", // 댓글 번호
+            qnaReply_text: "" // 댓글 내용
+        };*/
 
     // 목록 버튼 클릭시
     $(".Listbtn").on("click", function () {
         location.href = "/qna/qnaList";
     });
 
-    // 수정 버튼 클릭시
+    //수정 버튼 클릭시
     $(".Modbtn").on("click", function () {
+        let loggedInUser = $("#loggedInUser").val(); // 로그인한 사용자 정보 (예: 아이디)
+        let writer = $("#writer").val(); // 게시글 작성자 정보 (예: 아이디)
+        // 작성자가 동일하면 수정 페이지로 이동
+        let qna_num = $("#qna_num").val(); // 게시글 번호 가져오기
         location.href = "/qna/qnaModify?qna_num=" + qna_num;
     });
 

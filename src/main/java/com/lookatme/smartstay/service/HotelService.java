@@ -210,6 +210,7 @@ public class HotelService {
         hotel.setHotel_num(hotelDTO.getHotel_num());
         hotel.setHotel_name(hotelDTO.getHotel_name());
         hotel.setBusiness_num(hotelDTO.getBusiness_num());
+        hotel.setAddress(hotelDTO.getAddress());
         hotel.setOwner(hotelDTO.getOwner());
         hotel.setTel(hotelDTO.getTel());
 

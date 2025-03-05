@@ -9,13 +9,12 @@ import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.ImageService;
-import com.lookatme.smartstay.service.QnaServiceImpl;
+import com.lookatme.smartstay.service.QnaService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.Map;
 @RequestMapping("/qna")
 public class QnaController {
 
-    private final QnaServiceImpl qnaService;
+    private final QnaService qnaService;
     private final ImageService imageService;
     private final MemberRepository memberRepository;
     private final HotelRepository hotelRepository;
@@ -81,18 +81,37 @@ public class QnaController {
 
     //목록
     @GetMapping("/qnaList")
-    public String qnaList(Model model, PageRequestDTO pageRequestDTO) {
+    public String qnaList(Model model, PageRequestDTO pageRequestDTO, Principal principal) {
         log.info("pageRequestDTO: " + pageRequestDTO);
-
-        // 페이징 처리된 QnA 목록을 반환받음
+        String loggedInEmail = null;
+        if (principal != null) {
+            loggedInEmail = principal.getName();
+        }
+        model.addAttribute("loggedInEmail", loggedInEmail);
+        // 페이징 처리된 QnA 목록을 반환받음 (호텔 정보 포함)
         PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagelist(pageRequestDTO);
-
-        // 페이지 응답 DTO를 모델에 추가
+        // QnA 목록을 모델에 추가
         model.addAttribute("pageResponseDTO", pageResponseDTO);
-
         // 추가로, 페이지 관련 정보나 다른 데이터를 넘길 수 있음
         // 예: 현재 페이지, 총 페이지 수, 이전/다음 페이지 상태 등
         return "qna/qnaList";  // qnaList.html 또는 jsp 등으로 반환
+    }
+
+    @GetMapping("/myQnaList")
+    public String myQnaList(Model model, PageRequestDTO pageRequestDTO ,Principal principal) {
+        log.info("pageRequestDTO: " + pageRequestDTO);
+
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
+        /*String loggedInEmail = principal.getName();  // 로그인한 유저의 이메일*/
+       /* List<QnaDTO> myQnaList = qnaService.myQnaList(loggedInEmail)*/
+        PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagemylist(pageRequestDTO, principal.getName());
+
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
+
+        return "qna/myQnaList";  // myQnaList.html 또는 jsp 등으로 반환
     }
 
     //cm목록
@@ -100,17 +119,22 @@ public class QnaController {
     public String cmQnaList(Model model,  PageRequestDTO pageRequestDTO) {
         log.info("pageRequestDTO" + pageRequestDTO);
 
-        PageResponseDTO<QnaDTO> pageResponseDTO1 = qnaService.pagelist(pageRequestDTO);
-        model.addAttribute("pageResponseDTO1", pageResponseDTO1);
+        PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagelist(pageRequestDTO);
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
 
         return "qna/cmQnaList";
     }
 
     //상세
     @GetMapping("/qnaRead")
-    public String qnaRead(Long qna_num, Model model) {
+    public String qnaRead(Long qna_num, Model model, Principal principal, RedirectAttributes redirectAttributes) {
         log.info("컨트롤러 읽기로 들어온 게시글 번호:" + qna_num);
-        //log.info("컨트롤러 읽기로 들어온 게시글 번호:" + qna_num);
+
+        String loggedInEmail = null;
+        if (principal != null) {
+            loggedInEmail = principal.getName();
+        }
+        model.addAttribute("loggedInEmail", loggedInEmail);
 
         if (qna_num == null || qna_num.equals("")) {
             log.info("들어온 id 가 이상함");
@@ -120,8 +144,9 @@ public class QnaController {
         try {
             QnaDTO qnaDTO = qnaService.read(qna_num);
             model.addAttribute("qnaDTO", qnaDTO);
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             log.info("id로 값을 찾지 못함");
+            redirectAttributes.addFlashAttribute("errorMessage", "해당 게시글을 찾을 수 없습니다.");
             return "redirect:/qna/qnaList";
         }
 
@@ -159,10 +184,10 @@ public class QnaController {
         if (bindingResult.hasErrors()) {
             log.info("유효성검사 확인!!");
             log.info(bindingResult.getAllErrors()); //유효성 내용 콘솔창에 출력
-            return "qna/qnaList";
+            return "redirect:qna/qnaModify";
         }
 
-        return "redirect:/qna/qnaList"; //+pageRequestDTO.getLink()
+        return "redirect:/qna/myQnaList"; //+pageRequestDTO.getLink()
     }
 
     //삭제
@@ -170,7 +195,7 @@ public class QnaController {
     public String qnaDelete(Long qna_num) {
         log.info(qna_num);
         qnaService.del(qna_num);
-        return "redirect:/qna/qnaList";
+        return "redirect:/qna/myQnaList";
     }
 
     //조회수 상승 코드(REST 방식)

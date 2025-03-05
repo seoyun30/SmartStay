@@ -32,7 +32,7 @@
                         <div class="mb-3">
                             <label for="business_num" class="form-label">사업자번호</label>
                             <input type="text" min="0" class="form-control" th:field="*{business_num}" id="business_num" placeholder="번호만 입력하세요." required>
-                            <p id="businessNumError" class="text-danger" style="display: none;">유효한 사업자번호를 입력하세요.</p>
+                            <p id="businessNumError" class="text-danger" style="display: none;">유효한 사업자번호를 입력하세요.(예: 123-11-45678)</p>
                             <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
                         </div>
                     </div>
@@ -111,8 +111,8 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="tel" class="form-label">연락처</label>
-                            <input type="text" class="form-control" th:field="*{tel}" id="tel" placeholder="전화번호 입력 (예: 031-123-4567)">
-                            <p id="telError" class="text-danger" style="display: none;">유효한 전화번호를 입력하세요.</p>
+                            <input type="text" class="form-control" th:field="*{tel}" id="tel" placeholder="번호만입력하세요.">
+                            <p id="telError" class="text-danger" style="display: none;">유효한 전화번호를 입력하세요.(예: 031-123-4567)</p>
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
                     </div>
@@ -145,54 +145,100 @@
 
                             document.addEventListener("DOMContentLoaded", function() {
 
+                                const form = document.getElementById('hotelForm');
                                 const businessNumInput = document.getElementById('business_num');
                                 const businessNumError = document.getElementById("businessNumError");
                                 const telInput = document.getElementById('tel');
                                 const telError = document.getElementById("telError");
+                                const hotelNameInput = document.getElementById("hotel_name");
+                                const hotelNameError = document.getElementById("hotelNameError");
+                                const ownerInput = document.getElementById("owner");
+                                const ownerError = document.getElementById("ownerError");
                                 const formFile = document.getElementById('formFile');
                                 const imgPreview = document.querySelector('.imgpreview');
                                 const removeMainImage = document.getElementById('removeMainImage');
                                 const formFilede = document.getElementById('formFilede');
                                 const imgPreviewInput = document.querySelector('.imgpreviewinput');
 
-                                // 법인사업자번호: 숫자만 입력 가능 + 유효성 검사
+                                // 사업자번호 자동 하이픈 추가 + 유효성 검사
                                 businessNumInput.addEventListener('input', function () {
-                                    let value = this.value;
-                                    const numericValue = value.replace(/[^0-9]/g, ''); // 숫자만 남기기
-                                    if (value !== numericValue) {
-                                        businessNumError.style.display = "block"; // 유효하지 않으면 경고 메시지 표시
-                                    } else {
-                                        businessNumError.style.display = "none"; // 유효하면 경고 메시지 숨김
-                                    }
-                                    this.value = numericValue; // 숫자가 아닌 문자는 자동 제거
+                                    let value = this.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
+                                    if (value.length > 10) value = value.substring(0, 10); // 10자리 이상 입력 방지
+                                    // 하이픈 자동 추가
+                                    if (value.length > 3) {
+                                        value = value.replace(/(\d{3})(\d{0,2})(\d{0,5})/, '$1-$2-$3');
+                                    }this.value = value;
+                                    // 유효성 검사: 정확히 10자리인지 확인
+                                    businessNumError.style.display = value.replace(/-/g, '').length === 10 ? "none" : "block";
                                 });
 
                                 // 전화번호 자동 하이픈 추가 + 유효성 검사
                                 telInput.addEventListener('input', function () {
-                                    let value = this.value.replace(/[^0-9]/g, '');  // 숫자 이외의 문자 제거
-                                    const phoneRegex = /^(010|011|016|017|018|019)(\d{4})(\d{4})$/;  // 휴대폰 번호 패턴
-                                    const areaCodeRegex = /^(02)(\d{3,4})(\d{4})$|^(0[3-9][0-9])(\d{3,4})(\d{4})$/;  // 지역번호 패턴
+                                    let value = this.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
+
                                     // 전화번호 형식 변환
                                     if (value.startsWith("02")) {
-                                        if (value.length > 2) {
-                                            value = value.replace(/(\d{2})(\d{3,4})(\d{4})/, '$1-$2-$3');
+                                        // '02' 지역번호는 10자리로 제한하고, 형식은 '02-xxx-xxxx'
+                                        if (value.length > 9) { // 02-xxx-xxxx (10자리로 제한)
+                                            value = value.substring(0, 9);
                                         }
-                                    } else if (value.startsWith("010") || value.startsWith("011") || value.startsWith("016") || value.startsWith("017") || value.startsWith("018") || value.startsWith("019")) {
-                                        if (value.length > 3) {
-                                            value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                                        value = value.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3'); // 02-xxx-xxxx 형식
+                                    } else if (["010", "011", "016", "017", "018", "019"].includes(value.substring(0, 3))) {
+                                        // 휴대폰 번호 (11자리, 형식: 010-xxxx-xxxx)
+                                        if (value.length > 11) { // 010-xxxx-xxxx (11자리로 제한)
+                                            value = value.substring(0, 11);
                                         }
+                                        value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'); // 010-xxxx-xxxx 형식
                                     } else {
-                                        if (value.length > 3) {
-                                            value = value.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3');
+                                        // 지역번호 (다른 지역번호: 032-xxx-xxxx와 같은 10자리 형식)
+                                        if (value.length > 10) { // 10자리로 제한
+                                            value = value.substring(0, 10);
                                         }
+                                        value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'); // xxx-xxx-xxxx 형식
                                     }
+
                                     this.value = value;
-                                    // 유효성 검사: 휴대폰 또는 지역번호 형식만 허용
-                                    const numericValue = value.replace(/-/g, '');  // 하이픈 제거 후 숫자만 남기기
-                                    if (!phoneRegex.test(numericValue) && !areaCodeRegex.test(numericValue)) {
-                                        telError.style.display = "block";  // 유효하지 않은 경우 경고 메시지 표시
+
+                                    // 하이픈 제거 후 숫자만 남기기
+                                    const numericValue = value.replace(/-/g, '');
+
+                                    // 유효성 검사 (휴대폰 번호는 11자리, 지역번호는 10자리만 허용)
+                                    if ((["010", "011", "016", "017", "018", "019"].includes(numericValue.substring(0, 3)) && numericValue.length === 11) ||
+                                        (numericValue.startsWith('02') && numericValue.length === 10) ||
+                                        (numericValue.length === 10 && !numericValue.startsWith('02'))) {
+                                        telError.style.display = "none"; // 유효하면 에러 메시지 숨기기
                                     } else {
-                                        telError.style.display = "none";  // 유효하면 경고 메시지 숨김
+                                        telError.style.display = "block"; // 유효하지 않으면 에러 메시지 보이기
+                                    }
+                                });
+
+                                // 호텔 이름 유효성 검사
+                                hotelNameInput.addEventListener("input", function () {
+                                    const valid = /^[a-zA-Z가-힣\s]+$/.test(this.value.trim()); // 한글, 영어, 공백만 허용
+                                    hotelNameError.style.display = valid ? "none" : "block"; // 유효성 검사
+                                });
+
+                                // 대표자 이름 유효성 검사
+                                ownerInput.addEventListener("input", function () {
+                                    const valid = /^[a-zA-Z가-힣]+$/.test(this.value.trim()); // 한글, 영어만 허용
+                                    ownerError.style.display = valid ? "none" : "block"; // 유효성 검사
+                                });
+
+                                // 폼 제출 시 유효성 검사
+                                form.addEventListener("submit", function(event) {
+                                    const hotelNameValid = /^[a-zA-Z가-힣\s]+$/.test(hotelNameInput.value.trim());
+                                    const ownerValid = /^[a-zA-Z가-힣]+$/.test(ownerInput.value.trim());
+                                    const businessNumValid = businessNumInput.value.replace(/-/g, '').length === 10;
+                                    const telValid = telPattern.test(telInput.value);
+
+                                    // 유효성 검사 실패 시, 제출 방지
+                                    if (!hotelNameValid || !ownerValid || !businessNumValid || !telValid) {
+                                        event.preventDefault(); // 폼 제출 방지
+                                        alert("입력값을 확인하세요. 호텔 이름, 대표자 이름, 사업자번호, 전화번호가 올바르지 않습니다.");
+                                        if (!hotelNameValid) hotelNameInput.focus();
+                                        if (!ownerValid) ownerInput.focus();
+                                        if (!businessNumValid) businessNumInput.focus();
+                                        if (!telValid) telInput.focus();
                                     }
                                 });
 
@@ -269,6 +315,7 @@
                                             };
 
                                             reader.readAsDataURL(file);
+
                                         }
                                     });
                                 });
