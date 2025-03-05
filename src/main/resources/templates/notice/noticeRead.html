@@ -65,10 +65,10 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12">
-                                    <button type="button" th:onclick="|location.href='@{/notice/noticeModify(notice_num=${noticeDTO.notice_num})}'|" class="btn btn-dark">수정</button>
+                                <div class="col-12 text-center">
                                     <button type="button" onclick="location.href='/notice/noticeList'"class="btn btn-primary">목록</button>
-                                    <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
+                                    <button type="button" th:onclick="|location.href='@{/notice/noticeModify(notice_num=${noticeDTO.notice_num})}'|" class="btn btn-dark">수정</button>
+                                    <button type="button" class="btn btn-danger delnotice" >삭제</button>
                                 </div>
                             </div>
                         </div>
@@ -78,9 +78,45 @@
         </div>
     </div>
 
-    <form id="deleteForm" action="/notice/noticeDelete" method="post" style="display:none;">
-        <input type="hidden" name="id" th:value="${noticeDTO.notice_num}" />
-    </form>
+    <script th:inline="javascript">
+
+        $(document).ready(function () {
+            let delete_image_btn = $(".delete_image_btn")
+            let formObj =$("form");
+            let delnotice = $(".delnotice");
+            let notice_num = [[${noticeDTO.notice_num}]]
+
+            delnotice.on("click" ,function () {
+                const isdel = confirm("삭제하시겠습니까??")
+
+
+                if(isdel){
+                    formObj.attr("action", "/notice/noticeDelete")
+                            .attr("method", "post");
+                    let str = `<input name="notice_num" value="${notice_num}">`
+                    formObj.html(str);
+                    formObj.submit();
+
+
+                }
+            })
+
+
+
+            delete_image_btn.on("click", function () {
+
+                $(this).parent().hide()
+
+                let str = `<input name="delnumList" type="hidden" value="${delete_image_btn.val()}">`
+                formObj.append(str)
+
+
+            })
+
+
+        })
+
+    </script>
 
 </th:block>
 

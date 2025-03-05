@@ -52,12 +52,12 @@
                                 <div id="image-main">
                                     <label class="form-label">
                                         첨부 이미지<br>
-                                        <div class="row row-cols-md-2 ">
+                                        <div class="row row-cols-md-2">
                                         <th:block th:each="img : ${noticeDTO.imageDTOList}">
 
                                                 <div class="col position-relative">
                                                     <img th:src="${img.image_url}" alt="Main Image" width="100%">
-                                                    <button type="button" th:value="${img.image_id}" class="btn btn-dark delete_image_btn position-absolute  top-0 start-0 ms-3">삭제</button>
+                                                    <button type="button" th:value="${img.image_id}" class="btn btn-dark delete_image_btn position-absolute  top-0 end-0 me-3">삭제</button>
                                                 </div>
 
 
@@ -78,9 +78,9 @@
                         </div>
 
 
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-dark">저장</button>
+                        <div class="col-12 text-center">
                             <button type="button" class="btn btn-primary" onclick="location.href='/notice/noticeList'">목록</button>
+                            <button type="submit" class="btn btn-dark">저장</button>
                             <button type="button" class="btn btn-danger delnotice" >삭제</button>
                         </div>
                     </div>
@@ -122,7 +122,7 @@
 
                     let str = `<div class="preview">
                                                 <img width="300px"  src="${e.target.result}">
-                                                <button type="button" class="bb">올리지 않기</button>
+                                                <button type="button" class="bb btn-sm btn-secondary">올리지 않기</button>
                                               </div>`
                     $(".imgpreviewinput").val("")
                     $(".aa").append(str)

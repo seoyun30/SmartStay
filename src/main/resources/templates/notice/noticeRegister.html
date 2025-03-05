@@ -7,96 +7,105 @@
     <title>공지사항등록</title>
 </head>
 <body>
-<div layout:fragment="content">
-    <div class="row">
+<th:block layout:fragment="content">
 
-        <div class="col-8 offset-2">
-            <form th:action="@{/notice/noticeRegister}" method="post" th:object="${noticeDTO}" enctype="multipart/form-data">
-                <h2 class="mb-3 text-center">공지사항 등록</h2>
-                <div class="card">
-                    <!--제목-->
-                    <div class="card-header bg-white">
-                        <div class="input-group mt-2 my-3">
-                            <label for="validationDefault01" class="form-label mr-2">제목</label>
-                            <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></span>
-                            <input type="text" th:field="*{title}" class="form-control" id="validationDefault01" name="title" required placeholder="제목을 입력하세요.">
-                        </div>
-                    </div>
-                    <div class="card-body" style="height: 500px;"><!--공지사항글 제품-->
-                        <!--id와 name은 DTO에 변수명으로 작업-->
-                        <div class="input-group mt-1 my-3" style="height: 88%">
-                            <label for="validationDefault01" class="form-label mr-2">내용</label>
-                            <span th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></span>
-                            <textarea type="text" th:field="*{content}" class="form-control" id="validationDefault02" name="content" required placeholder="내용을 입력하세요."></textarea>
+    <form th:action="@{/notice/noticeRegister}" method="post" th:object="${noticeDTO}" enctype="multipart/form-data">
+
+        <div class="row">
+            <div class="col-6 offset-3">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3 mt-5 text-center">
+                            <h1 class="mb-3 text-center">공지사항 등록</h1>
                         </div>
                     </div>
 
-                        <div class="aa">
-                            <input type="file" name="multipartFileList" class="imgpreviewinput" ><br>
-
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">제목</label>
+                            <input type="text" th:field="*{title}" class="form-control" id="title" name="title">
+                            <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></p>
                         </div>
-                        <script>
-                            $(".imgpreviewinput").on("change", function () {
-                                readURL(this)
-                            })
-                            $(".aa").on("click", "button", function () {
-
-                                $(this).parent().remove("")
-                            })
-                            function readURL(input) {
-                                if (input.files && input.files[0]) {
-
-
-                                    var reader = new FileReader();
-                                    reader.onload = function(e) {
-
-                                        let inputtag = document.createElement("input")
-
-                                        inputtag.type = "file"
-                                        inputtag.name = "multipartFileList"
-
-                                        const dataTranster = new DataTransfer();
-                                        const $fileDatas = Array.from(input.files);
-                                        $fileDatas.forEach(file =>  dataTranster.items.add(file) );
-                                        inputtag.files = dataTranster.files;
-
-                                        let str = `<div class="preview">
-                                                <img width="300px"  src="${e.target.result}">
-                                                <button type="button" class="bb">올리지 않기</button>
-                                              </div>`
-                                        $(".imgpreviewinput").val("")
-                                        $(".aa").append(str)
-                                        document.querySelector(".aa").lastChild.appendChild(inputtag)
-                                        inputtag.style.display = 'none'
-                                        // document.getElementById('preview').src = e.target.result;
-                                        // document.querySelector(".aa").innerHTML = "<button type='button' class='bb'>올리지 않기</button>"
-                                    };
-                                    reader.readAsDataURL(input.files[0]);
-                                }
-                            }
-
-
-
-                        </script>
-
-                    <div class="card-footer d-flex justify-content-center">
-                        <input type="hidden" name="hotel_name" th:value="${hotel_name}" />
-
-
-
-
-                        <button type="button" class="btn btn-primary mr-2"
-                                th:onclick="|location.href='@{/notice/noticeList}'|">목록</button>
-                        <button type="submit" class="btn btn-dark mr-2">등록</button>
-                        <!--@{주소}, 문자열+주소 |문자열@{주소}|-->
                     </div>
+
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="content" class="form-label mr-2">내용</label>
+                            <textarea type="text" th:field="*{content}" class="form-control" id="content" name="content"></textarea>
+                            <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <input type="hidden" name="hotel_name" th:value="${hotel_name}" />
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3 imgA">
+                            <label for="formFile" class="form-label">이미지</label>
+                            <div class="aa">
+                                <input type="file" name="multipartFileList" class="form-control imgpreviewinput" id="formFile" ><br>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-primary" onclick="location.href='/notice/noticeList'">목록</button>
+                        <button type="submit" class="btn btn-dark">등록</button>
+                    </div>
+
                 </div>
-            </form>
+            </div>
         </div>
-        <div class="col-3"></div>
-    </div><!--row끝-->
-</div><!--container끝-->
-</div>
+    </form>
+</th:block>
 
+<th:block layout:fragment="script">
+
+    <script th:inline="javascript">
+
+        $(".imgpreviewinput").on("change", function () {
+            readURL(this)
+        })
+        $(".aa").on("click", "button", function () {
+
+            $(this).parent().remove("")
+        })
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+
+
+                var reader = new FileReader();
+                reader.onload = function(e) {
+
+                    let inputtag = document.createElement("input")
+
+                    inputtag.type = "file"
+                    inputtag.name = "multipartFileList"
+
+                    const dataTranster = new DataTransfer();
+                    const $fileDatas = Array.from(input.files);
+                    $fileDatas.forEach(file =>  dataTranster.items.add(file) );
+                    inputtag.files = dataTranster.files;
+
+                    let str = `<div class="preview">
+                                                <img width="300px"  src="${e.target.result}">
+                                                <button type="button" class="bb btn-sm btn-secondary">올리지 않기</button>
+                                              </div>`
+                    $(".imgpreviewinput").val("")
+                    $(".aa").append(str)
+                    document.querySelector(".aa").lastChild.appendChild(inputtag)
+                    inputtag.style.display = 'none'
+                    // document.getElementById('preview').src = e.target.result;
+                    // document.querySelector(".aa").innerHTML = "<button type='button' class='bb'>올리지 않기</button>"
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+    </script>
+</th:block>
 </body>
 </html>
