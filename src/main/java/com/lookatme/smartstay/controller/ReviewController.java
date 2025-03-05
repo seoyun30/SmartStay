@@ -6,16 +6,15 @@ import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.ReviewRepository;
 import com.lookatme.smartstay.repository.RoomReserveRepository;
-import com.lookatme.smartstay.service.HotelService;
-import com.lookatme.smartstay.service.MemberService;
-import com.lookatme.smartstay.service.ReviewService;
-import com.lookatme.smartstay.service.RoomReserveService;
+import com.lookatme.smartstay.service.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,6 +46,7 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ModelMapper modelMapper;
     private final ReviewRepository reviewRepository;
+    private final ImageService imageService;
 
 
     //관리자 리뷰 목록 페이지(chief, manager권한)
@@ -180,62 +180,139 @@ public class ReviewController {
 //
     //상세 보기 페이지
     @GetMapping("/reviewRead")
-    public String reviewRead(@RequestParam(required = false) Long review_num, Long hotel_num,
+    public String reviewRead(@RequestParam(required = false) Long rev_num, Long hotel_num,
                              Model model, RedirectAttributes redirectAttributes) {
 
-        if (hotel_num == null) {
-            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 호텔입니다.");
-            return "redirect:/errorPage";
-        }
-
-        if (review_num == null) {
+        if (rev_num == null) {
             redirectAttributes.addFlashAttribute("msg", "존재하지 않는 리뷰입니다.");
             return "redirect:/review/reviewList/" + hotel_num;
         }
 
         try {
             log.info("개별읽기...");
-            ReviewDTO reviewDTO = reviewService.reviewRead(review_num);
+            ReviewDTO reviewDTO = reviewService.reviewRead(rev_num);
+
             log.info("개별정보를 페이지에 전달...");
             model.addAttribute("review", reviewDTO);
+            log.info("받은 정보 : {}", reviewDTO );
 
             if (reviewDTO.getHotelDTO() != null) {
                 model.addAttribute("hotel_name", reviewDTO.getHotelDTO().getHotel_name());
             } else {
-                model.addAttribute("hotel_name", "호텔 없음");
+                model.addAttribute("hotel_name", "해당 호텔 정보가 없습니다.");
             }
             return "review/reviewRead";
         } catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("msg", "리뷰가 없습니다.");
+            redirectAttributes.addFlashAttribute("msg", "해당 리뷰를 찾을 수 없습니다..");
+            return "redirect:/review/reviewList/" + hotel_num;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("msg", "알 수 없는 오류가 발생 되었습니다.");
             return "redirect:/review/reviewList/" + hotel_num;
         }
     }
 
     //수정 페이지
     @GetMapping("/reviewModify")
-    public String reviewModifyGet(Principal principal,
-            PageRequestDTO pageRequestDTO){
+    public String reviewModifyGet(@RequestParam Long rev_num, Principal principal, Model model) {
+
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+        ReviewDTO reviewDTO = reviewService.reviewRead(rev_num);
+
+        if (reviewDTO.getHotelDTO() == null) {
+            throw new IllegalArgumentException("리뷰에 해당하는 호텔을 찾을 수 없습니다.");
+        }
+
+        if (!reviewDTO.getCreate_by().equals(principal.getName())) {
+            throw new SecurityException("수정 권한이 없습니다.");
+        }
+        model.addAttribute("reviewDTO", reviewDTO);
+        log.info("들어옴?" + reviewDTO);
 
         return "review/reviewModify";
     }
 
     @PostMapping("/reviewModify")
-    public String reviewModifyPost(ReviewDTO reviewDTO,
-                                   MemberDTO memberDTO, List<Long> delnumList,
-                                   List<MultipartFile> multipartFileList,
-                                   ImageDTO imageDTO,
-                                   PageRequestDTO pageRequestDTO){
+    public String reviewModifyPost(ReviewDTO reviewDTO, Principal principal, Model model,
+                                   RedirectAttributes redirectAttributes, Long hotel_num,
+                                   @RequestParam(value = "multipartFiles", required = false) List<MultipartFile> multipartFiles,
+                                   @RequestParam(value = "delnumList", required = false) List<Long> delnumList){
 
+        log.info("수정 요청 : {}" , reviewDTO);
 
-        return "redirect:/review/reviewList";
+        if (multipartFiles != null && multipartFiles.stream().allMatch(MultipartFile::isEmpty)) {
+            multipartFiles = null;
+        }
+        if (delnumList != null && delnumList.isEmpty()) {
+            delnumList = null;
+        }
+
+        if (!reviewDTO.getCreate_by().equals(principal.getName())) {
+            throw new SecurityException("수정 권한이 없습니다.");
+        }
+
+        try {
+            reviewService.reviewModify(reviewDTO, multipartFiles, delnumList);
+            redirectAttributes.addFlashAttribute("msg", "리뷰가 수정되었습니다.");
+            return "redirect:/review/reviewList/" + hotel_num;
+        } catch (Exception e) {
+            log.error("수정 실패: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "수정 중 오류가 발생하였습니다.");
+            return "redirect:/review/reviewModify?rev_num=" + reviewDTO.getRev_num() ;
+        }
+
     }
 
     //삭제
     @PostMapping("reviewDelete")
-    public String reviewDelete(Long review_num){
+    public String reviewDelete(@RequestParam("id") Long rev_num, Principal principal, RedirectAttributes redirectAttributes) {
         log.info("삭제 처리...");
 
-        return "redirect:/review/reviewList";
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
+        ReviewDTO reviewDTO = reviewService.reviewRead(rev_num);
+
+        if (!reviewDTO.getCreate_by().equals(principal.getName())) {
+            throw new SecurityException("리뷰 삭제 권한이 없습니다.");
+        }
+
+        try {
+            reviewService.reviewDelete(rev_num);
+            redirectAttributes.addFlashAttribute("successMessage", "삭제 완료");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "삭제 오류 발생");
+        }
+
+        return "redirect:/review/myReviewList";
     }
+
+    @DeleteMapping("/deleteImage/{imageId}")
+    public ResponseEntity<String> deleteImage(@PathVariable("imageId") Long imageId){
+        try {
+            imageService.deleteImage(imageId);
+            return ResponseEntity.ok("이미지가 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            log.error("이미지 삭제 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
+        }
+    }
+
+//    @GetMapping("/searchRead")
+//    public String searchRead(@RequestParam Long hotel_num,
+//                             @RequestParam(defaultValue = "asc") String order,
+//                             @RequestParam(defaultValue = "latest") String sortBy,
+//                             Model model) {
+//
+//        //호텔 정보 조회
+//        HotelDTO hotelDTO = hotelService.read(hotel_num);
+//        model.addAttribute("hotelDTO", hotelDTO);
+//
+//        // 리뷰 정렬 처리
+//        List<ReviewDTO> reviews = reviewService.
+//
+//    }
 
 }
