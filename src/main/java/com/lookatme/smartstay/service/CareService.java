@@ -171,11 +171,19 @@ public class CareService {
         log.info("케어가 삭제되었습니다. care_num:" + id);
     }
 
-    public List<CareDTO> searchList(String query, String sortField, String sortDir) {
+    public List<CareDTO> searchList(String careName, String careDetail, String sortField, String sortDir) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
-        List<Care> cares = careRepository.findByCare_nameContainingIgnoreCaseOrCare_detailContainingIgnoreCase(query, sort);
+        List<Care> cares;
+
+        if (careName != null && !careName.isEmpty()) {
+            cares = careRepository.findByCare_nameContainingIgnoreCase(careName, sort);
+        }else if (careDetail != null && !careDetail.isEmpty()) {
+            cares = careRepository.findByCare_detailContainingIgnoreCase(careDetail, sort);
+        }else {
+            cares = careRepository.findAll(sort);
+        }
 
         if (cares == null || cares.isEmpty()) {
             return Collections.emptyList();

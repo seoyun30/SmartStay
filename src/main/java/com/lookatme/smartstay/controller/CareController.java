@@ -83,7 +83,8 @@ public class CareController {
     public String careList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                            @RequestParam(defaultValue = "care_num") String sortField,
                            @RequestParam(defaultValue = "asc") String sortDir,
-                           @RequestParam(value = "query", required = false) String query) {
+                           @RequestParam(value = "careName", required = false) String careName,
+                           @RequestParam(value = "careDetail", required = false) String careDetail) {
 
         if (principal == null){
             return "redirect:/member/login";
@@ -97,14 +98,15 @@ public class CareController {
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
 
-        if (query == null || query.trim().isEmpty()) {
+        if ((careName == null || careName.trim().isEmpty()) && (careDetail == null || careDetail.trim().isEmpty())) {
             PageResponseDTO<CareDTO> pageResponseDTO = careService.careList(hotelDTO, pageRequestDTO, sortField, sortDir);
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("isSearch", false);
         }else {
-            List<CareDTO> results = careService.searchList(query, sortField, sortDir);
+            List<CareDTO> results = careService.searchList(careName, careDetail, sortField, sortDir);
             model.addAttribute("results", results != null ? results : Collections.emptyList());
-            model.addAttribute("query", query);
+            model.addAttribute("careName", careName);
+            model.addAttribute("careDetail", careDetail);
             model.addAttribute("isSearch", true);
             model.addAttribute("pageResponseDTO", null);
         }

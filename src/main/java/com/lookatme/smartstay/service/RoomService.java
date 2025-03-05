@@ -190,9 +190,9 @@ public class RoomService {
         List<Room> rooms;
 
         if (roomName != null && !roomName.isEmpty()) {
-            rooms = roomRepository.findByRoomNameContainingIgnoreCase(roomName, sort);
+            rooms = roomRepository.findByRoom_nameContainingIgnoreCase(roomName, sort);
         }else if (roomInfo != null && !roomInfo.isEmpty()) {
-            rooms = roomRepository.findByRoomInfoContainingIgnoreCase(roomInfo, sort);
+            rooms = roomRepository.findByRoom_infoContainingIgnoreCase(roomInfo, sort);
         }else {
             rooms = roomRepository.findAll(sort);
         }

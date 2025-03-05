@@ -16,9 +16,10 @@ public interface CareRepository extends JpaRepository<Care, Long> {
     @Query("select c from Care c where c.hotel = :hotel")
     Page<Care> findByHotel(@Param("hotel")Hotel hotel, Pageable pageable);
 
-    @Query("select c from Care c where c.care_name like %:query% or c.care_detail like %:query%")
-    List<Care> findByCare_nameContainingIgnoreCaseOrCare_detailContainingIgnoreCase(@Param("query") String query, Sort sort);
+    @Query("SELECT c FROM Care c WHERE LOWER(c.care_name) LIKE LOWER(CONCAT('%', :careName, '%'))")
+    List<Care> findByCare_nameContainingIgnoreCase(@Param("careName") String careName, Sort sort);
 
-    @Query("select c from Care c")
-    List<Care> findAllCares();
+    @Query("SELECT c FROM Care c WHERE LOWER(c.care_detail) LIKE LOWER(CONCAT('%', :careDetail, '%'))")
+    List<Care> findByCare_detailContainingIgnoreCase(@Param("careDetail") String careDetail, Sort sort);
+
 }
