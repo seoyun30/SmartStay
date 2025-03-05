@@ -8,13 +8,24 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
+        .reviewContent {
+            white-space: pre-wrap;  /* 사용자가 입력한 줄 바꿈(\n)을 그대로 유지 */
+            word-wrap: break-word;  /* 긴 단어가 있을 경우 줄 바꿈 */
+            overflow-wrap: break-word;  /* 단어가 너무 길어지면 줄 바꿈 */
+        }
+
         .short-text {
-            display: -webkit-box;
-            -webkit-line-clamp: 5; /* 5줄까지만 표시 */
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            /*white-space: pre-wrap; !* 줄 바꿈 유지 *!*/
-            word-break: break-word; /* 긴 단어 줄 바꿈 */
+            height: 5em;  /* 최대 5줄까지만 표시 (5줄 높이) */
+            overflow: hidden;  /* 넘치는 내용은 숨기기 */
+        }
+
+        .toggleButton {
+            background: none;
+            border: none;
+            color: blue;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -28,18 +39,18 @@
                     <div class="container d-flex flex-column align-items-center">
                         <!-- 리뷰 카드 -->
                         <div class="card mb-3 p-3" style="width: 55rem;">
-                            <input type="hidden" th:value="${review.create_by}">
-
+                            <input type="hidden" th:value="${review.create_by}"> <!--이거 지우면 자세히보기 작동 안됨-->
+                            <p th:text="${review.create_by}"></p>
                             <p th:text="${review.roomDTO.hotelDTO.hotel_name}">
                             <p th:text="${review.roomDTO.room_name}">룸 타입</p>
                             <p class="score" th:text="${review.score}"></p></p>
 
                             <div class="card-body d-flex flex-column align-items-center">
                                 <p  class="card-text center reviewContent"
-                                    style="width: 40rem; overflow: hidden; border: 1px solid #ccc; border-radius: 10px; padding: 10px;"
+                                    style="white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;"
                                     th:text="${review.content}">
                                 </p>
-                                <button class="btn btn-link toggleButton">>>자세히 보기<<</button>
+                                <button class="toggleButton" style="display: none;">>>자세히 보기<<</button>
                             </div>
 
                             <div class="mt-3 mb-3 imgA">
@@ -52,10 +63,36 @@
                                         </th:block>
                                     </th:block>
                                 </div>
+
+                                <div class="mt-3 row detail-images-container">
+                                    <th:block th:if="${review.imageDTOList.?[repimg_yn != 'Y'].size() > 0}">
+                                        <label class="col-12 form-label">상세 이미지</label>
+                                    </th:block>
+
+                                    <th:block th:each="img, iterStat : ${review.imageDTOList}">
+                                        <th:block th:unless="${img.repimg_yn == 'Y'}">
+                                            <div class="col-6 col-md-6">
+                                                <img class="detail-image" th:src="${img.thumbnail_url}" alt="상세 이미지">
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+                                </div>
                             </div>
 
                             <div class="card" style="position: absolute; bottom: 10px; right: 20px; font-size: 14px; color: gray;">
                                 <td th:text="${review.reg_date}"></td>
+                            </div>
+
+                            <div class="d-grid gap-2 col-6 mb-3 mx-auto">
+                                <button type="button"
+                                        th:onclick="|location.href='@{/review/reviewModify(rev_num=${review.rev_num})}'|"
+                                        class="mt-3 btn btn-dark">내 리뷰수정</button>
+
+                                <!--이미지 삭제 버튼??-->
+                                <form action="/review/reviewDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                    <input type="hidden" name="id" th:value="${review.rev_num}">
+                                    <button type="submit" class="btn btn-danger">내 리뷰 삭제</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -123,18 +160,20 @@
             let originalHeight = content.prop("scrollHeight");
             let maxHeight = parseInt(content.css("line-height")) * 5; // 5줄 높이 계산
 
+            // 리뷰 내용이 너무 길면 짧게 표시
             if (originalHeight > maxHeight) {
                 content.addClass("short-text").css("height", maxHeight + "px");
                 button.show(); // 버튼 표시
             }
 
+            // 버튼 클릭 시, 리뷰 내용 토글
             button.on("click", function () {
                 if (content.hasClass("short-text")) {
                     content.removeClass("short-text").css("height", "auto"); // 전체 내용 표시
-                    button.text(">>자세히 보기<<");
+                    button.text(">>닫기<<");
                 } else {
                     content.addClass("short-text").css("height", maxHeight + "px"); // 다시 축소
-                    button.text(">>닫기<<");
+                    button.text(">>자세히 보기<<");
                 }
             });
         });

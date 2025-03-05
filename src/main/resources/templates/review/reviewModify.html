@@ -1,10 +1,297 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>리뷰 수정</title>
 </head>
 <body>
+<th:block layout:fragment="content">
 
+    <form action="/review/reviewModify" method="post" th:object="${reviewDTO}" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-6 offset-3">
+                <div class="row">
+                    <input type="hidden" th:field="*{rev_num}">
+                    <div class="col-12">
+                        <input type="hidden" name="hotel_num" th:value="${reviewDTO.roomDTO.hotelDTO.hotel_num}" id="hotel_num">
+                        <h2 th:text="${reviewDTO.roomDTO.hotelDTO.hotel_name}" id="hotel_name"></h2>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+<!--                            <input type="hidden" name="roomreserveitem_num" th:value="${roomReserveItemDTO.roomreserveitem_num}">-->
+<!--                            <input type="hidden" name="reserve_num" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">-->
+                            <label for="exampleFormControlTextarea1" class="form-label">리뷰 내용</label>
+                            <textarea class="form-control" th:field="*{content}" id="exampleFormControlTextarea1" rows="5"
+                                      placeholder="리뷰 내용을 적어주세요."></textarea>
+                            <div th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
+                        </div>
+                    </div>
+
+                    <!--별점-->
+                    <div class="mb-3 starpoint_wrap">
+                        <select th:field="*{score}"></select>
+                        <div class="starpoint_box">
+                            <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>
+                            <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>
+                            <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>
+                            <label for="starpoint_4" class="label_star" title="2"><span class="blind">2점</span></label>
+                            <label for="starpoint_5" class="label_star" title="2.5"><span class="blind">2.5점</span></label>
+                            <label for="starpoint_6" class="label_star" title="3"><span class="blind">3점</span></label>
+                            <label for="starpoint_7" class="label_star" title="3.5"><span class="blind">3.5점</span></label>
+                            <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>
+                            <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
+                            <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
+                            <input type="radio" name="score" value="0.5" id="starpoint_1" class="star_radio" required>
+                            <input type="radio" name="score" value="1" id="starpoint_2" class="star_radio" required>
+                            <input type="radio" name="score" value="1.5" id="starpoint_3" class="star_radio" required>
+                            <input type="radio" name="score" value="2" id="starpoint_4" class="star_radio" required>
+                            <input type="radio" name="score" value="2.5" id="starpoint_5" class="star_radio" required>
+                            <input type="radio" name="score" value="3" id="starpoint_6" class="star_radio" required>
+                            <input type="radio" name="score" value="3.5" id="starpoint_7" class="star_radio" required>
+                            <input type="radio" name="score" value="4" id="starpoint_8" class="star_radio" required>
+                            <input type="radio" name="score" value="4.5" id="starpoint_9" class="star_radio" required>
+                            <input type="radio" name="score" value="5" id="starpoint_10" class="star_radio" required>
+                            <span class="starpoint_bg"></span>
+                        </div>
+                        <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}"><p>별점</p></div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3">  <!--룸 정보/ 룸 타입-->
+                            <label for="room_info" class="form-label">룸 정보</label>
+                            <input type="text" min="0" class="form-control" th:value="${reviewDTO.roomDTO.room_info}" id="room_info" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3"> <!--가격-->
+                            <label for="room_type"  class="form-label">룸 타입</label>
+                            <input type="text" min="0" class="form-control" th:value="${reviewDTO.roomDTO.room_type}" id="room_type" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">   <!--호텔 이름-->
+                            <label for="room_bed" class="form-label">인원 수</label>
+                            <input type="number" min="0" class="form-control" th:value="${reviewDTO.roomDTO.room_bed}" id="room_bed" readonly>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <input type="hidden" name="delnumList" id="delnumList">
+                        <div class="mb-3">
+                            <div id="image-list">
+                                <div id="image-main">
+                                    <label class="form-label">
+                                        대표 이미지<br>
+                                        <th:block th:each="img : ${reviewDTO.imageDTOList}">
+                                            <th:block th:if="${img.repimg_yn == 'Y'}">
+                                                <img th:src="${img.thumbnail_url}" alt="Main Image" width="250px">
+                                                <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
+                                            </th:block>
+                                        </th:block>
+                                    </label>
+                                </div>
+
+                                <div id="detail-images">
+                                    <label class="form-label">
+                                        상세 이미지<br>
+                                        <th:block th:each="img : ${reviewDTO.imageDTOList}">
+                                            <th:block th:unless="${img.repimg_yn == 'Y'}">
+                                                <div th:id="'image-' + ${img.image_id}">
+                                                    <img th:src="${img.thumbnail_url}" alt="Detail Image" class="mb-1" width="200px">
+                                                    <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
+                                                </div>
+                                            </th:block>
+                                        </th:block>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 imgA">
+                                <label for="formFile" class="form-label">대표 이미지 변경</label>
+                                <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file">
+                                <div class="row main imgpreview"></div>
+                                <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
+
+                                <label for="formFilede" class="form-label">상세 이미지 추가</label>
+                                <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
+                                <div class="row imgpreviewinput"></div>
+                            </div>
+
+                            <div class="col-12 text-center">
+<!--                                <button type="button" class="btn btn-primary" onclick="location.href='/review/reviewList'">목록</button>-->
+                                <button type="submit" class="btn btn-dark">저장</button>
+                                <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-center">
+                        <form class="review info" action="/review/reviewList/{hotel_num}">
+                            <button type="submit" class="btn btn-primary">확인</button>
+                        </form>
+                        <button type="reset" class="btn btn-secondary">초기화</button>
+                        <!--                        <span th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">-->
+                        <!--                            <button type="button" class="btn btn-danger"-->
+                        <!--                                    th:onclick="|location.href='@{/member/myRoomReserveRead(id=${reserve_num})}'|">취소</button>-->
+                        <!--                        </span>-->
+                        <!--                        @{주소}, 문자열+주소 |문자열@{주소}|-->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+    <div class="col-3"></div>
+</th:block><!--container끝-->
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteButtons = document.querySelectorAll('.delete-image-btn');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const imageId = this.getAttribute('data-image-id');
+
+                    if (!imageId) {
+                        alert('이미지 ID가 유효하지 않습니다.');
+                        return;
+                    }
+
+                    if (confirm('이미지를 삭제하시겠습니까?')) {
+                        fetch(`/room/deleteImage/${imageId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    const isMainImage = this.closest('#image-main') !== null;
+
+                                    if (isMainImage) {
+                                        const mainImageContainer = document.getElementById('image-main');
+                                        mainImageContainer.innerHTML = '<p>대표 이미지가 없습니다. 대표 이미지를 추가해 주세요.</p>';
+                                    } else {
+                                        const imageElement = document.getElementById(`image-${imageId}`);
+                                        if (imageElement) {
+                                            imageElement.remove();
+                                        }
+                                    }
+                                    alert('이미지가 성공적으로 삭제되었습니다.');
+                                } else {
+                                    alert('이미지 삭제에 실패했습니다.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('오류가 발생했습니다. 다시 시도해주세요.');
+                            });
+                    }
+                });
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const formFile = document.getElementById('formFile');
+            const removeMainImage = document.getElementById('removeMainImage');
+            const imgPreview = document.querySelector('.imgpreview');
+
+            const formFilede = document.getElementById('formFilede');
+            const imgPreviewInput = document.querySelector('.imgpreviewinput');
+
+            formFile.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        img.style.width = '350px';
+                        img.style.height = 'auto';
+                        img.style.objectFit = 'cover';
+
+                        imgPreview.innerHTML = '';
+                        imgPreview.appendChild(img);
+
+                        removeMainImage.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            removeMainImage.addEventListener('click', function() {
+                formFile.value = '';
+                imgPreview.innerHTML = '';
+                removeMainImage.style.display = 'none';
+            });
+
+            formFilede.addEventListener('change', function(event) {
+                const files = event.target.files;
+
+                Array.from(files).forEach((file, index) => {
+                    if (file) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            const imgWrapper = document.createElement('div');
+                            imgWrapper.classList.add('img-wrapper');
+                            imgWrapper.style.position = 'relative';
+                            imgWrapper.style.display = 'inline-block';
+                            imgWrapper.style.marginRight = '10px';
+
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = file.name;
+                            img.style.width = '200px';
+                            img.style.height = 'auto';
+                            img.style.objectFit = 'cover';
+
+                            const removeButton = document.createElement('button');
+                            removeButton.type = 'button';
+                            removeButton.textContent = '올리지 않기';
+                            removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+                            removeButton.style.top = '5px';
+                            removeButton.style.right = '5px';
+
+                            removeButton.addEventListener('click', function () {
+                                imgWrapper.remove();
+
+                                const dataTransfer = new DataTransfer();
+                                Array.from(formFilede.files).forEach((f, i) => {
+                                    if (i !== index) {
+                                        dataTransfer.items.add(f);
+                                    }
+                                });
+                                formFilede.files = dataTransfer.files;
+                            });
+
+                            imgWrapper.appendChild(img);
+                            imgWrapper.appendChild(removeButton);
+                            imgPreviewInput.appendChild(imgWrapper);
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+            document.querySelectorAll('.removeImage').forEach(button => {
+                button.addEventListener('click', function () {
+                    const imageId = this.getAttribute('data-id');
+                    if (confirm('이미지를 삭제하시겠습니까?')) {
+                        alert(`Deleting image with ID: ${imageId}`);
+                    }
+                });
+            });
+        });
+    </script>
+</th:block>
 </body>
 </html>

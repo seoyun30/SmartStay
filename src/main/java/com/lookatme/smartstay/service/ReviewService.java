@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -170,9 +171,10 @@ public class ReviewService {
     public ReviewDTO reviewRead(Long rev_num) {
 
         Review review = reviewRepository.findById(rev_num)
-                .orElseThrow(EntityNotFoundException::new);  //작성회원이 리뷰를 삭제했을 시
+                .orElseThrow(() -> new EntityNotFoundException("해당하는 리뷰가 존재하지 않습니다." + rev_num ));  //작성회원이 리뷰를 삭제했을 시
 
         ReviewDTO reviewDTO = modelMapper.map(review, ReviewDTO.class);
+
         //호텔 정보연결용
         Hotel hotel = review.getHotel();
         if (hotel != null) { //호텔이 null이 아니라면 호텔 정보 set
@@ -185,6 +187,7 @@ public class ReviewService {
             reviewDTO.setRoomDTO(roomDTO);
         }
 
+        //이미지
         List<Image> imageList = imageRepository.findByTarget("review", rev_num);
 
         if (imageList != null && !imageList.isEmpty()) {
@@ -204,35 +207,16 @@ public class ReviewService {
 
 
     //리뷰 수정(리뷰를 등록한 유저만 가능)
-    public void reviewModify(ReviewDTO reviewDTO, String email, List<MultipartFile> multipartFiles, List<Long> delnumList) {
+    public void reviewModify(ReviewDTO reviewDTO, List<MultipartFile> multipartFiles, List<Long> delnumList) throws Exception {
 
-        log.info(" 가져온 리뷰 :  " + reviewDTO);
+        log.info(" 리뷰 수정 :  " + reviewDTO);
 
         //리뷰 조회 , 없으면 예외발생
-        Review review = reviewRepository.findById(reviewDTO.getRev_num())
-                .orElseThrow(() -> new EntityNotFoundException("해당 리뷰를 찾을 수 없습니다."));
-
-        //수정자 정보확인
-        Member member = memberRepository.findByEmail(email);
-        if (member == null) {
-            throw new IllegalArgumentException("이메일에 해당하는 작성자 정보를 찾을 수 없습니다.");
-        }
-        if (review.getMember() == null || review.getCreate_by() == null) {
-            throw new IllegalArgumentException("리뷰 작성자 정보가 올바르지 않습니다.");
-        }
-
-        //권한 확인: 리뷰작성자와 수정하려는 회원이 일치하는지
-        if (!review.getMember().getEmail().equals(email)) {
-            throw new SecurityException("리뷰를 수정할 권한이 없습니다.");
-        }
+        Review review = reviewRepository.findById(reviewDTO.getRev_num()).orElseThrow(EntityNotFoundException::new);
 
         //리뷰 업데이트
-//        review.setRev_num(reviewDTO.getRev_num()); // 리뷰 번호 등록 그대로 사용
         review.setScore(reviewDTO.getScore());    //별점
         review.setContent(reviewDTO.getContent()); //리뷰 내용
-        review.setModi_date(LocalDateTime.now()); // 지금 시간으로 수정한 시간 설정
-        review.setModified_by(member.getEmail()); //// 수정자 정보 설정(로그인한 사용자의 이메일로 설정)
-//        review.setCreate_by(reviewDTO.getCreate_by()); // 작성자 정보가 변경 불가로 주석 처리
 
         reviewRepository.save(review);
 
@@ -261,20 +245,30 @@ public class ReviewService {
 
 
     //리뷰 삭제(작성한 본인 리뷰만 가능)
-    public void reviewDelete(Long id, String email) {
+    @Transactional
+    public void reviewDelete(Long id) {
         log.info("서비스로 들어온 삭제할 번호 :" + id);
 
-        // 리뷰를 작성한 사용자만 삭제 가능으로 추가
-        // 1. 리뷰 조회
-        Review review = reviewRepository.findById(id)
-                        .orElseThrow(()-> new EntityNotFoundException("해당 리뷰를 찾을 수 없습니다."));
+        List<Image> images = imageRepository.findByTarget("review", id);
 
-        //2. 권한 확인 : 작성자와 삭제 요청자를 이메일로 비교
-        if (!review.getMember().getEmail().equals(email)) {
-            throw new SecurityException("리뷰를 삭제할 권한이 없습니다.");
+        if (images == null && images.isEmpty()) {
+            log.error("삭제하려는 이미지가 없습니다. rev_num : " + id);
+        } else {
+            for (Image image : images) {
+                try {
+                    imageService.deleteImage(image.getImage_id());
+                    log.info("삭제된 이미지 id : " + image.getImage_id());
+                } catch (Exception e) {
+                    log.error("이미지 삭제 실패 : " + e.getMessage());
+                }
+            }
         }
 
+        // 1. 리뷰 조회
+
+
         reviewRepository.deleteById(id);
+        log.info("리뷰 삭제 완료 rev_num : " + id);
     }
 
 
@@ -286,6 +280,20 @@ public class ReviewService {
 
         return null;
     }
+
+
+//    public List<ReviewDTO> getSortedReviews (Long hotel_num, String sortBy, int limit) {
+//
+//        List<Review> reviews = reviewRepository.findByHotel(hotel_num);
+//
+//        switch (sortBy.toLowerCase()) {
+//            case "latest":
+//                reviews.sort(Comparator.comparing(ReviewDTO::getReg_date).reversed());
+//                break;
+//        }
+//    }
+
+
 
 
 
