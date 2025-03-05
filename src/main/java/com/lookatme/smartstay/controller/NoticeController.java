@@ -228,6 +228,14 @@ public class NoticeController {
             log.error(result.getAllErrors());
             return "/notice/noticeModify";
         }
+        log.info("들어온 사진");
+
+        for ( MultipartFile  multipartFile : multipartFileList) {
+            log.info(multipartFile.getOriginalFilename());
+        }
+        log.info("삭제할 값들");
+        log.info(delnumList);
+        log.info(delnumList);
 
 
         if (multipartFileList != null && multipartFileList.stream().allMatch(MultipartFile::isEmpty)) {
@@ -238,6 +246,11 @@ public class NoticeController {
         }
 
         String email = principal.getName();
+
+        if(memberService.findbyEmail(email).getRole().name().equals("user")){
+
+        }
+
 
         try {
             if(multipartFileList != null && !multipartFileList.isEmpty()){
@@ -258,9 +271,9 @@ public class NoticeController {
     }
 
     @PostMapping("/noticeDelete")
-    public String noticeDelete(Long notice_num, String email){
+    public String noticeDelete(Long notice_num, Principal principal){
         log.info("삭제 처리...");
-        noticeService.noticeDelete(notice_num, email);
+        noticeService.noticeDelete(notice_num, principal.getName());
 
         return "redirect:/notice/noticeList";
     }

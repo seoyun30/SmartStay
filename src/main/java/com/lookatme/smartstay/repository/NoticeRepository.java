@@ -32,7 +32,16 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>  {
             "WHERE n.title LIKE CONCAT('%', :keyword, '%') " +
             "  OR n.brand.brand_name LIKE CONCAT('%', :keyword, '%')" +
             "  OR n.hotel.hotel_name LIKE CONCAT('%', :keyword, '%')")
+    Page<Notice> userSearchNotice1(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT n FROM Notice n " +
+            "left join Brand b on n.brand.brand_num = b.brand_num " +
+            "left join Hotel h  on n.hotel.hotel_num = h.hotel_num " +
+            "where n.title like CONCAT('%', :keyword, '%') " +
+            "   or h.hotel_name like CONCAT('%', :keyword, '%') " +
+            "   or b.brand_name like  CONCAT('%', :keyword, '%')")
     Page<Notice> userSearchNotice(@Param("keyword") String keyword, Pageable pageable);
+
 
     @Query("select n from  Notice  n")
     Page<Notice> AllNotice(Pageable pageable);

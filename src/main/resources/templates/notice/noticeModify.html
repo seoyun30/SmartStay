@@ -40,58 +40,48 @@
 
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" style="width: 140px">작성날짜</span>
-                                    <input type="text" class="form-control" th:value="${#temporals.format(noticeDTO.reg_date, 'yyyy-MM-dd')}" name="reg_date">
+                                    <input type="text" class="form-control" th:value="${#temporals.format(noticeDTO.reg_date, 'yyyy-MM-dd')}" >
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-12">
-                        <input type="hidden" name="delnumList" id="delnumList">
                         <div class="mb-3">
                             <div id="image-list">
                                 <div id="image-main">
                                     <label class="form-label">
                                         첨부 이미지<br>
+                                        <div class="row row-cols-md-2 ">
                                         <th:block th:each="img : ${noticeDTO.imageDTOList}">
-                                            <th:block th:if="${img.repimg_yn == 'N'}">
-                                                <img th:src="${img.image_url}" alt="Main Image" width="250px">
-                                                <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
-                                            </th:block>
+
+                                                <div class="col position-relative">
+                                                    <img th:src="${img.image_url}" alt="Main Image" width="100%">
+                                                    <button type="button" th:value="${img.image_id}" class="btn btn-dark delete_image_btn position-absolute  top-0 start-0 ms-3">삭제</button>
+                                                </div>
+
+
                                         </th:block>
+                                        </div>
                                     </label>
                                 </div>
 
-                                <div id="detail-images">
-                                    <label class="form-label">
-                                        상세 이미지<br>
-                                        <th:block th:each="img : ${noticeDTO.imageDTOList}">
-                                            <th:block th:unless="${img.repimg_yn == 'N'}">
-                                                <div th:id="'image-' + ${img.image_id}">
-                                                    <img th:src="${img.image_url}" alt="Detail Image" class="mb-1" width="200px">
-                                                    <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
-                                                </div>
-                                            </th:block>
-                                        </th:block>
-                                    </label>
-                                </div>
+
                             </div>
 
-                        <div class="mb-3 imgA">
-                            <label for="formFile" class="form-label">이미지 변경</label>
-                            <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file">
-                            <div class="row main imgpreview"></div>
-                            <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
-
-                            <label for="formFilede" class="form-label">상세 이미지 추가</label>
-                            <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
-                            <div class="row imgpreviewinput"></div>
                         </div>
+
+                        <div class="aa mb-3">
+                            <label for="imgpreviewinput" class="form-label">이미지 추가</label>
+                            <input type="file" name="multipartFileList" id="imgpreviewinput" class="form-control imgpreviewinput" ><br>
+
+                        </div>
+
 
                         <div class="col-12">
                             <button type="submit" class="btn btn-dark">저장</button>
                             <button type="button" class="btn btn-primary" onclick="location.href='/notice/noticeList'">목록</button>
-                            <button type="button" class="btn btn-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) {document.getElementById('deleteForm').submit();}">삭제</button>
+                            <button type="button" class="btn btn-danger delnotice" >삭제</button>
                         </div>
                     </div>
                 </div>
@@ -99,155 +89,88 @@
         </div>
     </form>
 
-    <form id="deleteForm" action="/notice/noticeDelete" method="post" style="display:none;">
-        <input type="hidden" name="id" th:value="${noticeDTO.notice_num}">
-    </form>
+
 
 </th:block>
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const deleteButtons = document.querySelectorAll('.delete-image-btn');
+        $(".imgpreviewinput").on("change", function () {
+            readURL(this)
+        })
+        $(".aa").on("click", "button", function () {
 
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const imageId = this.getAttribute('data-image-id');
+            $(this).parent().remove("")
+        })
+        function readURL(input) {
+            if (input.files && input.files[0]) {
 
-                    if (!imageId) {
-                        alert('이미지 ID가 유효하지 않습니다.');
-                        return;
-                    }
 
-                    if (confirm('이미지를 삭제하시겠습니까?')) {
-                        fetch(`/notice/deleteImage/${imageId}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                            .then(response => {
-                                if (response.ok) {
-                                    const isMainImage = this.closest('#image-main') !== null;
+                var reader = new FileReader();
+                reader.onload = function(e) {
 
-                                    if (isMainImage) {
-                                        const mainImageContainer = document.getElementById('image-main');
-                                        mainImageContainer.innerHTML = '<p>대표 이미지가 없습니다. 대표 이미지를 추가해 주세요.</p>';
-                                    } else {
-                                        const imageElement = document.getElementById(`image-${imageId}`);
-                                        if (imageElement) {
-                                            imageElement.remove();
-                                        }
-                                    }
-                                    alert('이미지가 성공적으로 삭제되었습니다.');
-                                } else {
-                                    alert('이미지 삭제에 실패했습니다.');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                alert('오류가 발생했습니다. 다시 시도해주세요.');
-                            });
-                    }
-                });
-            });
-        });
+                    let inputtag = document.createElement("input")
 
-        document.addEventListener("DOMContentLoaded", function() {
+                    inputtag.type = "file"
+                    inputtag.name = "multipartFileList"
 
-            const formFile = document.getElementById('formFile');
-            const removeMainImage = document.getElementById('removeMainImage');
-            const imgPreview = document.querySelector('.imgpreview');
+                    const dataTranster = new DataTransfer();
+                    const $fileDatas = Array.from(input.files);
+                    $fileDatas.forEach(file =>  dataTranster.items.add(file) );
+                    inputtag.files = dataTranster.files;
 
-            const formFilede = document.getElementById('formFilede');
-            const imgPreviewInput = document.querySelector('.imgpreviewinput');
+                    let str = `<div class="preview">
+                                                <img width="300px"  src="${e.target.result}">
+                                                <button type="button" class="bb">올리지 않기</button>
+                                              </div>`
+                    $(".imgpreviewinput").val("")
+                    $(".aa").append(str)
+                    document.querySelector(".aa").lastChild.appendChild(inputtag)
+                    inputtag.style.display = 'none'
+                    // document.getElementById('preview').src = e.target.result;
+                    // document.querySelector(".aa").innerHTML = "<button type='button' class='bb'>올리지 않기</button>"
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
-            formFile.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.alt = file.name;
-                        img.style.width = '350px';
-                        img.style.height = 'auto';
-                        img.style.objectFit = 'cover';
 
-                        imgPreview.innerHTML = '';
-                        imgPreview.appendChild(img);
+        $(document).ready(function () {
+            let delete_image_btn = $(".delete_image_btn")
+            let formObj =$("form");
+            let delnotice = $(".delnotice");
+            let notice_num = [[${noticeDTO.notice_num}]]
 
-                        removeMainImage.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
+            delnotice.on("click" ,function () {
+                const isdel = confirm("삭제하시겠습니까??")
+
+
+                if(isdel){
+                    formObj.attr("action", "/notice/noticeDelete")
+                    let str = `<input name="notice_num" value="${notice_num}">`
+                    formObj.html(str);
+                    formObj.submit();
+
+
                 }
-            });
+            })
 
-            removeMainImage.addEventListener('click', function() {
-                formFile.value = '';
-                imgPreview.innerHTML = '';
-                removeMainImage.style.display = 'none';
-            });
 
-            formFilede.addEventListener('change', function(event) {
-                const files = event.target.files;
 
-                Array.from(files).forEach((file, index) => {
-                    if (file) {
-                        const reader = new FileReader();
+            delete_image_btn.on("click", function () {
 
-                        reader.onload = function (e) {
-                            const imgWrapper = document.createElement('div');
-                            imgWrapper.classList.add('img-wrapper');
-                            imgWrapper.style.position = 'relative';
-                            imgWrapper.style.display = 'inline-block';
-                            imgWrapper.style.marginRight = '10px';
+                $(this).parent().hide()
 
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.alt = file.name;
-                            img.style.width = '200px';
-                            img.style.height = 'auto';
-                            img.style.objectFit = 'cover';
+                let str = `<input name="delnumList" type="hidden" value="${delete_image_btn.val()}">`
+                formObj.append(str)
 
-                            const removeButton = document.createElement('button');
-                            removeButton.type = 'button';
-                            removeButton.textContent = '올리지 않기';
-                            removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
-                            removeButton.style.top = '5px';
-                            removeButton.style.right = '5px';
 
-                            removeButton.addEventListener('click', function () {
-                                imgWrapper.remove();
+            })
 
-                                const dataTransfer = new DataTransfer();
-                                Array.from(formFilede.files).forEach((f, i) => {
-                                    if (i !== index) {
-                                        dataTransfer.items.add(f);
-                                    }
-                                });
-                                formFilede.files = dataTransfer.files;
-                            });
 
-                            imgWrapper.appendChild(img);
-                            imgWrapper.appendChild(removeButton);
-                            imgPreviewInput.appendChild(imgWrapper);
-                        };
+        })
 
-                        reader.readAsDataURL(file);
-                    }
-                });
-            });
-            document.querySelectorAll('.removeImage').forEach(button => {
-                button.addEventListener('click', function () {
-                    const imageId = this.getAttribute('data-id');
-                    if (confirm('이미지를 삭제하시겠습니까?')) {
-                        alert(`Deleting image with ID: ${imageId}`);
-                    }
-                });
-            });
-        });
     </script>
 </th:block>
 </body>

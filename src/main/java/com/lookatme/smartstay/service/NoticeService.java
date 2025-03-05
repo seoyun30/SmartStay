@@ -198,9 +198,7 @@ public class NoticeService {
         log.info(pageRequestDTO);
 
 
-        Pageable pageable = PageRequest.of( pageRequestDTO.getPage() - 1,
-                pageRequestDTO.getSize(),
-                Sort.by("notice_num").descending());
+        Pageable pageable = pageRequestDTO.getPageable("notice_num");
 
         Page<Notice> noticePage;
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
@@ -213,6 +211,7 @@ public class NoticeService {
 
         List<Notice> noticeList = noticePage.getContent();
 
+        log.info("엔티티 리스트");
         noticeList.forEach(notice -> log.info(notice));
 
         if (noticeList == null  || noticeList.isEmpty()) {
@@ -247,7 +246,7 @@ public class NoticeService {
 
 
     //공지 사항 수정
-    public void noticeModify(NoticeDTO noticeDTO, String email, List<MultipartFile> multipartFileList, List<Long> delnumList)   {
+    public void noticeModify(NoticeDTO noticeDTO, String email, List<MultipartFile> multipartFileList, List<Long> delnumList) throws Exception {
 
        Notice notice = noticeRepository.findById(noticeDTO.getNotice_num()).orElseThrow(EntityNotFoundException::new);
 
@@ -255,12 +254,11 @@ public class NoticeService {
                 memberRepository.findByEmail(email);
 
 
-        if(member.getRole() != Role.MANAGER && member.getRole() != Role.CHIEF){
-            throw new SecurityException("수정 권한이 없습니다.");
-        }
+        if (  (notice.getBrand().getBrand_num() != member.getBrand().getBrand_num() )  ||
 
-        if (!notice.getBrand().getBrand_num().equals(member.getBrand().getBrand_num()) &&
-                !notice.getHotel().getHotel_num().equals(member.getHotel().getHotel_num())) {
+                notice.getHotel() != null  && member.getRole().name().equals("MANAGER") &&
+                        notice.getHotel().getHotel_num() != member.getHotel().getHotel_num()
+        ) {
             throw new SecurityException("수정할 수 있는 권한이 없습니다.");
         }
 
@@ -270,27 +268,29 @@ public class NoticeService {
 
         noticeRepository.save(notice);
 
-        boolean hasNewImages = multipartFileList != null && multipartFileList.stream().anyMatch(file -> !file.isEmpty());
-        boolean hasDeletedImages = delnumList != null && !delnumList.isEmpty();
+        //파일등록 리스트 > 반복해서 하나씩 저장
+        if(multipartFileList != null && !multipartFileList.isEmpty()) {
+            for (MultipartFile multipartFile : multipartFileList){
+                if (!multipartFile.isEmpty()) {
+                    String  savedFileName =
+                            fileService.uploadFile(imgUploadLocation , multipartFile);
+                    imageService.saveImageOne(savedFileName ,  multipartFile , notice);
+                }
 
-        if (hasNewImages || hasDeletedImages) {
-            log.info("이미지 업데이트 실행");
-            try {
-                imageService.updateImage(
-                        hasNewImages ? multipartFileList : null,
-                        hasDeletedImages ? delnumList : null,
-                        "notice",
-                        notice.getNotice_num()
-                );
-            } catch (IndexOutOfBoundsException e) {
-                log.error("이미지 업데이트 중 인덱스 오류 발생: {}", e.getMessage());
-                throw new IllegalArgumentException("업로드된 파일이나 삭제 요청이 잘못되었습니다.");
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                throw new RuntimeException(e);
             }
-        } else {
-            log.info("이미지 업데이트 없이 텍스트 정보만 수정");
+        }
+
+
+        //파일삭제
+        if(delnumList != null) {
+            for (Long delnum : delnumList){
+
+                if(delnum != null ){
+                    log.info("삭제 " + delnum);
+                    imageService.deleteImage(delnum);
+                }
+
+            }
         }
 
 
@@ -312,7 +312,20 @@ public class NoticeService {
             throw new SecurityException("삭제할 수 있는 권한이 없습니다.");
         }
 
-        noticeRepository.deleteById(notice_num);
+        List<Image> imageList =
+        imageRepository.findByTarget("notice", notice.getNotice_num());
+        if(imageList != null && !imageList.isEmpty()) {
+            for (Image image : imageList){
+
+                if(image != null ){
+                    log.info("삭제 " + image.getImage_id());
+                    imageService.deleteImage(image.getImage_id());
+                }
+
+            }
+        }
+
+        noticeRepository.delete(notice);
 
     }
 }

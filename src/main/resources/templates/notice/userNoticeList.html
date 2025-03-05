@@ -80,13 +80,13 @@
             <ul class="pagination justify-content-center">
               <th:block th:if="${pageResponseDTO.prev}">
                 <li class="page-item">
-                  <a class="page-link" th:href="@{/notice/noticeList(page=${pageResponseDTO.start -1}, keyword=${pageRequestDTO.keyword})}">이전</a>
+                  <a class="page-link" th:href="@{/notice/userNoticeList(page=${pageResponseDTO.start -1}, keyword=${pageRequestDTO.keyword})}">이전</a>
                 </li>
               </th:block>
 
               <th:block th:each="i: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
                 <li class="page-item">
-                  <a class="page-link" th:href="@{/notice/noticeList(page=${i}, keyword=${pageRequestDTO.keyword})}">
+                  <a class="page-link" th:href="@{/notice/userNoticeList(page=${i}, keyword=${pageRequestDTO.keyword})}">
                     [[${i}]]
                   </a>
                 </li>
@@ -94,7 +94,7 @@
 
               <th:block th:if="${pageResponseDTO.next}">
                 <li class="page-item">
-                  <a class="page-link" th:href="@{/notice/noticeList(page=${pageResponseDTO.end + 1}, keyword=${pageRequestDTO.keyword})}">다음</a>
+                  <a class="page-link" th:href="@{/notice/userNoticeList(page=${pageResponseDTO.end + 1}, keyword=${pageRequestDTO.keyword})}">다음</a>
                 </li>
               </th:block>
             </ul>
