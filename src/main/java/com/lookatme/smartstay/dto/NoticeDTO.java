@@ -19,10 +19,10 @@ public class NoticeDTO {
 
     private Long notice_num; //공지 번호
 
-    @NotBlank(message = "제목을 입력해주세요")
+    @NotBlank(message = "제목을 입력해주세요.")
     private String title; //제목
 
-    @NotBlank(message = "내용을 입력해주세요")
+    @NotBlank(message = "내용을 입력해주세요.")
     private String content; //내용
 
     private Long hotel_num;

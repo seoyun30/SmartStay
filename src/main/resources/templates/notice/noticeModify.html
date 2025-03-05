@@ -15,7 +15,7 @@
             <div class="col-8 offset-2">
                 <div class="row">
                     <div class="mb-3 text-center">
-                        <h2>공지사항 상세페이지</h2>
+                        <h1>공지사항 상세페이지</h1>
                     </div>
                     <div class="col text-center">
                         <div class="card mb-3">
@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" style="width: 140px">내용</span>
-                                    <input type="text" class="form-control" th:value="${noticeDTO.content}" name="content">
+                                    <textarea class="form-control" th:text="${noticeDTO.content}" name="content"></textarea>
                                 </div>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" style="width: 140px">호텔명</span>
@@ -95,6 +95,16 @@
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+
+        /* jQuery */
+        $(document).ready(function() {
+            $('textarea').on( 'keyup', function (e){
+                $(this).css('height', 'auto');
+                $(this).height(this.scrollHeight);
+            });
+            $('textarea').keyup();
+        });
+
 
         $(".imgpreviewinput").on("change", function () {
             readURL(this)
@@ -162,7 +172,7 @@
 
                 $(this).parent().hide()
 
-                let str = `<input name="delnumList" type="hidden" value="${delete_image_btn.val()}">`
+                let str = `<input name="delnumList" type="hidden" value="${$(this).val()}">`
                 formObj.append(str)
 
 

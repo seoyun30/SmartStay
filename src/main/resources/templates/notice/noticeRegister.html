@@ -5,6 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>공지사항등록</title>
+
+    <style>
+        .fieldError {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
 <th:block layout:fragment="content">
@@ -62,9 +69,15 @@
     </form>
 </th:block>
 
-<th:block layout:fragment="script">
+<script th:inline="javascript" layout:fragment="script">
 
-    <script th:inline="javascript">
+    $(document).ready(function () {
+
+        let msg = [[${msg}]]
+        if (msg) {
+            alert(msg)
+        }
+    })
 
         $(".imgpreviewinput").on("change", function () {
             readURL(this)
@@ -106,6 +119,6 @@
         }
 
     </script>
-</th:block>
+
 </body>
 </html>

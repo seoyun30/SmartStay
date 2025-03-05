@@ -57,7 +57,7 @@ public class NoticeController {
 
     //등록 내용 저장
     @PostMapping("/noticeRegister")
-    public String noticeRegisterPost(@Valid NoticeDTO noticeDTO, Long hotel_num, BindingResult bindingResult, Principal principal,  @RequestParam("multipartFileList") List<MultipartFile> multipartFileList, Model model) throws Exception {
+    public String noticeRegisterPost(@Valid NoticeDTO noticeDTO, BindingResult bindingResult, Long hotel_num, Principal principal,  @RequestParam("multipartFileList") List<MultipartFile> multipartFileList, Model model) throws Exception {
 
          log.info("컨트롤러로 들어온 값 " + noticeDTO);
 

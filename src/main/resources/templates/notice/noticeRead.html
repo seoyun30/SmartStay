@@ -35,7 +35,7 @@
                                             </div>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text" style="width: 140px">내용</span>
-                                                <input type="text" class="form-control" th:value="${noticeDTO.content}">
+                                                <textarea class="form-control" th:text="${noticeDTO.content}" ></textarea>
                                             </div>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text" style="width: 140px">호텔명</span>
@@ -79,6 +79,16 @@
     </div>
 
     <script th:inline="javascript">
+
+        /* jQuery */
+        $(document).ready(function() {
+            $('textarea').on( 'keyup', function (e){
+                $(this).css('height', 'auto');
+                $(this).height(this.scrollHeight);
+            });
+            $('textarea').keyup();
+        });
+
 
         $(document).ready(function () {
             let delete_image_btn = $(".delete_image_btn")

@@ -19,7 +19,7 @@
             <div class="search-form">
                 <form th:action="@{/notice/noticeList}" method="get">
                     <div class="input-group input-group-sm" id="input-group-search">
-                        <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="Search" th:value="${pageRequestDTO.keyword}" style="width: 250px;">
+                        <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="호텔명 또는 키워드로 검색하세요" th:value="${pageRequestDTO.keyword}" style="width: 250px;">
                         <div class="input-group-append">
                             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
                         </div>
@@ -56,7 +56,7 @@
                                 <h5>공지사항 목록이 없습니다.</h5>
                             </td>
                         </tr>
-                </th:block>
+                    </th:block>
 
                 <th:block th:each="noticeDTO : ${pageResponseDTO.dtoList}">
                     <tr class="text-center">
@@ -73,6 +73,7 @@
                         </th:block>
                         <td th:text="${noticeDTO.reg_date != null ? #temporals.format(noticeDTO.reg_date, 'yyyy-MM-dd') : ''}"></td>
                     </tr>
+                </th:block>
                 </th:block>
                 </tbody>
             </table>
