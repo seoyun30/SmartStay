@@ -10,81 +10,85 @@
 <body>
 
 <th:block layout:fragment="content">
-    <div class="row mt-5">
-        <h1 class="mb-3 text-center">룸 예약 상태</h1>
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="row mt-5">
+            <h1 class="mb-3 fw-bold text-center">룸 예약 상태</h1>
 
-        <div class="roomRead col-9">
+            <div class="card d-flex p-3">
+                <div class="row">
+                    <div class="roomRead col-9">
 
-                <div class="row row-cols-1 row-cols-md-5 g-4" >
+                        <div class="row row-cols-1 row-cols-md-5 g-4" >
 
-                    <th:block th:if="${roomDTOList.isEmpty()}">
-                        <div class="mt-3">
-                            <span class="h5 text-center fw-bold">등록된 룸이 없습니다.</span>
-                        </div>
-                    </th:block>
-                    <th:block th:unless="${roomDTOList.isEmpty()}" th:each="room : ${roomDTOList}">
-                        <div class="col">
-                            <div class="card toggleReadWindow" style="box-shadow: none" th:data-room-num="${room.room_num}">
-                                <div class="card-body">
-                                    <input type="hidden" class="room_num" th:value="${room.room_num}">
-                                    <span class="h5 card-title text-black fw-bold" th:text="${room.room_name}">룸 이름</span> <br>
-                                    <span class="card-text text-black" th:text="${room.room_type + ' / 최대 ' + room.room_bed + '인'}">룸 타입 / 최대 n인</span> <br>
-                                    <span class="card-text text-black" th:text="${'숙박당 ' + room.room_price + '원'}">가격</span> <br>
-
-                                    <small class="text-body-secondary fw-bold text-center"
-                                           th:text="${room.room_state.name().equals('YES')  ? '예약 가능' : '예약 불가'}">룸 상태</small>
+                            <th:block th:if="${roomDTOList.isEmpty()}">
+                                <div class="mt-3">
+                                    <span class="h5 text-center fw-bold">등록된 룸이 없습니다.</span>
                                 </div>
+                            </th:block>
+                            <th:block th:unless="${roomDTOList.isEmpty()}" th:each="room : ${roomDTOList}">
+                                <div class="col">
+                                    <div class="card toggleReadWindow" style="box-shadow: none;" th:data-room-num="${room.room_num}">
+                                        <div class="card-body">
+                                            <input type="hidden" class="room_num" th:value="${room.room_num}">
+                                            <span class="h5 card-title text-black fw-bold" th:text="${room.room_name}">룸 이름</span> <br>
+                                            <span class="card-text text-black" th:text="${room.room_type + ' / 최대 ' + room.room_bed + '인'}">룸 타입 / 최대 n인</span> <br>
+                                            <span class="card-text text-black" th:text="${'숙박당 ' + room.room_price + '원'}">가격</span> <br>
+
+                                            <small class="text-body-secondary fw-bold text-center"
+                                                   th:text="${room.room_state.name().equals('YES')  ? '예약 가능' : '예약 불가'}">룸 상태</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+
+                        </div>
+                    </div>
+
+                    <div class="readWindow col-3 border-start">
+                        <div class="mt-5" style="box-shadow: none">
+                            <div class="card-header reserveId">예약 번호</div>
+                            <div class="card-body">
+                                <span class="h5 card-title fw-bold reserveDay">예약일</span> <br>
+                                <span class="card-text reserveName">예약자 이름</span> <br>
+                                <span class="card-text reserveRequest">요청사항</span> <br>
+                                <span class="card-text fw-bold check_state">체크인 상태</span> <br>
                             </div>
                         </div>
-                    </th:block>
-
-                </div>
-            </div>
-
-        <div class="readWindow col-3 border-start">
-                <div class="mt-5" style="box-shadow: none">
-                    <div class="card-header reserveId">예약 번호</div>
-                    <div class="card-body">
-                        <span class="h5 card-title fw-bold reserveDay">예약일</span> <br>
-                        <span class="card-text reserveName">예약자 이름</span> <br>
-                        <span class="card-text reserveRequest">요청사항</span> <br>
-                        <span class="card-text fw-bold check_state">체크인 상태</span> <br>
                     </div>
                 </div>
             </div>
 
-        <div class="card col-12 mt-3">
-            <form action="#" method="get">
-                <h3 class="text-center fw-bold mt-3">검색 조건</h3>
-                <div class="input-group p-3">
-                    <span class="input-group-text">호텔 이름</span>
-                    <input type="text" class="form-control">
-                </div>
-                <div class="input-group p-3">
-                    <span class="input-group-text">방 이름</span>
-                    <input type="text" class="form-control">
-                </div>
+            <div class="card col-12 mt-3">
+                <form action="#" method="get">
+                    <h3 class="text-center fw-bold mt-3">검색 조건</h3>
+                    <div class="input-group p-3">
+                        <span class="input-group-text">호텔 이름</span>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="input-group p-3">
+                        <span class="input-group-text">방 이름</span>
+                        <input type="text" class="form-control">
+                    </div>
 
-                <div class="input-group p-3">
-                    <span class="input-group-text">시작일</span>
-                    <input type="date" class="form-control" name="sdate"
-                    > <!--예약시작일-->
+                    <div class="input-group p-3">
+                        <span class="input-group-text">시작일</span>
+                        <input type="date" class="form-control" name="sdate"
+                        > <!--예약시작일-->
 
-                    <span class="input-group-text">종료일</span>
-                    <input type="date" class="form-control" name="edate"
-                    > <!--예약종료일-->
-                </div>
+                        <span class="input-group-text">종료일</span>
+                        <input type="date" class="form-control" name="edate"
+                        > <!--예약종료일-->
+                    </div>
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
-                    <button type="submit" class="btn btn-primary">검색</button>
-                    <button type="reset" class="btn btn-secondary">초기화</button>
-                </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
+                        <button type="submit" class="btn btn-primary">검색</button>
+                        <button type="reset" class="btn btn-secondary">초기화</button>
+                    </div>
 
-            </form>
-        </div>
+                </form>
+            </div>
 
-        <div class="card col-12 mt-3">
-            <div class="card">
+            <div class="card col-12 mt-3">
                 <div class="card-body table-responsive">
                     <table class="table table-hover table-fixed">
                         <thead>
@@ -128,7 +132,7 @@
                                 <td th:text="${#temporals.format(roomReserveItemDTO.out_date, 'yyyy.MM.dd HH:mm')}" class="w-12">체크아웃 날짜</td>
                                 <td th:text="${roomReserveItemDTO.count + '명'}">예약 인원</td>
                                 <td th:text="${roomReserveItemDTO.reserve_request}" class="text-truncate">요청 사항</td>
-                                <td th:text="${roomReserveItemDTO.payDTO.amount + '원'}" >결제 금액</td>
+                                <td th:text="${#numbers.formatInteger(roomReserveItemDTO.payDTO.amount, 0) + '원'}" >결제 금액</td>
                                 <td th:switch="${roomReserveItemDTO.roomReserveDTO.check_state}" > <!--주문 상태-->
                                     <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}" th:case="${roomReserveItemDTO.roomReserveDTO.check_state.RESERVE}">예약 접수</button>
                                     <button type="button" class="btn btn-warning stateBtn" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}" th:case="${roomReserveItemDTO.roomReserveDTO.check_state.IN}">체크인</button>
@@ -169,11 +173,6 @@
 
         </div>
 
-
-
-
-
-
     </div>
 
 </th:block>
@@ -185,7 +184,6 @@
         let readWindow = $(".readWindow");
         let currentRoomNum = null; //현재 표시된 roomNum을 저장
 
-        // 초기 상태에서 readWindow를 숨기고 roomRead의 클래스를 col-12로 변경
         readWindow.hide();
         roomRead.removeClass('col-9').addClass('col-12');
 
@@ -262,6 +260,83 @@
 
 
         });
+
+        $(document).on("click", ".stateBtn", function() {
+            let button = $(this);
+            let reserveNum = button.val();
+            let currentStateText = button.text().trim();
+
+            let states = {
+                "RESERVE": "예약 접수",
+                "IN": "체크인",
+                "OUT": "체크아웃",
+                "CANCEL": "예약 취소"
+            };
+
+            let currentState = Object.keys(states).find(key => states[key] === currentStateText);
+
+            if (currentState === "OUT" || currentState === "CANCEL") {
+                alert("변경할 수 없는 상태입니다.");
+                return;
+            }
+
+            // 기존 버튼을 숨기고, select 박스 추가
+            let selectHtml = `<select class="reserve-state-select" data-reserve-num="${reserveNum}">`;
+            Object.keys(states).forEach(state => {
+                let selected = state === currentState ? "selected" : "";
+                selectHtml += `<option value="${state}" ${selected}>${states[state]}</option>`;
+            });
+            selectHtml += `</select>`;
+
+            button.replaceWith(selectHtml);
+        });
+
+        // 상태 변경 이벤트
+        $(document).on("change", ".reserve-state-select", function() {
+            let select = $(this);
+            let reserveNum = select.data("reserve-num");
+            let newState = select.val();
+
+            if (confirm("예약 상태를 변경하시겠습니까?")) {
+                $.ajax({
+                    type: "POST",
+                    url: "/roomreserve/state",
+                    data: { reserve_num: reserveNum, check_state: newState },
+                    success: function(response) {
+                        let newButton = `<button type="button" class="btn ${getButtonClass(newState)} stateBtn" value="${reserveNum}">${getStateText(newState)}</button>`;
+                        select.replaceWith(newButton);
+                    },
+                    error: function() {
+                        alert("변경 중 오류가 발생했습니다.");
+                        location.reload();
+                    }
+                });
+            } else {
+                location.reload();
+            }
+        });
+
+        // 예약 상태 텍스트 변환 함수
+        function getStateText(state) {
+            let stateText = {
+                "RESERVE": "예약 접수",
+                "IN": "체크인",
+                "OUT": "체크아웃",
+                "CANCEL": "예약 취소"
+            };
+            return stateText[state] || "오류";
+        }
+
+        // 예약 상태별 버튼 클래스 지정
+        function getButtonClass(state) {
+            let btnClass = {
+                "RESERVE": "btn-primary",
+                "IN": "btn-warning",
+                "OUT": "btn-danger",
+                "CANCEL": "btn-secondary"
+            };
+            return btnClass[state] || "btn-primary";
+        }
 
 
     })

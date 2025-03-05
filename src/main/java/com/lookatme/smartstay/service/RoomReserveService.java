@@ -168,4 +168,15 @@ public class RoomReserveService {
         return roomReserveItemDTO;
     }
 
+    //주문 상태 변경
+    public RoomReserveDTO stateChange(RoomReserveDTO roomReserveDTO) {
+        RoomReserve roomReserve = roomReserveRepository.findById(roomReserveDTO.getReserve_num())
+                .orElseThrow(EntityNotFoundException::new);
+
+        roomReserve.setCheck_state(roomReserveDTO.getCheck_state());
+
+        roomReserve = roomReserveRepository.save(roomReserve);
+        return modelMapper.map(roomReserve, RoomReserveDTO.class);
+    }
+
 }

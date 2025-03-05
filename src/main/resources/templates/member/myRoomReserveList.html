@@ -77,20 +77,26 @@
                         </th:block>
                         <th:block th:unless="${pageResponseDTO ==null or pageResponseDTO.dtoList == null or pageResponseDTO.dtoList.isEmpty()}" th:each="roomReserveItem : ${pageResponseDTO.dtoList}">
                             <tr class="text-center align-middle">
-                                <td class="w-10">
+                                <td>
                                     <a th:href="@{/member/myRoomReserveRead(roomreserveitem_num=${roomReserveItem.roomreserveitem_num})}"
                                        th:text="${roomReserveItem.roomReserveDTO.reserve_id}">예약 번호</a></td>
-                                <td th:text="${roomReserveItem.roomDTO.hotelDTO.hotel_name}" class="w-15">예약 호텔</td>
-                                <td class="w-15">
+                                <td th:text="${roomReserveItem.roomDTO.hotelDTO.hotel_name}">예약 호텔</td>
+                                <td>
                                     <a th:href="@{/searchRoomRead(room_num=${roomReserveItem.roomDTO.room_num})}"
                                        th:text="${roomReserveItem.roomDTO.room_name}">예약 방</a>
                                 </td>
-                                <td th:text="${#temporals.format(roomReserveItem.in_date, 'yyyy.MM.dd HH:mm')}" class="w-12">체크인 날짜</td>
-                                <td th:text="${#temporals.format(roomReserveItem.out_date, 'yyyy.MM.dd HH:mm')}" class="w-12">체크아웃 날짜</td>
+                                <td th:text="${#temporals.format(roomReserveItem.in_date, 'yyyy.MM.dd HH:mm')}">체크인 날짜</td>
+                                <td th:text="${#temporals.format(roomReserveItem.out_date, 'yyyy.MM.dd HH:mm')}">체크아웃 날짜</td>
                                 <td th:text="${roomReserveItem.count}" class="w-8">예약 인원</td>
                                 <td th:text="${roomReserveItem.reserve_request}" class="w-12 text-truncate">요청 사항</td>
-                                <td th:text="${roomReserveItem.day * roomReserveItem.roomDTO.room_price}" class="w-12">결제 금액</td>
-                                <td th:text="${roomReserveItem.roomReserveDTO.check_state}" class="w-12">예약 상태</td>
+                                <td th:text="${roomReserveItem.day * roomReserveItem.roomDTO.room_price}">결제 금액</td>
+                                <td th:switch="${roomReserveItem.roomReserveDTO.check_state}">
+                                    <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.RESERVE}">예약 접수</button>
+                                    <button type="button" class="btn btn-warning stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.IN}">체크인</button>
+                                    <button type="button" class="btn btn-danger stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.OUT}">체크아웃</button>
+                                    <button type="button" class="btn btn-secondary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.CANCEL}">예약 취소</button>
+                                    <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="*">오류</button> <!-- 예외 처리 -->
+                                </td>
                             </tr>
                         </th:block>
                         </tbody>
@@ -124,6 +130,50 @@
 
         </div>
     </div>
+
+    <script th:inline="javascript" layout:fragment="script">
+
+        $(document).ready(function () {
+
+            $(document).on("click", ".stateBtn", function() {
+                let button = $(this);
+                let reserveNum = button.val();
+                let currentStateText = button.text().trim();
+
+                let states = {
+                    "RESERVE": "예약 접수",
+                    "IN": "체크인",
+                    "OUT": "체크아웃",
+                    "CANCEL": "예약 취소"
+                };
+
+                let currentState = Object.keys(states).find(key => states[key] === currentStateText);
+
+                if (currentState !== "RESERVE") {
+                    alert("예약 접수 상태에서만 취소할 수 있습니다.");
+                    return;
+                }
+
+                if (confirm("정말 예약을 취소하시겠습니까?")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/roomreserve/state",
+                        data: { reserve_num: reserveNum, check_state: "CANCEL" },
+                        success: function(response) {
+                            let newButton = `<button type="button" class="btn btn-secondary stateBtn" value="${reserveNum}">예약 취소</button>`;
+                            button.replaceWith(newButton);
+                        },
+                        error: function() {
+                            alert("변경 중 오류가 발생했습니다.");
+                            location.reload();
+                        }
+                    });
+                }
+            });
+
+        });
+
+    </script>
 
 </th:block>
 

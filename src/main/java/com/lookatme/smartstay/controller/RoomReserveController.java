@@ -1,9 +1,6 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.dto.PageResponseDTO;
-import com.lookatme.smartstay.dto.RoomDTO;
-import com.lookatme.smartstay.dto.RoomReserveItemDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.service.RoomReserveService;
 import com.lookatme.smartstay.service.RoomService;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -66,6 +60,14 @@ public class RoomReserveController {
         model.addAttribute("roomReserveItemDTO", roomReserveItemDTO);
 
         return "roomreserve/roomReserveRead";
+    }
+
+    @PostMapping("/state")
+    @ResponseBody
+    public ResponseEntity<?> stateChange(RoomReserveDTO roomReserveDTO) {
+
+        RoomReserveDTO result = roomReserveService.stateChange(roomReserveDTO);
+        return ResponseEntity.ok(result);
     }
 
 

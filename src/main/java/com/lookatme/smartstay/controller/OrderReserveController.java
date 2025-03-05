@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
@@ -32,9 +33,18 @@ public class OrderReserveController {
 
     @GetMapping("/orderReserveRegister")
     public String orderReserveRegisterGet(Principal principal, Long roomreserveitem_num,
-                                          Model model) {
+                                          Model model, RedirectAttributes redirectAttributes) {
+
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
 
         RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(roomreserveitem_num, principal.getName());
+
+        if (!roomReserveItemDTO.getRoomReserveDTO().getCheck_state().name().equals("IN")){
+            redirectAttributes.addFlashAttribute("msg", "룸서비스를 주문할 수 없는 상태입니다.");
+            return "redirect:/member/myRoomReserveRead?roomreserveitem_num=" + roomreserveitem_num;
+        }
 
         model.addAttribute("roomReserveItemDTO", roomReserveItemDTO);
 
@@ -44,11 +54,14 @@ public class OrderReserveController {
     @GetMapping("/orderReserveList")
     public String orderReserveList(PageRequestDTO pageRequestDTO, Principal principal, Model model) {
 
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
         HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
         model.addAttribute("hotelDTO", hotelDTO);
 
         PageResponseDTO<OrderReserveItemDTO> pageResponseDTO = orderReserveService.findOrderReservePage(principal.getName(), pageRequestDTO);
-        pageResponseDTO.getDtoList().forEach(orderReserveItemDTO -> log.info(orderReserveItemDTO));
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
         return "orderreserve/orderReserveList";
