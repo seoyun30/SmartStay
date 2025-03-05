@@ -14,30 +14,40 @@
         <div class="row">
             <div class="col-12">
                 <div class="mb-3 text-center fw-bold">
-                    <h1 th:text="${hotel_name}">호텔 이름</h1>
+                    <h1 th:text="${hotel_name} + ' 룸 케어 목록'"></h1>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div th:if="${pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}" class="alert alert-success text-center">
+        <p>등록된 룸 케어가 없습니다.</p>
     </div>
 
     <div class="mr-6 text-end">
         <button type="button" onclick="location.href='/care/careRegister'" class="btn btn-dark">룸 케어 등록</button>
     </div>
 
-    <nav class="navbar" id="navbar">
-        <div class="navbar-right">
-            <div class="search-form">
-                <form method="get" action="/care/careList" onsubmit="saveSearchQuery()">
-                    <div class="input-group input-group-sm" id="input-group-search">
-                        <input type="text" autocomplete="off" class="form-control" name="query" placeholder="케어 이름 또는 케어 상세로 검색하세요." id="search-input" th:value="${param.query}">
-                        <div class="input-group-append">
-                            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+    <div class="col-12 mt-3">
+        <div class="card search-form">
+            <form action="/care/careList" method="get"  onsubmit="saveSearchQuery()">
+                <h3 class="text-center fw-bold mt-3 mb-1">검색 조건</h3>
+                <div class="input-group p-2">
+                    <span class="input-group-text">케어 이름</span>
+                    <input type="text" name="careName" class="form-control" th:value="${param.careName}">
+                </div>
+                <div class="input-group p-2">
+                    <span class="input-group-text">케어 상세</span>
+                    <input type="text" name="careDetail" class="form-control" th:value="${param.careDetail}">
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
+                    <button type="submit" class="btn btn-primary">검색</button>
+                    <button type="reset" class="btn btn-secondary">초기화</button>
+                    <button type="button" class="btn btn-success" onclick="location.href='/care/careList'">목록으로 돌아가기</button>
+                </div>
+            </form>
         </div>
-    </nav>
+    </div>
 
     <div th:if="${isSearch}">
         <table class="table" th:if="${results != null && results.size() > 0}">

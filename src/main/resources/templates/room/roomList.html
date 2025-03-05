@@ -14,10 +14,14 @@
         <div class="row">
             <div class="col-12">
                 <div class="mb-3 text-center fw-bold">
-                    <h1 th:text="${hotel_name}">호텔 이름</h1>
+                    <h1 th:text="${hotel_name} + ' 룸 목록'"></h1>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div th:if="${pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}" class="alert alert-success text-center">
+        <p>등록된 룸이 없습니다.</p>
     </div>
 
     <div class="text-end mr-6">

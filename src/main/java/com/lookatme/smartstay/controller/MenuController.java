@@ -1,6 +1,9 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.MenuDTO;
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.service.HotelService;
@@ -10,7 +13,6 @@ import com.lookatme.smartstay.service.MenuService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -83,7 +85,8 @@ public class MenuController {
     public String menuList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                            @RequestParam(defaultValue = "menu_num") String sortField,
                            @RequestParam(defaultValue = "asc") String sortDir,
-                           @RequestParam(value = "query", required = false) String query, Sort sort) {
+                           @RequestParam(value = "menuName", required = false) String menuName,
+                           @RequestParam(value = "menuDetail", required = false) String menuDetail) {
 
         if (principal == null) {
             return "redirect:/member/login";
@@ -97,14 +100,15 @@ public class MenuController {
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
 
-        if (query == null || query.trim().isEmpty()){
+        if ((menuName == null || menuName.trim().isEmpty()) && (menuDetail == null || menuDetail.trim().isEmpty())) {
             PageResponseDTO<MenuDTO> pageResponseDTO = menuService.menuList(hotelDTO, pageRequestDTO, sortField, sortDir);
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("isSearch", false);
         }else {
-            List<MenuDTO> results = menuService.searchList(query, sortField, sortDir);
+            List<MenuDTO> results = menuService.searchList(menuName, menuDetail, sortField, sortDir);
             model.addAttribute("results", results != null ? results : Collections.emptyList());
-            model.addAttribute("query", query);
+            model.addAttribute("menuName", menuName);
+            model.addAttribute("menuDetail", menuDetail);
             model.addAttribute("isSearch", true);
             model.addAttribute("pageResponseDTO", null);
         }
