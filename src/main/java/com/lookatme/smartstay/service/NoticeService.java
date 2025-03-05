@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -162,35 +163,39 @@ public class NoticeService {
             noticePage = noticeRepository.noticeBrandList(brandNum, pageable);
         }
         List<Notice> noticeList = noticePage.getContent();
+        List<NoticeDTO> noticeDTOList;
 
         noticeList.forEach(notice -> log.info(notice));
 
-        if (noticeList == null  || noticeList.isEmpty()) {
-            log.info("공지사항 없음");
-            return null;
-        } else {
-            List<NoticeDTO> noticeDTOList = noticeList.stream()
+        if (!noticeList.isEmpty()) {
+            noticeDTOList = noticeList.stream()
                     .map(notice ->{
-                                NoticeDTO noticeDTO = modelMapper.map(notice, NoticeDTO.class);
+                        NoticeDTO noticeDTO = modelMapper.map(notice, NoticeDTO.class);
 
-                                noticeDTO.setBrandDTO( modelMapper.map(notice.getBrand(), BrandDTO.class));
+                        noticeDTO.setBrandDTO( modelMapper.map(notice.getBrand(), BrandDTO.class));
 
-                                noticeDTO.setHotelDTO(modelMapper.map(notice.getHotel(), HotelDTO.class));
+                        noticeDTO.setHotelDTO(modelMapper.map(notice.getHotel(), HotelDTO.class));
 
-                                return  noticeDTO;
-                            } )
+                        return  noticeDTO;
+                    } )
                     .collect(Collectors.toList());
 
             log.info("DTO변환");
 
-            noticeDTOList.forEach(dto -> log.info(dto));
+        } else {
+            log.info("공지사항 없음");
+            noticeDTOList = Collections.emptyList();
+        }
+
+
+        noticeDTOList.forEach(dto -> log.info(dto));
 
             return PageResponseDTO.<NoticeDTO>withAll()
                     .pageRequestDTO(pageRequestDTO)
                     .dtoList(noticeDTOList)
                     .total((int) noticePage.getTotalElements())
                     .build();
-        }
+
     }
 
     public PageResponseDTO<NoticeDTO> userNoticeList(PageRequestDTO pageRequestDTO) {

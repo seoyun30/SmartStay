@@ -11,7 +11,7 @@
 <body>
 
 <th:block layout:fragment="content">
-    <h1 class="text-center mt-3">권한 승인 목록</h1>
+    <h1 class="text-center mt-5">권한 승인 목록</h1>
 
 
     <!--검색창-->
@@ -57,7 +57,7 @@
                                 <h5>승인할 목록이 없습니다.</h5>
                             </td>
                         </tr>
-                </th:block>
+                    </th:block>
 
                 <th:block th:each="memberDTO : ${pageResponseDTO.dtoList}">
                     <input type="hidden" class="brand_num" th:value="${memberDTO.brandDTO.brand_num}">

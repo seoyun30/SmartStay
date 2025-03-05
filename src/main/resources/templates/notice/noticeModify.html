@@ -15,7 +15,7 @@
             <div class="col-8 offset-2">
                 <div class="row">
                     <div class="mb-3 text-center">
-                        <h2>공지사항 상세페이지</h2>
+                        <h1>공지사항 상세페이지</h1>
                     </div>
                     <div class="col text-center">
                         <div class="card mb-3">
@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" style="width: 140px">내용</span>
-                                    <input type="text" class="form-control" th:value="${noticeDTO.content}" name="content">
+                                    <textarea class="form-control" th:text="${noticeDTO.content}" name="content"></textarea>
                                 </div>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" style="width: 140px">호텔명</span>
@@ -52,12 +52,12 @@
                                 <div id="image-main">
                                     <label class="form-label">
                                         첨부 이미지<br>
-                                        <div class="row row-cols-md-2 ">
+                                        <div class="row row-cols-md-2">
                                         <th:block th:each="img : ${noticeDTO.imageDTOList}">
 
                                                 <div class="col position-relative">
                                                     <img th:src="${img.image_url}" alt="Main Image" width="100%">
-                                                    <button type="button" th:value="${img.image_id}" class="btn btn-dark delete_image_btn position-absolute  top-0 start-0 ms-3">삭제</button>
+                                                    <button type="button" th:value="${img.image_id}" class="btn btn-dark delete_image_btn position-absolute  top-0 end-0 me-3">삭제</button>
                                                 </div>
 
 
@@ -78,9 +78,9 @@
                         </div>
 
 
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-dark">저장</button>
+                        <div class="col-12 text-center">
                             <button type="button" class="btn btn-primary" onclick="location.href='/notice/noticeList'">목록</button>
+                            <button type="submit" class="btn btn-dark">저장</button>
                             <button type="button" class="btn btn-danger delnotice" >삭제</button>
                         </div>
                     </div>
@@ -95,6 +95,16 @@
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+
+        /* jQuery */
+        $(document).ready(function() {
+            $('textarea').on( 'keyup', function (e){
+                $(this).css('height', 'auto');
+                $(this).height(this.scrollHeight);
+            });
+            $('textarea').keyup();
+        });
+
 
         $(".imgpreviewinput").on("change", function () {
             readURL(this)
@@ -122,7 +132,7 @@
 
                     let str = `<div class="preview">
                                                 <img width="300px"  src="${e.target.result}">
-                                                <button type="button" class="bb">올리지 않기</button>
+                                                <button type="button" class="bb btn-sm btn-secondary">올리지 않기</button>
                                               </div>`
                     $(".imgpreviewinput").val("")
                     $(".aa").append(str)
@@ -162,7 +172,7 @@
 
                 $(this).parent().hide()
 
-                let str = `<input name="delnumList" type="hidden" value="${delete_image_btn.val()}">`
+                let str = `<input name="delnumList" type="hidden" value="${$(this).val()}">`
                 formObj.append(str)
 
 
