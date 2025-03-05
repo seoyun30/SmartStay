@@ -30,10 +30,10 @@
                                 <p>체크아웃 : <span th:text="${roomReserveItemDTO.out_date}"></span></p>
                                 <p>인원 : 기준 /최대 <span th:text="${roomReserveItemDTO.roomDTO.room_bed}">2명</span></p>
                                 <p>가격 : <span th:text="${roomReserveItemDTO.payDTO.amount}"></span></p>
-                                <button type="button"
+                                <button type="button" th:classappend="${roomReserveItemDTO.roomReserveDTO.check_state.name() == 'IN'} ? 'active' : 'disabled'"
                                         th:onclick="|location.href='@{/orderreserve/orderReserveRegister(roomreserveitem_num=${roomReserveItemDTO.roomreserveitem_num})}'|"
                                         class="mt-3 btn btn-primary">룸서비스 주문</button>
-                                <button type="button"
+                                <button type="button" th:classappend="${roomReserveItemDTO.roomReserveDTO.check_state.name() == 'OUT'} ? 'active' : 'disabled'"
                                         th:onclick="|location.href='@{/review/reviewRegister(reserve_num=${roomReserveItemDTO.roomReserveDTO.reserve_num})}'|"
                                         class="mt-3 btn btn-secondary">후기 작성하기</button>
                             </div>
@@ -63,6 +63,18 @@
             </div>
         </div>
     </div>
+
+    <script th:inline="javascript" layout:fragment="script">
+
+        let msg = [[${msg}]]
+        if (msg) {
+            alert(msg)
+        }
+        $(document).ready(function () {
+
+        });
+
+    </script>
 </th:block>
 
 </body>

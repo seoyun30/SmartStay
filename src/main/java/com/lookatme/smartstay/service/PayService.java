@@ -174,15 +174,6 @@ public class PayService {
 
         log.info("룸 서비스 정보 저장 시작");
         // 룸서비스 주문 이력 생성 및 설정
-        OrderReserve orderReserve = new OrderReserve();
-        orderReserve.setMember(pay.getMember()); // 결제한 회원 정보와 연결
-        orderReserve.setOrder_state(OrderState.ORDER); // 예약 상태 설정
-        orderReserve.setOrder_id(UUID.randomUUID().toString()); // 예약 ID 생성 (UUID 사용 36자 고정)
-
-        log.info(orderReserve);
-        orderReserve = orderReserveRepository.save(orderReserve);
-
-        Long totalPrice = 0L;  // 총 가격 계산용 변수
         List<MenuReserveItem> allMenuReserveItems = new ArrayList<>();
         List<CareReserveItem> allCareReserveItems = new ArrayList<>();
 
@@ -191,6 +182,13 @@ public class PayService {
             if (orderItemDTO.getService_num() != null){
                 cartService.deleteCartOrderItem(orderItemDTO.getService_num());
             }
+
+            OrderReserve orderReserve = new OrderReserve();
+            orderReserve.setMember(pay.getMember()); // 결제한 회원 정보와 연결
+            orderReserve.setOrder_state(OrderState.ORDER); // 예약 상태 설정
+            orderReserve.setOrder_id(UUID.randomUUID().toString()); // 예약 ID 생성 (UUID 사용 36자 고정)
+
+            orderReserve = orderReserveRepository.save(orderReserve);
 
             OrderReserveItem orderReserveItem = new OrderReserveItem();
             orderReserveItem.setMenu_request(orderItemDTO.getMenu_request());
@@ -202,62 +200,57 @@ public class PayService {
             orderReserveItem.setPay(pay);
             orderReserveItem.setOrderReserve(orderReserve);
             orderReserveItems.add(orderReserveItem);
+
+            orderReserveItemRepository.save(orderReserveItem);
+
+            Long totalPrice = 0L;
+
+                List<MenuReserveItem> menuReserveItems = new ArrayList<>();
+                for (MenuItemDTO menuItemDTO : orderItemDTO.getMenuItemDTOList()) {
+                    Menu menu = menuRepository.findById(menuItemDTO.getMenuDTO().getMenu_num())
+                            .orElseThrow(() -> new IllegalArgumentException("해당 메뉴가 존재하지 않습니다. menu_num: " + menuItemDTO.getMenuDTO().getMenu_num()));
+
+
+                    MenuReserveItem menuReserveItem = new MenuReserveItem();
+                    menuReserveItem.setMenu(menu);
+                    menuReserveItem.setMenu_count(menuItemDTO.getMenu_count());
+                    menuReserveItem.setOrderReserveItem(orderReserveItem);
+                    menuReserveItems.add(menuReserveItem);
+
+                    totalPrice += menu.getMenu_price() * menuItemDTO.getMenu_count();
+                }
+
+                allMenuReserveItems.addAll(menuReserveItems);
+
+                List<CareReserveItem> careReserveItems = new ArrayList<>();
+                for (CareItemDTO careItemDTO : orderItemDTO.getCareItemDTOList()) {
+                    Care care = careRepository.findById(careItemDTO.getCareDTO().getCare_num())
+                            .orElseThrow(() -> new IllegalArgumentException("해당 케어 서비스가 존재하지 않습니다. care_num: " + careItemDTO.getCareDTO().getCare_num()));
+
+
+                    CareReserveItem careReserveItem = new CareReserveItem();
+                    careReserveItem.setCare(care);
+                    careReserveItem.setCare_count(careItemDTO.getCare_count());
+                    careReserveItem.setOrderReserveItem(orderReserveItem);
+                    careReserveItems.add(careReserveItem);
+
+                    totalPrice += care.getCare_price() * careItemDTO.getCare_count();
+                }
+                allCareReserveItems.addAll(careReserveItems);
+
+                orderReserveItem.getMenuReserveItemList().clear();
+                orderReserveItem.getMenuReserveItemList().addAll(menuReserveItems);
+                orderReserveItem.getCareReserveItemList().clear();
+                orderReserveItem.getCareReserveItemList().addAll(careReserveItems);
+
+            orderReserve.setTotal_price(totalPrice);
+            orderReserve.getOrderReserveItemList().clear();
+            orderReserve.getOrderReserveItemList().add(orderReserveItem);
+            orderReserveRepository.save(orderReserve);
         }
 
-        orderReserveItemRepository.saveAll(orderReserveItems);
-
-        for (int i = 0; i < orderReserveItems.size(); i++) {
-            OrderItemDTO orderItemDTO = payDTO.getOrderItemDTOList().get(i);
-            OrderReserveItem orderReserveItem = orderReserveItems.get(i);
-
-            List<MenuReserveItem> menuReserveItems = new ArrayList<>();
-            for (MenuItemDTO menuItemDTO : orderItemDTO.getMenuItemDTOList()) {
-                Menu menu = menuRepository.findById(menuItemDTO.getMenuDTO().getMenu_num())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 메뉴가 존재하지 않습니다. menu_num: " + menuItemDTO.getMenuDTO().getMenu_num()));
-
-
-                MenuReserveItem menuReserveItem = new MenuReserveItem();
-                menuReserveItem.setMenu(menu);
-                menuReserveItem.setMenu_count(menuItemDTO.getMenu_count());
-                menuReserveItem.setOrderReserveItem(orderReserveItem);
-                menuReserveItems.add(menuReserveItem);
-
-                totalPrice += menu.getMenu_price() * menuItemDTO.getMenu_count();
-            }
-
-            allMenuReserveItems.addAll(menuReserveItems);
-
-            List<CareReserveItem> careReserveItems = new ArrayList<>();
-            for (CareItemDTO careItemDTO : orderItemDTO.getCareItemDTOList()) {
-                Care care = careRepository.findById(careItemDTO.getCareDTO().getCare_num())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 케어 서비스가 존재하지 않습니다. care_num: " + careItemDTO.getCareDTO().getCare_num()));
-
-
-                CareReserveItem careReserveItem = new CareReserveItem();
-                careReserveItem.setCare(care);
-                careReserveItem.setCare_count(careItemDTO.getCare_count());
-                careReserveItem.setOrderReserveItem(orderReserveItem);
-                careReserveItems.add(careReserveItem);
-
-                totalPrice += care.getCare_price() * careItemDTO.getCare_count();
-            }
-            allCareReserveItems.addAll(careReserveItems);
-
-            orderReserveItem.getMenuReserveItemList().clear();
-            orderReserveItem.getMenuReserveItemList().addAll(menuReserveItems);
-            orderReserveItem.getCareReserveItemList().clear();
-            orderReserveItem.getCareReserveItemList().addAll(careReserveItems);
-        }
-
-        menuReserveItemRepository.saveAll(allMenuReserveItems);
-        careReserveItemRepository.saveAll(allCareReserveItems);
-
-        orderReserve.setTotal_price(totalPrice);
-
-        orderReserve.getOrderReserveItemList().clear();
-        orderReserveItemRepository.flush();
-        orderReserve.getOrderReserveItemList().addAll(orderReserveItems);
-        orderReserveRepository.save(orderReserve);
+            menuReserveItemRepository.saveAll(allMenuReserveItems);
+            careReserveItemRepository.saveAll(allCareReserveItems);
 
         roomReserveItemRepository.saveAll(roomReserveItems);
         orderReserveItemRepository.saveAll(orderReserveItems);
