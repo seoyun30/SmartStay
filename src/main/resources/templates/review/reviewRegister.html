@@ -45,75 +45,78 @@
     <form th:action="@{'/review/reviewRegister/' + ${roomReserveItemDTO.roomReserveDTO.reserve_num}}" method="post" th:object="${reviewDTO}" enctype="multipart/form-data">
 
         <div class="row">
-            <div class="col-8 offset-2">
-                <div class="starpoint_wrap">
-                    <div class="starpoint_box">
-                        <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>
-                        <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>
-                        <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>
-                        <label for="starpoint_4" class="label_star" title="2"><span class="blind">2점</span></label>
-                        <label for="starpoint_5" class="label_star" title="2.5"><span class="blind">2.5점</span></label>
-                        <label for="starpoint_6" class="label_star" title="3"><span class="blind">3점</span></label>
-                        <label for="starpoint_7" class="label_star" title="3.5"><span class="blind">3.5점</span></label>
-                        <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>
-                        <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
-                        <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
-                        <input type="radio" name="score" value="0.5" id="starpoint_1" class="star_radio" required>
-                        <input type="radio" name="score" value="1" id="starpoint_2" class="star_radio" required>
-                        <input type="radio" name="score" value="1.5" id="starpoint_3" class="star_radio" required>
-                        <input type="radio" name="score" value="2" id="starpoint_4" class="star_radio" required>
-                        <input type="radio" name="score" value="2.5" id="starpoint_5" class="star_radio" required>
-                        <input type="radio" name="score" value="3" id="starpoint_6" class="star_radio" required>
-                        <input type="radio" name="score" value="3.5" id="starpoint_7" class="star_radio" required>
-                        <input type="radio" name="score" value="4" id="starpoint_8" class="star_radio" required>
-                        <input type="radio" name="score" value="4.5" id="starpoint_9" class="star_radio" required>
-                        <input type="radio" name="score" value="5" id="starpoint_10" class="star_radio" required>
-                        <span class="starpoint_bg"></span>
+            <div class="col-6 offset-3">
+                <div class="row">
+                    <div class="col-12">
+                        <input type="hidden" name="hotel_num" th:value="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_num}">
+                        <h2 th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}"></h2>
                     </div>
-                </div>
-                <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}"></div>
-                <!--리뷰 내용-->
-                <div class="card">
-
-                    <div class="card-body" style="height: 500px;"><!--공지사항글 제품-->
-<!--                        <div class="mb-3">-->
-<!--                            <label class="form-label">예약 번호</label>-->
-<!--                            <input type="hidden" class="card-title fw-bold" th:text="${roomReserveItemDTO.roomReserveDTO.reserve_num}"></input>-->
-<!--                        </div>-->
+                    <div class="col-12">
                         <div class="mb-3">
                             <input type="hidden" name="roomreserveitem_num" th:value="${roomReserveItemDTO.roomreserveitem_num}">
                             <input type="hidden" name="reserve_num" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">
-
-                            <input type="hidden" name="hotel_num" th:value="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_num}">
-                            <h2 class="card-title fw-bold" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}"></h2>
-                        </div>
-                        <div class="mb-3">
                             <label for="exampleFormControlTextarea1" class="form-label">리뷰 내용</label>
                             <textarea class="form-control" th:field="*{content}" id="exampleFormControlTextarea1" rows="5"
                                       placeholder="리뷰 내용을 적어주세요."></textarea>
                             <div th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
                         </div>
-                        <div class="mb-3 imgA">
-                            <!--이미지 업로드 -->
-                            <label for="formFile" class="form-label">이미지</label>
-                            <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file" required>
-                            <div class="row imgpreview"></div>
-                            <button type="button" class="btn btn-secondary" id="removeMainImage" style="display: none;">이미지 삭제</button>
-                        </div>
-
                     </div>
+
+                    <!--별점-->
+                    <div class="mb-3 starpoint_wrap">
+                        <div class="starpoint_box">
+                            <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>
+                            <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>
+                            <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>
+                            <label for="starpoint_4" class="label_star" title="2"><span class="blind">2점</span></label>
+                            <label for="starpoint_5" class="label_star" title="2.5"><span class="blind">2.5점</span></label>
+                            <label for="starpoint_6" class="label_star" title="3"><span class="blind">3점</span></label>
+                            <label for="starpoint_7" class="label_star" title="3.5"><span class="blind">3.5점</span></label>
+                            <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>
+                            <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
+                            <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
+                            <input type="radio" name="score" value="0.5" id="starpoint_1" class="star_radio" required>
+                            <input type="radio" name="score" value="1" id="starpoint_2" class="star_radio" required>
+                            <input type="radio" name="score" value="1.5" id="starpoint_3" class="star_radio" required>
+                            <input type="radio" name="score" value="2" id="starpoint_4" class="star_radio" required>
+                            <input type="radio" name="score" value="2.5" id="starpoint_5" class="star_radio" required>
+                            <input type="radio" name="score" value="3" id="starpoint_6" class="star_radio" required>
+                            <input type="radio" name="score" value="3.5" id="starpoint_7" class="star_radio" required>
+                            <input type="radio" name="score" value="4" id="starpoint_8" class="star_radio" required>
+                            <input type="radio" name="score" value="4.5" id="starpoint_9" class="star_radio" required>
+                            <input type="radio" name="score" value="5" id="starpoint_10" class="star_radio" required>
+                            <span class="starpoint_bg"></span>
+                        </div>
+                        <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}"><p>별점</p></div>
+                    </div>
+
+                    <div class="mb-3 imgA">
+                        <!--이미지 업로드 -->
+                        <label for="formFile" class="form-label">이미지</label>
+                        <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file" required>
+                        <div class="row imgpreview"></div>
+                        <button type="button" class="btn btn-secondary" id="removeMainImage" style="display: none;">이미지 삭제</button>
+                    </div>
+
+                    <div class="mb-3 imgA">
+                        <label for="formFilede" class="form-label">상세 이미지</label>
+                        <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
+                        <div class="row imgpreviewinput"></div>
+                    </div>
+
                     <div class="card-footer d-flex justify-content-center">
                         <form class="review info" action="/review/reviewList/{hotel_num}">
                             <button type="submit" class="btn btn-primary">등록</button>
                         </form>
                         <button type="reset" class="btn btn-secondary">초기화</button>
-<!--                        <span th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">-->
-<!--                            <button type="button" class="btn btn-danger"-->
-<!--                                    th:onclick="|location.href='@{/member/myRoomReserveRead(id=${reserve_num})}'|">취소</button>-->
-<!--                        </span>-->
-<!--                        @{주소}, 문자열+주소 |문자열@{주소}|-->
+                        <!--                        <span th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">-->
+                        <!--                            <button type="button" class="btn btn-danger"-->
+                        <!--                                    th:onclick="|location.href='@{/member/myRoomReserveRead(id=${reserve_num})}'|">취소</button>-->
+                        <!--                        </span>-->
+                        <!--                        @{주소}, 문자열+주소 |문자열@{주소}|-->
                     </div>
-               </div>
+                </div>
+
             </div>
         </div>
     </form>
@@ -130,6 +133,9 @@
             const imgPreview = document.querySelector('.imgpreview');
             const removeMainImage = document.getElementById('removeMainImage');
 
+            const formFilede = document.getElementById('formFilede');
+            const imgPreviewInput = document.querySelector('.imgpreviewinput');
+
             formFile.addEventListener('change', function(event) {
                 const file = event.target.files[0];
                 if (file) {
@@ -138,7 +144,7 @@
                         const img = document.createElement('img');
                         img.src = e.target.result;
                         img.alt = file.name;
-                        img.style.width = '250px';
+                        img.style.width = '350px';
                         img.style.height = 'auto';
                         img.style.objectFit = 'cover';
 
@@ -155,6 +161,56 @@
                 formFile.value = '';
                 imgPreview.innerHTML = '';
                 removeMainImage.style.display = 'none';
+            });
+
+            formFilede.addEventListener('change', function(event) {
+                const files = event.target.files;
+
+                Array.from(files).forEach((file, index) => {
+                    if (file) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            const imgWrapper = document.createElement('div');
+                            imgWrapper.classList.add('img-wrapper');
+                            imgWrapper.style.position = 'relative';
+                            imgWrapper.style.display = 'inline-block';
+                            imgWrapper.style.marginRight = '10px';
+
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = file.name;
+                            img.style.width = '200px';
+                            img.style.height = 'auto';
+                            img.style.objectFit = 'cover';
+
+                            const removeButton = document.createElement('button');
+                            removeButton.type = 'button';
+                            removeButton.textContent = '올리지 않기';
+                            removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+                            removeButton.style.top = '5px';
+                            removeButton.style.right = '5px';
+
+                            removeButton.addEventListener('click', function () {
+                                imgWrapper.remove();
+
+                                const dataTransfer = new DataTransfer();
+                                Array.from(formFilede.files).forEach((f, i) => {
+                                    if (i !== index) {
+                                        dataTransfer.items.add(f);
+                                    }
+                                });
+                                formFilede.files = dataTransfer.files;
+                            });
+
+                            imgWrapper.appendChild(img);
+                            imgWrapper.appendChild(removeButton);
+                            imgPreviewInput.appendChild(imgWrapper);
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                });
             });
         });
     </script>
