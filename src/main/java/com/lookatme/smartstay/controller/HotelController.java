@@ -89,16 +89,11 @@ public class HotelController {
         return "hotel/hotelModify";
     }
     @PostMapping("/hotelModify")
-    public String hotelModifyPost(HotelDTO hotelDTO, BindingResult bindingResult,
+    public String hotelModifyPost(HotelDTO hotelDTO,
                                   @RequestParam(value = "delnumList", required = false) List<Long> delnumList,
                                   @RequestParam(value = "multi", required = false) List<MultipartFile> multi,
                                   ImageDTO imageDTO, RedirectAttributes redirectAttributes) throws Exception {
-
-        if (bindingResult.hasErrors()) {
-            log.info("유효성 검사 실패:" + bindingResult.getAllErrors());
-            return "hotel/hotelModify";
-        }
-        log.info("유효성 통과");
+        log.info("수정 : "+hotelDTO);
 
         if (multi != null && multi.stream().allMatch(MultipartFile::isEmpty)) {
             multi = null;
