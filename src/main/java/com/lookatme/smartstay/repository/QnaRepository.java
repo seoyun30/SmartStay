@@ -92,6 +92,27 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
     @Query("select q from Qna q where q.hotel.brand.brand_num = :brand_num")
     Page<Qna> findbyBrand(Long brand_num, Pageable pageable);
 
+    @Query("select q from Qna q where q.title like concat('%', :keyword, '%')  and q.hotel.brand.brand_num = :brand_num ")
+    public Page<Qna> findByTitleAndBrand_numContaining(String keyword, Long brand_num, Pageable pageable);
+
+    @Query("select q from Qna q where q.content like concat('%', :keyword, '%') and q.hotel.brand.brand_num = :brand_num ")
+    public Page<Qna> findByContentContainingAndBrand_numContaining(String keyword, Long brand_num, Pageable pageable);
+
+    @Query("select q from Qna q where q.writer like concat('%', :str, '%') and q.hotel.brand.brand_num = :brand_num")
+    public Page<Qna> selectlikeWriterAndBrand_numContaining(String str, Long brand_num, Pageable pageable);
+
+    @Query("select q from Qna q join q.hotel h where h.hotel_name like concat('%', :str, '%') and q.hotel.brand.brand_num = :brand_num")
+    public Page<Qna> selectlikeHotelAndBrand_numContaining(String str, Long brand_num, Pageable pageable);
+
+    @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str1, '%') and q.hotel.brand.brand_num = :brand_num")
+    public Page<Qna> titleOrConAndBrand_numContaining(String str, String str1, Long brand_num, Pageable pageable);
+
+    @Query("select q from Qna q where q.writer like concat('%', :str, '%')or q.title like concat('%', :str1, '%') and q.hotel.brand.brand_num = :brand_num ")
+    public Page<Qna> findByTitleContainingOrWriterContainingAndBrand_numContaining(String str, String str1, Long brand_num, Pageable pageable);
+
+    @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') or q.writer like concat('%', :str, '%') and q.hotel.brand.brand_num = :brand_num ")
+    public Page<Qna> titleOrConOrWrAnaBrand_numContaining(String str, Long brand_num, Pageable pageable);
+
 
 
 
