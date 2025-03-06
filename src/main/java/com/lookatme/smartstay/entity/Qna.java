@@ -20,8 +20,10 @@ public class Qna extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long qna_num; //문의 번호
 
+    @Column(nullable = false)
     private String title; //문의 제목
 
+    @Column(nullable = false, length = 5000)
     private String content; //문의 내용
 
     private String writer; //문의 작성자

@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -17,8 +18,10 @@ public class QnaDTO {
 
     private Long qna_num; //문의 번호
 
+    @NotBlank(message = "제목을 입력해주세요.")
     private String title; //문의 제목
 
+    @NotBlank(message = "내용을 입력해주세요.")
     private String content; //문의 내용
 
     private String writer; //문의 작성자

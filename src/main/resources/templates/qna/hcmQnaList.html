@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/adminlayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block layout:fragment="content">
+    <h1 class="text-center mb-3 mt-5">문의사항 목록</h1>
+
+    <!--검색창-->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-right">
+            <div class="search-form">
+                <form th:action="@{/qna/hcmQnaList}" method="get">
+                    <div class="input-group input-group-sm" id="input-group-search">
+                        <select class="form-select-sm" name="type">
+                            <option th:selected="${type==null}">검색항목</option>
+                            <option value="t" th:selected="${type=='t'}">제목</option>>
+                            <option value="c" th:selected="${type=='c'}">내용</option>>
+                            <option value="w" th:selected="${type=='w'}">작성자</option>>
+                            <option value="h" th:selected="${type=='h'}">호텔</option>>
+                            <option value="tc" th:selected="${type=='tc'}">제목+내용</option>>
+                            <option value="tcw" th:selected="${type=='tcw'}">제목+내용+작성자</option>>
+                        </select>
+                        <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="Search" th:value="${pageRequestDTO.keyword}" style="width: 250px;">
+                        <div class="input-group-append">
+                            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                            <button type="reset" class="btn btn-secondary">초기화</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="row mt-5">
+        <div class="col">
+            <table class="table table-striped table-hover text-center">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>호텔</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="qna:${pageResponseDTO.dtoList}">
+                    <tr class="align-middle">
+                        <td th:text="${qna.qna_num}"></td>
+                        <td>
+                            <a href="#" class="increment-view-btn" th:data-qna_num="${qna.qna_num}">
+                                [[${qna.title}]]
+                            </a>
+                        </td>
+                        <td class="hotel" th:text="${qna.hotelDTO != null ? qna.hotelDTO.hotel_name : '정보 없음'}"></td>
+                        <td th:text="${qna.writer}"></td>
+                        <td th:text="${qna.viewCount}"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <th:block th:if="${pageResponseDTO.prev}">
+                                <li class="page-item"><a class="page-link" th:href="|@{'/qna/qnaList(page=${pageResponseDTO.start-1})'}|">이전</a></li>
+                            </th:block>
+
+                            <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+                                <li class="page-item"><a class="page-link" th:href="|@{'/qna/qnaList?page=' +${num}}|">[[${num}]]</a></li>
+                            </th:block>
+
+                            <th:block th:if="${pageResponseDTO.next}">
+                                <li class="page-item"><a class="page-link" th:href="|@{'/qna/qnaList(${pageResponseDTO.end+1}'}|">다음</a></li>
+                            </th:block>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </th:block>
+    </div>
+
+</th:block>
+<script th:inline="javascript" layout:fragment="script">
+    let messages = [[${msg}]];
+    if (messages != null && messages.trim() !== "") {
+        alert(messages);
+    }
+
+    //조회수 상승 코드
+    $(document).ready(function() {
+        $('.increment-view-btn').on('click', function(e) {
+            e.preventDefault();
+            var qna_num = $(this).data('qna_num');
+            incrementViewCount(qna_num);
+        });
+    });
+
+    function incrementViewCount(qna_num) {
+        $.ajax({
+            url: '/qna/incrementViewCount',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({ qna_num: qna_num }),
+            success: function(result) {
+                // 조회수 증가 후 상세 페이지로 이동
+                console.info(result)
+                window.location.href = '/qna/qnaRead?qna_num=' + qna_num;
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                // 오류가 발생하면 바로 상세 페이지로 이동
+
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

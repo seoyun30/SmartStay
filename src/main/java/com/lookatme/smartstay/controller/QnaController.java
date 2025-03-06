@@ -105,8 +105,6 @@ public class QnaController {
             return "redirect:/member/login";
         }
 
-        /*String loggedInEmail = principal.getName();  // 로그인한 유저의 이메일*/
-       /* List<QnaDTO> myQnaList = qnaService.myQnaList(loggedInEmail)*/
         PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagemylist(pageRequestDTO, principal.getName());
 
         model.addAttribute("pageResponseDTO", pageResponseDTO);
@@ -115,14 +113,20 @@ public class QnaController {
     }
 
     //cm목록
-    @GetMapping("/cmQnaList")
-    public String cmQnaList(Model model,  PageRequestDTO pageRequestDTO) {
+    @GetMapping("/hcmQnaList")
+    public String hcmQnaList(Model model,  PageRequestDTO pageRequestDTO, Long hotel_num, Principal principal) {
         log.info("pageRequestDTO" + pageRequestDTO);
 
-        PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagelist(pageRequestDTO);
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
+        PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagehlist(pageRequestDTO, hotel_num, principal.getName());
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
-        return "qna/cmQnaList";
+        log.info("qnaDTO: " + pageResponseDTO);
+
+        return "qna/hcmQnaList";
     }
 
     //상세
