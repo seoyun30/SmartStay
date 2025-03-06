@@ -112,21 +112,38 @@ public class QnaController {
         return "qna/myQnaList";  // myQnaList.html 또는 jsp 등으로 반환
     }
 
-    //cm목록
+    //매니저 소속 호텔용 목록
     @GetMapping("/hcmQnaList")
-    public String hcmQnaList(Model model,  PageRequestDTO pageRequestDTO, Long hotel_num, Principal principal) {
+    public String hcmQnaList(Model model,  PageRequestDTO pageRequestDTO, Principal principal) {
         log.info("pageRequestDTO" + pageRequestDTO);
 
         if (principal == null) {
             return "redirect:/member/login";
         }
 
-        PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagehlist(pageRequestDTO, hotel_num, principal.getName());
+        PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagehlist(pageRequestDTO, principal.getName());
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
         log.info("qnaDTO: " + pageResponseDTO);
 
         return "qna/hcmQnaList";
+    }
+
+    //치프 소속 브랜드용 목록
+    @GetMapping("/bcmQnaList")
+    public String bcmQnaList(Model model,  PageRequestDTO pageRequestDTO, Principal principal) {
+        log.info("pageRequestDTO" + pageRequestDTO);
+
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
+        PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pageblist(pageRequestDTO, principal.getName());
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
+
+        log.info("qnaDTO: " + pageResponseDTO);
+
+        return "qna/bcmQnaList";
     }
 
     //상세
