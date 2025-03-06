@@ -463,18 +463,24 @@ public class MenuService {
         log.info("메뉴가 삭제되었습니다. menu_num:" + id);
     }
 
-    public List<MenuDTO> searchList(String menuName, String menuDetail, String sortField, String sortDir) {
+    public List<MenuDTO> searchList(String searchType, String searchKeyword, String sortField, String sortDir) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
         List<Menu> menus;
 
-        if (menuName != null && !menuName.isEmpty()) {
-            menus = menuRepository.findByMenu_nameContainingIgnoreCase(menuName, sort);
-        }else if (menuDetail != null && !menuDetail.isEmpty()) {
-            menus = menuRepository.findByMenu_detailContainingIgnoreCase(menuDetail, sort);
-        }else {
-            menus = menuRepository.findAll(sort);
+        switch (searchType) {
+            case "menuName":
+                menus = menuRepository.findByMenu_nameContainingIgnoreCase(searchKeyword, sort);
+                break;
+            case "menuDetail":
+                menus = menuRepository.findByMenu_detailContainingIgnoreCase(searchKeyword, sort);
+                break;
+            case "menuSort":
+                menus = menuRepository.findByMenu_sortContainingIgnoreCase(searchKeyword, sort);
+                break;
+            default:
+                menus = menuRepository.findAll(sort);
         }
 
         if (menus == null || menus.isEmpty()) {

@@ -2,7 +2,9 @@ package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.*;
-import com.lookatme.smartstay.entity.*;
+import com.lookatme.smartstay.entity.Image;
+import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.entity.Notice;
 import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -10,19 +12,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -83,23 +80,9 @@ public class NoticeService {
         notice = noticeRepository.save(notice);
         log.info("저장후 결과를 가지고 있는 notice" + notice);
 
-        if(multipartFiles != null) {
-
-            for(MultipartFile multipartFile : multipartFiles){
-                if(!multipartFile.isEmpty()) {
-                    //물리적인 저장
-                    String savedFileName =
-                    fileService.uploadFile(imgUploadLocation, multipartFile);
-                    //db저장
-                    imageService.saveImage(multipartFiles,  "notice" , notice.getNotice_num());
-
-
-                }
-            }
-
-
+        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+            imageService.saveImage(multipartFiles, "notice", notice.getNotice_num());
         }
-
 
     }
 
@@ -274,16 +257,10 @@ public class NoticeService {
         noticeRepository.save(notice);
 
         //파일등록 리스트 > 반복해서 하나씩 저장
-        if(multipartFileList != null && !multipartFileList.isEmpty()) {
-            for (MultipartFile multipartFile : multipartFileList){
-                if (!multipartFile.isEmpty()) {
-                    String  savedFileName =
-                            fileService.uploadFile(imgUploadLocation , multipartFile);
-                    imageService.saveImage(multipartFileList ,  "notice" , notice.getNotice_num());
-                }
-
-            }
+        if (multipartFileList != null && !multipartFileList.isEmpty()) {
+            imageService.saveImage(multipartFileList, "notice", notice.getNotice_num());
         }
+
 
 
         //파일삭제

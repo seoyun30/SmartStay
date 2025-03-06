@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <div th:if="${pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}" class="alert alert-success text-center">
+    <div th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and #lists.isEmpty(pageResponseDTO.dtoList)}" class="alert alert-success text-center">
         <p>등록된 메뉴가 없습니다.</p>
     </div>
 
@@ -28,26 +28,29 @@
         <button type="button" onclick="location.href='/menu/menuRegister'" class="btn btn-dark">메뉴 등록</button>
     </div>
 
-    <div class="col-12 mt-3">
-        <div class="card search-form">
-            <form action="/menu/menuList" method="get"  onsubmit="saveSearchQuery()">
-                <h3 class="text-center fw-bold mt-3 mb-1">검색 조건</h3>
-                <div class="input-group p-2">
-                    <span class="input-group-text">메뉴 이름</span>
-                    <input type="text" name="menuName" class="form-control" th:value="${param.menuName}">
-                </div>
-                <div class="input-group p-2">
-                    <span class="input-group-text">메뉴 상세</span>
-                    <input type="text" name="menuDetail" class="form-control" th:value="${param.menuDetail}">
-                </div>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
-                    <button type="submit" class="btn btn-primary">검색</button>
-                    <button type="reset" class="btn btn-secondary">초기화</button>
-                    <button type="button" class="btn btn-success" onclick="location.href='/menu/menuList'">목록으로 돌아가기</button>
-                </div>
-            </form>
+    <nav class="navbar" id="navbar">
+        <div class="navbar-right">
+            <div class="search-form">
+                <form action="/menu/menuList" method="get" onsubmit="saveSearchQuery()">
+                    <div class="input-group input-group-sm" id="input-group-search">
+                        <select class="form-select-sm" name="searchType">
+                            <option value="" th:selected="${searchType == null}">검색 조건</option>
+                            <option value="menuSort" th:selected="${searchType == 'menuSort'}">메뉴 분류</option>
+                            <option value="menuName" th:selected="${searchType == 'menuName'}">메뉴 이름</option>
+                            <option value="menuDetail" th:selected="${searchType == 'menuDetail'}">메뉴 상세</option>
+                        </select>
+                        <input type="text" name="searchKeyword" class="form-control" placeholder="검색어 입력" th:value="${searchKeyword}">
+                        <input type="hidden" name="sortField" th:value="${sortField}">
+                        <input type="hidden" name="sortDir" th:value="${sortDir}">
+                        <div class="input-group-append">
+                            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                            <button type="reset" class="btn btn-secondary">초기화</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+    </nav>
 
     <div th:if="${isSearch}">
         <table class="table" th:if="${results != null && results.size() > 0}">

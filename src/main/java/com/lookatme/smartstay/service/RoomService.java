@@ -183,18 +183,24 @@ public class RoomService {
         log.info("룸이 삭제되었습니다. room_num: " + id);
     }
 
-    public List<RoomDTO> searchList(HotelDTO hotelDTO, String roomName, String roomInfo, String sortField, String sortDir) {
+    public List<RoomDTO> searchList(HotelDTO hotelDTO, String searchType, String searchKeyword, String sortField, String sortDir) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
         List<Room> rooms;
 
-        if (roomName != null && !roomName.isEmpty()) {
-            rooms = roomRepository.findByRoom_nameContainingIgnoreCase(roomName, sort);
-        }else if (roomInfo != null && !roomInfo.isEmpty()) {
-            rooms = roomRepository.findByRoom_infoContainingIgnoreCase(roomInfo, sort);
-        }else {
-            rooms = roomRepository.findAll(sort);
+        switch (searchType) {
+            case "roomName":
+                rooms = roomRepository.findByRoom_nameContainingIgnoreCase(searchKeyword, sort);
+                break;
+            case "roomInfo":
+                rooms = roomRepository.findByRoom_infoContainingIgnoreCase(searchKeyword, sort);
+                break;
+            case "roomType":
+                rooms = roomRepository.findByRoom_typeContainingIgnoreCase(searchKeyword, sort);
+                break;
+            default:
+                rooms = roomRepository.findAll(sort);
         }
 
         if (rooms == null || rooms.isEmpty()) {

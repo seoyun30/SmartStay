@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -85,8 +84,8 @@ public class MenuController {
     public String menuList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                            @RequestParam(defaultValue = "menu_num") String sortField,
                            @RequestParam(defaultValue = "asc") String sortDir,
-                           @RequestParam(value = "menuName", required = false) String menuName,
-                           @RequestParam(value = "menuDetail", required = false) String menuDetail) {
+                           @RequestParam(required = false) String searchType,
+                           @RequestParam(required = false) String searchKeyword) {
 
         if (principal == null) {
             return "redirect:/member/login";
@@ -100,17 +99,16 @@ public class MenuController {
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
 
-        if ((menuName == null || menuName.trim().isEmpty()) && (menuDetail == null || menuDetail.trim().isEmpty())) {
+        if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
+            List<MenuDTO> results = menuService.searchList(searchType, searchKeyword, sortField, sortDir);
+            model.addAttribute("results", results);
+            model.addAttribute("searchType", searchType);
+            model.addAttribute("searchKeyword", searchKeyword);
+            model.addAttribute("isSearch", true);
+        } else {
             PageResponseDTO<MenuDTO> pageResponseDTO = menuService.menuList(hotelDTO, pageRequestDTO, sortField, sortDir);
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("isSearch", false);
-        }else {
-            List<MenuDTO> results = menuService.searchList(menuName, menuDetail, sortField, sortDir);
-            model.addAttribute("results", results != null ? results : Collections.emptyList());
-            model.addAttribute("menuName", menuName);
-            model.addAttribute("menuDetail", menuDetail);
-            model.addAttribute("isSearch", true);
-            model.addAttribute("pageResponseDTO", null);
         }
         return "menu/menuList";
     }
