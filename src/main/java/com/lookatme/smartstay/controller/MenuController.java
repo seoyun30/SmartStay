@@ -100,8 +100,8 @@ public class MenuController {
         model.addAttribute("sortDir", sortDir);
 
         if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
-            List<MenuDTO> results = menuService.searchList(searchType, searchKeyword, sortField, sortDir);
-            model.addAttribute("results", results);
+            PageResponseDTO<MenuDTO> pageResponseDTO = menuService.searchList(searchType, searchKeyword, sortField, sortDir, pageRequestDTO);
+            model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("searchType", searchType);
             model.addAttribute("searchKeyword", searchKeyword);
             model.addAttribute("isSearch", true);

@@ -61,7 +61,7 @@
                 <form action="/care/careList" method="get" onsubmit="saveSearchQuery()">
                     <div class="input-group" id="input-group-search">
                         <select class="form-select" name="searchType">
-                            <option value="" th:selected="${searchType == null}">검색 조건</option>
+                            <option value="" th:selected="${searchType == null}">전체</option>
                             <option value="careName" th:selected="${searchType == 'careName'}">케어 이름</option>
                             <option value="careDetail" th:selected="${searchType == 'careDetail'}">케어 상세</option>
                         </select>
@@ -78,7 +78,7 @@
     </nav>
 
     <div th:if="${isSearch}">
-        <table class="table" th:if="${results != null && results.size() > 0}">
+        <table class="table" th:if="${pageResponseDTO != null and not #lists.isEmpty(pageResponseDTO.dtoList)}">
             <h3 class="text-center mt-3 mb-3">검색 결과</h3>
             <div class="row mt-3">
                 <div class="col-12 mb-2">
@@ -89,7 +89,7 @@
                             <td>룸 케어 이름</td>
                             <td>룸 케어 상세</td>
                             <td>
-                                <a th:href="@{/care/careList(sortField='care_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                                <a th:href="@{/care/careList(page=1, size=${pageResponseDTO.size}, sortField='care_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
                                     룸 케어 가격
                                     <span th:if="${sortField == 'care_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                                 </a>
@@ -99,7 +99,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="care : ${results}" class="text-center">
+                            <tr th:each="care : ${pageResponseDTO.dtoList}" class="text-center">
                                 <td th:text="${care.care_num}"></td>
                                 <td>
                                     <a th:href="@{/care/careRead(care_num=${care.care_num})}">
@@ -123,7 +123,33 @@
                 </div>
             </div>
         </table>
-        <h2 class="text-center text-primary mt-5" th:if="${results.size() == 0}">검색 결과가 없습니다.</h2>
+        <h2 class="text-center text-primary mt-5" th:if="${#lists.isEmpty(pageResponseDTO.dtoList)}">검색 결과가 없습니다.</h2>
+
+        <div class="row mt-3" th:if="${isSearch}">
+            <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
+                <div class="row">
+                    <div class="col-12">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <th:block th:if="${pageResponseDTO.prev}">
+                                    <li class="page-item"><a class="page-link" th:href="@{/care/careList(page=${pageResponseDTO.start-1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">이전</a></li>
+                                </th:block>
+
+                                <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+                                    <li class="page-item">
+                                        <a class="page-link" th:href="@{/care/careList(page=${num}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">[[${num}]]</a>
+                                    </li>
+                                </th:block>
+
+                                <th:block th:if="${pageResponseDTO.next}">
+                                    <li class="page-item"><a class="page-link" th:href="@{/care/careList(page=${pageResponseDTO.end+1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">다음</a></li>
+                                </th:block>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </th:block>
+        </div>
     </div>
 
     <div th:if="${!isSearch}">
@@ -136,7 +162,7 @@
                         <td>룸 케어 이름</td>
                         <td>룸 케어 상세</td>
                         <td>
-                            <a th:href="@{/care/careList(sortField='care_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                            <a th:href="@{/care/careList(page=1, size=${pageResponseDTO.size}, sortField='care_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
                                 룸 케어 가격
                                 <span th:if="${sortField == 'care_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                             </a>
@@ -174,22 +200,32 @@
         </div>
     </div>
 
-    <div class="row mt-3">
+    <div class="row mt-3" th:if="${!isSearch}">
         <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
             <div class="row">
                 <div class="col-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-center">
                             <th:block th:if="${pageResponseDTO.prev}">
-                                <li class="page-item"><a class="page-link" th:href="|@{'/care/careList?page=' +${pageResponseDTO.start-1}}|">이전</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/care/careList(page=${pageResponseDTO.start-1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">
+                                        이전
+                                    </a>
+                                </li>
                             </th:block>
-
                             <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
-                                <li class="page-item"><a class="page-link" th:href="|@{'/care/careList?page=' +${num}}|">[[${num}]]</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/care/careList(page=${num}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">
+                                        [[${num}]]
+                                    </a>
+                                </li>
                             </th:block>
-
                             <th:block th:if="${pageResponseDTO.next}">
-                                <li class="page-item"><a class="page-link" th:href="|@{'/care/careList?page=' +${pageResponseDTO.end+1}}|">다음</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/care/careList(page=${pageResponseDTO.end+1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">
+                                        다음
+                                    </a>
+                                </li>
                             </th:block>
                         </ul>
                     </nav>

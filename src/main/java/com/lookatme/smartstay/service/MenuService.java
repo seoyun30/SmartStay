@@ -463,54 +463,46 @@ public class MenuService {
         log.info("메뉴가 삭제되었습니다. menu_num:" + id);
     }
 
-    public List<MenuDTO> searchList(String searchType, String searchKeyword, String sortField, String sortDir) {
+    public PageResponseDTO<MenuDTO> searchList(String searchType, String searchKeyword, String sortField, String sortDir, PageRequestDTO pageRequestDTO) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
-        List<Menu> menus;
+        Page<Menu> result;
 
         switch (searchType) {
             case "menuName":
-                menus = menuRepository.findByMenu_nameContainingIgnoreCase(searchKeyword, sort);
+                result = menuRepository.findByMenu_nameContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "menuDetail":
-                menus = menuRepository.findByMenu_detailContainingIgnoreCase(searchKeyword, sort);
+                result = menuRepository.findByMenu_detailContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "menuSort":
-                menus = menuRepository.findByMenu_sortContainingIgnoreCase(searchKeyword, sort);
+                result = menuRepository.findByMenu_sortContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             default:
-                menus = menuRepository.findAll(sort);
+                result = menuRepository.findAll(PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
         }
 
-        if (menus == null || menus.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<MenuDTO> menuDTOS = menus.stream()
-                .map(menu -> {
-                    MenuDTO menuDTO = modelMapper.map(menu, MenuDTO.class);
-
-                    List<Image> imageList = imageRepository.findByTarget("menu", menu.getMenu_num());
-                    if (imageList != null && !imageList.isEmpty()) {
-                        List<ImageDTO> imageDTOList = imageList.stream()
-                                .map(image -> modelMapper.map(image, ImageDTO.class))
-                                .collect(Collectors.toList());
-                        menuDTO.setImageDTOList(imageDTOList);
-
-                        ImageDTO mainImage = imageDTOList.stream()
-                                .filter(image -> "Y".equalsIgnoreCase(image.getRepimg_yn()))
-                                .findFirst()
-                                .orElse(imageDTOList.get(0));
-                        menuDTO.setMainImage(mainImage);
-                    }else {
-                        log.warn("메뉴 번호:{}에 이미지가 없습니다.", menu.getMenu_num());
-                    }
-                    return menuDTO;
-                })
+        List<MenuDTO> menuDTOList = result.stream()
+                .map(menu -> modelMapper.map(menu, MenuDTO.class)
+                        .setHotelDTO(modelMapper.map(menu.getHotel(), HotelDTO.class)))
                 .collect(Collectors.toList());
 
-        return menuDTOS;
+        for (MenuDTO menuDTO : menuDTOList) {
+            List<Image> menuImageList = imageRepository.findByTarget("menu", menuDTO.getMenu_num());
+            if (!menuImageList.isEmpty()) {
+                List<ImageDTO> menuImageDTOList = menuImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                menuDTO.setImageDTOList(menuImageDTOList);
+            } else {
+                menuDTO.setImageDTOList(null);
+            }
+        }
+
+        PageResponseDTO<MenuDTO> menuDTOPageResponseDTO = PageResponseDTO.<MenuDTO>withAll()
+                .pageRequestDTO(pageRequestDTO).dtoList(menuDTOList).total((int) result.getTotalElements()).build();
+
+        return menuDTOPageResponseDTO;
     }
 
 

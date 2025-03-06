@@ -79,7 +79,7 @@
     </nav>
 
     <div th:if="${isSearch}">
-        <table class="table" th:if="${results != null && results.size() > 0}">
+        <table class="table" th:if="${pageResponseDTO != null and not #lists.isEmpty(pageResponseDTO.dtoList)}">
             <h3 class="text-center mt-3 mb-3">검색 결과</h3>
             <div class="row mt-3">
                 <div class="col-12 mb-2">
@@ -88,7 +88,7 @@
                         <tr class="text-center text-black fw-bold">
                             <td>메뉴 번호</td>
                             <td>
-                                <a th:href="@{/menu/menuList(sortField='menu_sort', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                                <a th:href="@{/menu/menuList(page=1, size=${pageResponseDTO.size}, sortField='menu_sort', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
                                     메뉴 분류
                                     <span th:if="${sortField == 'menu_sort'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                                 </a>
@@ -96,7 +96,7 @@
                             <td>메뉴 이름</td>
                             <td>메뉴 상세</td>
                             <td>
-                                <a th:href="@{/menu/menuList(sortField='menu_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                                <a th:href="@{/menu/menuList(page=1, size=${pageResponseDTO.size}, sortField='menu_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
                                     메뉴 가격
                                     <span th:if="${sortField == 'menu_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                                 </a>
@@ -106,32 +106,58 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="menu : ${results}" class="text-center">
-                            <td th:text="${menu.menu_num}"></td>
-                            <td th:text="${menu.menu_sort}"></td>
-                            <td>
-                                <a th:href="@{/menu/menuRead(menu_num=${menu.menu_num})}">
-                                    [[${menu.menu_name}]]
-                                </a>
-                            </td>
-                            <td th:text="${menu.menu_detail}"></td>
-                            <td th:text="${menu.menu_price}"></td>
-                            <td>
-                                <button type="button" th:attr="onclick='location.href=\'/menu/menuModify?menu_num=' + ${menu.menu_num} + '\''" class="btn btn-warning">수정</button>
-                            </td>
-                            <td>
-                                <form action="/menu/menuDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                    <input type="hidden" name="id" th:value="${menu.menu_num}">
-                                    <button type="submit" class="btn btn-danger">삭제</button>
-                                </form>
-                            </td>
-                        </tr>
+                            <tr th:each="menu : ${pageResponseDTO.dtoList}" class="text-center">
+                                <td th:text="${menu.menu_num}"></td>
+                                <td th:text="${menu.menu_sort}"></td>
+                                <td>
+                                    <a th:href="@{/menu/menuRead(menu_num=${menu.menu_num})}">
+                                        [[${menu.menu_name}]]
+                                    </a>
+                                </td>
+                                <td th:text="${menu.menu_detail}"></td>
+                                <td th:text="${menu.menu_price}"></td>
+                                <td>
+                                    <button type="button" th:attr="onclick='location.href=\'/menu/menuModify?menu_num=' + ${menu.menu_num} + '\''" class="btn btn-warning">수정</button>
+                                </td>
+                                <td>
+                                    <form action="/menu/menuDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                        <input type="hidden" name="id" th:value="${menu.menu_num}">
+                                        <button type="submit" class="btn btn-danger">삭제</button>
+                                    </form>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </table>
-        <h2 class="text-center text-primary mt-5" th:if="${results.size() == 0}">검색 결과가 없습니다.</h2>
+        <h2 class="text-center text-primary mt-5" th:if="${#lists.isEmpty(pageResponseDTO.dtoList)}">검색 결과가 없습니다.</h2>
+
+        <div class="row mt-3" th:if="${isSearch}">
+            <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
+                <div class="row">
+                    <div class="col-12">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <th:block th:if="${pageResponseDTO.prev}">
+                                    <li class="page-item"><a class="page-link" th:href="@{/menu/menuList(page=${pageResponseDTO.start-1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">이전</a></li>
+                                </th:block>
+
+                                <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+                                    <li class="page-item">
+                                        <a class="page-link" th:href="@{/menu/menuList(page=${num}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">[[${num}]]</a>
+                                    </li>
+                                </th:block>
+
+                                <th:block th:if="${pageResponseDTO.next}">
+                                    <li class="page-item"><a class="page-link" th:href="@{/menu/menuList(page=${pageResponseDTO.end+1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">다음</a></li>
+                                </th:block>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </th:block>
+        </div>
     </div>
 
     <div th:if = "${!isSearch}">
@@ -142,7 +168,7 @@
                     <tr class="text-center text-black fw-bold">
                         <td>메뉴 번호</td>
                         <td>
-                            <a th:href="@{/menu/menuList(sortField='menu_sort', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                            <a th:href="@{/menu/menuList(page=1, size=${pageResponseDTO.size}, sortField='menu_sort', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
                                 메뉴 분류
                                 <span th:if="${sortField == 'menu_sort'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                             </a>
@@ -150,7 +176,7 @@
                         <td>메뉴 이름</td>
                         <td>메뉴 상세</td>
                         <td>
-                            <a th:href="@{/menu/menuList(sortField='menu_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                            <a th:href="@{/menu/menuList(page=1, size=${pageResponseDTO.size}, sortField='menu_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
                                 메뉴 가격
                                 <span th:if="${sortField == 'menu_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                             </a>
@@ -189,22 +215,26 @@
         </div>
     </div>
 
-    <div class="row mt-3">
+    <div class="row mt-3" th:if="${!isSearch}">
         <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
             <div class="row">
                 <div class="col-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-center">
                             <th:block th:if="${pageResponseDTO.prev}">
-                                <li class="page-item"><a class="page-link" th:href="|@{'/menu/menuList?page=' +${pageResponseDTO.start-1}}|">이전</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/menu/menuList(page=${pageResponseDTO.start-1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">이전</a>
+                                </li>
                             </th:block>
-
                             <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
-                                <li class="page-item"><a class="page-link" th:href="|@{'/menu/menuList?page=' +${num}}|">[[${num}]]</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/menu/menuList(page=${num}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">[[${num}]]</a>
+                                </li>
                             </th:block>
-
                             <th:block th:if="${pageResponseDTO.next}">
-                                <li class="page-item"><a class="page-link" th:href="|@{'/menu/menuList?page=' +${pageResponseDTO.end+1}}|">다음</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/menu/menuList(page=${pageResponseDTO.end+1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">다음</a>
+                                </li>
                             </th:block>
                         </ul>
                     </nav>
