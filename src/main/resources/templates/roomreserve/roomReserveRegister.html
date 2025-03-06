@@ -6,6 +6,12 @@
 <head>
     <meta charset="UTF-8">
     <title>룸예약</title>
+    <!-- flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 </head>
 <body>
 
@@ -15,7 +21,9 @@
 
         <div class="card w-75 mt-5 mx-auto">
             <div class="card-title">
+                <button type="button" class="btn btn-lg" style="border: none" onclick="history.back()"><i class="bi bi-chevron-left"></i></button>
                 <h1 class="mt-5 text-center">룸 예약</h1>
+                <hr>
             </div>
             <div class="card-body">
                 <h3 class="card-title fw-bold" th:text="${roomDTO.hotelDTO.hotel_name}">호텔 매장 이름</h3>
@@ -23,13 +31,20 @@
                 <input type="hidden" class="room_num" th:value="${roomDTO.room_num}" name="room_num">
 
                 <div class="row mb-3">
-                    <div class="col-4">
-                        <span class="fs-6 text-secondary">체크인</span> <br>
-                        <input class="in_date" type="datetime-local" name="in_date">
+                    <div class="col-12">
+                        <span class="card-text">체크인 예정 시간 : [[${roomDTO.in_time}]] | </span>
+                        <span class="card-text">체크아웃 예정 시간 : [[${roomDTO.out_time}]]</span>
+                        <input type="hidden" class="in_time" th:value="${roomDTO.in_time}">
+                        <input type="hidden" class="out_time" th:value="${roomDTO.out_time}">
                     </div>
-                    <div class="col-4">
-                        <span class="fs-6 text-secondary">체크아웃</span> <br>
-                        <input class="out_date" type="datetime-local" name="out_date">
+
+                    <div class="col-6">
+                        <p class="fs-6 text-secondary">체크인 예정일</p>
+                        <input class="in_date" id="in_date" type="date" name="in_date">
+                    </div>
+                    <div class="col-6">
+                        <p class="fs-6 text-secondary">체크아웃 예정일</p>
+                        <input class="out_date" id="out_date" type="date" name="out_date">
                     </div>
                 </div>
 
@@ -66,82 +81,74 @@
 </th:block>
 <script th:inline="javascript" layout:fragment="script">
     $(document).ready(function () {
+        const flatpickr = require("flatpickr");
 
+        let room_num = $(".room_num").val();
+        let inTime = [[${roomDTO.in_time}]];
+        let outTime = [[${roomDTO.out_time}]];
         let price = [[${roomDTO.room_price}]];
         let maxPeople = [[${roomDTO.room_bed}]]
+        let reservedDates = new Set();
+
+        // 예약된 날짜 가져오기
+        function fetchReservedDates(room_num) {
+            $.ajax({
+                url: `/roomreserve/checkReserve/${room_num}`,
+                type: "GET",
+                success: function (data) {
+                    data.forEach(item => {
+                        let startDate = new Date(item.in_date).toISOString().split("T")[0];
+                        let endDate = new Date(item.out_date).toISOString().split("T")[0];
+
+                        let currentDate = new Date(startDate);
+                        while (currentDate.toISOString().split("T")[0] <= endDate) {
+                            reservedDates.add(currentDate.toISOString().split("T")[0]);
+                            currentDate.setDate(currentDate.getDate() + 1);
+                        }
+                    });
+                    console.log(reservedDates)
+                    disableReservedDates();
+                },
+                error: function () {
+                    console.error("예약된 날짜를 가져오는 데 실패했습니다.");
+                }
+            });
+        }
+        fetchReservedDates(room_num);
+
+        // 예약된 날짜 비활성화
+        function disableReservedDates() {
+            flatpickr("#in_date", {
+                dateFormat: "Y-m-d",
+                disable: Array.from(reservedDates), // 예약된 날짜 비활성화
+            });
+
+            flatpickr("#out_date", {
+                dateFormat: "Y-m-d",
+                disable: Array.from(reservedDates), // 예약된 날짜 비활성화
+            });
+
+            flatpickr.localize(flatpickr.l10ns.ko); // global 적용
+        }
 
         //현재 이전 날짜 설정 불가 함수
-        function setMinDateTime() {
+        function setMinDate() {
             let today = new Date();
             let year = today.getFullYear();
-            let month = String(today.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1 필요)
-            let day = String(today.getDate()).padStart(2, '0'); // 일
-            let hours = String(today.getHours()).padStart(2, '0'); // 현재 시간
-            let minutes = String(today.getMinutes()).padStart(2, '0'); // 현재 분
+            let month = String(today.getMonth() + 1).padStart(2, '0');
+            let day = String(today.getDate()).padStart(2, '0');
+            let minDate = `${year}-${month}-${day}`;
 
-            let minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
-            $(".in_date").attr("min", minDateTime);
-            $(".out_date").attr("min", minDateTime);
+            $(".in_date").attr("min", minDate);
+            $(".out_date").attr("min", minDate);
         }
         // 페이지 로드 시 실행
-        setMinDateTime();
-
-        // 체크인 날짜 변경 시, 과거 시간 선택 제한
-        $(".in_date").on("change", function () {
-            let selectedDate = new Date($(this).val());
-            let today = new Date();
-
-            // 사용자가 오늘 날짜를 선택한 경우, 현재 시간 이전을 선택 못 하게 변경
-            if (selectedDate.toDateString() === today.toDateString()) {
-                let minTime = today.getHours().toString().padStart(2, '0') + ":" + today.getMinutes().toString().padStart(2, '0');
-                let selectedTime = selectedDate.getHours().toString().padStart(2, '0') + ":" + selectedDate.getMinutes().toString().padStart(2, '0');
-
-                if (selectedTime < minTime) {
-                    alert("현재 시간 이전은 선택할 수 없습니다.");
-                    $(this).val(""); // 잘못된 값 초기화
-                }
-            }
-        });
-
-        $(".out_date").on("change", function () {
-            let selectedDate = new Date($(this).val());
-            let today = new Date();
-
-            // 사용자가 오늘 날짜를 선택한 경우, 현재 시간 이전을 선택 못 하게 변경
-            if (selectedDate.toDateString() === today.toDateString()) {
-                let minTime = today.getHours().toString().padStart(2, '0') + ":" + today.getMinutes().toString().padStart(2, '0');
-                let selectedTime = selectedDate.getHours().toString().padStart(2, '0') + ":" + selectedDate.getMinutes().toString().padStart(2, '0');
-
-                if (selectedTime < minTime) {
-                    alert("현재 시간 이전은 선택할 수 없습니다.");
-                    $(this).val(""); // 잘못된 값 초기화
-                }
-            }
-        });
-
-        $(".count").on("change", function () {
-            let count = $(".count").val()
-
-            if (!count || count < 1) {
-                alert("예약 인원 수를 입력해주세요.");
-                return;
-            } else if (count > maxPeople) {
-                alert("최대 예약 가능 인원을 초과할 수 없습니다. (최대 예약 가능 인원: " + maxPeople + "명)");
-                $(".count").val(maxPeople); // 최대 인원으로 값 변경
-                return; // 수정 요청 중단
-            }
-        });
-
-        // 날짜 변경 시 총 가격 업데이트
-        $(".in_date, .out_date").on("change", function () {
-            totalpriceChange();
-        });
+        setMinDate();
 
         //총 가격 계산 함수
         function totalpriceChange(){
-
-            let in_date = $(".in_date").val()
-            let out_date = $(".out_date").val()
+            let in_date = $(".in_date").val();
+            let out_date = $(".out_date").val();
 
             // 날짜가 모두 입력되지 않으면 계산하지 않음
             if (!in_date || !out_date) {
@@ -170,14 +177,31 @@
             $(".totalPrice").text(roundedPrice)
         }
 
+        $(".in_date, .out_date").on("change", function () {
+            totalpriceChange();
+        });
+
+
+        $(".count").on("change", function () {
+            let count = $(".count").val();
+
+            if (!count || count < 1) {
+                alert("예약 인원 수를 입력해주세요.");
+                return;
+            } else if (count > maxPeople) {
+                alert("최대 예약 가능 인원을 초과할 수 없습니다. (최대 예약 가능 인원: " + maxPeople + "명)");
+                $(".count").val(maxPeople); // 최대 인원으로 값 변경
+                return; // 수정 요청 중단
+            }
+        });
+
         //장바구니 추가 버튼
         $(".cartBtn").on("click", function () {
-            let room_num = $(".room_num").val()
-            let in_date = $(".in_date").val()
-            let out_date = $(".out_date").val()
-            let day = $(".day").val()
-            let count = $(".count").val()
-            let reserve_request = $(".reserve_request").val()
+            let in_date = $(".in_date").val();
+            let out_date = $(".out_date").val();
+            let count = $(".count").val();
+            let day = $(".day").val();
+            let reserve_request = $(".reserve_request").val();
 
             //유효성 검사
             if (!room_num) {
@@ -196,8 +220,6 @@
                 alert("예약 인원 수를 입력해주세요.");
                 return;
             }
-
-            // 요청 사항이 비어 있을 경우 기본값 설정
             if (reserve_request === "") {
                 reserve_request = "없음";
             }
@@ -209,8 +231,8 @@
         function addCart(room_num, in_date, out_date, day, count, reserve_request) {
             let roomItem = {
                 room_num : room_num,
-                in_date : in_date,
-                out_date : out_date,
+                in_date : in_date + "T" + inTime,
+                out_date : out_date + "T" + outTime,
                 day : day,
                 count : count,
                 reserve_request : reserve_request
@@ -241,15 +263,19 @@
         
         $(".payBtn").on("click", function (e) {
             e.preventDefault(); // 기본 제출 이벤트 방지
+            let in_date = $(".in_date").val();
+            let out_date = $(".out_date").val();
+            let count = $(".count").val();
+            let day = $(".day").val();
+            let reserve_request = $(".reserve_request").val();
 
-            // 입력된 값 가져오기
             let roomItemDTO = {
-                room_num: $(".room_num").val(),
-                in_date: $(".in_date").val(),
-                out_date: $(".out_date").val(),
-                count: $(".count").val(),
-                reserve_request: $(".reserve_request").val(),
-                day: $(".day").val(),
+                room_num: room_num,
+                in_date: in_date + "T" + inTime,
+                out_date: out_date + "T" + outTime,
+                count: count,
+                reserve_request: reserve_request,
+                day: day,
                 price: $(".price").text().replace(/[^0-9]/g, '') // 숫자만 추출
             };
 
@@ -259,7 +285,6 @@
                 return;
             }
 
-            // 요청사항이 없을 경우 기본값 설정
             if (!roomItemDTO.reserve_request) {
                 roomItemDTO.reserve_request = "없음";
             }
