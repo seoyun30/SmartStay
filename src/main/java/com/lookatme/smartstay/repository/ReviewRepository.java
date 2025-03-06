@@ -25,6 +25,24 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByUser(@Param("email") String email);
 
 
+//    /**카테고리 name 으로 review 찾기**/
+//    Page<Review> findAllByOrderByCountDesc(Pageable pageable);  //조회수
+//
+//    Page<Review> findAllByOrderByViewsDesc(Pageable pageable);  // 조회순
+//
+//    Page<Review> findAllByOrderByDateTimeDesc(Pageable pageable); // 시간순
+//
+//    Page<Review> findAllByOrderByReviewLikeDesc(Pageable pageable);  // 별점 순
+
+//    // Acs : 오름차, Desc : 내림차
+//    List<Review> findByScoreOrderByScoreDesc(String score);
+//    List<Review> findByScoreOrderByScoreAsc(String score);
+
+//    List<Review> findByReg_dateContaining(String reg_date);
+//
+//    List<Review> findByScoreContaining(String score);
+
+
     //
     @Query("SELECT r FROM Review r WHERE r.hotel.hotel_num = :hotel_num ORDER BY r.reg_date DESC")
     List<Review> findTopNByHotelNum(@Param("hotel_num") Long hotel_num, Pageable pageable);
@@ -34,4 +52,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT COUNT(r) FROM Review r WHERE r.hotel.hotel_num = :hotel_num")
     int countByHotelNum(@Param("hotel_num") Long hotel_num);
+
+
+
 }
