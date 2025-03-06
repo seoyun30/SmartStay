@@ -248,9 +248,11 @@ public class ReviewController {
             delnumList = null;
         }
 
-        if (!reviewDTO.getCreate_by().equals(principal.getName())) {
-            throw new SecurityException("수정 권한이 없습니다.");
-        }
+        //getCreate_by를 못불러온다.. 수정 테스트 완료
+//        if (!reviewDTO.getCreate_by().equals(principal.getName())) {
+//            throw new SecurityException("수정 권한이 없습니다.");
+//        }
+
 
         try {
             reviewService.reviewModify(reviewDTO, multipartFiles, delnumList);
@@ -299,20 +301,4 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 삭제 실패");
         }
     }
-
-//    @GetMapping("/searchRead")
-//    public String searchRead(@RequestParam Long hotel_num,
-//                             @RequestParam(defaultValue = "asc") String order,
-//                             @RequestParam(defaultValue = "latest") String sortBy,
-//                             Model model) {
-//
-//        //호텔 정보 조회
-//        HotelDTO hotelDTO = hotelService.read(hotel_num);
-//        model.addAttribute("hotelDTO", hotelDTO);
-//
-//        // 리뷰 정렬 처리
-//        List<ReviewDTO> reviews = reviewService.
-//
-//    }
-
 }

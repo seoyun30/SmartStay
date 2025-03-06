@@ -209,15 +209,33 @@ public class ReviewService {
     //리뷰 수정(리뷰를 등록한 유저만 가능)
     public void reviewModify(ReviewDTO reviewDTO, List<MultipartFile> multipartFiles, List<Long> delnumList) throws Exception {
 
-        log.info(" 리뷰 수정 :  " + reviewDTO);
+        log.info(" 리뷰 수정 요청 : {} " , reviewDTO);
+
+//        // 별점 유효성 체크
+//        String scoreStr = reviewDTO.getScore(); // 클라이언트에서 받은 별점
+//        if (scoreStr == null || scoreStr.trim().isEmpty()) {
+//            throw new IllegalArgumentException("별점은 필수 입력값입니다.");
+//        }
+//
+//        double score;
+//        try {
+//            score = Double.parseDouble(scoreStr); // 별점을 숫자로 변환
+//        } catch (NumberFormatException e) {
+//            throw new IllegalArgumentException("별점은 숫자여야 합니다.");
+//        }
+//
+//        // 별점 유효성 체크
+//        if (score < 1.0 || score > 5.0 || score * 10 % 5 != 0) {
+//            throw new IllegalArgumentException("별점은 1~5점 사이여야 하고, 0.5 단위 입력도 가능합니다.");
+//        }
 
         //리뷰 조회 , 없으면 예외발생
         Review review = reviewRepository.findById(reviewDTO.getRev_num()).orElseThrow(EntityNotFoundException::new);
 
+
         //리뷰 업데이트
         review.setScore(reviewDTO.getScore());    //별점
         review.setContent(reviewDTO.getContent()); //리뷰 내용
-
         reviewRepository.save(review);
 
         boolean hasNewImages = multipartFiles != null && multipartFiles.stream().anyMatch(file -> !file.isEmpty());
@@ -277,25 +295,8 @@ public class ReviewService {
     public PageResponseDTO<ReviewDTO> adMyReviewList(PageRequestDTO pageRequestDTO) {
 
 
-
         return null;
     }
-
-
-//    public List<ReviewDTO> getSortedReviews (Long hotel_num, String sortBy, int limit) {
-//
-//        List<Review> reviews = reviewRepository.findByHotel(hotel_num);
-//
-//        switch (sortBy.toLowerCase()) {
-//            case "latest":
-//                reviews.sort(Comparator.comparing(ReviewDTO::getReg_date).reversed());
-//                break;
-//        }
-//    }
-
-
-
-
 
 
     public List<ReviewDTO> getLimitedReviews (Long hotel_num, int limit) {
