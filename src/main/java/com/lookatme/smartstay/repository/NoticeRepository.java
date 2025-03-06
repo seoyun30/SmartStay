@@ -29,6 +29,25 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
             ")")
     Page<Notice> searchNotice(@Param("brand_num") Long brand_num, @Param("keyword") String keyword, Pageable pageable);
 
+    @Query("SELECT n FROM Notice n " +
+            "LEFT  JOIN Brand b on n.brand.brand_num = b.brand_num " +
+            "LEFT  JOIN Hotel h on n.hotel.hotel_num = h.hotel_num " +
+            "WHERE (b.brand_num = :brand_num) " +
+            "AND (" +
+            "     n.title LIKE CONCAT('%', :keyword, '%') " +
+            ")")
+    Page<Notice> searchNoticeByTitle(@Param("brand_num") Long brand_num, @Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT n FROM Notice n " +
+            "LEFT  JOIN Brand b on n.brand.brand_num = b.brand_num " +
+            "LEFT  JOIN Hotel h on n.hotel.hotel_num = h.hotel_num " +
+            "WHERE (b.brand_num = :brand_num) " +
+            "AND (" +
+            "     b.brand_name LIKE CONCAT('%', :keyword, '%')" +
+            "  OR h.hotel_name LIKE CONCAT('%', :keyword, '%')" +
+            ")")
+    Page<Notice> searchNoticeByHotelName(@Param("brand_num") Long brand_num, @Param("keyword") String keyword, Pageable pageable);
+
 
     @Query("SELECT n FROM Notice n " +
             "left join Brand b on n.brand.brand_num = b.brand_num " +
@@ -37,6 +56,19 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
             "   or h.hotel_name like CONCAT('%', :keyword, '%') " +
             "   or b.brand_name like  CONCAT('%', :keyword, '%')")
     Page<Notice> userSearchNotice(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT n FROM Notice n " +
+            "left join Brand b on n.brand.brand_num = b.brand_num " +
+            "left join Hotel h  on n.hotel.hotel_num = h.hotel_num " +
+            "where n.title like CONCAT('%', :keyword, '%')")
+    Page<Notice> userSearchNoticeByTitle(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT n FROM Notice n " +
+            "left join Brand b on n.brand.brand_num = b.brand_num " +
+            "left join Hotel h  on n.hotel.hotel_num = h.hotel_num " +
+            "where h.hotel_name like CONCAT('%', :keyword, '%') " +
+            "   or b.brand_name like  CONCAT('%', :keyword, '%')")
+    Page<Notice> userSearchNoticeByHotelName(@Param("keyword") String keyword, Pageable pageable);
 
 
     @Query("select n from  Notice  n")
