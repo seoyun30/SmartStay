@@ -8,7 +8,6 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
 public class QnaReply extends BaseEntity{
 
@@ -29,13 +28,23 @@ public class QnaReply extends BaseEntity{
     @JoinColumn(name = "member_num")
     private Member member;
 
-    // 1:1 관계 (Qna와의 관계)
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "qna_num") // qna_num 외래 키로 연결
-    private Qna qna; // 1:1 관계 - 하나의 질문에 하나의 답변만
+    // QnA와 QnaReply의 N:1 관계 설정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "qna_num") // 외래 키 컬럼 이름
+    private Qna qna;
 
     //댓글수정
     public void update(String commen) {
-        this.comment = commen;
+        this.comment = comment;
+    }
+
+    // Lombok의 @ToString 제거 후 직접 작성
+    @Override
+    public String toString() {
+        return "QnaReply{" +
+                "qnaReply_num=" + qnaReply_num +
+                ", comment='" + comment + '\'' +
+                ", writer='" + writer + '\'' +
+                '}';
     }
 }

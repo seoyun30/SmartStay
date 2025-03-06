@@ -36,7 +36,7 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Role role; //회원 권한
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "brand_num")
     private Brand brand;
 
