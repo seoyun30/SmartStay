@@ -6,6 +6,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        #input-group-search .form-select {
+            font-size: 18px !important;
+            height: 45px;
+            padding: 8px 40px 8px 12px;
+            background-color: #f8f9fa;
+            color: black;
+            border: none;
+            position: relative;
+            appearance: none;
+            -webkit-appearance: none;
+            background-position: right 12px center;
+        }
+        .form-control {
+            font-size: 18px;
+            height: 45px;
+            padding: 8px 12px;
+            border: none;
+            flex: 3;
+        }
+        .input-group {
+            position: relative;
+        }
+        .form-select option {
+            white-space: nowrap;
+        }
+    </style>
 </head>
 <body>
 
@@ -32,14 +59,14 @@
         <div class="navbar-right">
             <div class="search-form">
                 <form action="/menu/menuList" method="get" onsubmit="saveSearchQuery()">
-                    <div class="input-group input-group-sm" id="input-group-search">
-                        <select class="form-select-sm" name="searchType">
+                    <div class="input-group" id="input-group-search">
+                        <select class="form-select" name="searchType">
                             <option value="" th:selected="${searchType == null}">검색 조건</option>
                             <option value="menuSort" th:selected="${searchType == 'menuSort'}">메뉴 분류</option>
                             <option value="menuName" th:selected="${searchType == 'menuName'}">메뉴 이름</option>
                             <option value="menuDetail" th:selected="${searchType == 'menuDetail'}">메뉴 상세</option>
                         </select>
-                        <input type="text" name="searchKeyword" class="form-control" placeholder="검색어 입력" th:value="${searchKeyword}">
+                        <input type="text" name="searchKeyword" class="form-control" placeholder="검색어를 입력하세요" th:value="${searchKeyword}">
                         <input type="hidden" name="sortField" th:value="${sortField}">
                         <input type="hidden" name="sortDir" th:value="${sortDir}">
                         <div class="input-group-append">
