@@ -19,12 +19,13 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>  {
     Page<Notice> noticeBrandList(@Param("brand_num") Long brand_num, Pageable pageable);
 
     @Query("SELECT n FROM Notice n " +
-            "LEFT JOIN Brand b on n.brand.brand_num = b.brand_num " +
+            "LEFT  JOIN Brand b on n.brand.brand_num = b.brand_num " +
+            "LEFT  JOIN Hotel h on n.hotel.hotel_num = h.hotel_num " +
             "WHERE (b.brand_num = :brand_num) " +
             "AND (" +
             "     n.title LIKE CONCAT('%', :keyword, '%') " +
-            "  OR n.brand.brand_name LIKE CONCAT('%', :keyword, '%')" +
-            "  OR n.hotel.hotel_name LIKE CONCAT('%', :keyword, '%')" +
+            "  OR b.brand_name LIKE CONCAT('%', :keyword, '%')" +
+            "  OR h.hotel_name LIKE CONCAT('%', :keyword, '%')" +
             ")")
     Page<Notice> searchNotice(@Param("brand_num")Long brand_num, @Param("keyword") String keyword, Pageable pageable);
 
