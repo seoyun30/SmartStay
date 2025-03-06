@@ -4,12 +4,9 @@ import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Menu;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 
@@ -17,13 +14,13 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     Page<Menu> findByHotel(@Param("hotel") Hotel hotel, Pageable pageable);
 
     @Query("SELECT m FROM Menu m WHERE LOWER(m.menu_name) LIKE LOWER(CONCAT('%', :menuName, '%'))")
-    List<Menu> findByMenu_nameContainingIgnoreCase(@Param("menuName") String menuName, Sort sort);
+    Page<Menu> findByMenu_nameContainingIgnoreCase(@Param("menuName") String menuName, Pageable pageable);
 
     @Query("SELECT m FROM Menu m WHERE LOWER(m.menu_detail) LIKE LOWER(CONCAT('%', :menuDetail, '%'))")
-    List<Menu> findByMenu_detailContainingIgnoreCase(@Param("menuDetail") String menuDetail, Sort sort);
+    Page<Menu> findByMenu_detailContainingIgnoreCase(@Param("menuDetail") String menuDetail, Pageable pageable);
 
     @Query("SELECT m FROM Menu m WHERE LOWER(m.menu_sort) LIKE LOWER(CONCAT('%', :menuSort, '%'))")
-    List<Menu> findByMenu_sortContainingIgnoreCase(@Param("menuSort") String menuDetail, Sort sort);
+    Page<Menu> findByMenu_sortContainingIgnoreCase(@Param("menuSort") String menuDetail, Pageable pageable);
 
     //전체 메뉴
     @Query("select m from Menu m where m.hotel = :hotel")
