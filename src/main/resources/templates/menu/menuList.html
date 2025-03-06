@@ -47,10 +47,6 @@
         </div>
     </div>
 
-    <div th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and #lists.isEmpty(pageResponseDTO.dtoList)}" class="alert alert-success text-center">
-        <p>등록된 메뉴가 없습니다.</p>
-    </div>
-
     <div class="mr-6 text-end">
         <button type="button" onclick="location.href='/menu/menuRegister'" class="btn btn-dark">메뉴 등록</button>
     </div>
@@ -79,60 +75,59 @@
     </nav>
 
     <div th:if="${isSearch}">
-        <table class="table" th:if="${pageResponseDTO != null and not #lists.isEmpty(pageResponseDTO.dtoList)}">
-            <h3 class="text-center mt-3 mb-3">검색 결과</h3>
-            <div class="row mt-3">
-                <div class="col-12 mb-2">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                        <tr class="text-center text-black fw-bold">
-                            <td>메뉴 번호</td>
-                            <td>
-                                <a th:href="@{/menu/menuList(page=1, size=${pageResponseDTO.size}, sortField='menu_sort', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
-                                    메뉴 분류
-                                    <span th:if="${sortField == 'menu_sort'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
-                                </a>
-                            </td>
-                            <td>메뉴 이름</td>
-                            <td>메뉴 상세</td>
-                            <td>
-                                <a th:href="@{/menu/menuList(page=1, size=${pageResponseDTO.size}, sortField='menu_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
-                                    메뉴 가격
-                                    <span th:if="${sortField == 'menu_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
-                                </a>
-                            </td>
-                            <td>수정</td>
-                            <td>삭제</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="menu : ${pageResponseDTO.dtoList}" class="text-center">
-                                <td th:text="${menu.menu_num}"></td>
-                                <td th:text="${menu.menu_sort}"></td>
-                                <td>
-                                    <a th:href="@{/menu/menuRead(menu_num=${menu.menu_num})}">
-                                        [[${menu.menu_name}]]
-                                    </a>
-                                </td>
-                                <td th:text="${menu.menu_detail}"></td>
-                                <td th:text="${menu.menu_price}"></td>
-                                <td>
-                                    <button type="button" th:attr="onclick='location.href=\'/menu/menuModify?menu_num=' + ${menu.menu_num} + '\''" class="btn btn-warning">수정</button>
-                                </td>
-                                <td>
-                                    <form action="/menu/menuDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                        <input type="hidden" name="id" th:value="${menu.menu_num}">
-                                        <button type="submit" class="btn btn-danger">삭제</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <h3 class="text-center mt-3 mb-3">검색 결과</h3>
+        <div class="row mt-3">
+            <div class="col-12 mb-2">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr class="text-center text-black fw-bold">
+                        <td>메뉴 번호</td>
+                        <td>
+                            <a th:href="@{/menu/menuList(page=1, size=${pageResponseDTO.size}, sortField='menu_sort', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                                메뉴 분류
+                                <span th:if="${sortField == 'menu_sort'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                            </a>
+                        </td>
+                        <td>메뉴 이름</td>
+                        <td>메뉴 상세</td>
+                        <td>
+                            <a th:href="@{/menu/menuList(page=1, size=${pageResponseDTO.size}, sortField='menu_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                                메뉴 가격
+                                <span th:if="${sortField == 'menu_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                            </a>
+                        </td>
+                        <td>수정</td>
+                        <td>삭제</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${pageResponseDTO == null or pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}" class="text-center">
+                        <td colspan="11">검색 결과가 없습니다.</td>
+                    </tr>
+                    <tr th:if="${pageResponseDTO != null}" th:each="menu : ${pageResponseDTO.dtoList}" class="text-center">
+                        <td th:text="${menu.menu_num}"></td>
+                        <td th:text="${menu.menu_sort}"></td>
+                        <td>
+                            <a th:href="@{/menu/menuRead(menu_num=${menu.menu_num})}">
+                                [[${menu.menu_name}]]
+                            </a>
+                        </td>
+                        <td th:text="${menu.menu_detail}"></td>
+                        <td th:text="${menu.menu_price}"></td>
+                        <td>
+                            <button type="button" th:attr="onclick='location.href=\'/menu/menuModify?menu_num=' + ${menu.menu_num} + '\''" class="btn btn-warning">수정</button>
+                        </td>
+                        <td>
+                            <form action="/menu/menuDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <input type="hidden" name="id" th:value="${menu.menu_num}">
+                                <button type="submit" class="btn btn-danger">삭제</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </table>
-        <h2 class="text-center text-primary mt-5" th:if="${#lists.isEmpty(pageResponseDTO.dtoList)}">검색 결과가 없습니다.</h2>
-
+        </div>
         <div class="row mt-3" th:if="${isSearch}">
             <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
                 <div class="row">
@@ -159,7 +154,6 @@
             </th:block>
         </div>
     </div>
-
     <div th:if = "${!isSearch}">
         <div class="row mt-3">
             <div class="col">
@@ -186,29 +180,29 @@
                     </tr>
                     </thead>
                     <tbody>
-
-                    <th:block th:if="${pageResponseDTO != null}" th:each="menuDTO : ${pageResponseDTO.dtoList}">
-                        <tr class="text-center">
-                            <td th:text="${menuDTO.menu_num}"></td>
-                            <td th:text="${menuDTO.menu_sort}"></td>
-                            <td>
-                                <a th:href="@{/menu/menuRead(menu_num=${menuDTO.menu_num})}">
-                                    [[${menuDTO.menu_name}]]
-                                </a>
-                            </td>
-                            <td th:text="${menuDTO.menu_detail}"></td>
-                            <td th:text="${menuDTO.menu_price}"></td>
-                            <td>
-                                <button type="button" th:attr="onclick='location.href=\'/menu/menuModify?menu_num=' + ${menuDTO.menu_num} + '\''" class="btn btn-warning">수정</button>
-                            </td>
-                            <td>
-                                <form action="/menu/menuDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                    <input type="hidden" name="id" th:value="${menuDTO.menu_num}">
-                                    <button type="submit" class="btn btn-danger">삭제</button>
-                                </form>
-                            </td>
-                        </tr>
-                    </th:block>
+                    <tr th:if="${pageResponseDTO == null or pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}" class="text-center">
+                        <td colspan="11">등록된 메뉴가 없습니다.</td>
+                    </tr>
+                    <tr th:if="${pageResponseDTO != null}" th:each="menuDTO : ${pageResponseDTO.dtoList}" class="text-center">
+                        <td th:text="${menuDTO.menu_num}"></td>
+                        <td th:text="${menuDTO.menu_sort}"></td>
+                        <td>
+                            <a th:href="@{/menu/menuRead(menu_num=${menuDTO.menu_num})}">
+                                [[${menuDTO.menu_name}]]
+                            </a>
+                        </td>
+                        <td th:text="${menuDTO.menu_detail}"></td>
+                        <td th:text="${menuDTO.menu_price}"></td>
+                        <td>
+                            <button type="button" th:attr="onclick='location.href=\'/menu/menuModify?menu_num=' + ${menuDTO.menu_num} + '\''" class="btn btn-warning">수정</button>
+                        </td>
+                        <td>
+                            <form action="/menu/menuDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <input type="hidden" name="id" th:value="${menuDTO.menu_num}">
+                                <button type="submit" class="btn btn-danger">삭제</button>
+                            </form>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
