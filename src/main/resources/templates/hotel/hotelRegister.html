@@ -111,7 +111,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="tel" class="form-label">연락처</label>
-                            <input type="text" class="form-control" th:field="*{tel}" id="tel" placeholder="번호만입력하세요.">
+                            <input type="text" class="form-control" th:field="*{tel}" id="tel" placeholder="번호만 입력하세요.">
                             <p id="telError" class="text-danger" style="display: none;">유효한 전화번호를 입력하세요.(예: 031-123-4567)</p>
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
