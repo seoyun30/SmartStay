@@ -1,9 +1,12 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.QnaReplyDTO;
+import com.lookatme.smartstay.dto.QnaReplyRequest;
+import com.lookatme.smartstay.entity.QnaReply;
 import com.lookatme.smartstay.service.QnaReplyService;
-import com.lookatme.smartstay.service.QnaReplyServiceImpl;
+import com.lookatme.smartstay.service.QnaService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -14,6 +17,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -22,84 +27,49 @@ import java.util.List;
 @RequestMapping("/qnareply")
 public class QnaReplyRestController {
 
-    private final QnaReplyServiceImpl qnaReplyServiceImpl;
     private final QnaReplyService qnaReplyService;
+    private final QnaService qnaService;
 
     @PostMapping("/register")
-    public ResponseEntity qnareplyregister(@Valid QnaReplyDTO qnaReplyDTO, BindingResult bindingResult) {
-        log.info("댓글 들어온 값:" + qnaReplyDTO);
-
-        if (bindingResult.hasErrors()) {
-            log.info("에러가 있습니다");
-            log.info(bindingResult.getAllErrors());
-
-            //특정 필드값의 오류만 확인하면됨
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            log.info("-------------------");
-            fieldErrors.forEach(a -> log.info(a.getDefaultMessage()));
-
-            return new ResponseEntity<String>(fieldErrors.get(0).getDefaultMessage(), HttpStatus.OK);
-        }
-        if (qnaReplyDTO.getQnaReply_num() == null || qnaReplyDTO.getQnaReply_num().equals("")) {
-
-            return new ResponseEntity<String>("댓글값들이 안들어옴", HttpStatus.BAD_REQUEST);
-        }
-
-        //댓글 저장
-        try {
-            log.info("저장시작");
-            qnaReplyService.register(qnaReplyDTO);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<String>("입력하신 글에는 댓글이 없습니다.", HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<String>("저당되었습니다.", HttpStatus.OK);
+    public ResponseEntity<QnaReply> register(@PathVariable Long qnaReply_num,
+                                             @RequestBody QnaReplyRequest request,
+                                             Principal principal,
+                                             HttpServletResponse response) throws IOException {
+        log.info("register() 호출, qnaReply_num: {}, principal: {}", qnaReply_num, principal.getName());
+        // principal.getName()을 통해 현재 로그인한 사용자의 이메일을 가져옵니다.
+        String email = principal.getName();
+        // qnaReplyService.register에 필요한 파라미터를 전달
+        QnaReply qnaReply = qnaReplyService.register(qnaReply_num, request, email, response);
+        // 생성된 QnaReply 객체를 응답 본문으로 반환
+        log.info("댓글 등록 완료, qnaReply_num: {}", qnaReply.getQnaReply_num());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(qnaReply);
     }
 
-    @GetMapping("/list")
-    public ResponseEntity list(Long qna_num) {
-        log.info("댓글" + qna_num);
-
-        if (qna_num == null || qna_num.equals("")) {
-            return new ResponseEntity<String>("요청값을 확인해주세요", HttpStatus.BAD_REQUEST);
-        }
-
-        //댓글불러옴??
-
-        return new ResponseEntity(qnaReplyService.list(qna_num), HttpStatus.OK);
-    }
-
+    //댓글 읽어오기
     @GetMapping("/read/{qna_num}")
-    public ResponseEntity read(@PathVariable("qna_num") Long qna_num) {
-        QnaReplyDTO qnaReplyDTO = qnaReplyService.read(qna_num);
-
-        return new ResponseEntity<QnaReplyDTO>(qnaReplyDTO, HttpStatus.OK);
+    public QnaReply read(@PathVariable long qna_num) {
+        log.info("read() 호출, qna_num: {}", qna_num);
+        QnaReply qnaReply = qnaReplyService.read(qna_num);
+        log.info("댓글 읽기 완료, qna_num: {}, qnaReply_num: {}", qna_num, qnaReply.getQnaReply_num());
+        return qnaReply;
     }
 
-    @PostMapping("/modify")
-    public ResponseEntity modify(QnaReplyDTO qnaReplyDTO) {
-        log.info(qnaReplyDTO);
-
-        try {
-            qnaReplyService.modify(qnaReplyDTO);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<String>("댓글 못 찾음", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<String>("수정본",HttpStatus.OK);
+    //댓글 업데이트
+    @PutMapping({"/modify"})
+    public ResponseEntity<Long> update(@PathVariable long qna_num, @PathVariable Long qnaReply_num, @RequestBody QnaReplyRequest dto) {
+        log.info("update() 호출, qna_num: {}, qnaReply_num: {}", qna_num, qnaReply_num);
+        qnaReplyService.updateQnaReply(qna_num, qnaReply_num, dto);
+        log.info("댓글 수정 완료, qnaReply_num: {}", qnaReply_num);
+        return ResponseEntity.ok(qnaReply_num);
     }
 
-    @PostMapping("/del/{qna_num}")
-    public ResponseEntity del(@PathVariable("qna_num") Long qna_num) {
-        log.info("컨트롤러 qna_num"+qna_num);
-
-        try {
-            qnaReplyService.del(qna_num);
-        }catch (EntityNotFoundException e) {
-            return new ResponseEntity<String>("댓글 없음", HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<String>("삭제됨",HttpStatus.OK);
+    //댓글 삭제
+    @DeleteMapping("/del/{qna_num}")
+    public ResponseEntity<Long> delete(@PathVariable long qna_num, @PathVariable Long qnaReply_num) {
+        log.info("delete() 호출, qna_num: {}, qnaReply_num: {}", qna_num, qnaReply_num);
+        qnaReplyService.delete(qna_num, qnaReply_num);
+        log.info("댓글 삭제 완료, qnaReply_num: {}", qnaReply_num);
+        return ResponseEntity.ok(qnaReply_num);
     }
-
-
 }

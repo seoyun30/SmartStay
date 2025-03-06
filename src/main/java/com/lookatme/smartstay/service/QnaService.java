@@ -423,8 +423,8 @@ public class QnaService {
             return null;
         }
 
-        Long adminHotelNum = member.getHotel().getHotel_num();  // 로그인한 사용자의 호텔 번호
-        log.info("관리자 소속 호텔 번호 : " + adminHotelNum);
+        Long adminBrandNum = member.getBrand().getBrand_num();
+        log.info("관리자 소속 호텔 번호 : " + adminBrandNum);
 
         Page<Qna> qnaPage = null;
         int currentPage = pageRequestDTO.getPage() - 1;
@@ -435,25 +435,28 @@ public class QnaService {
         log.info("페이저블 : " + pageRequestDTO);
 
         if (pageRequestDTO.getType() == null || pageRequestDTO.getKeyword() == null || pageRequestDTO.getKeyword().equals("")) {
-            qnaPage = qnaRepository.findbyHotel(adminHotelNum, qnaPageable);
+            qnaPage = qnaRepository.findbyBrand(adminBrandNum, qnaPageable);
         } else if (pageRequestDTO.getType().equals("t")) {
             log.info("제목으로 검색, 검색 키워드는: " + pageRequestDTO.getKeyword());
-            qnaPage = qnaRepository.findByTitleAndHotel_numContaining(pageRequestDTO.getKeyword(), adminHotelNum, qnaPageable);
+            qnaPage = qnaRepository.findByTitleAndBrand_numContaining(pageRequestDTO.getKeyword(), adminBrandNum, qnaPageable);
         } else if (pageRequestDTO.getType().equals("c")) {
             log.info("내용으로 검색, 검색 키워드는: " + pageRequestDTO.getKeyword());
-            qnaPage = qnaRepository.findByContentContainingAndHotel_numContaining(pageRequestDTO.getKeyword(), adminHotelNum, qnaPageable);
+            qnaPage = qnaRepository.findByContentContainingAndBrand_numContaining(pageRequestDTO.getKeyword(), adminBrandNum, qnaPageable);
         } else if (pageRequestDTO.getType().equals("w")) {
             log.info("작성자로 검색, 검색 키워드는: " + pageRequestDTO.getKeyword());
-            qnaPage = qnaRepository.selectlikeWriterAndHotel_numContaining(pageRequestDTO.getKeyword(), adminHotelNum, qnaPageable);
+            qnaPage = qnaRepository.selectlikeWriterAndBrand_numContaining(pageRequestDTO.getKeyword(), adminBrandNum, qnaPageable);
+        }else if(pageRequestDTO.getType().equals("h")){
+            log.info( "작성자로 검색으로  검색키워드는"  +pageRequestDTO.getKeyword() );
+            qnaPage =  qnaRepository.selectlikeHotelAndBrand_numContaining(pageRequestDTO.getKeyword(), adminBrandNum, qnaPageable);
         } else if (pageRequestDTO.getType().equals("tc")) {
             log.info("제목 + 내용 검색, 검색 키워드는: " + pageRequestDTO.getKeyword());
-            qnaPage = qnaRepository.titleOrConAndHotel_numContaining(pageRequestDTO.getKeyword(), pageRequestDTO.getKeyword(), adminHotelNum, qnaPageable);
+            qnaPage = qnaRepository.titleOrConAndBrand_numContaining(pageRequestDTO.getKeyword(), pageRequestDTO.getKeyword(), adminBrandNum, qnaPageable);
         } else if (pageRequestDTO.getType().equals("cw")) {
             log.info("내용 + 작성자로 검색, 검색 키워드는: " + pageRequestDTO.getKeyword());
-            qnaPage = qnaRepository.findByTitleContainingOrWriterContainingAndHotel_numContaining(pageRequestDTO.getKeyword(), pageRequestDTO.getKeyword(), adminHotelNum, qnaPageable);
+            qnaPage = qnaRepository.findByTitleContainingOrWriterContainingAndBrand_numContaining(pageRequestDTO.getKeyword(), pageRequestDTO.getKeyword(), adminBrandNum, qnaPageable);
         } else if (pageRequestDTO.getType().equals("tcw")) {
             log.info("제목 + 내용 + 작성자로 검색, 검색 키워드는: " + pageRequestDTO.getKeyword());
-            qnaPage = qnaRepository.titleOrConOrWrAnaHotel_numContaining(pageRequestDTO.getKeyword(), adminHotelNum, qnaPageable);
+            qnaPage = qnaRepository.titleOrConOrWrAnaBrand_numContaining(pageRequestDTO.getKeyword(), adminBrandNum, qnaPageable);
         }
 
         // 변환

@@ -53,123 +53,69 @@
 
 <body>
 <th:block layout:fragment="content">
-    <h1 class="text-center mb-3 mt-5">상세보기</h1>
+
     <div class="d-flex vh-100">
-        <div class="container bg-body-tertiary rounded">
+        <div class="container my-auto">
             <div class="row justify-content-center">
-
                 <form action="/qna/qnaRead" method="post" th:object="${qnaDTO}">
-                    <!-- 큰 박스를 감싸는 컨테이너 div -->
-                    <div class="form-container mt-5">
-                        <input type="hidden" id="loggedInUser" th:value="${loggedInEmail}">
-                        <div class="row">
-                            <div class="col text-center">
-                                <div class="row form-row">
-                                    <label for="qna_num" class="col-sm-2 col-form-label form-label">번호</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" readonly class="form-control" id="qna_num" th:value="*{qna_num}">
-                                    </div>
+                    <div class="row mt-5">
+                        <div class="col-8 offset-2">
+                            <div class="row">
+                                <div class="mb-3 mt-5 text-center">
+                                    <h1 class="text-center mb-3 mt-5">상세보기</h1>
                                 </div>
-                                <div class="row form-row">
-                                    <label for="title" class="col-sm-2 col-form-label form-label">제목</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" readonly class="form-control" id="title" th:value="${qnaDTO.title}">
-                                    </div>
-                                </div>
-                                <div class="row form-row">
-                                    <label for="content" class="col-sm-2 col-form-label form-label">내용</label>
-                                    <div class="col-sm-10">
-                                        <textarea readonly class="form-control" id="content" th:text="${qnaDTO.content}"></textarea>
-                                    </div>
-                                </div>
-
-                                <div class="row form-row">
-                                    <label for="hotel" class="col-sm-2 col-form-label form-label">호텔명</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" readonly class="form-control" id="hotel" th:value="${qnaDTO.hotelDTO != null ? qnaDTO.hotelDTO.hotel_name : '정보 없음'}">
-                                    </div>
-                                </div>
-
-                                <div class="row form-row">
-                                    <label for="writer" class="col-sm-2 col-form-label form-label">작성자</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" readonly class="form-control" id="writer" th:value="${qnaDTO.writer}">
-                                    </div>
-                                </div>
-
-                                <div class="row form-row">
-                                    <label for="writer" class="col-sm-2 col-form-label form-label">조회수</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" readonly class="form-control" id="viewCount" th:value="${qnaDTO.viewCount}">
-                                    </div>
-                                </div>
-
-                                <div class="row form-row">
-                                    <label class="col-sm-2 col-form-label form-label">이미지</label>
-                                    <div class="col-sm-10">
-                                        <div class="d-flex flex-wrap">
-                                            <th:block th:each="image : ${qnaDTO.imageDTOList}">
-                                                <img th:src="@{${image.thumbnail_url}}" class="img-thumbnail m-2" style="width: 150px; height: 150px;" />
-                                            </th:block>
+                                <div class="col text-center">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <input type="hidden" id="loggedInUser" th:value="${loggedInEmail}">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">번호</span>
+                                                <input type="text"  class="form-control" id="qna_num" th:value="*{qna_num}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">제목</span>
+                                                <input type="text"  class="form-control" id="title" th:value="${qnaDTO.title}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">내용</span>
+                                                <textarea  class="form-control" id="content" th:text="${qnaDTO.content}"></textarea>
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">호텔명</span>
+                                                <input type="text"  class="form-control" id="hotel" th:value="${qnaDTO.hotelDTO != null ? qnaDTO.hotelDTO.hotel_name : '정보 없음'}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">작성자</span>
+                                                <input type="text"  class="form-control" id="writer" th:value="${qnaDTO.writer}">
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 140px">조회수</span>
+                                                <input type="text"  class="form-control" id="viewCount" th:value="${qnaDTO.viewCount}">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
                                 <!-- 버튼 영역 -->
                                 <div class="button-container">
                                     <button type="button" class="btn btn-dark Modbtn" style="float:right" th:if="${qnaDTO.writer.equals(loggedInEmail)}">수정</button>
                                     <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </form>
 
-                <!--댓글-->
-                <form action="/qna/qnaRead" method="post">
-                    <div class="form-container mt-5">
-                        <div class="row">
-                            <div class="col text-center">
-                                <div class="col-12">
-                                    <div class="mb-3">
-                                        <label for="content" class="form-label">답변</label>
-                                        <textarea  min="0" name="content" class="form-control" id="content1" rows="3" required></textarea>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- 댓글 작성 폼 -->
+                <form id="comment-form">
+                    <div class="form-group">
+                        <label for="comment">답변</label>
+                        <textarea class="form-control" id="comment" rows="3"></textarea>
                     </div>
+                    <button type="submit" class="btn btn-primary" id="qrbtn" style="float:right; margin-left: 10px;">답변 등록</button>
+                    <a href="#" class="btn btn-primary float-end modiBtn" data-bs-toggle="modal" data-bs-target="#replyModal" style="display:none">수정</a>
                 </form>
-                            <a href="#" class="btn btn-primary float-end registerBtn" sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF','MANAGER')">등록</a>
-                            <a href="#" class="btn btn-primary float-end modiBtn" data-bs-toggle="modal" data-bs-target="#replyModal" style="display:none">수정</a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="replyModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel"></h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="text" class="form-control regDate" id="regDate" placeholder="작성일">
-                    <input type="text" class="form-control modDate" id="modDate" placeholder="수정일">
-                    <textarea class="form-control contentModal replyText" id="contentModal" rows="3"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary saveBtn cbtn">저장</button>
-                    <button type="button" class="btn btn-primary delBtn cbtn" style="display:none">삭제</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                </div>
+                </section>
+                <!-- 댓글 섹션 끝 -->
             </div>
         </div>
     </div>
@@ -178,24 +124,14 @@
 <script th:inline="javascript" layout:fragment="script">
     let qna_num = document.getElementById("qna_num").value;
 
-
-
-        /*
-        // 댓글 관련 버튼들
-        let registerBtn = $(".registerBtn");  // 댓글 등록 버튼
-        let replyText = $(".replyText"); // 댓글 내용
-        let saveBtn = $(".saveBtn"); // 저장 버튼
-        let delBtn = $(".delBtn"); // 삭제 버튼
-        let modBtn = $(".modBtn"); // 수정 버튼
-        let cbtn = $(".cbtn");
-        let regDate = $("#regDate");
-        let modDate = $("#modDate");
-
-        let qnaReplyDTO = {
-            qna_num: qna_num, // qna_num을 전달
-            qnaReply_num: "", // 댓글 번호
-            qnaReply_text: "" // 댓글 내용
-        };*/
+    /* jQuery */
+    $(document).ready(function() {
+        $('textarea').on( 'keyup', function (e){
+            $(this).css('height', 'auto');
+            $(this).height(this.scrollHeight);
+        });
+        $('textarea').keyup();
+    });
 
     // 목록 버튼 클릭시
     $(".Listbtn").on("click", function () {
@@ -211,100 +147,102 @@
         location.href = "/qna/qnaModify?qna_num=" + qna_num;
     });
 
-  /*  // 댓글 등록 버튼 클릭 시
-    registerBtn.on("click", function () {
-        cbtn.hide();
-        saveBtn.show();
-        regDate.hide();
-        modDate.hide();
-        replyText.val(""); // 댓글 내용 초기화
-    });
+    //댓글
+    // 댓글 등록
+    const createCommentButton = document.getElementById('qrbtn');
 
-    // 댓글 저장 버튼 클릭 시
-    saveBtn.on("click", function () {
-        qnaReplyDTO.qnaReply_num = ""; // 새 댓글 등록 시 번호는 비어 있음
-        qnaReplyDTO.qnaReply_text = replyText.val(); // 댓글 내용
+    if (createCommentButton) {
+        createCommentButton.addEventListener('click', function(event) {
+            event.preventDefault();
 
-        if (!qnaReplyDTO.qnaReply_text.trim()) {
-            alert("댓글 내용을 입력하세요.");
-            return;
-        }
+            const data = {
+                qna_num: qna_num,  // 게시글 번호
+                comment: $('#comment').val()
+            };
 
-        // 댓글 등록
-        qnaReplysave(qnaReplyDTO);
-        $(".modal").modal('hide');
-    });
+            if (!data.comment || data.comment.trim() === "") {
+                alert("공백 또는 입력하지 않은 부분이 있습니다.");
+                return false;
+            } else {
+                body = JSON.stringify({
+                    comment: $('#comment').val()
+                });
 
-    // 댓글 수정 버튼 클릭 시
-    modBtn.on("click", function () {
-        qnaReplyDTO.qnaReply_num = $(".qnaReplymodal").val();  // 수정할 댓글 번호
-        qnaReplyDTO.qnaReply_text = replyText.val();  // 수정된 댓글 내용
+                function success() {
+                    alert('등록 완료되었습니다.');
+                    location.replace('/qna/qnaRead/' + data.qna_num);  // 댓글 등록 후 해당 QnA 페이지로 이동
+                };
+                function fail() {
+                    alert('등록 실패했습니다.');
+                    location.replace('/qna/qnaRead/' + data.qna_num);  // 실패 시에도 해당 QnA 페이지로 이동
+                };
 
-        if (!qnaReplyDTO.qnaReply_text.trim()) {
-            alert("댓글 내용을 입력하세요.");
-            return;
-        }
-
-        // 댓글 수정
-        modify(qnaReplyDTO);
-        $(".modal").modal("hide");
-    });
-
-    // 댓글 삭제 버튼 클릭 시
-    delBtn.on("click", function () {
-        let qnaReply_num = $(".qnaReplymodal").val();  // 삭제할 댓글 번호
-        del(qnaReply_num);
-        $(".modal").modal("hide");
-    });
-
-    // 댓글 등록 함수
-    function qnaReplysave(qnaReplyDTO) {
-        $.ajax({
-            url: "/qnaReply/qnaReplyRegister",
-            data: JSON.stringify(qnaReplyDTO),
-            contentType: "application/json",
-            type: "POST",
-            success: function(result) {
-                alert(result); // 성공 메시지
-            },
-            error: function(error) {
-                console.log(error);
-                alert("댓글 등록에 실패했습니다.");
+                // 요청 URL을 "/qnareply/register"로 수정
+                httpRequest('POST', '/qna/qnaRead', body, success, fail);
             }
         });
     }
 
-    // 댓글 수정 함수
-    function modify(qnaReplyDTO) {
-        $.ajax({
-            url: "/qnaReply/modify",
-            data: JSON.stringify(qnaReplyDTO),
-            contentType: "application/json",
-            type: "POST",
-            success: function(result) {
-                alert(result); // 수정 성공 메시지
+    // 쿠키를 가져오는 함수
+    function getCookie(key) {
+        var result = null;
+        var cookie = document.cookie.split(';');
+        cookie.some(function (item) {
+            item = item.replace(' ', '');
+
+            var dic = item.split('=');
+
+            if (key === dic[0]) {
+                result = dic[1];
+                return true;
+            }
+        });
+
+        return result;
+    }
+    function httpRequest(method, url, body, success, fail) {
+        alert("success");
+
+        fetch(url, {
+            method: method,
+            headers: { // 로컬 스토리지에서 액세스 토큰 값을 가져와 헤더에 추가
+                Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                'Content-Type': 'application/json',
             },
-            error: function(error) {
-                console.log(error);
-                alert("댓글 수정에 실패했습니다.");
+            body: body,
+        }).then(response => {
+            if (response.status === 200 || response.status === 201) {
+                return success();
+            }
+            const refresh_token = getCookie('refresh_token');
+            if (response.status === 401 && refresh_token) {
+                fetch('/api/token', {
+                    method: 'POST',
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        refreshToken: getCookie('refresh_token'),
+                    }),
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            return res.json();
+                        }
+                    })
+                    .then(result => { // 재발급이 성공하면 로컬 스토리지값을 새로운 액세스 토큰으로 교체
+                        localStorage.setItem('access_token', result.accessToken);
+                        httpRequest(method, url, body, success, fail);
+                    })
+                    .catch(error => fail());
+            } else {
+                return fail();
             }
         });
     }
 
-    // 댓글 삭제 함수
-    function del(qnaReply_num) {
-        $.ajax({
-            url: "/qnaReply/del/" + qnaReply_num,
-            type: "POST",
-            success: function(result) {
-                alert(result); // 삭제 성공 메시지
-            },
-            error: function(error) {
-                console.log(error);
-                alert("댓글 삭제에 실패했습니다.");
-            }
-        });
-    }*/
+
 </script>
 </body>
 </html>
