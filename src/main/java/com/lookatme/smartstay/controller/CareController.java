@@ -1,6 +1,9 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.*;
+import com.lookatme.smartstay.dto.CareDTO;
+import com.lookatme.smartstay.dto.HotelDTO;
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.PageResponseDTO;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.service.CareService;
@@ -19,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -83,8 +85,8 @@ public class CareController {
     public String careList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                            @RequestParam(defaultValue = "care_num") String sortField,
                            @RequestParam(defaultValue = "asc") String sortDir,
-                           @RequestParam(value = "careName", required = false) String careName,
-                           @RequestParam(value = "careDetail", required = false) String careDetail) {
+                           @RequestParam(required = false) String searchType,
+                           @RequestParam(required = false) String searchKeyword) {
 
         if (principal == null){
             return "redirect:/member/login";
@@ -98,17 +100,16 @@ public class CareController {
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
 
-        if ((careName == null || careName.trim().isEmpty()) && (careDetail == null || careDetail.trim().isEmpty())) {
+        if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
+            List<CareDTO> results = careService.searchList(searchType, searchKeyword, sortField, sortDir);
+            model.addAttribute("results", results);
+            model.addAttribute("searchType", searchType);
+            model.addAttribute("searchKeyword", searchKeyword);
+            model.addAttribute("isSearch", true);
+        } else {
             PageResponseDTO<CareDTO> pageResponseDTO = careService.careList(hotelDTO, pageRequestDTO, sortField, sortDir);
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("isSearch", false);
-        }else {
-            List<CareDTO> results = careService.searchList(careName, careDetail, sortField, sortDir);
-            model.addAttribute("results", results != null ? results : Collections.emptyList());
-            model.addAttribute("careName", careName);
-            model.addAttribute("careDetail", careDetail);
-            model.addAttribute("isSearch", true);
-            model.addAttribute("pageResponseDTO", null);
         }
         return "care/careList";
     }

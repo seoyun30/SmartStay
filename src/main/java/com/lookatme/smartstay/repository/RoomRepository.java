@@ -28,4 +28,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     @Query("SELECT r FROM Room r WHERE LOWER(r.room_info) LIKE LOWER(CONCAT('%', :roomInfo, '%'))")
     List<Room> findByRoom_infoContainingIgnoreCase(@Param("roomInfo") String roomInfo, Sort sort);
+
+    @Query("SELECT r FROM Room r WHERE LOWER(r.room_type) LIKE LOWER(CONCAT('%', :roomType, '%'))")
+    List<Room> findByRoom_typeContainingIgnoreCase(@Param("roomType") String roomType, Sort sort);
 }

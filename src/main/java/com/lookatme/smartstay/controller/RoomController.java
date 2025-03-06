@@ -24,7 +24,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalTime;
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -101,8 +100,8 @@ public class RoomController {
     public String roomList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                            @RequestParam(defaultValue = "room_num") String sortField,
                            @RequestParam(defaultValue = "asc") String sortDir,
-                           @RequestParam(value = "roomName", required = false) String roomName,
-                           @RequestParam(value = "roomInfo", required = false) String roomInfo) {
+                           @RequestParam(required = false) String searchType,
+                           @RequestParam(required = false) String searchKeyword) {
 
         if (principal == null) {
             return "redirect:/member/login";
@@ -116,21 +115,20 @@ public class RoomController {
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
 
-        if ((roomName == null || roomName.trim().isEmpty()) && (roomInfo == null || roomInfo.trim().isEmpty())) {
+        if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
+            List<RoomDTO> results = roomService.searchList(hotelDTO, searchType, searchKeyword, sortField, sortDir);
+            model.addAttribute("results", results);
+            model.addAttribute("searchType", searchType);
+            model.addAttribute("searchKeyword", searchKeyword);
+            model.addAttribute("isSearch", true);
+        } else {
             PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotelDTO, pageRequestDTO, sortField, sortDir);
-            log.info("PageResponseDTO: " + pageResponseDTO);
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("isSearch", false);
-        } else {
-            List<RoomDTO> results = roomService.searchList(hotelDTO, roomName, roomInfo, sortField, sortDir);
-            model.addAttribute("results", results != null ? results : Collections.emptyList());
-            model.addAttribute("roomName", roomName);
-            model.addAttribute("roomInfo", roomInfo);
-            model.addAttribute("isSearch", true);
-            model.addAttribute("pageResponseDTO", null);
         }
         return "room/roomList";
     }
+
 
     @GetMapping("/roomRead")
     public String roomRead(@RequestParam(required = false) Long room_num, Principal principal,
