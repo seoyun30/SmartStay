@@ -178,6 +178,9 @@ public class CareService {
         Page<Care> result;
 
         switch (searchType) {
+            case "keyword":
+                result = careRepository.findByCare_nameContainingIgnoreCaseOrCare_detailContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                break;
             case "careName":
                 result = careRepository.findByCare_nameContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;

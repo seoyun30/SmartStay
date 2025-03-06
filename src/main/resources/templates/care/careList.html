@@ -61,7 +61,7 @@
                 <form action="/care/careList" method="get" onsubmit="saveSearchQuery()">
                     <div class="input-group" id="input-group-search">
                         <select class="form-select" name="searchType">
-                            <option value="" th:selected="${searchType == null}">전체</option>
+                            <option value="keyword" th:selected="${searchType == 'keyword'}">전체</option>
                             <option value="careName" th:selected="${searchType == 'careName'}">케어 이름</option>
                             <option value="careDetail" th:selected="${searchType == 'careDetail'}">케어 상세</option>
                         </select>

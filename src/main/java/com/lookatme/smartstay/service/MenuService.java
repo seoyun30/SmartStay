@@ -470,6 +470,9 @@ public class MenuService {
         Page<Menu> result;
 
         switch (searchType) {
+            case "keyword":
+                result = menuRepository.findByMenu_nameContainingIgnoreCaseOrMenu_detailContainingIgnoreCaseOrMenu_sortContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                break;
             case "menuName":
                 result = menuRepository.findByMenu_nameContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
