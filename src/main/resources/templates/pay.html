@@ -168,7 +168,7 @@
                                                 <th:block th:each="img: ${careItem.imageDTOList}">
                                                     <th:block th:if="${img.repimg_yn == 'Y'}">
                                                         <div class="square-image mb-3">
-                                                            <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
+                                                            <img class="img-fluid" th:src="${img.thumbnail_url}" alt="대표 이미지">
                                                         </div>
                                                     </th:block>
                                                 </th:block>
@@ -192,7 +192,7 @@
                                                 <th:block th:each="img: ${menuItem.imageDTOList}">
                                                     <th:block th:if="${img.repimg_yn == 'Y'}">
                                                         <div class="square-image mb-3">
-                                                            <img class="img-fluid" th:src="${img.image_url}" alt="대표 이미지">
+                                                            <img class="img-fluid" th:src="${img.thumbnail_url}" alt="대표 이미지">
                                                         </div>
                                                     </th:block>
                                                 </th:block>
