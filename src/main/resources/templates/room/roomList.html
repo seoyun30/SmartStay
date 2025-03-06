@@ -47,10 +47,6 @@
         </div>
     </div>
 
-    <div th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and #lists.isEmpty(pageResponseDTO.dtoList)}" class="alert alert-success text-center">
-        <p>등록된 룸이 없습니다.</p>
-    </div>
-
     <div class="text-end mr-6">
         <button type="button" onclick="location.href='/room/roomRegister'" class="btn btn-dark">룸 등록</button>
     </div>
@@ -78,80 +74,78 @@
         </div>
     </nav>
 
-
     <div th:if="${isSearch}">
-        <table class="table" th:if="${pageResponseDTO != null and not #lists.isEmpty(pageResponseDTO.dtoList)}">
-            <h3 class="text-center mt-3 mb-3">검색 결과</h3>
-            <div class="row mt-3">
-                <div class="col">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                        <tr class="text-center text-black fw-bold">
-                            <td>룸 번호</td>
-                            <td>룸 이름</td>
-                            <td>룸 정보</td>
-                            <td>
-                                <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_type', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
-                                    룸 타입
-                                    <span th:if="${sortField == 'room_type'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
-                                </a>
-                            </td>
-                            <td>
-                                <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_bed', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
-                                    최대 인원
-                                    <span th:if="${sortField == 'room_bed'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
-                                </a>
-                            </td>
-                            <td>
-                                <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
-                                    룸 가격
-                                    <span th:if="${sortField == 'room_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
-                                </a>
-                            </td>
-                            <td>
-                                <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_state', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
-                                    룸 상태
-                                    <span th:if="${sortField == 'room_state'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
-                                </a>
-                            </td>
-                            <td>체크인 시간</td>
-                            <td>체크아웃 시간</td>
-                            <td>수정</td>
-                            <td>삭제</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="room : ${pageResponseDTO.dtoList}" class="text-center">
-                                <td th:text="${room.room_num}"></td>
-                                <td>
-                                    <a th:href="@{/room/roomRead(room_num=${room.room_num})}">
-                                        [[${room.room_name}]]
-                                    </a>
-                                </td>
-                                <td th:text="${room.room_info}"></td>
-                                <td th:text="${room.room_type}"></td>
-                                <td th:text="${room.room_bed}"></td>
-                                <td th:text="${room.room_price}"></td>
-                                <td th:text="${room.room_state}"></td>
-                                <td th:text="${#temporals.format(room.in_time, 'HH'+'시')}"></td>
-                                <td th:text="${#temporals.format(room.out_time, 'HH'+'시')}"></td>
-                                <td>
-                                    <button type="button" th:attr="onclick='location.href=\'/room/roomModify?room_num=' + ${room.room_num} + '\''" class="btn btn-warning">수정</button>
-                                </td>
-                                <td>
-                                    <form action="/room/roomDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                        <input type="hidden" name="id" th:value="${room.room_num}">
-                                        <button type="submit" class="btn btn-danger">삭제</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <h3 class="text-center mt-3 mb-3">검색 결과</h3>
+        <div class="row mt-3">
+            <div class="col">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr class="text-center text-black fw-bold">
+                        <td>룸 번호</td>
+                        <td>룸 이름</td>
+                        <td>룸 정보</td>
+                        <td>
+                            <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_type', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                                룸 타입
+                                <span th:if="${sortField == 'room_type'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_bed', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                                최대 인원
+                                <span th:if="${sortField == 'room_bed'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                                룸 가격
+                                <span th:if="${sortField == 'room_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_state', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                                룸 상태
+                                <span th:if="${sortField == 'room_state'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                            </a>
+                        </td>
+                        <td>체크인 시간</td>
+                        <td>체크아웃 시간</td>
+                        <td>수정</td>
+                        <td>삭제</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${pageResponseDTO == null or pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}" class="text-center">
+                        <td colspan="11">검색 결과가 없습니다.</td>
+                    </tr>
+                    <tr th:if="${pageResponseDTO != null}" th:each="roomDTO : ${pageResponseDTO.dtoList}" class="text-center">
+                        <td th:text="${roomDTO.room_num}"></td>
+                        <td>
+                            <a th:href="@{/room/roomRead(room_num=${roomDTO.room_num})}">
+                                [[${roomDTO.room_name}]]
+                            </a>
+                        </td>
+                        <td th:text="${roomDTO.room_info}"></td>
+                        <td th:text="${roomDTO.room_type}"></td>
+                        <td th:text="${roomDTO.room_bed}"></td>
+                        <td th:text="${roomDTO.room_price}"></td>
+                        <td th:text="${roomDTO.room_state}"></td>
+                        <td th:text="${#temporals.format(roomDTO.in_time, 'HH'+'시')}"></td>
+                        <td th:text="${#temporals.format(roomDTO.out_time, 'HH'+'시')}"></td>
+                        <td>
+                            <button type="button" th:attr="onclick='location.href=\'/room/roomModify?room_num=' + ${roomDTO.room_num} + '\''" class="btn btn-warning">수정</button>
+                        </td>
+                        <td>
+                            <form action="/room/roomDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <input type="hidden" name="id" th:value="${roomDTO.room_num}">
+                                <button type="submit" class="btn btn-danger">삭제</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </table>
-        <h2 class="text-center text-primary mt-5" th:if="${#lists.isEmpty(pageResponseDTO.dtoList)}">검색 결과가 없습니다.</h2>
-
+        </div>
         <div class="row mt-3" th:if="${isSearch}">
             <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
                 <div class="row">
@@ -180,76 +174,74 @@
     </div>
 
    <div th:if = "${!isSearch}">
-       <div th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
-           <div class="row mt-3">
-               <div class="col">
-                   <table class="table table-striped table-hover">
-                       <thead>
-                       <tr class="text-center text-black fw-bold">
-                           <td>룸 번호</td>
-                           <td>룸 이름</td>
-                           <td>룸 정보</td>
-                           <td>
-                               <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_type', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
-                                   룸 타입
-                                   <span th:if="${sortField == 'room_type'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
-                               </a>
-                           </td>
-                           <td>
-                               <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_bed', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
-                                   최대 인원
-                                   <span th:if="${sortField == 'room_bed'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
-                               </a>
-                           </td>
-                           <td>
-                               <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
-                                   룸 가격
-                                   <span th:if="${sortField == 'room_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
-                               </a>
-                           </td>
-                           <td>
-                               <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_state', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
-                                   룸 상태
-                                   <span th:if="${sortField == 'room_state'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
-                               </a>
-                           </td>
-                           <td>체크인 시간</td>
-                           <td>체크아웃 시간</td>
-                           <td>수정</td>
-                           <td>삭제</td>
-                       </tr>
-                       </thead>
-
-                       <tbody>
-                       <th:block th:if="${pageResponseDTO != null}" th:each="roomDTO : ${pageResponseDTO.dtoList}">
-                           <tr class="text-center">
-                               <td th:text="${roomDTO.room_num}"></td>
-                               <td>
-                                   <a th:href="@{/room/roomRead(room_num=${roomDTO.room_num})}">
-                                       [[${roomDTO.room_name}]]
-                                   </a>
-                               </td>
-                               <td th:text="${roomDTO.room_info}"></td>
-                               <td th:text="${roomDTO.room_type}"></td>
-                               <td th:text="${roomDTO.room_bed}"></td>
-                               <td th:text="${roomDTO.room_price}"></td>
-                               <td th:text="${roomDTO.room_state}"></td>
-                               <td th:text="${#temporals.format(roomDTO.in_time, 'HH'+'시')}"></td>
-                               <td th:text="${#temporals.format(roomDTO.out_time, 'HH'+'시')}"></td>
-                               <td>
-                                   <button type="button" th:attr="onclick='location.href=\'/room/roomModify?room_num=' + ${roomDTO.room_num} + '\''" class="btn btn-warning">수정</button>
-                               </td>
-                               <td>
-                                   <form action="/room/roomDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                       <input type="hidden" name="id" th:value="${roomDTO.room_num}">
-                                       <button type="submit" class="btn btn-danger">삭제</button>
-                                   </form>
-                               </td>
-                           </tr>
-                       </th:block>
-                       </tbody>
-                   </table>
-               </div>
+       <div class="row mt-3">
+           <div class="col">
+               <table class="table table-striped table-hover">
+                   <thead>
+                   <tr class="text-center text-black fw-bold">
+                       <td>룸 번호</td>
+                       <td>룸 이름</td>
+                       <td>룸 정보</td>
+                       <td>
+                           <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_type', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
+                               룸 타입
+                               <span th:if="${sortField == 'room_type'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                           </a>
+                       </td>
+                       <td>
+                           <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_bed', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
+                               최대 인원
+                               <span th:if="${sortField == 'room_bed'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                           </a>
+                       </td>
+                       <td>
+                           <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
+                               룸 가격
+                               <span th:if="${sortField == 'room_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                           </a>
+                       </td>
+                       <td>
+                           <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_state', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
+                               룸 상태
+                               <span th:if="${sortField == 'room_state'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                           </a>
+                       </td>
+                       <td>체크인 시간</td>
+                       <td>체크아웃 시간</td>
+                       <td>수정</td>
+                       <td>삭제</td>
+                   </tr>
+                   </thead>
+                   <tbody>
+                   <tr th:if="${pageResponseDTO == null or pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}" class="text-center">
+                       <td colspan="11">등록된 룸이 없습니다.</td>
+                   </tr>
+                   <tr th:if="${pageResponseDTO != null}" th:each="roomDTO : ${pageResponseDTO.dtoList}" class="text-center">
+                       <td th:text="${roomDTO.room_num}"></td>
+                       <td>
+                           <a th:href="@{/room/roomRead(room_num=${roomDTO.room_num})}">
+                               [[${roomDTO.room_name}]]
+                           </a>
+                       </td>
+                       <td th:text="${roomDTO.room_info}"></td>
+                       <td th:text="${roomDTO.room_type}"></td>
+                       <td th:text="${roomDTO.room_bed}"></td>
+                       <td th:text="${roomDTO.room_price}"></td>
+                       <td th:text="${roomDTO.room_state}"></td>
+                       <td th:text="${#temporals.format(roomDTO.in_time, 'HH'+'시')}"></td>
+                       <td th:text="${#temporals.format(roomDTO.out_time, 'HH'+'시')}"></td>
+                       <td>
+                           <button type="button" th:attr="onclick='location.href=\'/room/roomModify?room_num=' + ${roomDTO.room_num} + '\''" class="btn btn-warning">수정</button>
+                       </td>
+                       <td>
+                           <form action="/room/roomDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                               <input type="hidden" name="id" th:value="${roomDTO.room_num}">
+                               <button type="submit" class="btn btn-danger">삭제</button>
+                           </form>
+                       </td>
+                   </tr>
+                   </tbody>
+               </table>
            </div>
        </div>
    </div>
