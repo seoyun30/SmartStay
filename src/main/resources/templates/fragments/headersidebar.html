@@ -308,7 +308,13 @@
                                         </a>
                                         <ul id="qna-nav" class="collapse" data-bs-parent="#sidebar-menu">
                                             <div class="sub-menu">
-                                                <li>
+                                                <li sec:authorize="hasAuthority('CHIEF')">
+                                                    <a href="/qna/bcmQnaList" class="sidenav-item-link">
+                                                        <i class="bi bi-question-circle mr-1"></i>
+                                                        <span class="nav-text">문의사항 목록</span>
+                                                    </a>
+                                                </li>
+                                                <li sec:authorize="hasAuthority('MANAGER')">
                                                     <a href="/qna/hcmQnaList" class="sidenav-item-link">
                                                         <i class="bi bi-question-circle mr-1"></i>
                                                         <span class="nav-text">문의사항 목록</span>
@@ -316,6 +322,7 @@
                                                 </li>
                                             </div>
                                         </ul>
+
                                     </li>
 
                                     <li sec:authorize="hasAuthority('MANAGER')" class="has-sub mb-8">
