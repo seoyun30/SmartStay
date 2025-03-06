@@ -22,6 +22,12 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("SELECT m FROM Menu m WHERE LOWER(m.menu_sort) LIKE LOWER(CONCAT('%', :menuSort, '%'))")
     Page<Menu> findByMenu_sortContainingIgnoreCase(@Param("menuSort") String menuDetail, Pageable pageable);
 
+    @Query("SELECT m FROM Menu m " +
+            "WHERE LOWER(m.menu_name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(m.menu_detail) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(m.menu_sort) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Menu> findByMenu_nameContainingIgnoreCaseOrMenu_detailContainingIgnoreCaseOrMenu_sortContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
+
     //전체 메뉴
     @Query("select m from Menu m where m.hotel = :hotel")
     Page<Menu> findAllMenu(@Param("hotel") Hotel hotel, Pageable pageable);

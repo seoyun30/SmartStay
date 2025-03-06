@@ -19,4 +19,9 @@ public interface CareRepository extends JpaRepository<Care, Long> {
     @Query("SELECT c FROM Care c WHERE LOWER(c.care_detail) LIKE LOWER(CONCAT('%', :careDetail, '%'))")
     Page<Care> findByCare_detailContainingIgnoreCase(@Param("careDetail") String careDetail, Pageable pageable);
 
+    @Query("SELECT c FROM Care c " +
+            "WHERE LOWER(c.care_name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(c.care_detail) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Care> findByCare_nameContainingIgnoreCaseOrCare_detailContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
+
 }

@@ -61,7 +61,7 @@
                 <form action="/menu/menuList" method="get" onsubmit="saveSearchQuery()">
                     <div class="input-group" id="input-group-search">
                         <select class="form-select" name="searchType">
-                            <option value="" th:selected="${searchType == null}">검색 조건</option>
+                            <option value="keyword" th:selected="${searchType == 'keyword'}">전체</option>
                             <option value="menuSort" th:selected="${searchType == 'menuSort'}">메뉴 분류</option>
                             <option value="menuName" th:selected="${searchType == 'menuName'}">메뉴 이름</option>
                             <option value="menuDetail" th:selected="${searchType == 'menuDetail'}">메뉴 상세</option>

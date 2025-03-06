@@ -61,7 +61,7 @@
                 <form action="/room/roomList" method="get" onsubmit="saveSearchQuery()">
                     <div class="input-group" id="input-group-search">
                         <select class="form-select" name="searchType">
-                            <option value="" th:selected="${searchType == null}">검색 조건</option>
+                            <option value="keyword" th:selected="${searchType == 'keyword'}">전체</option>
                             <option value="roomName" th:selected="${searchType == 'roomName'}">룸 이름</option>
                             <option value="roomInfo" th:selected="${searchType == 'roomInfo'}">룸 정보</option>
                             <option value="roomType" th:selected="${searchType == 'roomType'}">룸 타입</option>

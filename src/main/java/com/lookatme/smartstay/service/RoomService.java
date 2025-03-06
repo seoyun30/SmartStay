@@ -190,6 +190,9 @@ public class RoomService {
         Page<Room> result;
 
         switch (searchType) {
+            case "keyword":
+                result = roomRepository.findByRoom_nameContainingIgnoreCaseOrRoom_infoContainingIgnoreCaseOrRoom_typeContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                break;
             case "roomName":
                 result = roomRepository.findByRoom_nameContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
