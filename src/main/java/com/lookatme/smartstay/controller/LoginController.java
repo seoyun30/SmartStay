@@ -220,8 +220,8 @@ public class LoginController {
            return "member/signup";
        }
 
-       redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
-        return "member/login";
+
+        return "redirect:/member/signup?success=true";
    }
 
    /*@GetMapping("/adLogin") //로그인페이지(총판,매니져) 관리자들

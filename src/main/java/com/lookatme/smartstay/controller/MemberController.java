@@ -276,6 +276,7 @@ public class MemberController {
     public String memberList(Principal principal, PageRequestDTO pageRequestDTO,
                              @RequestParam(value = "sort", required = false, defaultValue = "DESC") String sortOrder,
                              @RequestParam(value = "orderType", required = false, defaultValue = "member_num") String orderType,
+                             @RequestParam(value="type", defaultValue = "") String type,
                              Model model){
 
         log.info("진입");
@@ -289,20 +290,22 @@ public class MemberController {
             sortOrder = "DESC";  // 기본 정렬 방향
         }
 
-        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.memberList(pageRequestDTO, sortOrder, orderType);
+        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.memberList(pageRequestDTO, sortOrder, orderType, type);
 
         model.addAttribute("pageResponseDTO", pageResponseDTO);
         model.addAttribute("sortOrder", sortOrder);
         model.addAttribute("orderType", orderType);
+        model.addAttribute("type", type);
         model.addAttribute("pageRequestDTO", pageRequestDTO);
 
         return "member/memberList";
     }
 
     @GetMapping("/adPowerList") // 권한승인(총판)
-    public String adPowerList(Principal principal, PageRequestDTO pageRequestDTO, Model model, String email) {
+    public String adPowerList(Principal principal, PageRequestDTO pageRequestDTO, String email,
+                              @RequestParam(value="type", defaultValue = "") String type, Model model) {
 
-        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.adPowerList(pageRequestDTO, email);
+        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.adPowerList(pageRequestDTO, email, type);
 
         log.info("전달되는 pageResponseDTO" + pageResponseDTO);
         log.info("전달되는 pageResponseDTO DTO리스트" + pageResponseDTO.getDtoList());
@@ -325,10 +328,10 @@ public class MemberController {
     }
 
     @PostMapping("/adPowerMember") //권한 승인
-    public String adPowerMember(@RequestParam("email") PageRequestDTO pageRequestDTO, String email, Model model){
+    public String adPowerMember(@RequestParam("email") PageRequestDTO pageRequestDTO, String email, String type, Model model){
 
         try {
-            List<MemberDTO> adPowerList = memberService.adPowerList(pageRequestDTO, email).getDtoList();
+            List<MemberDTO> adPowerList = memberService.adPowerList(pageRequestDTO, email, type).getDtoList();
             model.addAttribute("adPowerList", adPowerList);
             model.addAttribute("message", "변경완료");
 
@@ -341,13 +344,14 @@ public class MemberController {
     }
 
     @GetMapping("/cmPowerList") // 권한승인(치프, 매니져)
-    public String cmPowerList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
+    public String cmPowerList(Principal principal, PageRequestDTO pageRequestDTO,
+                              @RequestParam(value="type", defaultValue = "") String type, Model model) {
 
         log.info(principal);
         log.info(principal.getName());
         String email = principal.getName();
 
-        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.cmPowerList(pageRequestDTO, email);
+        PageResponseDTO<MemberDTO> pageResponseDTO = memberService.cmPowerList(pageRequestDTO, email, type);
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
 

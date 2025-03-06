@@ -19,7 +19,7 @@ public class Notice extends BaseEntity {
     @Column(nullable = false)
     private String title; //제목
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 5000 )
     private String content; //내용
 
 

@@ -93,13 +93,14 @@ public class NoticeController {
 
     //목록 페이지
     @GetMapping("/noticeList")
-    public String noticeList(PageRequestDTO pageRequestDTO, Model model, Principal principal) {
+    public String noticeList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
+                             @RequestParam(value="type", defaultValue = "") String type) {
 
         String email = principal.getName();
         log.info("로그인한 사용자 " + email);
         log.info("모든 데이터를 읽어온다..." + pageRequestDTO);
 
-        PageResponseDTO<NoticeDTO> pageResponseDTO = noticeService.noticeList(pageRequestDTO, email);
+        PageResponseDTO<NoticeDTO> pageResponseDTO = noticeService.noticeList(pageRequestDTO, email, type);
 
         log.info("전달되는 DTO" + pageResponseDTO);
         log.info("전달되는 DTO리스트 " + pageResponseDTO);
@@ -112,12 +113,13 @@ public class NoticeController {
     }
 
     @GetMapping("/userNoticeList")
-    public String userNoticeList(PageRequestDTO pageRequestDTO, Model model) {
+    public String userNoticeList(PageRequestDTO pageRequestDTO, Model model,
+                                 @RequestParam(value="type", defaultValue = "") String type) {
 
 
         log.info("모든 데이터를 읽어온다..." + pageRequestDTO);
 
-        PageResponseDTO<NoticeDTO> pageResponseDTO = noticeService.userNoticeList(pageRequestDTO);
+        PageResponseDTO<NoticeDTO> pageResponseDTO = noticeService.userNoticeList(pageRequestDTO, type);
 
         log.info("전달되는 DTO" + pageResponseDTO);
         log.info("전달되는 DTO리스트 " + pageResponseDTO);

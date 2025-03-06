@@ -121,7 +121,7 @@ public class NoticeService {
 
 
     //공지 사항 목록
-    public PageResponseDTO<NoticeDTO> noticeList(PageRequestDTO pageRequestDTO, String email) {
+    public PageResponseDTO<NoticeDTO> noticeList(PageRequestDTO pageRequestDTO, String email, String type) {
 
         Member member = memberRepository.findByEmail(email);
 
@@ -140,7 +140,15 @@ public class NoticeService {
 
         Page<Notice> noticePage;
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
-            noticePage = noticeRepository.searchNotice(brandNum, pageRequestDTO.getKeyword(), pageable);
+
+            if(type.equals("1")) {
+                noticePage = noticeRepository.searchNoticeByTitle(brandNum, pageRequestDTO.getKeyword(), pageable);
+            }else if(type.equals("2")) {
+                noticePage = noticeRepository.searchNoticeByHotelName(brandNum, pageRequestDTO.getKeyword(), pageable);
+            }else {
+                noticePage = noticeRepository.searchNotice(brandNum, pageRequestDTO.getKeyword(), pageable);
+            }
+
         } else {
             log.info("해당브랜드의 리스트 적용");
             noticePage = noticeRepository.noticeBrandList(brandNum, pageable);
@@ -181,7 +189,7 @@ public class NoticeService {
 
     }
 
-    public PageResponseDTO<NoticeDTO> userNoticeList(PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<NoticeDTO> userNoticeList(PageRequestDTO pageRequestDTO, String type) {
 
         log.info(pageRequestDTO);
 
@@ -190,7 +198,15 @@ public class NoticeService {
 
         Page<Notice> noticePage;
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
-            noticePage = noticeRepository.userSearchNotice(pageRequestDTO.getKeyword(), pageable);
+
+            if(type.equals("1")) {
+                noticePage = noticeRepository.userSearchNoticeByTitle(pageRequestDTO.getKeyword(), pageable);
+            }else if(type.equals("2")) {
+                noticePage = noticeRepository.userSearchNoticeByHotelName(pageRequestDTO.getKeyword(), pageable);
+            } else {
+                noticePage = noticeRepository.userSearchNotice(pageRequestDTO.getKeyword(), pageable);
+            }
+
         } else {
             noticePage = noticeRepository.AllNotice(pageable);
         }
@@ -198,28 +214,31 @@ public class NoticeService {
 
 
         List<Notice> noticeList = noticePage.getContent();
+        List<NoticeDTO> noticeDTOList;
 
         log.info("엔티티 리스트");
         noticeList.forEach(notice -> log.info(notice));
 
-        if (noticeList == null  || noticeList.isEmpty()) {
-            log.info("공지사항 없음");
-            return null;
-
-        } else {
-            List<NoticeDTO> noticeDTOList = noticeList.stream()
-                    .map(notice ->{
+        if (!noticeList.isEmpty()) {
+            noticeDTOList = noticeList.stream()
+                    .map(notice -> {
                         NoticeDTO noticeDTO = modelMapper.map(notice, NoticeDTO.class);
 
-                        noticeDTO.setBrandDTO( modelMapper.map(notice.getBrand(), BrandDTO.class));
+                        noticeDTO.setBrandDTO(modelMapper.map(notice.getBrand(), BrandDTO.class));
 
                         noticeDTO.setHotelDTO(modelMapper.map(notice.getHotel(), HotelDTO.class));
 
-                        return  noticeDTO;
-                    } )
+                        return noticeDTO;
+                    })
                     .collect(Collectors.toList());
 
             log.info("DTO변환");
+
+        } else {
+            log.info("공지사항 없음");
+            noticeDTOList = Collections.emptyList();
+
+        }
 
             noticeDTOList.forEach(dto -> log.info(dto));
 
@@ -229,7 +248,7 @@ public class NoticeService {
                     .total((int) noticePage.getTotalElements())
                     .build();
         }
-    }
+
 
 
 

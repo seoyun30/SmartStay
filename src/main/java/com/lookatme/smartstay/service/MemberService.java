@@ -257,7 +257,7 @@ public class MemberService implements UserDetailsService {
 //
 //    }
 
-    public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO, String sortOrder, String orderType){
+    public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO, String sortOrder, String orderType, String type){
         Pageable pageable = null;
 
 
@@ -273,8 +273,21 @@ public class MemberService implements UserDetailsService {
         log.info("정렬방식" + sortOrder);
 
         Page<Member> memberPage = null;
+
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().equals("")) {
-            memberPage = memberRepository.searchMember(pageRequestDTO.getKeyword(), pageable);
+
+            if(type.equals("1")) {
+                memberPage = memberRepository.searchMemberByEmail(pageRequestDTO.getKeyword(), pageable);
+            }else if(type.equals("2")) {
+                memberPage = memberRepository.searchMemberByName(pageRequestDTO.getKeyword(), pageable);
+            }else if(type.equals("3")) {
+                memberPage = memberRepository.searchMemberByTel(pageRequestDTO.getKeyword(), pageable);
+            }else if(type.equals("4")) {
+                memberPage = memberRepository.searchMemberByRole(pageRequestDTO.getKeyword(), pageable);
+            } else {
+                memberPage = memberRepository.searchMember(pageRequestDTO.getKeyword(), pageable);
+            }
+
         }else {
             memberPage = memberRepository.selectAll(pageable);
 
@@ -390,7 +403,7 @@ public class MemberService implements UserDetailsService {
 
 
 
-    public PageResponseDTO<MemberDTO> adPowerList(PageRequestDTO pageRequestDTO, String email) { //슈퍼어드민이 승인하는 권한리스트
+    public PageResponseDTO<MemberDTO> adPowerList(PageRequestDTO pageRequestDTO, String email, String type) { //슈퍼어드민이 승인하는 권한리스트
 
         Pageable pageable = pageRequestDTO.getPageable("member_num");
 
@@ -400,9 +413,19 @@ public class MemberService implements UserDetailsService {
 
         //슈퍼어드민이 승인해야 하는 회원리스트만 조회 (페이징적용)
         Page<Member> memberPage;
+
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             log.info("검색어 적용: " + pageRequestDTO.getKeyword());
-            memberPage = memberRepository.searchSelectBySuperAdmin(pageRequestDTO.getKeyword(), pageable);
+
+            if(type.equals("1")) {
+                memberPage = memberRepository.searchSelectBySuperAdminByEmail(pageRequestDTO.getKeyword(), pageable);
+            }else if(type.equals("2")) {
+                memberPage = memberRepository.searchSelectBySuperAdminByName(pageRequestDTO.getKeyword(), pageable);
+            }else if(type.equals("3")) {
+                memberPage = memberRepository.searchSelectBySuperAdminByTel(pageRequestDTO.getKeyword(), pageable);
+            }else {
+                memberPage = memberRepository.searchSelectBySuperAdmin(pageRequestDTO.getKeyword(), pageable);
+            }
         } else {
             log.info("전체 슈퍼어드민 리스트 적용");
             memberPage = memberRepository.selectBySuperAdmin(pageable);
@@ -412,6 +435,7 @@ public class MemberService implements UserDetailsService {
 
         if (memberList == null) {
             return null;
+
         } else {
             List<MemberDTO> memberDTOList = memberList.stream()
                     .map(member -> modelMapper.map(member, MemberDTO.class))
@@ -432,7 +456,7 @@ public class MemberService implements UserDetailsService {
     }
 
 
-    public PageResponseDTO<MemberDTO> cmPowerList(PageRequestDTO pageRequestDTO, String email) { //치프가 승인하는 권한리스트
+    public PageResponseDTO<MemberDTO> cmPowerList(PageRequestDTO pageRequestDTO, String email, String type) { //치프가 승인하는 권한리스트
 //로그인한 권한을 승인해줄 치프의 이메일과 페이징처리를 위한 내용을 받아서
         Member member  = memberRepository.findByEmail(email);
 
@@ -450,11 +474,23 @@ public class MemberService implements UserDetailsService {
         Page<Member> memberPage;
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             log.info("검색어 적용: " + pageRequestDTO.getKeyword());
-            memberPage = memberRepository.searchSelectByChief(brandNum, pageRequestDTO.getKeyword(), pageable);
+
+            if (type.equals("1")) {
+                memberPage = memberRepository.searchSelectByChiefByEmail(brandNum, pageRequestDTO.getKeyword(), pageable);
+            }else if (type.equals("2")) {
+                memberPage = memberRepository.searchSelectByChiefByName(brandNum, pageRequestDTO.getKeyword(), pageable);
+            }else if (type.equals("3")) {
+                memberPage = memberRepository.searchSelectByChiefByTel(brandNum, pageRequestDTO.getKeyword(), pageable);
+            }else if (type.equals("4")) {
+                memberPage = memberRepository.searchSelectByChiefByRole(brandNum, pageRequestDTO.getKeyword(), pageable);
+            }else {
+                memberPage = memberRepository.searchSelectByChief(brandNum, pageRequestDTO.getKeyword(), pageable);
+            }
         } else {
-            log.info("치프 매니저 리스트 적용");
             memberPage = memberRepository.selectByChief(brandNum, pageable);
         }
+
+
         List<Member> memberList = memberPage.getContent();
 
         log.info("권한리스트");
