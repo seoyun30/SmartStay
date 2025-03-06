@@ -61,7 +61,7 @@
                 <form action="/room/roomList" method="get" onsubmit="saveSearchQuery()">
                     <div class="input-group" id="input-group-search">
                         <select class="form-select" name="searchType">
-                            <option value="" th:selected="${searchType == null}">검색 조건</option>
+                            <option value="keyword" th:selected="${searchType == 'keyword'}">전체</option>
                             <option value="roomName" th:selected="${searchType == 'roomName'}">룸 이름</option>
                             <option value="roomInfo" th:selected="${searchType == 'roomInfo'}">룸 정보</option>
                             <option value="roomType" th:selected="${searchType == 'roomType'}">룸 타입</option>
@@ -80,7 +80,7 @@
 
 
     <div th:if="${isSearch}">
-        <table class="table" th:if="${results != null && results.size() > 0}">
+        <table class="table" th:if="${pageResponseDTO != null and not #lists.isEmpty(pageResponseDTO.dtoList)}">
             <h3 class="text-center mt-3 mb-3">검색 결과</h3>
             <div class="row mt-3">
                 <div class="col">
@@ -91,25 +91,25 @@
                             <td>룸 이름</td>
                             <td>룸 정보</td>
                             <td>
-                                <a th:href="@{/room/roomList(sortField='room_type', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                                <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_type', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
                                     룸 타입
                                     <span th:if="${sortField == 'room_type'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                                 </a>
                             </td>
                             <td>
-                                <a th:href="@{/room/roomList(sortField='room_bed', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                                <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_bed', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
                                     최대 인원
                                     <span th:if="${sortField == 'room_bed'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                                 </a>
                             </td>
                             <td>
-                                <a th:href="@{/room/roomList(sortField='room_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                                <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
                                     룸 가격
                                     <span th:if="${sortField == 'room_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                                 </a>
                             </td>
                             <td>
-                                <a th:href="@{/room/roomList(sortField='room_state', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                                <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_state', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
                                     룸 상태
                                     <span th:if="${sortField == 'room_state'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                                 </a>
@@ -120,9 +120,8 @@
                             <td>삭제</td>
                         </tr>
                         </thead>
-
                         <tbody>
-                            <tr th:each="room : ${results}" class="text-center">
+                            <tr th:each="room : ${pageResponseDTO.dtoList}" class="text-center">
                                 <td th:text="${room.room_num}"></td>
                                 <td>
                                     <a th:href="@{/room/roomRead(room_num=${room.room_num})}">
@@ -151,7 +150,33 @@
                 </div>
             </div>
         </table>
-        <h2 class="text-center text-primary mt-5" th:if="${results == null or results.size() == 0}">검색 결과가 없습니다.</h2>
+        <h2 class="text-center text-primary mt-5" th:if="${#lists.isEmpty(pageResponseDTO.dtoList)}">검색 결과가 없습니다.</h2>
+
+        <div class="row mt-3" th:if="${isSearch}">
+            <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
+                <div class="row">
+                    <div class="col-12">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <th:block th:if="${pageResponseDTO.prev}">
+                                    <li class="page-item"><a class="page-link" th:href="@{/room/roomList(page=${pageResponseDTO.start-1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">이전</a></li>
+                                </th:block>
+
+                                <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+                                    <li class="page-item">
+                                        <a class="page-link" th:href="@{/room/roomList(page=${num}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">[[${num}]]</a>
+                                    </li>
+                                </th:block>
+
+                                <th:block th:if="${pageResponseDTO.next}">
+                                    <li class="page-item"><a class="page-link" th:href="@{/room/roomList(page=${pageResponseDTO.end+1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">다음</a></li>
+                                </th:block>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </th:block>
+        </div>
     </div>
 
    <div th:if = "${!isSearch}">
@@ -165,25 +190,25 @@
                            <td>룸 이름</td>
                            <td>룸 정보</td>
                            <td>
-                               <a th:href="@{/room/roomList(sortField='room_type', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                               <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_type', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
                                    룸 타입
                                    <span th:if="${sortField == 'room_type'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                                </a>
                            </td>
                            <td>
-                               <a th:href="@{/room/roomList(sortField='room_bed', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                               <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_bed', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
                                    최대 인원
                                    <span th:if="${sortField == 'room_bed'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                                </a>
                            </td>
                            <td>
-                               <a th:href="@{/room/roomList(sortField='room_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                               <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_price', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
                                    룸 가격
                                    <span th:if="${sortField == 'room_price'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                                </a>
                            </td>
                            <td>
-                               <a th:href="@{/room/roomList(sortField='room_state', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, query=${query})}">
+                               <a th:href="@{/room/roomList(page=1, size=${pageResponseDTO.size}, sortField='room_state', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
                                    룸 상태
                                    <span th:if="${sortField == 'room_state'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                                </a>
@@ -228,22 +253,26 @@
            </div>
        </div>
    </div>
-    <div class="row mt-3">
+    <div class="row mt-3" th:if="${!isSearch}">
         <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
             <div class="row">
                 <div class="col-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-center">
                             <th:block th:if="${pageResponseDTO.prev}">
-                                <li class="page-item"><a class="page-link" th:href="|@{'/room/roomList?page=' +${pageResponseDTO.start-1}}|">이전</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/room/roomList(page=${pageResponseDTO.start-1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">이전</a>
+                                </li>
                             </th:block>
-
-                            <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
-                                <li class="page-item"><a class="page-link" th:href="|@{'/room/roomList?page=' +${num}}|">[[${num}]]</a></li>
+                            <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/room/roomList(page=${num}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">[[${num}]]</a>
+                                </li>
                             </th:block>
-
                             <th:block th:if="${pageResponseDTO.next}">
-                                <li class="page-item"><a class="page-link" th:href="|@{'/room/roomList?page=' +${pageResponseDTO.end+1}}|">다음</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/room/roomList(page=${pageResponseDTO.end+1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">다음</a>
+                                </li>
                             </th:block>
                         </ul>
                     </nav>

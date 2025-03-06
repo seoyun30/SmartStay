@@ -116,8 +116,8 @@ public class RoomController {
         model.addAttribute("sortDir", sortDir);
 
         if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
-            List<RoomDTO> results = roomService.searchList(hotelDTO, searchType, searchKeyword, sortField, sortDir);
-            model.addAttribute("results", results);
+            PageResponseDTO<RoomDTO> pageResponseDTO = roomService.searchList(searchType, searchKeyword, sortField, sortDir, pageRequestDTO);
+            model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("searchType", searchType);
             model.addAttribute("searchKeyword", searchKeyword);
             model.addAttribute("isSearch", true);

@@ -183,55 +183,48 @@ public class RoomService {
         log.info("룸이 삭제되었습니다. room_num: " + id);
     }
 
-    public List<RoomDTO> searchList(HotelDTO hotelDTO, String searchType, String searchKeyword, String sortField, String sortDir) {
+    public PageResponseDTO<RoomDTO> searchList(String searchType, String searchKeyword, String sortField, String sortDir, PageRequestDTO pageRequestDTO) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
-        List<Room> rooms;
+        Page<Room> result;
 
         switch (searchType) {
+            case "keyword":
+                result = roomRepository.findByRoom_nameContainingIgnoreCaseOrRoom_infoContainingIgnoreCaseOrRoom_typeContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                break;
             case "roomName":
-                rooms = roomRepository.findByRoom_nameContainingIgnoreCase(searchKeyword, sort);
+                result = roomRepository.findByRoom_nameContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "roomInfo":
-                rooms = roomRepository.findByRoom_infoContainingIgnoreCase(searchKeyword, sort);
+                result = roomRepository.findByRoom_infoContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "roomType":
-                rooms = roomRepository.findByRoom_typeContainingIgnoreCase(searchKeyword, sort);
+                result = roomRepository.findByRoom_typeContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             default:
-                rooms = roomRepository.findAll(sort);
+                result = roomRepository.findAll(PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
         }
 
-        if (rooms == null || rooms.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<RoomDTO> roomDTOS = rooms.stream()
-                .map(room -> {
-                    RoomDTO roomDTO = modelMapper.map(room, RoomDTO.class);
-
-                    List<Image> imageList = imageRepository.findByTarget("room", room.getRoom_num());
-                    log.info("룸번호:{}, 조회된 이미지 개수:{}", room.getRoom_num(), imageList.size());
-                    if (imageList != null && !imageList.isEmpty()) {
-                        List<ImageDTO> imageDTOList = imageList.stream()
-                                .map(image -> modelMapper.map(image, ImageDTO.class))
-                                .collect(Collectors.toList());
-                        roomDTO.setImageDTOList(imageDTOList);
-
-                        ImageDTO mainImage = imageDTOList.stream()
-                                .filter(image -> "Y".equalsIgnoreCase(image.getRepimg_yn()))
-                                .findFirst()
-                                .orElse(imageDTOList.get(0));
-                        roomDTO.setMainImage(mainImage);
-                    }else {
-                        log.warn("룸번호:{}에 이미지가 없습니다.", room.getRoom_num());
-                    }
-                    return roomDTO;
-                })
+        List<RoomDTO> roomDTOList = result.stream()
+                .map(room -> modelMapper.map(room, RoomDTO.class)
+                        .setHotelDTO(modelMapper.map(room.getHotel(), HotelDTO.class)))
                 .collect(Collectors.toList());
 
-        return roomDTOS;
+        for (RoomDTO roomDTO : roomDTOList) {
+            List<Image> roomImageList = imageRepository.findByTarget("room", roomDTO.getRoom_num());
+            if (!roomImageList.isEmpty()) {
+                List<ImageDTO> roomImageDTOList = roomImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                roomDTO.setImageDTOList(roomImageDTOList);
+            } else {
+                roomDTO.setImageDTOList(null);
+            }
+        }
+            PageResponseDTO<RoomDTO> roomDTOPageResponseDTO = PageResponseDTO.<RoomDTO>withAll()
+                    .pageRequestDTO(pageRequestDTO).dtoList(roomDTOList).total((int)result.getTotalElements()).build();
+
+        return roomDTOPageResponseDTO;
     }
 
     public List<RoomDTO> searchRead(Long hotel_num) {

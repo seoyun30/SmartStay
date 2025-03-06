@@ -4,7 +4,6 @@ import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,11 +23,17 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     Long findLowestRoomPriceByHotelNum(@Param("hotel_num") Long hotel_num);
 
     @Query("SELECT r FROM Room r WHERE LOWER(r.room_name) LIKE LOWER(CONCAT('%', :roomName, '%'))")
-    List<Room> findByRoom_nameContainingIgnoreCase(@Param("roomName") String roomName, Sort sort);
+    Page<Room> findByRoom_nameContainingIgnoreCase(@Param("roomName") String roomName, Pageable pageable);
 
     @Query("SELECT r FROM Room r WHERE LOWER(r.room_info) LIKE LOWER(CONCAT('%', :roomInfo, '%'))")
-    List<Room> findByRoom_infoContainingIgnoreCase(@Param("roomInfo") String roomInfo, Sort sort);
+    Page<Room> findByRoom_infoContainingIgnoreCase(@Param("roomInfo") String roomInfo, Pageable pageable);
 
     @Query("SELECT r FROM Room r WHERE LOWER(r.room_type) LIKE LOWER(CONCAT('%', :roomType, '%'))")
-    List<Room> findByRoom_typeContainingIgnoreCase(@Param("roomType") String roomType, Sort sort);
+    Page<Room> findByRoom_typeContainingIgnoreCase(@Param("roomType") String roomType, Pageable pageable);
+
+    @Query("SELECT r FROM Room r " +
+            "WHERE LOWER(r.room_name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(r.room_info) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(r.room_type) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Room> findByRoom_nameContainingIgnoreCaseOrRoom_infoContainingIgnoreCaseOrRoom_typeContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
 }
