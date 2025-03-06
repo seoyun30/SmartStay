@@ -11,27 +11,31 @@
 <th:block layout:fragment="content">
     <h1 class="text-center mb-3 mt-5">문의사항 목록</h1>
 
-    <div class="col-12 mb-3">
-        <div class="card">
-            <form action="#" method="get">
-                <h3 class="text-center fw-bold mt-3">검색 조건</h3>
-                <div class="input-group p-3">
-                    <span class="input-group-text">제목</span>
-                    <input type="text" class="form-control">
-                </div>
-                <div class="input-group p-3">
-                    <span class="input-group-text">내용</span>
-                    <input type="text" class="form-control">
-                </div>
-
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
-                    <button type="submit" class="btn btn-primary">검색</button>
-                    <button type="reset" class="btn btn-secondary">초기화</button>
-                </div>
-
-            </form>
+    <!--검색창-->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-right">
+            <div class="search-form">
+                <form th:action="@{/qna/bcmQnaList}" method="get">
+                    <div class="input-group input-group-sm" id="input-group-search">
+                        <select class="form-select-sm" name="type">
+                            <option th:selected="${type==null}">검색항목</option>
+                            <option value="t" th:selected="${type=='t'}">제목</option>>
+                            <option value="c" th:selected="${type=='c'}">내용</option>>
+                            <option value="w" th:selected="${type=='w'}">작성자</option>>
+                            <option value="h" th:selected="${type=='h'}">호텔</option>>
+                            <option value="tc" th:selected="${type=='tc'}">제목+내용</option>>
+                            <option value="tcw" th:selected="${type=='tcw'}">제목+내용+작성자</option>>
+                        </select>
+                        <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="Search" th:value="${pageRequestDTO.keyword}" style="width: 250px;">
+                        <div class="input-group-append">
+                            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                            <button type="reset" class="btn btn-secondary">초기화</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+    </nav>
 
     <div class="row mt-5">
         <div class="col">
@@ -40,6 +44,7 @@
                 <tr>
                     <th>번호</th>
                     <th>제목</th>
+                    <th>호텔</th>
                     <th>작성자</th>
                     <th>조회수</th>
                 </tr>
@@ -53,6 +58,7 @@
                                 [[${qna.title}]]
                             </a>
                         </td>
+                        <td class="hotel" th:text="${qna.hotelDTO != null ? qna.hotelDTO.hotel_name : '정보 없음'}"></td>
                         <td th:text="${qna.writer}"></td>
                         <td th:text="${qna.viewCount}"></td>
                     </tr>
@@ -120,36 +126,6 @@
             }
         });
     }
-
-    let pageResponseDTO = [[${pageResponseDTO}]]
-    console.log(pageResponseDTO)
-
-    $(".pagingbtn").on("click", function (e) {
-        e.preventDefault();
-
-        let num = $(this).text();
-        let str = "";
-        if (num == '다음') {
-
-            str = `<input type="hidden" name="page" value="${pageResponseDTO.end +1}">`
-
-        } else if (num == '이전') {
-
-            str = `<input type="hidden" name="page" value="${pageResponseDTO.start -1 }">`
-
-        } else {
-
-            str = `<input type="hidden" name="page" value="${num}">`
-        }
-
-        let formObj = $(".formObj")
-        console.log(formObj)
-
-        formObj.append(str)
-
-        console.log("클릭함")
-        formObj.submit()     //전송
-    })
 
 </script>
 

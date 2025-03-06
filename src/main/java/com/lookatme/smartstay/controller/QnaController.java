@@ -105,8 +105,6 @@ public class QnaController {
             return "redirect:/member/login";
         }
 
-        /*String loggedInEmail = principal.getName();  // 로그인한 유저의 이메일*/
-       /* List<QnaDTO> myQnaList = qnaService.myQnaList(loggedInEmail)*/
         PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagemylist(pageRequestDTO, principal.getName());
 
         model.addAttribute("pageResponseDTO", pageResponseDTO);
@@ -114,15 +112,38 @@ public class QnaController {
         return "qna/myQnaList";  // myQnaList.html 또는 jsp 등으로 반환
     }
 
-    //cm목록
-    @GetMapping("/cmQnaList")
-    public String cmQnaList(Model model,  PageRequestDTO pageRequestDTO) {
+    //매니저 소속 호텔용 목록
+    @GetMapping("/hcmQnaList")
+    public String hcmQnaList(Model model,  PageRequestDTO pageRequestDTO, Principal principal) {
         log.info("pageRequestDTO" + pageRequestDTO);
 
-        PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagelist(pageRequestDTO);
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
+        PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagehlist(pageRequestDTO, principal.getName());
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
-        return "qna/cmQnaList";
+        log.info("qnaDTO: " + pageResponseDTO);
+
+        return "qna/hcmQnaList";
+    }
+
+    //치프 소속 브랜드용 목록
+    @GetMapping("/bcmQnaList")
+    public String bcmQnaList(Model model,  PageRequestDTO pageRequestDTO, Principal principal) {
+        log.info("pageRequestDTO" + pageRequestDTO);
+
+        if (principal == null) {
+            return "redirect:/member/login";
+        }
+
+        PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pageblist(pageRequestDTO, principal.getName());
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
+
+        log.info("qnaDTO: " + pageResponseDTO);
+
+        return "qna/bcmQnaList";
     }
 
     //상세

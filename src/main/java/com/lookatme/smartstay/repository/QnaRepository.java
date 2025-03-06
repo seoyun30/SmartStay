@@ -18,14 +18,6 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
     @Query("SELECT q FROM Qna q WHERE q.writer = :writer")
     List<Qna> findByWriter(@Param("writer") String writer);  // 작성자로 QnA 목록 조회
 
-    //호텔로 검색 페이징
-    @Query("select q from Qna q where q.hotel.hotel_num = :hotel_num")
-    Page<Qna> findbyHotel(Long hotel_num, Pageable pageable);
-
-    //브랜드로 검색 페이징
-    @Query("select q from Qna q where q.hotel.brand.brand_num = :brand_num")
-    Page<Qna> findbyBrand(Long brand_num, Pageable pageable);
-
     @Query("SELECT q FROM Qna q WHERE q.writer = :writer")
     Page<Qna> findByWriter(@Param("writer") String writer, Pageable pageable);  // 작성자로 QnA 목록 조회 페이징
 
@@ -73,6 +65,32 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
 
     @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') and q.writer = :email ")
     public Page<Qna> titleOrConAndWriter(String str, String email, Pageable pageable);
+
+    //호텔로 검색 페이징
+    @Query("select q from Qna q where q.hotel.hotel_num = :hotel_num")
+    Page<Qna> findbyHotel(Long hotel_num, Pageable pageable);
+
+    @Query("select q from Qna q where q.title like concat('%', :keyword, '%')  and q.hotel.hotel_num = :hotel_num ")
+    public Page<Qna> findByTitleAndHotel_numContaining(String keyword, Long hotel_num, Pageable pageable);
+
+    @Query("select q from Qna q where q.content like concat('%', :keyword, '%') and q.hotel.hotel_num = :hotel_num ")
+    public Page<Qna> findByContentContainingAndHotel_numContaining(String keyword, Long hotel_num, Pageable pageable);
+
+    @Query("select q from Qna q where q.writer like concat('%', :str, '%') and q.hotel.hotel_num = :hotel_num")
+    public Page<Qna> selectlikeWriterAndHotel_numContaining(String str, Long hotel_num, Pageable pageable);
+
+    @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str1, '%') and q.hotel.hotel_num = :hotel_num")
+    public Page<Qna> titleOrConAndHotel_numContaining(String str, String str1, Long hotel_num, Pageable pageable);
+
+    @Query("select q from Qna q where q.writer like concat('%', :str, '%')or q.title like concat('%', :str1, '%') and q.hotel.hotel_num = :hotel_num ")
+    public Page<Qna> findByTitleContainingOrWriterContainingAndHotel_numContaining(String str, String str1, Long hotel_num, Pageable pageable);
+
+    @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') or q.writer like concat('%', :str, '%')and q.hotel.hotel_num = :hotel_num ")
+    public Page<Qna> titleOrConOrWrAnaHotel_numContaining(String str, Long hotel_num, Pageable pageable);
+
+    //브랜드로 검색 페이징
+    @Query("select q from Qna q where q.hotel.brand.brand_num = :brand_num")
+    Page<Qna> findbyBrand(Long brand_num, Pageable pageable);
 
 
 
