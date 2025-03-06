@@ -91,7 +91,7 @@ public class NoticeService {
                     String savedFileName =
                     fileService.uploadFile(imgUploadLocation, multipartFile);
                     //db저장
-                    imageService.saveImageOne(savedFileName, multipartFile, notice  );
+                    imageService.saveImage(multipartFiles,  "notice" , notice.getNotice_num());
 
 
                 }
@@ -279,7 +279,7 @@ public class NoticeService {
                 if (!multipartFile.isEmpty()) {
                     String  savedFileName =
                             fileService.uploadFile(imgUploadLocation , multipartFile);
-                    imageService.saveImageOne(savedFileName ,  multipartFile , notice);
+                    imageService.saveImage(multipartFileList ,  "notice" , notice.getNotice_num());
                 }
 
             }
