@@ -57,7 +57,7 @@
                                             <th:block th:each="img: ${noticeDTO.imageDTOList}">
                                                 <th:block th:if="${img.repimg_yn == 'N'}">
                                                     <label class="col-12 form-label">
-                                                        <img class="main-image mt-3" th:src="${img.image_url}">
+                                                        <img class="main-image mt-3" th:src="${img.thumbnail_url}">
                                                     </label>
                                                 </th:block>
                                             </th:block>
