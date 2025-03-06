@@ -306,6 +306,7 @@ public class QnaService {
 
         log.info("페이저블 : " + pageRequestDTO);
 
+
         if(pageRequestDTO.getType() == null || pageRequestDTO.getKeyword()==null || pageRequestDTO.getKeyword().equals("")){
             qnaPage =  qnaRepository.findByWriter(email, qnaPageable);
         } else if(pageRequestDTO.getType().equals("t")){
@@ -333,6 +334,74 @@ public class QnaService {
                 qnaList.stream().map(qna -> modelMapper.map(qna, QnaDTO.class)
                                 .setHotelDTO(modelMapper.map(qna.getHotel(), HotelDTO.class)))
                         .collect(Collectors.toList());
+
+        PageResponseDTO<QnaDTO> qnaDTOPageResponseDTO
+                = PageResponseDTO.<QnaDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(qnaDTOList)
+                .total((int)qnaPage.getTotalElements())
+                .build();
+
+        return qnaDTOPageResponseDTO;
+    }
+
+    public PageResponseDTO<QnaDTO> pagehlist(PageRequestDTO pageRequestDTO, Long hotel_num, String email) {
+
+        log.info("진입 : "+ pageRequestDTO);
+
+        // 로그인한 관리자의 소속된 호텔 정보를 가져옵니다.
+        Member member = memberRepository.findByEmail(email);
+
+        if (member == null || member.getHotel() == null) {
+            log.info("사용자의 소속 호텔을 찾을 수 없음 : " + email);
+            return null;  // 소속 호텔이 없다면 null 반환
+        }
+       /* // 로그인한 관리자의 호텔 번호를 사용하여 강제 필터링
+        Long adminHotelNum = member.getHotel().getHotel_num();
+        log.info("관리자 소속 호텔 번호 : " + adminHotelNum);*/
+
+        Page<Qna> qnaPage = null;
+        int currentPage = pageRequestDTO.getPage()-1;
+        int guestLimits = pageRequestDTO.getSize();
+        Pageable qnaPageable = PageRequest.of(currentPage, guestLimits,
+                Sort.by(Sort.Direction.DESC,"qna_num"));  //위의 주석 내용과 같은 개념(PageRequestDTO에 사용)
+
+        log.info("페이저블 : " + pageRequestDTO);
+
+        if(pageRequestDTO.getType() == null || pageRequestDTO.getKeyword()==null || pageRequestDTO.getKeyword().equals("")){
+            qnaPage =  qnaRepository.findbyHotel(hotel_num, qnaPageable);
+        } else if(pageRequestDTO.getType().equals("t")){
+            log.info( "제목으로 검색 검색키워드는"  +pageRequestDTO.getKeyword() );
+            qnaPage =  qnaRepository.findByTitleAndHotel_numContaining(pageRequestDTO.getKeyword(), hotel_num, qnaPageable);
+
+        }else if(pageRequestDTO.getType().equals("c")){
+            log.info( "내용으로 검색 검색키워드는"  +pageRequestDTO.getKeyword() );
+            qnaPage =  qnaRepository.findByContentContainingAndHotel_numContaining(pageRequestDTO.getKeyword(), hotel_num, qnaPageable);
+
+        }else if(pageRequestDTO.getType().equals("w")){
+            log.info( "작성자로 검색으로  검색키워드는"  +pageRequestDTO.getKeyword() );
+            qnaPage =  qnaRepository.selectlikeWriterAndHotel_numContaining(pageRequestDTO.getKeyword(), hotel_num, qnaPageable);
+
+        }else if(pageRequestDTO.getType().equals("tc")){
+            log.info("제목 + 내용중에 검색  검색키워드는 " + pageRequestDTO.getKeyword());
+            qnaPage = qnaRepository.titleOrConAndHotel_numContaining(pageRequestDTO.getKeyword(), hotel_num, qnaPageable);
+        }
+        else if(pageRequestDTO.getType().equals("cw")) {
+            log.info("내용 + 작성자으로  검색키워드는" + pageRequestDTO.getKeyword());
+            qnaPage = qnaRepository.findByTitleContainingOrWriterContainingAndHotel_numContaining(pageRequestDTO.getKeyword(), pageRequestDTO.getKeyword(), hotel_num, qnaPageable);
+        }
+
+        //변환
+        List<Qna> qnaList = qnaPage.getContent();
+        qnaList.forEach(qna -> log.info(qna));
+        //dto변환
+        List<QnaDTO> qnaDTOList=
+                qnaList.stream()
+                        .map(qna -> modelMapper.map(qna, QnaDTO.class)
+                                .setHotelDTO(modelMapper.map(qna.getHotel(), HotelDTO.class)))
+                        .collect(Collectors.toList());
+
+        log.info("qnaDTOList : " + qnaDTOList);
 
         PageResponseDTO<QnaDTO> qnaDTOPageResponseDTO
                 = PageResponseDTO.<QnaDTO>withAll()
