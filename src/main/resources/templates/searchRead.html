@@ -149,7 +149,7 @@
             </form>
         </div>
 
-        <div th:each="room : ${roomList}" class="mb-4">
+        <div th:if="${roomList != null and !roomList.isEmpty()}" th:each="room : ${roomList}" class="mb-4">
             <div class="card shadow-sm">
                 <div class="row g-0">
                     <div class="col-md-4 position-relative">
@@ -172,6 +172,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div th:if="${roomList == null or roomList.isEmpty()}" class="text-center mb-3 mt-5">
+            <h3>등록된 룸이 없습니다.</h3>
         </div>
     </div>
 </th:block>
