@@ -1,7 +1,9 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.*;
-import com.lookatme.smartstay.entity.*;
+import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.ReviewDTO;
+import com.lookatme.smartstay.dto.RoomReserveItemDTO;
+import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.ReviewRepository;
@@ -17,14 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.nio.file.AccessDeniedException;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -52,8 +51,8 @@ public class ReviewController {
     //관리자 리뷰 목록 페이지(chief, manager권한)
     @GetMapping("/adMyReviewList")
     public String adMyReviewList(Principal principal,
-                                 @RequestParam("brand_num") Long brand_num,
-                                 @RequestParam("hotel_num") Long hotel_num, PageRequestDTO pageRequestDTO, Model model) {
+                                 @RequestParam(value = "brand_num", required = false) Long brand_num,
+                                 @RequestParam(value = "hotel_num", required = false) Long hotel_num, PageRequestDTO pageRequestDTO, Model model) {
 
         if (principal == null) {
             return "redirect:/member/login";
@@ -65,14 +64,14 @@ public class ReviewController {
             List<ReviewDTO> reviewDTOList = reviewService.getBrandReviewList(brand_num, principal.getName());
             model.addAttribute("reviewDTOList", reviewDTOList);
             reviewDTOList.forEach(reviewDTO -> log.info("reviewDTO: {}", reviewDTO));
-            return "redirect:/review/adMyReviewList";
+            return "review/adMyReviewList";
 
             //권한 : 매니저(호텔 별 리뷰목록)
         } else if (member.getRole().name().equals("MANAGER")) {
             List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num);
             model.addAttribute("reviewDTOList", reviewDTOList);
             reviewDTOList.forEach(reviewDTO -> log.info("reviewDTO: {}", reviewDTO));
-            return "redirect:/review/adMyReviewList";
+            return "review/adMyReviewList";
         }
 
         //권한이 없는 경우 에러
