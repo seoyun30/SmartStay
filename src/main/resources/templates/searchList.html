@@ -64,7 +64,11 @@
                 </div>
             </div>
         </table>
-    <h2 class="text-center text-primary mt-5" th:if="${results.size() == 0}">검색 결과가 없습니다.</h2>
+    <h3 class="text-center text-black mt-5" th:if="${results.size() == 0}">
+        <br>
+        일치하는 검색 결과가 없습니다.<br>
+        지역명, 호텔명으로 검색어를 변경해 보세요.
+    </h3>
 </th:block>
 </body>
 </html>
