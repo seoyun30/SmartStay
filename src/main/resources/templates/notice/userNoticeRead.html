@@ -50,7 +50,7 @@
                                                         <th:block th:each="img: ${noticeDTO.imageDTOList}">
                                                             <th:block th:if="${img.repimg_yn == 'N'}">
                                                                 <div class="col-12 mt-3">
-                                                                    <img class="img-fluid" th:src="${img.thumbnail_url}" alt="이미지" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                    <img class="img-fluid" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 100%; object-fit: cover;">
                                                                 </div>
                                                             </th:block>
                                                         </th:block>

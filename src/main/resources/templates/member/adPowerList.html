@@ -54,7 +54,7 @@
                             <option value="2" th:selected="${type == '2'}">이름</option>
                             <option value="3" th:selected="${type == '3'}">연락처</option>
                         </select>
-                        <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="검색어를 입력하세요" th:value="${keyword}" style="width: 250px;">
+                        <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="검색어를 입력하세요" th:value="${keyword}">
                         <div class="input-group-append">
                             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
                         </div>

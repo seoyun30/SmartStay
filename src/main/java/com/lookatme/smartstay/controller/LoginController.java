@@ -219,10 +219,10 @@ public class LoginController {
 
            return "member/signup";
        }
-
-
-        return "redirect:/member/signup?success=true";
+       redirectAttributes.addFlashAttribute("msg", "회원가입이 완료되었습니다.");
+        return "redirect:/member/login";
    }
+
 
    /*@GetMapping("/adLogin") //로그인페이지(총판,매니져) 관리자들
     public String adLoginGet(MemberDTO memberDTO, Principal principal){
