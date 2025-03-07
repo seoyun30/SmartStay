@@ -1,6 +1,7 @@
 package com.lookatme.smartstay.dto;
 
 import com.lookatme.smartstay.constant.ActiveState;
+import com.lookatme.smartstay.constant.RoomState;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -62,4 +63,10 @@ public class HotelDTO {
     }
 
     private int review_count;
+
+    private List<RoomDTO> rooms = new ArrayList<>();
+
+    public boolean hasAvailableRooms() {
+        return rooms.stream().anyMatch(roomDTO -> roomDTO.getRoom_state() == RoomState.YES);
+    }
 }
