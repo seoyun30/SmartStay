@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.constant.CheckState;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.RoomReserve;
@@ -19,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -184,7 +182,12 @@ public class RoomReserveService {
 
     /* 예약된 날짜 목록 조회 메서드 */
     public List<Map<String, String>> getReserveDatesByRoom(Long room_num) {
-        List<RoomReserveItem> roomReserveItemList = roomReserveItemRepository.findByRoomRoom_num(room_num);
+        log.info("들어온 방번호: " + room_num);
+        List<RoomReserveItem> roomReserveItemList =
+                roomReserveItemRepository.findRoomNotReserve(room_num,
+                        CheckState.IN, CheckState.RESERVE);
+
+        roomReserveItemList.forEach(roomReserveItem -> log.info(roomReserveItem));
 
         return roomReserveItemList.stream().map(roomReserveItem -> {
             Map<String, String> map = new HashMap<>();

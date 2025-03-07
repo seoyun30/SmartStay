@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.repository;
 
+import com.lookatme.smartstay.constant.CheckState;
 import com.lookatme.smartstay.entity.RoomReserveItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,11 @@ public interface RoomReserveItemRepository extends JpaRepository<RoomReserveItem
     
     @Query("select r from RoomReserveItem r where r.room.room_num = :room_num")
     List<RoomReserveItem> findByRoomRoom_num(Long room_num);
+
+    @Query("select r from RoomReserveItem r where r.room.room_num = :room_num " +
+            "and (r.roomReserve.check_state in :excludedState1 " +
+            "or r.roomReserve.check_state in :excludedState2)")
+    List<RoomReserveItem> findRoomNotReserve(Long room_num, CheckState excludedState1, CheckState excludedState2);
 
     @Query("select r from RoomReserveItem r where r.roomreserveitem_num = :roomreserveitem_num and r.roomReserve.member.email = :email")
     RoomReserveItem findByReserveItemNumAndEmail(Long roomreserveitem_num, String email);

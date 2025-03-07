@@ -107,6 +107,9 @@ public class PayService {
         if (!preAmount.equals(paidAmount)) { //결제 금액이 같지 않다면 결제 취소
             CancelData cancelData = cancelPayment(iamportResponse);
             api.cancelPaymentByImpUid(cancelData);
+        } else {
+            // 결제 검증 성공 시, 사전 결제 데이터 삭제
+            prePayRepository.delete(prePay);
         }
 
         return iamportResponse.getResponse();
@@ -119,6 +122,8 @@ public class PayService {
 
     @Transactional
     public void savePayInfo(PayDTO payDTO) {
+        // 사전 검증 데이터 삭제
+        prePayRepository.findById(payDTO.getMerchant_uid()).ifPresent(prePayRepository::delete);
 
         //결제 정보를 Pay 엔티티로 변환
         Member member = memberRepository.findByEmail(payDTO.getMemberDTO().getEmail());

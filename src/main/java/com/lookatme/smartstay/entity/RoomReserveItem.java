@@ -30,7 +30,6 @@ public class RoomReserveItem extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "room_num")
-    @ToString.Exclude
     private Room room; //룸
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
