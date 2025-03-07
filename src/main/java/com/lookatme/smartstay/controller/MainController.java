@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.constant.RoomState;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Image;
 import com.lookatme.smartstay.repository.ImageRepository;
@@ -131,6 +132,8 @@ public class MainController {
 
         List<HotelDTO> list = hotelService.activeHotelList();  // 변경된 부분
 
+        list = list.stream().filter(HotelDTO::hasAvailableRooms).collect(Collectors.toList());
+
         List<HotelDTO> top12Hotels = list.stream().limit(12).collect(Collectors.toList());
 
         List<Image> banner = imageRepository.findByTargetTypeOrderByOrderIndex("banner");
@@ -151,6 +154,9 @@ public class MainController {
     public String search(Model model) {
 
         List<HotelDTO> results = hotelService.hotelList();
+
+        results = results.stream().filter(HotelDTO::hasAvailableRooms).collect(Collectors.toList());
+
         model.addAttribute("results", results);
 
         return "main";
@@ -167,6 +173,8 @@ public class MainController {
         }else {
             results = hotelService.searchList(query);
         }
+
+        results = results.stream().filter(HotelDTO::hasAvailableRooms).collect(Collectors.toList());
 
         if ("asc".equalsIgnoreCase(order)) {
             results.sort((h1, h2) -> Long.compare(
@@ -196,7 +204,9 @@ public class MainController {
         List<ReviewDTO> reviews = reviewService.getLimitedReviews(hotel_num, 3);
         model.addAttribute("reviews", reviews);
 
-        List<RoomDTO> roomList = roomService.searchRead(hotel_num);
+        List<RoomDTO> roomList = roomService.searchRead(hotel_num).stream()
+                .filter(roomDTO -> roomDTO.getRoom_state() == RoomState.YES)
+                .collect(Collectors.toList());
 
         if (order.equalsIgnoreCase("asc")) {
             roomList.sort(Comparator.comparing(RoomDTO::getRoom_price));
@@ -219,7 +229,10 @@ public class MainController {
     public String searchRoomRead(@RequestParam Long room_num, Model model) {
 
         RoomDTO roomDTO = roomService.roomRead(room_num);
-        model.addAttribute("roomDTO", roomDTO);
+
+        if (roomDTO != null && roomDTO.getRoom_state() == RoomState.YES) {
+            model.addAttribute("roomDTO", roomDTO);
+        }
 
         List<ReviewDTO> reviews = reviewService.getLimitedRoomReviews(room_num, 3);
         model.addAttribute("reviews", reviews);
@@ -232,6 +245,9 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<List<HotelDTO>> getActiveHotel() {
         List<HotelDTO> activeHotel = hotelService.activeHotelList();
+
+        activeHotel = activeHotel.stream().filter(HotelDTO::hasAvailableRooms).collect(Collectors.toList());
+
         return ResponseEntity.ok(activeHotel);
     }
 }
