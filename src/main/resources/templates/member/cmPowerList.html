@@ -221,8 +221,15 @@
             let memberNum = row.find("td:eq(0)").text().trim();
             let brandNum = $(".brand_num").val(); // 브랜드 ID 가져오기
             console.log(brandNum)
-            let hotelSelect = $("<select class='form-control hotelSelect'></select>");
-            let roleSelect = $("<select class='form-control roleSelect'></select>");
+            let hotelSelect = $("<select class='form-control hotelSelect'></select>").css({
+                "text-align": "center",
+                "text-align-last": "center"
+            });
+            let roleSelect = $("<select class='form-control roleSelect'></select>").css({
+                "text-align": "center",
+                "text-align-last": "center"
+            });
+
             let saveButton = $("<button class='btn btn-success savebtn'>저장</button>");
 
             roleSelect.append("<option value='CHIEF'>CHIEF</option>");
