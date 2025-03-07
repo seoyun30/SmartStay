@@ -34,7 +34,7 @@ public class QnaReply extends BaseEntity{
     private Qna qna;
 
     //댓글수정
-    public void update(String commen) {
+    public void update(String comment) {
         this.comment = comment;
     }
 

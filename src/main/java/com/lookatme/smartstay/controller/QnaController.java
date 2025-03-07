@@ -66,7 +66,6 @@ public class QnaController {
     public String qnaRegisterPost(@Valid QnaDTO qnaDTO, BindingResult bindingResult, MultipartFile[] multipartFiles) {
 
         log.info("컨트롤러로 들어온 값:" + qnaDTO);
-        //log.info("컨트롤러로 들어온 값:" + MultipartFile.getOriginalFilename());
 
         if (bindingResult.hasErrors()) {
             log.info("유효성 검사나 문제가 있다 아래 로그는 모든 문제를 출력");

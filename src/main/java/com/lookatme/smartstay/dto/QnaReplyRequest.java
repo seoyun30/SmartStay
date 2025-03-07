@@ -23,8 +23,6 @@ public class QnaReplyRequest {
     @Size(min = 2, max = 255, message = "댓글은 2~255 글자 사이여야 합니다.")
     private String comment;
 
-    @NotBlank(message = "작성자는 공백일 수 없습니다.")
-    @Size(min = 2, max = 255, message = "작성자는 2~255 글자 사이여야 합니다.")
     private String writer;
 
     private Long qna_num; // Qna 엔티티 참조
