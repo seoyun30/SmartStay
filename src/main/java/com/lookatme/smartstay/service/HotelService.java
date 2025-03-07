@@ -1,10 +1,7 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.ActiveState;
-import com.lookatme.smartstay.dto.BrandDTO;
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.ImageDTO;
-import com.lookatme.smartstay.dto.MemberDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -84,6 +81,11 @@ public class HotelService {
                     HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
                     BrandDTO brandDTO = modelMapper.map(hotel.getBrand(), BrandDTO.class);
                     hotelDTO.setBrandDTO(brandDTO);
+                    List<Room> rooms = roomRepository.findRoomsByHotelNum(hotel.getHotel_num());
+                    List<RoomDTO> roomDTOS = rooms.stream()
+                            .map(room -> modelMapper.map(room, RoomDTO.class))
+                            .collect(Collectors.toList());
+                    hotelDTO.setRooms(roomDTOS);
                     Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
                     hotelDTO.setLowestPrice(lowestPrice);
                     ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
