@@ -59,7 +59,7 @@
                             <option value="1" th:selected="${type == '1'}">제목</option>
                             <option value="2" th:selected="${type == '2'}">호텔명</option>
                         </select>
-                        <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="검색어를 입력하세요" th:value="${pageRequestDTO.keyword}" style="width: 250px;">
+                        <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="검색어를 입력하세요" th:value="${pageRequestDTO.keyword}">
                         <div class="input-group-append">
                             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
                         </div>

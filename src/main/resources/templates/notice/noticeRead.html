@@ -20,7 +20,7 @@
                         <div class="col-8 offset-2">
                             <div class="row">
                                 <div class="mb-3 text-center">
-                                    <h2>공지사항 상세페이지</h2>
+                                    <h2>공지사항</h2>
                                 </div>
                                 <div class="col text-center">
                                     <div class="card mb-3">
@@ -57,7 +57,7 @@
                                             <th:block th:each="img: ${noticeDTO.imageDTOList}">
                                                 <th:block th:if="${img.repimg_yn == 'N'}">
                                                     <label class="col-12 form-label">
-                                                        <img class="main-image mt-3" th:src="${img.thumbnail_url}" style="width: 100%; height: auto; object-fit: contain;">
+                                                        <img class="main-image mt-3" th:src="${img.image_url}" style="width: 100%; height: auto; object-fit: contain;">
                                                     </label>
                                                 </th:block>
                                             </th:block>
@@ -66,7 +66,7 @@
                                 </div>
 
                                 <div class="col-12 text-center">
-                                    <button type="button" onclick="location.href='/notice/noticeList'"class="btn btn-primary">목록</button>
+                                    <button type="button" onclick="location.href='/notice/noticeList'" class="btn btn-primary">목록</button>
                                     <button type="button" th:onclick="|location.href='@{/notice/noticeModify(notice_num=${noticeDTO.notice_num})}'|" class="btn btn-dark">수정</button>
                                     <button type="button" class="btn btn-danger delnotice" >삭제</button>
                                 </div>

@@ -106,7 +106,6 @@
                                 <input type="hidden" class="roomNumber" name="room_num" th:value="${roomItem.roomDTO.room_num}">
                                 <span class="reserveDate">[[${#temporals.format(roomItem.in_date, 'yyyy-MM-dd HH:mm')}]]~[[${#temporals.format(roomItem.out_date,'yyyy-MM-dd HH:mm')}]] | [[${roomItem.day}]]박</span> <br>
                                 <span class="fs-6 reserveCount">최대 [[${roomItem.roomDTO.room_bed}]]명 / 예약인원 [[${roomItem.count}]]명</span> <br>
-                                <span>룸서비스 신청</span> <br>
                                 <span class="reserveRequest">요청사항 : [[${roomItem.reserve_request}]]</span>
                                 <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">
                                 <input type="hidden" class="reserveDay" th:value="${roomItem.day}">
