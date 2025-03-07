@@ -30,7 +30,7 @@ public class FileUpload {
     출력 : 저장후 생성된 새로운 파일명
     설명 : 이미지파일을 새로운 이름으로 지정된 폴더에 저장하고 새로운 이름을 전달
     */
-    public String FileUpload(MultipartFile imageFile) {
+    public String fileUpload(MultipartFile imageFile, String createThumbnail) {
         //이미지파일에 파일명을 읽어온다. sample.jpg
         String originalFilename = imageFile.getOriginalFilename();
         //확장자인 분리 .jpg
@@ -56,9 +56,10 @@ public class FileUpload {
                 byte[] filedata = imageFile.getBytes();
                 fos.write(filedata); // 파일 쓰기
             }
-            // 썸네일 생성
-            createThumbnail(path, filename);
-
+            // 썸네일 생성 여부 확인
+            if ("Y".equalsIgnoreCase(createThumbnail)) {
+                createThumbnail(path, filename);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return null; // 실패 시 null 반환
@@ -99,8 +100,8 @@ public class FileUpload {
             int originalHeight = img.getHeight();
 
             // 원하는 최대 크기
-            int maxWidth = 1000;
-            int maxHeight = 1000;
+            int maxWidth = 350;
+            int maxHeight = 350;
 
             // 비율 계산
             double widthRatio = (double) maxWidth / originalWidth;
@@ -130,7 +131,7 @@ public class FileUpload {
     출력 : 저장후 생성된 새로운 파일명
     설명 : 이미지파일을 새로운 이름으로 지정된 폴더에 저장하고 새로운 이름을 전달
     */
-    public void FileDelete(String imageFileName) {
+    public void fileDelete(String imageFileName) {
         //imgLocation(c:/movie), imageFileName(432erw-234w342.jpg)
         String deleteFileName = imgLocation + imageFileName; //c:/movie/432erw-234w342.jpg
 
@@ -147,7 +148,7 @@ public class FileUpload {
             }
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 }

@@ -40,7 +40,7 @@ public class ImageService {
                     continue;
                 }
 
-                String imageName = fileUpload.FileUpload(file);
+                String imageName = fileUpload.fileUpload(file, "Y");
                 String originalName = file.getOriginalFilename();
                 String imageUrl = "/images/" + imageName;
                 String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
@@ -120,7 +120,7 @@ public class ImageService {
     public void deleteImage(Long imageId) {
         Image image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이미지를 찾을 수 없습니다."));
-        fileUpload.FileDelete(image.getImage_name());
+        fileUpload.fileDelete(image.getImage_name());
         //imageRepository.delete(image);
         imageRepository.deleteById(imageId); // 가지고있는 이미지 번호로 삭제시 부모테이블 건들일 필요가 없다
     } //이미지 삭제
@@ -147,7 +147,7 @@ public class ImageService {
                     continue;
                 }
 
-                String imageName = fileUpload.FileUpload(file);
+                String imageName = fileUpload.fileUpload(file, "Y");
                 String originalName = file.getOriginalFilename();
                 String imageUrl = "/images/" + imageName;
                 String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
@@ -272,7 +272,7 @@ public class ImageService {
         }
 
         // 새 이미지를 저장소에 업로드
-        String imageName = fileUpload.FileUpload(imageFile);
+        String imageName = fileUpload.fileUpload(imageFile, "N");
         String originalName = imageFile.getOriginalFilename();
         String imageUrl = "/images/" + imageName; // 모든 이미지를 /images/ 경로로 설정
         String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
@@ -313,7 +313,7 @@ public class ImageService {
         Image image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이미지를 찾을 수 없습니다: " + imageId));
 
-        fileUpload.FileDelete(image.getImage_name());
+        fileUpload.fileDelete(image.getImage_name());
 
         imageRepository.deleteById(imageId);
 
