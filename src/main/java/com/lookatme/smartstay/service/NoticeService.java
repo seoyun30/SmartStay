@@ -80,8 +80,19 @@ public class NoticeService {
         notice = noticeRepository.save(notice);
         log.info("저장후 결과를 가지고 있는 notice" + notice);
 
-        if (multipartFiles != null && !multipartFiles.isEmpty()) {
-            imageService.saveImage(multipartFiles, "notice", notice.getNotice_num());
+        if(multipartFiles != null) {
+
+            for(MultipartFile multipartFile : multipartFiles){
+                if(!multipartFile.isEmpty()) {
+                    //물리적인 저장
+                    String savedFileName =
+                            fileService.uploadFile(imgUploadLocation, multipartFile);
+                    //db저장
+                    imageService.saveImageOne(savedFileName, multipartFile, notice);
+
+                }
+            }
+
         }
 
     }
@@ -255,7 +266,7 @@ public class NoticeService {
     //공지 사항 수정
     public void noticeModify(NoticeDTO noticeDTO, String email, List<MultipartFile> multipartFileList, List<Long> delnumList) throws Exception {
 
-       Notice notice = noticeRepository.findById(noticeDTO.getNotice_num()).orElseThrow(EntityNotFoundException::new);
+        Notice notice = noticeRepository.findById(noticeDTO.getNotice_num()).orElseThrow(EntityNotFoundException::new);
 
         Member member =
                 memberRepository.findByEmail(email);
@@ -276,25 +287,25 @@ public class NoticeService {
         noticeRepository.save(notice);
 
         //파일등록 리스트 > 반복해서 하나씩 저장
-        if (multipartFileList != null && !multipartFileList.isEmpty()) {
-            imageService.saveImage(multipartFileList, "notice", notice.getNotice_num());
+        if(multipartFileList != null && !multipartFileList.isEmpty()) {
+            for (MultipartFile multipartFile : multipartFileList){
+                if (!multipartFile.isEmpty()) {
+                    String  savedFileName =
+                            fileService.uploadFile(imgUploadLocation , multipartFile);
+                    imageService.saveImageOne(savedFileName, multipartFile , notice);
+                }
+            }
         }
-
-
-
         //파일삭제
         if(delnumList != null) {
             for (Long delnum : delnumList){
 
-                if(delnum != null ){
+                if(delnum != null ) {
                     log.info("삭제 " + delnum);
                     imageService.deleteImage(delnum);
                 }
-
             }
         }
-
-
     }
 
     //공지 사항 삭제

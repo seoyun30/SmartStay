@@ -26,6 +26,11 @@
             </div>-->
 
             <script th:inline="javascript">
+                let msg = [[${msg}]];
+                if (msg) {
+                    alert(msg);
+                }
+
                 let errorMsg = [[${param.error}]];
                 if (errorMsg) {
                     if (errorMsg == 'approval') {

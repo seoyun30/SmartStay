@@ -41,14 +41,31 @@ public class SecurityConfig {
             auth.requestMatchers("/**").permitAll(); //모든 매핑 허용
             auth.requestMatchers("/h2-console/**").permitAll(); //모든 매핑 허용
             //메인페이지 및 서브페이지
-            auth.requestMatchers("/", "/search", "/images/**").permitAll();
+            auth.requestMatchers("/", "/search", "/images/**", "/searchList", "/searchRead").permitAll();
+            auth.requestMatchers("/adMain").hasAnyRole("SUPERADMIN", "CHIEF", "MANAGER");
             //회원관련(모든 사용자)-로그인, 회원가입, 임시비밀번호발급
            /* auth.requestMatchers("/login", "/logout", "/register", "/password").permitAll();*/
-            auth.requestMatchers( "/member/login", "/member/loginPW","/register", "/password").permitAll();
+            auth.requestMatchers( "/member/login", "/member/logout", "/member/adSignup", "/member/cmSignup", "/member/signup", "/member/loginPW", "/member/findID", "/member/findPW").permitAll();
             auth.requestMatchers("/notice/userNoticeList", "/notice/userNoticeRead").permitAll();
             //인증된 사용자만 접근 가능
-            auth.requestMatchers("/modify", "/member/logout").permitAll(); //수정,로그아웃
+            auth.requestMatchers("/member/changePW", "/member/adMypage", "/member/adMypageModify", "/member/adMypagePasswordCheck").authenticated(); //정보변경
+            auth.requestMatchers("/member/mypage", "/member/mypageModify", "/member/mypagePasswordCheck").hasRole("USER"); //유저정보변경
+            auth.requestMatchers("/member/memberList", "/member/adPowerList").hasRole("SUPERADMIN"); //멤버전체리스트, 최초치프 권한승인리스트
+            auth.requestMatchers("/member/cmPowerList").hasRole("CHIEF"); //멤버전체리스트, 최초치프 권한승인리스트
+
+            auth.requestMatchers("/brand/brandList").hasRole("SUPERADMIN"); //룸, 메뉴, 케어
+            auth.requestMatchers("/brand/brandRegister", "/brand/brandModify","/hotel/hotelRegister", "/hotel/hotelList", "/hotel/hotelModify").hasRole("CHIEF"); //브랜드등록, 브랜드수정, 호텔등록, 호텔목록
+            auth.requestMatchers("/room/**", "/menu/**", "/care/**").hasRole("MANAGER"); //룸, 메뉴, 케어
+            auth.requestMatchers("/brand/brandRead").hasAnyRole("SUPERADMIN", "CHIEF"); //브랜드 상세보기
+            auth.requestMatchers("/hotel/hotelRead").hasAnyRole("CHIEF", "MANAGER"); //호텔 상세보기
+
+            auth.requestMatchers("/notice/noticeList", "/notice/noticeRegister", "/notice/noticeRead", "/notice/noticeModify").hasAnyRole("CHIEF", "MANAGER"); //공지사항
+            auth.requestMatchers("/notice/userNoticeList", "/notice/userNoticeRead").permitAll(); //유저 문의사항 리스트, 읽기
+            auth.requestMatchers("/qdqd222", "/dqdq/dqqd311").anonymous(); //로그인안한사람만
             //매핑명을 작업이름/매핑명
+
+            auth.requestMatchers("/roomreserve/**", "/orderreserve/**").hasRole("MANAGER"); //예약
+            auth.requestMatchers("/member/myRoomReserveList", "member/myRoomReserveRead", "member/myOrderReserveList", "member/myOrderReserveRead").hasRole("USER"); //예약정보
             auth.requestMatchers("/cart/**").authenticated(); //cart로 시작하는 모든 맵핑에 제한
             auth.requestMatchers("/pay/**").authenticated(); //pay로 시작하는 모든 맵핑에 제한
             auth.anyRequest().authenticated();
