@@ -18,8 +18,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -177,6 +180,18 @@ public class RoomReserveService {
 
         roomReserve = roomReserveRepository.save(roomReserve);
         return modelMapper.map(roomReserve, RoomReserveDTO.class);
+    }
+
+    /* 예약된 날짜 목록 조회 메서드 */
+    public List<Map<String, String>> getReserveDatesByRoom(Long room_num) {
+        List<RoomReserveItem> roomReserveItemList = roomReserveItemRepository.findByRoomRoom_num(room_num);
+
+        return roomReserveItemList.stream().map(roomReserveItem -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("in_date", roomReserveItem.getIn_date().truncatedTo(ChronoUnit.MINUTES).toString()); // 초 제거
+            map.put("out_date", roomReserveItem.getOut_date().truncatedTo(ChronoUnit.MINUTES).toString());
+            return map;
+        }).collect(Collectors.toList());
     }
 
 }
