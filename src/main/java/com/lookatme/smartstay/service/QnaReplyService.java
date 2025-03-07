@@ -1,6 +1,5 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.dto.QnaReplyDTO;
 import com.lookatme.smartstay.dto.QnaReplyRequest;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.Qna;
@@ -15,8 +14,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -58,7 +55,8 @@ public class QnaReplyService {
         Qna qna = qnaRepository.findById(qna_num).orElseThrow(() ->
                 new IllegalArgumentException("해당 질문이 존재하지 않습니다. qna_num: " + qna_num));
         log.info("Qna 찾음, qna_num: {}", qna_num);
-        return qna.getQnaReply(); // 단일 QnaReply 반환
+        //  return qna.getQnaReply(); // 단일 QnaReply 반환
+        return null;
     }
 
     //수정

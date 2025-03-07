@@ -114,8 +114,19 @@
                     <button type="submit" class="btn btn-primary" id="qrbtn" style="float:right; margin-left: 10px;">답변 등록</button>
                     <a href="#" class="btn btn-primary float-end modiBtn" data-bs-toggle="modal" data-bs-target="#replyModal" style="display:none">수정</a>
                 </form>
-                </section>
                 <!-- 댓글 섹션 끝 -->
+
+                <div id="comment-section">
+                    <th:block th:each="reply : ${replies}">
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <p th:text="${reply.content}"></p>
+                                <small class="text-muted">작성자: <span th:text="${reply.writer}"></span> | 작성일: <span th:text="${reply.createdDate}"></span></small>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+
             </div>
         </div>
     </div>
@@ -126,7 +137,7 @@
 
     /* jQuery */
     $(document).ready(function() {
-        $('textarea').on( 'keyup', function (e){
+        $('textarea').on('keyup', function () {
             $(this).css('height', 'auto');
             $(this).height(this.scrollHeight);
         });
@@ -140,11 +151,15 @@
 
     //수정 버튼 클릭시
     $(".Modbtn").on("click", function () {
-        let loggedInUser = $("#loggedInUser").val(); // 로그인한 사용자 정보 (예: 아이디)
-        let writer = $("#writer").val(); // 게시글 작성자 정보 (예: 아이디)
-        // 작성자가 동일하면 수정 페이지로 이동
+        let loggedInUser = $("#loggedInUser").val(); // 로그인한 사용자 정보
+        let writer = $("#writer").val(); // 게시글 작성자 정보
         let qna_num = $("#qna_num").val(); // 게시글 번호 가져오기
-        location.href = "/qna/qnaModify?qna_num=" + qna_num;
+
+        if (loggedInUser === writer) {
+            location.href = "/qna/qnaModify?qna_num=" + qna_num;
+        } else {
+            alert("수정 권한이 없습니다.");
+        }
     });
 
     //댓글
@@ -155,40 +170,52 @@
         createCommentButton.addEventListener('click', function(event) {
             event.preventDefault();
 
-            const data = {
-                qna_num: qna_num,  // 게시글 번호
-                comment: $('#comment').val()
+            const commentContent = $('#comment').val().trim();
+            if (!commentContent) {
+                alert("댓글 내용을 입력해주세요.");
+                return;
+            }
+
+            // QnA 번호 가져오기 (URL에서 추출)
+            const urlParams = new URLSearchParams(window.location.search);
+            const qna_num = urlParams.get('qna_num'); // URL에서 qna_num 추출
+
+            if (!qna_num) {
+                alert("QnA 번호를 확인할 수 없습니다.");
+                return;
+            }
+
+            const body = {
+                comment: commentContent
             };
 
-            if (!data.comment || data.comment.trim() === "") {
-                alert("공백 또는 입력하지 않은 부분이 있습니다.");
-                return false;
-            } else {
-                body = JSON.stringify({
-                    comment: $('#comment').val()
-                });
-
-                function success() {
-                    alert('등록 완료되었습니다.');
-                    location.replace('/qna/qnaRead/' + data.qna_num);  // 댓글 등록 후 해당 QnA 페이지로 이동
-                };
-                function fail() {
-                    alert('등록 실패했습니다.');
-                    location.replace('/qna/qnaRead/' + data.qna_num);  // 실패 시에도 해당 QnA 페이지로 이동
-                };
-
-                // 요청 URL을 "/qnareply/register"로 수정
-                httpRequest('POST', '/qna/qnaRead', body, success, fail);
-            }
+            // AJAX 요청
+            $.ajax({
+                url: '/qnareply/register?qna_num=' + qna_num, // QnA 번호를 쿼리 파라미터로 전달
+                type: 'POST',
+                contentType: 'application/json', // 요청 본문 타입
+                data: JSON.stringify(body), // JSON 데이터로 변환하여 전송
+                success: function (response) {
+                    alert('댓글이 성공적으로 등록되었습니다.');
+                    location.replace('/qna/qnaRead?qna_num=' + qna_num); // 성공 시 QnA 상세 페이지로 이동
+                },
+                error: function (xhr, status, error) {
+                    console.error('댓글 등록 실패:', error);
+                    alert('댓글 등록에 실패했습니다.');
+                    location.replace('/qna/qnaRead?qna_num=' + qna_num); // 실패 시에도 QnA 상세 페이지로 이동
+                }
+            });
         });
-    }
+    } else {
+        console.error("댓글 등록 버튼을 찾을 수 없습니다.");
+    };
 
     // 쿠키를 가져오는 함수
     function getCookie(key) {
         var result = null;
         var cookie = document.cookie.split(';');
         cookie.some(function (item) {
-            item = item.replace(' ', '');
+            item = item.trim();
 
             var dic = item.split('=');
 
@@ -242,7 +269,34 @@
         });
     }
 
+    $(document).ready(function() {
+        // 페이지 로드 시 댓글 목록 가져오기
+        const qna_num = new URLSearchParams(window.location.search).get('qna_num'); // URL에서 qna_num 추출
 
+        $.ajax({
+            url: '/qnareply/list?qna_num=' + qna_num, // 댓글 목록 API 호출
+            type: 'GET',
+            success: function(response) {
+                const commentSection = $('#comment-section'); // 댓글 표시 영역
+                commentSection.empty(); // 기존 댓글 초기화
+
+                response.forEach(comment => {
+                    const commentHTML = `
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <p>${comment.content}</p>
+                            <small class="text-muted">작성자: ${comment.writer} | 작성일: ${comment.createdDate}</small>
+                        </div>
+                    </div>
+                `;
+                    commentSection.append(commentHTML);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('댓글 목록 가져오기 실패:', error);
+            }
+        });
+    });
 </script>
 </body>
 </html>
