@@ -70,12 +70,12 @@ public class SecurityConfig {
             auth.requestMatchers("/qdqd222", "/dqdq/dqqd311").anonymous(); //로그인안한사람만
             //매핑명을 작업이름/매핑명
 
-            auth.requestMatchers("/roomreserve/roomReserveRegister", "/roomreserve/checkReserve/**", "/orderreserve/orderReserveRegister").hasRole("USER");
 
             auth.requestMatchers("/review/reviewRegister", "/review/reviewModify", "/review/myReviewList").authenticated(); //리뷰입력
             auth.requestMatchers("/review/reviewList", "/review/reviewRead").permitAll(); //리뷰보기
             auth.requestMatchers("/review/adMyReviewList").hasRole("MANAGER"); //관리자 리뷰관리
 
+            auth.requestMatchers("/roomreserve/roomReserveRegister", "/roomreserve/checkReserve/**", "/orderreserve/orderReserveRegister").hasRole("USER");
             auth.requestMatchers("/roomreserve/**", "/orderreserve/**").hasRole("MANAGER"); //예약
             auth.requestMatchers("/member/myRoomReserveList", "member/myRoomReserveRead", "member/myOrderReserveList", "member/myOrderReserveRead").hasRole("USER"); //예약정보
             auth.requestMatchers("/cart/**").authenticated(); //cart로 시작하는 모든 맵핑에 제한
