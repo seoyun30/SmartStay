@@ -53,10 +53,14 @@
     <input type="hidden" class="buyer_tel" th:value="${memberDTO.tel}">
 
     <div id="contain" class="card w-75 mt-5 mx-auto">
-        <div class="card-title">
-            <button class="btn btn-lg" style="border: none" onclick="history.back()"><i class="bi bi-chevron-left"></i></button>
-            <h2 class="mt-3 text-center fw-bold">결제</h2>
-            <hr>
+        <div class="card-title row d-flex align-items-center border-bottom mx-0">
+            <div class="col-2">
+                <button class="btn btn-lg" style="border: none" onclick="history.back()">
+                    <i class="bi bi-chevron-left" style="font-size: 2rem;"></i>
+                </button>
+            </div>
+            <div class="col-8 h2 text-center fw-bold">결제</div>
+            <div class="col-2"></div>
         </div>
 
         <th:block th:unless="${roomItemDTOList.isEmpty()}">
@@ -96,10 +100,11 @@
                                 <div class="card-body reserveinfo" >
                                     <input type="hidden" class="roomItemNumber" name="roomItem_num" th:value="${roomItem.roomitem_num}">
                                     <input type="hidden" class="roomNumber" name="room_num" th:value="${roomItem.roomDTO.room_num}">
-                                    <span class="reserveDate">[[${#temporals.format(roomItem.in_date, 'yyyy-MM-dd HH:mm')}]]~[[${#temporals.format(roomItem.out_date,'yyyy-MM-dd HH:mm')}]] | [[${roomItem.day}]]박</span> <br>
+                                    <span class="reserveDate">[[${#temporals.format(roomItem.in_date, 'yyyy-MM-dd HH:mm')}]]~[[${#temporals.format(roomItem.out_date,'yyyy-MM-dd HH:mm')}]]</span> <br>
                                     <span class="fs-6 reserveCount">최대 [[${roomItem.roomDTO.room_bed}]]명 / 예약인원 [[${roomItem.count}]]명</span> <br>
-                                    <span>룸서비스 신청</span> <br>
                                     <span class="reserveRequest">요청사항 : [[${roomItem.reserve_request}]]</span>
+                                    <input type="hidden" class="in_date" th:value="${roomItem.in_date}">
+                                    <input type="hidden" class="out_date" th:value="${roomItem.out_date}">
                                     <input type="hidden" class="roomPrice" th:value="${roomItem.roomDTO.room_price}">
                                     <input type="hidden" class="reserveDay" th:value="${roomItem.day}">
                                     <h5 class="text-end fw-bold roomreservePrice"></h5>
@@ -264,8 +269,23 @@
         $('.reserveinfo').each(function() {
             let roomPrice = parseFloat($(this).find('.roomPrice').val());  // 방 가격
             let reserveDay = parseInt($(this).find('.reserveDay').val());  // 예약 일수
+            let inDate = $(this).find('.in_date').val();  // 체크인 날짜
+            let outDate = $(this).find('.out_date').val();  // 체크아웃 날짜
             let roomItemNum = $(this).find('.roomItemNumber').val();  // roomitem_num 값 가져오기
             let roomreservePrice = $(this).find('.roomreservePrice');  // 가격을 삽입할 요소
+            let reserveText = $(this).find('.reserveDate');  // 예약 날짜 텍스트를 삽입할
+            let reserveDayInput = $(this).find('.reserveDay');
+
+            if (!reserveDay && inDate && outDate) {
+                let checkInDate = new Date(inDate);
+                let checkOutDate = new Date(outDate);
+                reserveDay = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));  // 날짜 차이 계산
+                if (reserveDay <= 1) {
+                    reserveDay = 1;
+                }
+            }
+
+            let reserveDayText = (reserveDay === 1) ? '1박' : `${reserveDay}박`;
 
             // 1박과 연박 구분하여 가격 계산
             let price = roomPrice * reserveDay;
@@ -278,6 +298,8 @@
             }
 
             roomreservePrice.html(priceText);
+            reserveText.html(`${reserveText.text()} | ${reserveDayText}`);
+            reserveDayInput.val(reserveDay);
         });
 
         //케어+메뉴 총 가격 계산
@@ -303,6 +325,44 @@
                 $("#servicePrice-" + serviceNum).text(serviceTotalPrice);
             })
 
+        //총 가격 및 결제 상품 수 계산 메소드
+        function calculateTotal() {
+            let totalPrice = 0;
+            let totalCount = 0;
+
+            $(".reserveinfo").each(function () {
+                let price = parseInt($(this).find(".roomPrice").val());
+                let days = parseInt($(this).find(".reserveDay").val());
+                totalPrice += price * days;
+                totalCount++;
+            });
+
+            $(".roomServiceInfo").each(function () {
+                let serviceTotalPrice = 0;
+
+                // 룸케어 서비스 가격 합산
+                $(this).find(".care_price").each(function () {
+                    let price = parseInt($(this).text().replace(/[^0-9]/g, '')) || 0;
+                    let count = parseInt($(this).siblings(".care_count").text().replace(/[^0-9]/g, '')) || 1;
+                    serviceTotalPrice += price * count;
+                });
+
+                // 주문 메뉴 가격 합산
+                $(this).find(".menu_price").each(function () {
+                    let price = parseInt($(this).text().replace(/[^0-9]/g, '')) || 0;
+                    let count = parseInt($(this).siblings(".menu_count").text().replace(/[^0-9]/g, '')) || 1;
+                    serviceTotalPrice += price * count;
+                });
+
+                // 룸서비스 총 가격을 totalPrice에 합산
+                totalPrice += serviceTotalPrice;
+                totalCount++;
+            });
+
+            $("#totalPrice").text(totalPrice.toLocaleString());
+            $(".totalCount").text("총 " + totalCount + "건");
+
+        }
         calculateTotal()
 
         let merchant_uid = `payment-${crypto.randomUUID()}`;
@@ -520,46 +580,6 @@
                     });
                 }
             });
-        }
-
-
-        //총 가격 및 결제 상품 수 계산 메소드
-        function calculateTotal() {
-            let totalPrice = 0;
-            let totalCount = 0;
-
-            $(".reserveinfo").each(function () {
-                let price = parseInt($(this).find(".roomPrice").val());
-                let days = parseInt($(this).find(".reserveDay").val());
-                totalPrice += price * days;
-                totalCount++;
-            });
-
-            $(".roomServiceInfo").each(function () {
-                let serviceTotalPrice = 0;
-
-                // 룸케어 서비스 가격 합산
-                $(this).find(".care_price").each(function () {
-                    let price = parseInt($(this).text().replace(/[^0-9]/g, '')) || 0;
-                    let count = parseInt($(this).siblings(".care_count").text().replace(/[^0-9]/g, '')) || 1;
-                    serviceTotalPrice += price * count;
-                });
-
-                // 주문 메뉴 가격 합산
-                $(this).find(".menu_price").each(function () {
-                    let price = parseInt($(this).text().replace(/[^0-9]/g, '')) || 0;
-                    let count = parseInt($(this).siblings(".menu_count").text().replace(/[^0-9]/g, '')) || 1;
-                    serviceTotalPrice += price * count;
-                });
-
-                // 룸서비스 총 가격을 totalPrice에 합산
-                totalPrice += serviceTotalPrice;
-                totalCount++;
-            });
-
-            $("#totalPrice").text(totalPrice.toLocaleString());
-            $(".totalCount").text("총 " + totalCount + "건");
-
         }
 
     }); //document.ready
