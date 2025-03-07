@@ -59,12 +59,23 @@ public class SecurityConfig {
             auth.requestMatchers("/brand/brandRead").hasAnyRole("SUPERADMIN", "CHIEF"); //브랜드 상세보기
             auth.requestMatchers("/hotel/hotelRead").hasAnyRole("CHIEF", "MANAGER"); //호텔 상세보기
 
+            auth.requestMatchers("/qna/qnaList","/qna/qnaRead").permitAll(); //문의사항
+            auth.requestMatchers("/qna/qnaRegister", "/qna/qnaModify", "/qna/myQnaList").authenticated(); //문의사항
+            auth.requestMatchers("/qna/hcmQnaList").hasRole("MANAGER"); //관리자 문의사항
+            auth.requestMatchers("/qna/bcmQnaList").hasRole("CHIEF"); //관리자 문의사항
+
+
             auth.requestMatchers("/notice/noticeList", "/notice/noticeRegister", "/notice/noticeRead", "/notice/noticeModify").hasAnyRole("CHIEF", "MANAGER"); //공지사항
-            auth.requestMatchers("/notice/userNoticeList", "/notice/userNoticeRead").permitAll(); //유저 문의사항 리스트, 읽기
+            auth.requestMatchers("/notice/userNoticeList", "/notice/userNoticeRead").permitAll(); //유저 공지사항 리스트, 읽기
             auth.requestMatchers("/qdqd222", "/dqdq/dqqd311").anonymous(); //로그인안한사람만
             //매핑명을 작업이름/매핑명
 
             auth.requestMatchers("/roomreserve/roomReserveRegister", "/roomreserve/checkReserve/**", "/orderreserve/orderReserveRegister").hasRole("USER");
+
+            auth.requestMatchers("/review/reviewRegister", "/review/reviewModify", "/review/myReviewList").authenticated(); //리뷰입력
+            auth.requestMatchers("/review/reviewList", "/review/reviewRead").permitAll(); //리뷰보기
+            auth.requestMatchers("/review/adMyReviewList").hasRole("MANAGER"); //관리자 리뷰관리
+
             auth.requestMatchers("/roomreserve/**", "/orderreserve/**").hasRole("MANAGER"); //예약
             auth.requestMatchers("/member/myRoomReserveList", "member/myRoomReserveRead", "member/myOrderReserveList", "member/myOrderReserveRead").hasRole("USER"); //예약정보
             auth.requestMatchers("/cart/**").authenticated(); //cart로 시작하는 모든 맵핑에 제한
