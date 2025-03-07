@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.constant.RoomState;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Image;
@@ -280,5 +281,17 @@ public class RoomService {
             return modelMapper.map(imageList.get(0), ImageDTO.class);
         }
         return null;
+    }
+
+    public void updateRoomState(Long room_num, RoomState newState) {
+        Room room = roomRepository.findById(room_num)
+                .orElseThrow(() -> new EntityNotFoundException("Room not found with id: " + room_num));
+
+        room.setRoom_state(newState);
+        try {
+            roomRepository.save(room);
+        } catch (Exception e) {
+            System.out.println("저장 실패: " + e.getMessage());
+        }
     }
 }

@@ -132,9 +132,22 @@ public class MainController {
 
         List<HotelDTO> list = hotelService.activeHotelList();  // 변경된 부분
 
-        list = list.stream().filter(HotelDTO::hasAvailableRooms).collect(Collectors.toList());
+        log.info("활성화된 호텔 수: {}", list.size());
 
-        List<HotelDTO> top12Hotels = list.stream().limit(12).collect(Collectors.toList());
+        list = list.stream()
+                .filter(HotelDTO::hasAvailableRooms)
+                .collect(Collectors.toList());
+
+        log.info("사용 가능한 방이 있는 호텔 수: {}", list.size());
+
+        list.forEach(hotelDTO -> {
+            log.info("호텔 이름: {}, 방 상태: {}", hotelDTO.getHotel_name(), hotelDTO.getRooms());
+        });
+
+        List<HotelDTO> top12Hotels = list.stream()
+                .sorted(Comparator.comparing(HotelDTO::getReview_count).reversed())
+                .limit(12)
+                .collect(Collectors.toList());
 
         List<Image> banner = imageRepository.findByTargetTypeOrderByOrderIndex("banner");
 
@@ -144,7 +157,8 @@ public class MainController {
             log.info("배너 이미지 리스트: {}", banner);
         }
 
-        model.addAttribute("list", top12Hotels);
+        model.addAttribute("list", list);
+        model.addAttribute("top12Hotels", top12Hotels);
         model.addAttribute("banner", banner);
 
         return "main";

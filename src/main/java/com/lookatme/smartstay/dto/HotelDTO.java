@@ -67,6 +67,7 @@ public class HotelDTO {
     private List<RoomDTO> rooms = new ArrayList<>();
 
     public boolean hasAvailableRooms() {
-        return rooms.stream().anyMatch(roomDTO -> roomDTO.getRoom_state() == RoomState.YES);
+        return rooms.stream()
+                .anyMatch(roomDTO -> roomDTO.getRoom_state() == RoomState.YES);
     }
 }

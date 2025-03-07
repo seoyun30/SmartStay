@@ -129,7 +129,17 @@
                         <td th:text="${roomDTO.room_type}"></td>
                         <td th:text="${roomDTO.room_bed}"></td>
                         <td th:text="${roomDTO.room_price}"></td>
-                        <td th:text="${roomDTO.room_state}"></td>
+                        <td>
+                            <select th:id="'roomState_' + ${roomDTO.room_num}"
+                                    th:attr="data-room-num=${roomDTO.room_num}"
+                                    onchange="updateRoomState(this)">
+                                <option th:each="state : ${roomStates}"
+                                        th:value="${state}"
+                                        th:text="${state}"
+                                        th:selected="${state == roomDTO.room_state ? 'selected' : null}">
+                                </option>
+                            </select>
+                        </td>
                         <td th:text="${#temporals.format(roomDTO.in_time, 'HH'+'시')}"></td>
                         <td th:text="${#temporals.format(roomDTO.out_time, 'HH'+'시')}"></td>
                         <td>
@@ -227,7 +237,17 @@
                        <td th:text="${roomDTO.room_type}"></td>
                        <td th:text="${roomDTO.room_bed}"></td>
                        <td th:text="${roomDTO.room_price}"></td>
-                       <td th:text="${roomDTO.room_state}"></td>
+                       <td>
+                           <select th:id="'roomState_' + ${roomDTO.room_num}"
+                                   th:attr="data-room-num=${roomDTO.room_num}"
+                                   onchange="updateRoomState(this)">
+                               <option th:each="state : ${roomStates}"
+                                       th:value="${state}"
+                                       th:text="${state}"
+                                       th:selected="${state == roomDTO.room_state ? 'selected' : null}">
+                               </option>
+                           </select>
+                       </td>
                        <td th:text="${#temporals.format(roomDTO.in_time, 'HH'+'시')}"></td>
                        <td th:text="${#temporals.format(roomDTO.out_time, 'HH'+'시')}"></td>
                        <td>
@@ -284,6 +304,32 @@
     function saveSearchQuery() {
         const query = document.getElementById('search-input').value;
         localStorage.setItem('searchQuery', query);
+    }
+
+    function updateRoomState(selectElement) {
+        const roomNum = selectElement.getAttribute('data-room-num');
+        const newState = selectElement.value;
+
+        console.log("AJAX 요청 시작:", { roomNum, newState }); // 요청 데이터 확인
+
+        $.ajax({
+            url: '/updateState',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                room_num: roomNum,
+                room_state: newState,
+            }),
+            success: function (response) {
+                console.log("AJAX 요청 성공:", response); // 응답 데이터 확인
+                alert(response.message);
+                selectElement.value = newState; // 상태 업데이트
+            },
+            error: function (xhr) {
+                console.error("AJAX 요청 실패:", xhr.responseJSON || xhr.statusText); // 에러 로그
+                alert('룸 상태 변경에 실패했습니다: ' + (xhr.responseJSON?.error || 'Unknown error'));
+            },
+        });
     }
 </script>
 </body>
