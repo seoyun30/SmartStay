@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.controller;
 
+import com.lookatme.smartstay.constant.RoomState;
 import com.lookatme.smartstay.dto.HotelDTO;
 import com.lookatme.smartstay.dto.PageRequestDTO;
 import com.lookatme.smartstay.dto.PageResponseDTO;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -114,6 +116,7 @@ public class RoomController {
         model.addAttribute("hotel_name", hotelDTO.getHotel_name());
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
+        model.addAttribute("roomStates", RoomState.values());
 
         if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
             PageResponseDTO<RoomDTO> pageResponseDTO = roomService.searchList(searchType, searchKeyword, sortField, sortDir, pageRequestDTO);
@@ -252,4 +255,17 @@ public class RoomController {
         }
     }
 
+    @PostMapping("/updateState")
+    @ResponseBody
+    public ResponseEntity<?> updateRoomState(@RequestBody Map<String, Object> payload) {
+        try {
+            Long roomNum = Long.parseLong(payload.get("room_num").toString());
+            RoomState roomState = RoomState.valueOf(payload.get("room_state").toString());
+
+            roomService.updateRoomState(roomNum, roomState);
+            return ResponseEntity.ok().body(Map.of("message", "룸 상태가 성공적으로 변경되었습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
 }

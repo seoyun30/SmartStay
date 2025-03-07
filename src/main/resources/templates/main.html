@@ -141,8 +141,25 @@
                 <h1 class="text-muted">등록된 호텔이 없습니다.</h1>
             </div>
 
-            <div th:unless="${#lists.isEmpty(list)}" class="row row-cols-1 row-cols-md-4 g-4">
+            <div th:if="${list.size() < 12}" class="row row-cols-1 row-cols-md-4 g-4">
                 <div th:each="hotel : ${list}" class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div>
+                            <img th:src="${hotel.mainImage.thumbnail_url}" style="height: 200px; object-fit: cover;" alt="호텔 이미지" class="card-img-top img-fluid rounded-top" />
+                        </div>
+                        <div class="card-body text-center d-flex flex-column">
+                            <a th:href="@{/searchRead(hotel_num=${hotel.hotel_num})}" th:text="${hotel.hotel_name}" class="text-decoration-none text-primary fw-bold"></a>
+                            <p class="text-black mt-3" th:text="${hotel.lowestPrice + '원~'}"></p>
+                            <span class="text-black mt-auto">
+                                <i class="text-black bi bi-star-fill"></i>
+                                <span th:text="${hotel.score}">별점</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${list.size() >= 12}" class="row row-cols-1 row-cols-md-4 g-4">
+                <div th:each="hotel : ${top12Hotels}" class="col">
                     <div class="card h-100 shadow-sm">
                         <div>
                             <img th:src="${hotel.mainImage.thumbnail_url}" style="height: 200px; object-fit: cover;" alt="호텔 이미지" class="card-img-top img-fluid rounded-top" />
