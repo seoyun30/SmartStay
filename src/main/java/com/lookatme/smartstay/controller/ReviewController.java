@@ -159,10 +159,6 @@ public class ReviewController {
             return "redirect:/member/myRoomReserveRead"; //
         };
 
-        if (multipartFiles != null && multipartFiles.stream().allMatch(MultipartFile::isEmpty)) {
-            multipartFiles = null;
-        }
-
         //리뷰 등록 처리
         try {
             reviewService.reviewRegister(reviewDTO, principal.getName(), multipartFiles, mainImageIndex);

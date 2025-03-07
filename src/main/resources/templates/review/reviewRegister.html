@@ -9,31 +9,31 @@
     <title>Title</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
-        /*.starpoint_wrap{display:inline-block;}*/
-        /*.starpoint_box{position:relative;background:url(https://ido-archive.github.io/svc/etc/element/img/sp_star.png) 0 0 no-repeat;font-size:0;}*/
-        /*.starpoint_box .starpoint_bg{display:block;position:absolute;top:0;left:0;height:18px;background:url(https://ido-archive.github.io/svc/etc/element/img/sp_star.png) 0 -20px no-repeat;pointer-events:none;}*/
-        /*.starpoint_box .label_star{display:inline-block;width:10px;height:18px;box-sizing:border-box;}*/
-        /*.starpoint_box .star_radio{opacity:0;width:0;height:0;position:absolute;}*/
-        /*.starpoint_box .star_radio:nth-of-type(1):hover ~ .starpoint_bg,*/
-        /*.starpoint_box .star_radio:nth-of-type(1):checked ~ .starpoint_bg{width:10%;}*/
-        /*.starpoint_box .star_radio:nth-of-type(2):hover ~ .starpoint_bg,*/
-        /*.starpoint_box .star_radio:nth-of-type(2):checked ~ .starpoint_bg{width:20%;}*/
-        /*.starpoint_box .star_radio:nth-of-type(3):hover ~ .starpoint_bg,*/
-        /*.starpoint_box .star_radio:nth-of-type(3):checked ~ .starpoint_bg{width:30%;}*/
-        /*.starpoint_box .star_radio:nth-of-type(4):hover ~ .starpoint_bg,*/
-        /*.starpoint_box .star_radio:nth-of-type(4):checked ~ .starpoint_bg{width:40%;}*/
-        /*.starpoint_box .star_radio:nth-of-type(5):hover ~ .starpoint_bg,*/
-        /*.starpoint_box .star_radio:nth-of-type(5):checked ~ .starpoint_bg{width:50%;}*/
-        /*.starpoint_box .star_radio:nth-of-type(6):hover ~ .starpoint_bg,*/
-        /*.starpoint_box .star_radio:nth-of-type(6):checked ~ .starpoint_bg{width:60%;}*/
-        /*.starpoint_box .star_radio:nth-of-type(7):hover ~ .starpoint_bg,*/
-        /*.starpoint_box .star_radio:nth-of-type(7):checked ~ .starpoint_bg{width:70%;}*/
-        /*.starpoint_box .star_radio:nth-of-type(8):hover ~ .starpoint_bg,*/
-        /*.starpoint_box .star_radio:nth-of-type(8):checked ~ .starpoint_bg{width:80%;}*/
-        /*.starpoint_box .star_radio:nth-of-type(9):hover ~ .starpoint_bg,*/
-        /*.starpoint_box .star_radio:nth-of-type(9):checked ~ .starpoint_bg{width:90%;}*/
-        /*.starpoint_box .star_radio:nth-of-type(10):hover ~ .starpoint_bg,*/
-        /*.starpoint_box .star_radio:nth-of-type(10):checked ~ .starpoint_bg{width:100%;}*/
+        .starpoint_wrap{display:inline-block;}
+        .starpoint_box{position:relative;background:url(https://ido-archive.github.io/svc/etc/element/img/sp_star.png) 0 0 no-repeat;font-size:0;}
+        .starpoint_box .starpoint_bg{display:block;position:absolute;top:0;left:0;height:18px;background:url(https://ido-archive.github.io/svc/etc/element/img/sp_star.png) 0 -20px no-repeat;pointer-events:none;}
+        .starpoint_box .label_star{display:inline-block;width:10px;height:18px;box-sizing:border-box;}
+        .starpoint_box .star_radio{opacity:0;width:0;height:0;position:absolute;}
+        .starpoint_box .star_radio:nth-of-type(1):hover ~ .starpoint_bg,
+        .starpoint_box .star_radio:nth-of-type(1):checked ~ .starpoint_bg{width:10%;}
+        .starpoint_box .star_radio:nth-of-type(2):hover ~ .starpoint_bg,
+        .starpoint_box .star_radio:nth-of-type(2):checked ~ .starpoint_bg{width:20%;}
+        .starpoint_box .star_radio:nth-of-type(3):hover ~ .starpoint_bg,
+        .starpoint_box .star_radio:nth-of-type(3):checked ~ .starpoint_bg{width:30%;}
+        .starpoint_box .star_radio:nth-of-type(4):hover ~ .starpoint_bg,
+        .starpoint_box .star_radio:nth-of-type(4):checked ~ .starpoint_bg{width:40%;}
+        .starpoint_box .star_radio:nth-of-type(5):hover ~ .starpoint_bg,
+        .starpoint_box .star_radio:nth-of-type(5):checked ~ .starpoint_bg{width:50%;}
+        .starpoint_box .star_radio:nth-of-type(6):hover ~ .starpoint_bg,
+        .starpoint_box .star_radio:nth-of-type(6):checked ~ .starpoint_bg{width:60%;}
+        .starpoint_box .star_radio:nth-of-type(7):hover ~ .starpoint_bg,
+        .starpoint_box .star_radio:nth-of-type(7):checked ~ .starpoint_bg{width:70%;}
+        .starpoint_box .star_radio:nth-of-type(8):hover ~ .starpoint_bg,
+        .starpoint_box .star_radio:nth-of-type(8):checked ~ .starpoint_bg{width:80%;}
+        .starpoint_box .star_radio:nth-of-type(9):hover ~ .starpoint_bg,
+        .starpoint_box .star_radio:nth-of-type(9):checked ~ .starpoint_bg{width:90%;}
+        .starpoint_box .star_radio:nth-of-type(10):hover ~ .starpoint_bg,
+        .starpoint_box .star_radio:nth-of-type(10):checked ~ .starpoint_bg{width:100%;}
 
         .blind{position:absolute;clip:rect(0 0 0 0);margin:-1px;width:1px;height: 1px;overflow:hidden;}
 
@@ -91,62 +91,42 @@
                         </div>
                     </div>
 
-                    <!--별점-->
-<!--                    <div class="mb-3 starpoint_wrap">-->
-<!--                        <div class="starpoint_box">-->
-<!--                            <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>-->
-<!--                            <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>-->
-<!--                            <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>-->
-<!--                            <label for="starpoint_4" class="label_star" title="2"><span class="blind">2점</span></label>-->
-<!--                            <label for="starpoint_5" class="label_star" title="2.5"><span class="blind">2.5점</span></label>-->
-<!--                            <label for="starpoint_6" class="label_star" title="3"><span class="blind">3점</span></label>-->
-<!--                            <label for="starpoint_7" class="label_star" title="3.5"><span class="blind">3.5점</span></label>-->
-<!--                            <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>-->
-<!--                            <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>-->
-<!--                            <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>-->
-<!--                            <input type="radio" name="score" id="starpoint_1" class="star_radio">-->
-<!--                            <input type="radio" name="score" id="starpoint_2" class="star_radio">-->
-<!--                            <input type="radio" name="score" id="starpoint_3" class="star_radio">-->
-<!--                            <input type="radio" name="score" id="starpoint_4" class="star_radio">-->
-<!--                            <input type="radio" name="score" id="starpoint_5" class="star_radio">-->
-<!--                            <input type="radio" name="score" id="starpoint_6" class="star_radio">-->
-<!--                            <input type="radio" name="score" id="starpoint_7" class="star_radio">-->
-<!--                            <input type="radio" name="score" id="starpoint_8" class="star_radio">-->
-<!--                            <input type="radio" name="score" id="starpoint_9" class="star_radio">-->
-<!--                            <input type="radio" name="score" id="starpoint_10" class="star_radio">-->
-<!--                            <span class="starpoint_bg"></span>-->
-<!--                        </div>-->
-<!--                        <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}"><p>별점</p></div>-->
-<!--                    </div>-->
-
 
                     <div class="mb-3 starpoint_wrap">
                         <div class="starpoint_box">
-                            <!-- 별 아이콘들 -->
-                            <i class="bi bi-star" data-score="0.5"></i>
-                            <i class="bi bi-star" data-score="1"></i>
-                            <i class="bi bi-star" data-score="1.5"></i>
-                            <i class="bi bi-star" data-score="2"></i>
-                            <i class="bi bi-star" data-score="2.5"></i>
-                            <i class="bi bi-star" data-score="3"></i>
-                            <i class="bi bi-star" data-score="3.5"></i>
-                            <i class="bi bi-star" data-score="4"></i>
-                            <i class="bi bi-star" data-score="4.5"></i>
-                            <i class="bi bi-star" data-score="5"></i>
-
-                            <!-- 숨겨진 input으로 별점 값 저장 -->
-                            <input type="hidden" name="score" id="scoreInput" required>
-
+                            <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>
+                            <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>
+                            <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>
+                            <label for="starpoint_4" class="label_star" title="2"><span class="blind">2점</span></label>
+                            <label for="starpoint_5" class="label_star" title="2.5"><span class="blind">2.5점</span></label>
+                            <label for="starpoint_6" class="label_star" title="3"><span class="blind">3점</span></label>
+                            <label for="starpoint_7" class="label_star" title="3.5"><span class="blind">3.5점</span></label>
+                            <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>
+                            <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
+                            <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
+                            <input type="radio" name="score" value="0.5" data-score="0.5" id="starpoint_1" class="star_radio">
+                            <input type="radio" name="score" value="1" data-score="1" id="starpoint_2" class="star_radio">
+                            <input type="radio" name="score" value="1.5" data-score="1.5" id="starpoint_3" class="star_radio">
+                            <input type="radio" name="score" value="2" data-score="2" id="starpoint_4" class="star_radio">
+                            <input type="radio" name="score" value="2.5" data-score="2.5" id="starpoint_5" class="star_radio">
+                            <input type="radio" name="score" value="3" data-score="3" id="starpoint_6" class="star_radio">
+                            <input type="radio" name="score" value="3.5" data-score="3.5" id="starpoint_7" class="star_radio">
+                            <input type="radio" name="score" value="4" data-score="4" id="starpoint_8" class="star_radio">
+                            <input type="radio" name="score" value="4.5" data-score="4.5" id="starpoint_9" class="star_radio">
+                            <input type="radio" name="score" value="5" data-score="5" id="starpoint_10" class="star_radio">
                             <span class="starpoint_bg"></span>
+                            <input type="hidden" id="scoreInput" name="score">
                         </div>
+                        <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}"><p>별점</p></div>
                     </div>
+
 
 
 
                     <div class="mb-3 imgA">
                         <!--이미지 업로드 -->
                         <label for="formFile" class="form-label">이미지</label>
-                        <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file" required>
+                        <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file">
                         <div class="row imgpreview"></div>
                         <button type="button" class="btn btn-secondary" id="removeMainImage" style="display: none;">이미지 삭제</button>
                     </div>
