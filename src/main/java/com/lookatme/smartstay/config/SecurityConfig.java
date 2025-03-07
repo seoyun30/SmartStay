@@ -108,8 +108,13 @@ public class SecurityConfig {
                 .exceptionHandling(
                         a -> a.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                                 .accessDeniedHandler(new AccessDeniedHandlerImpl())
-
+                                .authenticationEntryPoint((request, response, authException) -> {
+                                    response.sendRedirect("/login"); // 인증되지 않은 사용자는 로그인 페이지로 이동
+                                })
                 );
+
+
+
 
 
        /* http.logout(logout -> logout
