@@ -134,13 +134,21 @@ public class ReviewService {
         String scoreStr = reviewDTO.getScore();
         if (scoreStr == null || scoreStr.trim().isEmpty()) {
             throw new IllegalArgumentException("별점은 필수 입력값입니다.");
+        } else {
+            scoreStr = scoreStr.replaceAll(",", "");
         }
+
+        if (!scoreStr.matches("^\\d+(\\.\\d+)?$")) {
+            throw new IllegalArgumentException("별점은 숫자 형식이어야 합니다.");
+        }
+
         //별점을 숫자로 변환
+        log.info("scoreStr: {}", scoreStr);
         double score;
         try {
-            score = Double.parseDouble(scoreStr);
+            score = Double.parseDouble(scoreStr.trim());
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("별점은 숫자여야 합니다.");
+            throw new IllegalArgumentException("별점 변환 중 오류가 발생했습니다.");
         }
         // 1.0~ 5.0 사이의 값인지 체크
         if (score < 1.0 || score > 5.0 || score * 10 % 5 != 0) {
@@ -162,7 +170,7 @@ public class ReviewService {
         review = reviewRepository.save(review);
 
         // 저장된 리뷰의 `rev_num`을 target_id로 사용하여 이미지 저장
-        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+        if (!multipartFiles.isEmpty()) {
             imageService.saveImage(multipartFiles, "review", review.getRev_num());
         }
     }
