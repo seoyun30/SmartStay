@@ -120,22 +120,25 @@
                         <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}"><p>별점</p></div>
                     </div>
 
+<!--                    <div class="mb-3 imgA">-->
+<!--                        &lt;!&ndash;이미지 업로드 &ndash;&gt;-->
+<!--                        <label for="formFile" class="form-label">이미지</label>-->
+<!--                        <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file">-->
+<!--                        <div class="row imgpreview"></div>-->
 
+<!--                    </div>-->
 
-
+                    <!-- 이미지 업로드 폼 -->
                     <div class="mb-3 imgA">
-                        <!--이미지 업로드 -->
-                        <label for="formFile" class="form-label">이미지</label>
-                        <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file">
-                        <div class="row imgpreview"></div>
-                        <button type="button" class="btn btn-secondary" id="removeMainImage" style="display: none;">이미지 삭제</button>
+                        <div class="form-group">
+                            <label for="formFilede" class="form-label">상세 이미지(여러 개 선택 가능)</label>
+                            <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
+                            <!-- 미리보기 영역 -->
+                            <div class="row imgpreviewinput"></div>
+                        </div>
                     </div>
+                    <button type="button" class="btn btn-secondary" id="removeMainImage" style="display: none;">이미지 삭제</button>
 
-                    <div class="mb-3 imgA">
-                        <label for="formFilede" class="form-label">상세 이미지</label>
-                        <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
-                        <div class="row imgpreviewinput"></div>
-                    </div>
 
                     <div class="card-footer d-flex justify-content-center">
                         <form class="review info" action="/review/reviewList/{hotel_num}">
@@ -149,7 +152,6 @@
                         <!--                        @{주소}, 문자열+주소 |문자열@{주소}|-->
                     </div>
                 </div>
-
             </div>
         </div>
     </form>
@@ -159,36 +161,83 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
 
-        //이미지 업로드
+        // //이미지 업로드
+        // $(document).ready(function () {
+        //     let msg = [[${msg}]];
+        //     if (msg) {
+        //         alert(msg);
+        //     }
+        // })
+        //
+        // $(".imgpreviewinput").on("change", function () {
+        //     readURL(this)
+        // })
+        // $(".form-group").on("click", "button", function () {
+        //
+        //     $(this).parent().remove("")
+        // })
+        // function readURL(input) {
+        //     if (input.files && input.files[0]) {
+        //
+        //         var reader = new FileReader();
+        //         reader.onload = function (e) {
+        //
+        //             let inputtag = document.createEvent("input")
+        //
+        //             inputtag.type = "file"
+        //             inputtag.name = "multipartFiles"
+        //
+        //             const dataTranster = new DataTransfer();
+        //             const $fileDatas = Array.from(input.files);
+        //             $fileDatas.forEach(file => dataTranster.items.add(file));
+        //             inputtag.files = dataTranster.files;
+        //
+        //             let str = `<div class="preview">
+        //                                         <img width="300px"  src="${e.target.result}">
+        //                                         <button type="button" class="bb btn-sm btn-secondary">올리지 않기</button>
+        //                                       </div>`
+        //             $(".imgpreviewinput").val("")
+        //             $(".aa").append(str)
+        //             document.querySelector(".aa").lastChild.appendChild(inputtag)
+        //             inputtag.style.display = 'none'
+        //             // document.getElementById('preview').src = e.target.result;
+        //             // document.querySelector(".aa").innerHTML = "<button type='button' class='bb'>올리지 않기</button>"
+        //         };
+        //         reader.readAsDataURL(input.files[0]);
+        //     }
+        // }
+
         document.addEventListener("DOMContentLoaded", function (){
 
             const formFile = document.getElementById('formFile');
             const imgPreview = document.querySelector('.imgpreview');
-            const removeMainImage = document.getElementById('removeMainImage');
 
+            const removeMainImage = document.getElementById('removeMainImage');
             const formFilede = document.getElementById('formFilede');
             const imgPreviewInput = document.querySelector('.imgpreviewinput');
 
-            formFile.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.alt = file.name;
-                        img.style.width = '350px';
-                        img.style.height = 'auto';
-                        img.style.objectFit = 'cover';
 
-                        imgPreview.innerHTML = '';
-                        imgPreview.appendChild(img);
-
-                        removeMainImage.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
+            // //단일 이미지
+            // formFile.addEventListener('change', function(event) {
+            //     const file = event.target.files[0];
+            //     if (file) {
+            //         const reader = new FileReader();
+            //         reader.onload = function(e) {
+            //             const img = document.createElement('img');
+            //             img.src = e.target.result;
+            //             img.alt = file.name;
+            //             img.style.width = '350px';
+            //             img.style.height = 'auto';
+            //             img.style.objectFit = 'cover';
+            //
+            //             imgPreview.innerHTML = '';
+            //             imgPreview.appendChild(img);
+            //
+            //             removeMainImage.style.display = 'block';
+            //         };
+            //         reader.readAsDataURL(file);
+            //     }
+            // });
 
             removeMainImage.addEventListener('click', function() {
                 formFile.value = '';
@@ -202,7 +251,6 @@
                 Array.from(files).forEach((file, index) => {
                     if (file) {
                         const reader = new FileReader();
-
                         reader.onload = function (e) {
                             const imgWrapper = document.createElement('div');
                             imgWrapper.classList.add('img-wrapper');
@@ -244,6 +292,17 @@
                         reader.readAsDataURL(file);
                     }
                 });
+            });
+
+
+
+
+            document.querySelector("form").addEventListener("submit", function(event) {
+                const selectedScore = document.querySelector('input[name="score"]:checked');
+                if (selectedScore) {
+                    let scoreValue = parseFloat(selectedScore.value).toFixed(1); // 강제 변환
+                    document.getElementById('scoreInput').value = scoreValue;
+                }
             });
         });
 

@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -39,6 +40,10 @@ public class ReviewService {
     private final ImageService imageService;
     private final RoomReserveRepository roomReserveRepository; // 호텔예약정보 필요
     private final RoomReserveItemRepository roomReserveItemRepository;
+    private final FileService fileService;
+
+    @Value("${imgUploadLocation}")
+    private String imgUploadLocation;
 
     //리뷰의 전체 조회
     //관리자 리뷰 전체 목록 (관리자 리뷰 페이지 치프, 매니저)
@@ -136,6 +141,7 @@ public class ReviewService {
             throw new IllegalArgumentException("별점은 필수 입력값입니다.");
         } else {
             scoreStr = scoreStr.replaceAll(",", "");
+            reviewDTO.setScore(scoreStr);
         }
 
         if (!scoreStr.matches("^\\d+(\\.\\d+)?$")) {
@@ -170,7 +176,8 @@ public class ReviewService {
         review = reviewRepository.save(review);
 
         // 저장된 리뷰의 `rev_num`을 target_id로 사용하여 이미지 저장
-        if (!multipartFiles.isEmpty()) {
+        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+            // // imageService의 saveImage 메소드로 다중 파일 처리
             imageService.saveImage(multipartFiles, "review", review.getRev_num());
         }
     }
