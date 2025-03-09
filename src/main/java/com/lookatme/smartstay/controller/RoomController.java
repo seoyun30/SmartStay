@@ -26,7 +26,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -113,10 +112,11 @@ public class RoomController {
         if (hotelDTO == null) {
             return "redirect:/adMain";
         }
+
         model.addAttribute("hotel_name", hotelDTO.getHotel_name());
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
-        model.addAttribute("roomStates", RoomState.values());
+        model.addAttribute("room_state", RoomState.values());
 
         if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
             PageResponseDTO<RoomDTO> pageResponseDTO = roomService.searchList(searchType, searchKeyword, sortField, sortDir, pageRequestDTO);
@@ -255,17 +255,35 @@ public class RoomController {
         }
     }
 
-    @PostMapping("/updateState")
-    @ResponseBody
-    public ResponseEntity<?> updateRoomState(@RequestBody Map<String, Object> payload) {
-        try {
-            Long roomNum = Long.parseLong(payload.get("room_num").toString());
-            RoomState roomState = RoomState.valueOf(payload.get("room_state").toString());
+    @PostMapping("/updateRoomState")
+    public String updateRoomState(@RequestParam("room_num") String roomNumStr, @RequestParam("room_state") String roomStateStr, RedirectAttributes redirectAttributes) {
 
-            roomService.updateRoomState(roomNum, roomState);
-            return ResponseEntity.ok().body(Map.of("message", "룸 상태가 성공적으로 변경되었습니다."));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        log.info("입력된 룸 번호 문자열: {}", roomNumStr);
+
+        try {
+            if (roomNumStr == null || roomNumStr.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "룸 번호를 입력해주세요.");
+                return "redirect:/room/roomList";
+            }
+
+            roomNumStr = roomNumStr.trim();
+
+            Long room_num = Long.parseLong(roomNumStr);
+            RoomState room_state = RoomState.valueOf(roomStateStr);
+
+            roomService.updateRoomState(room_num, room_state);
+
+            redirectAttributes.addFlashAttribute("message", "룸 상태가 성공적으로 업데이트되었습니다.");
+
+        } catch (NumberFormatException e) {
+            redirectAttributes.addFlashAttribute("error", "잘못된 룸 번호 형식입니다. 숫자를 입력해주세요.");
+            log.info("잘못된 룸 번호 형식입니다.");
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", "잘못된 룸 상태입니다.");
+            log.info("잘못된 룸 상태입니다.");
         }
+
+        return "redirect:/room/roomList";
     }
 }
