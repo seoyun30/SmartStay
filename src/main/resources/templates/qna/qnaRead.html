@@ -124,25 +124,17 @@
     </div>
 </th:block>
 
+
 <script th:inline="javascript" layout:fragment="script">
 
     /* jQuery */
     $(document).ready(function() {
         let qna_num = $("#qna_num").val();
 
-        //본문 목록 버튼 클릭시
+        // 목록 버튼 클릭 시
         $(".listBtn").on("click", function () {
-
-            let loggedInUser = $("#loggedInUser").val();
-
-            // 권한 확인 (예제: 서버에서 "manager", "chief" 등의 값이 들어온다고 가정)
-            if (loggedInUser === "manager") {
-                location.href = "/qna/hcmQnaList";
-            } else if (loggedInUser === "chief") {
-                location.href = "/qna/bcmQnaList";
-            } else {
-                location.href = "/qna/qnaList";
-            }
+            // 브라우저의 히스토리에서 이전 페이지로 이동
+            window.history.back();
         });
 
         //본문 수정 버튼 클릭시
