@@ -167,7 +167,7 @@ public class MainController {
     @GetMapping("/search")
     public String search(Model model) {
 
-        List<HotelDTO> results = hotelService.hotelList();
+        List<HotelDTO> results = hotelService.activeHotelList();
 
         results = results.stream().filter(HotelDTO::hasAvailableRooms).collect(Collectors.toList());
 
@@ -183,12 +183,20 @@ public class MainController {
         List<HotelDTO> results;
 
         if (query == null || query.trim().isEmpty()) {
-            results = hotelService.hotelList();
+            results = hotelService.activeHotelList();
+            System.out.println("전체 호텔 목록: " + results.size());
         }else {
             results = hotelService.searchList(query);
+            System.out.println("검색 결과: " + results.size());
         }
 
-        results = results.stream().filter(HotelDTO::hasAvailableRooms).collect(Collectors.toList());
+//        results = results.stream().filter(HotelDTO::hasAvailableRooms).collect(Collectors.toList());
+        results = results.stream()
+                .peek(hotel -> System.out.println("Before filter: " + hotel))
+                .filter(HotelDTO::hasAvailableRooms)
+                .peek(hotel -> System.out.println("After filter: " + hotel))
+                .collect(Collectors.toList());
+        System.out.println("가용한 방이 있는 호텔 수: " + results.size());
 
         if ("asc".equalsIgnoreCase(order)) {
             results.sort((h1, h2) -> Long.compare(
