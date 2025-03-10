@@ -112,8 +112,6 @@
                         <textarea class="form-control" id="comment" rows="3"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary" id="qrbtn" style="float:right; margin-left: 10px;">답변 등록</button>
-                    <button type="button" class="btn btn-dark rmodBtn" style="float:right" th:if="${qnaDTO.writer.equals(loggedInEmail)}">수정</button>
-                    <button type="button" class="btn btn-danger">삭제</button>
                 </form>
                 <!-- 댓글 섹션 끝 -->
 
@@ -126,15 +124,17 @@
     </div>
 </th:block>
 
+
 <script th:inline="javascript" layout:fragment="script">
 
     /* jQuery */
     $(document).ready(function() {
         let qna_num = $("#qna_num").val();
 
-        //본문 목록 버튼 클릭시
+        // 목록 버튼 클릭 시
         $(".listBtn").on("click", function () {
-            location.href = "/qna/qnaList";
+            // 브라우저의 히스토리에서 이전 페이지로 이동
+            window.history.back();
         });
 
         //본문 수정 버튼 클릭시
@@ -218,7 +218,8 @@
                             <div class="card-body">
                                 <p>${response.comment}</p>
                                 <small class="text-muted">작성자: ${response.writer} | 작성일: ${response.reg_date}</small>
-                                <button type="button" value="${response.qnaReply_num}" class="btn btn-danger replydelBtn">삭제</button>
+                                <button type="button" value="${response.qnaReply_num}" class="btn btn-warning replyEditBtn">수정</button>
+                                <button type="button" value="${response.qnaReply_num}" class="btn btn-danger replyDelBtn">삭제</button>
                             </div>
                         </div>
                         `;
@@ -234,8 +235,48 @@
             });
         }
 
+        // 댓글 수정
+        $(document).on('click', '.replyEditBtn', function () {
+            let qnaReply_num = $(this).val();
+            console.log('수정 버튼 클릭 - qnaReply_num:', qnaReply_num);
+            let commentText = $('#comment-text').text();
+            $('#comment').val(commentText);
+            $('#comment-form').show();
+            $('#qrbtn').hide();
+
+            if ($('#update-btn').length === 0) {
+                $('#comment-form').append('<button type="button" id="update-btn" class="btn btn-success" style="float:right;">수정 완료</button>');
+            }
+
+            $('#update-btn').off().on('click', function () {
+                let updatedComment = $('#comment').val().trim();
+                if (!updatedComment) {
+                    alert("수정할 내용을 입력해주세요.");
+                    return;
+                }
+
+                let qnaReplyDTO = { qnaReply_num: qnaReply_num, comment: updatedComment };
+                console.log('수정 요청 데이터:', qnaReplyDTO);
+
+                $.ajax({
+                    url: '/qnaReply/modify?qna_num=' + qna_num,
+                    type: 'PUT',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(qnaReplyDTO),
+                    success: function () {
+                        alert('댓글이 수정되었습니다.');
+                        location.replace('/qna/qnaRead?qna_num=' + qna_num);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('댓글 수정 실패:', xhr.responseText);
+                        alert('댓글 수정에 실패했습니다.');
+                    }
+                });
+            });
+        });
+
         // 댓글 삭제
-        $(document).on('click', '.replydelBtn', function () {
+        $(document).on('click', '.replyDelBtn', function () {
             let qnaReply_num = $(this).val()
             console.log(qnaReply_num)
             $.ajax({
@@ -278,9 +319,6 @@
                 }
             });
         }
-
-
-        // 댓글 수정
 
 
         // 쿠키를 가져오는 함수
