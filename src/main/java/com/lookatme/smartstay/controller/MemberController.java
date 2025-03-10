@@ -148,8 +148,6 @@ public class MemberController {
         PageRequestDTO pageRequestDTO = new PageRequestDTO();
         pageRequestDTO.setSize(4);
         PageResponseDTO<RoomReserveItemDTO> reserveItemDTOPageResponseDTO = roomReserveService.findMyRoomReservePage(principal.getName(), pageRequestDTO);
-
-        List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveService.findMyRoomReserve(principal.getName());
         model.addAttribute("reserveItemDTOPageResponseDTO", reserveItemDTOPageResponseDTO);
 
         PageResponseDTO<OrderReserveItemDTO> orderReserveItemDTOPageResponseDTO = orderReserveService.findMyOrderPage(principal.getName(), pageRequestDTO);
@@ -401,10 +399,11 @@ public class MemberController {
 
     //회원용 룸 예약 목록
     @GetMapping("/myRoomReserveList")
-    public String myRoomReserveList(PageRequestDTO pageRequestDTO, Principal principal, Model model){
+    public String myRoomReserveList(PageRequestDTO pageRequestDTO, Principal principal,ReserveSearchDTO reserveSearchDTO, Model model){
         //내 룸예약 조회
-        PageResponseDTO<RoomReserveItemDTO> pageResponseDTO = roomReserveService.findMyRoomReservePage(principal.getName(), pageRequestDTO);
+        PageResponseDTO<RoomReserveItemDTO> pageResponseDTO = roomReserveService.findMyRoomReservePageSearch(principal.getName(), pageRequestDTO, reserveSearchDTO);
         model.addAttribute("pageResponseDTO", pageResponseDTO);
+        model.addAttribute("reserveSearchDTO", reserveSearchDTO);
 
         return "member/myRoomReserveList";
     }
@@ -419,10 +418,11 @@ public class MemberController {
     }
 
     @GetMapping("/myOrderReserveList")
-    public String myOrderReserveList(PageRequestDTO pageRequestDTO, Principal principal, Model model){
+    public String myOrderReserveList(PageRequestDTO pageRequestDTO, Principal principal, ReserveSearchDTO reserveSearchDTO, Model model){
         //내 룸서비스 주문 조회
-        PageResponseDTO<OrderReserveItemDTO> pageResponseDTO = orderReserveService.findMyOrderPage(principal.getName(), pageRequestDTO);
+        PageResponseDTO<OrderReserveItemDTO> pageResponseDTO = orderReserveService.findMyOrderPageSearch(principal.getName(), pageRequestDTO, reserveSearchDTO);
         model.addAttribute("pageResponseDTO", pageResponseDTO);
+        model.addAttribute("reserveSearchDTO", reserveSearchDTO);
 
         return "member/myOrderReserveList";
     }

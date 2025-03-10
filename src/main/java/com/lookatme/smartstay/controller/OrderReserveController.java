@@ -57,7 +57,7 @@ public class OrderReserveController {
         HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
         model.addAttribute("hotelDTO", hotelDTO);
 
-        PageResponseDTO<OrderReserveItemDTO> pageResponseDTO = orderReserveService.findOrderReservePage(principal.getName(), pageRequestDTO);
+        PageResponseDTO<OrderReserveItemDTO> pageResponseDTO = orderReserveService.findOrderReservePageSearch(principal.getName(), pageRequestDTO, reserveSearchDTO);
         model.addAttribute("pageResponseDTO", pageResponseDTO);
         model.addAttribute("reserveSearchDTO", reserveSearchDTO);
 

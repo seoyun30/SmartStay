@@ -46,6 +46,22 @@ public interface RoomReserveItemRepository extends JpaRepository<RoomReserveItem
     boolean isRoomAlreadyReserve(Long room_num,
                                 LocalDateTime in_date,
                                 LocalDateTime out_date);
+    @Query("SELECT r FROM RoomReserveItem r WHERE r.roomReserve.member.email = :email "
+            + "AND (:reserve_id IS NULL OR r.roomReserve.reserve_id LIKE %:reserve_id%) "
+            + "AND (:hotel_name IS NULL OR r.room.hotel.hotel_name LIKE %:hotel_name%) "
+            + "AND (:room_name IS NULL OR r.room.room_name LIKE %:room_name%) "
+            + "AND (:state IS NULL OR r.roomReserve.check_state = :state) "
+            + "AND (:sdate IS NULL OR r.in_date >= :sdate) "
+            + "AND (:edate IS NULL OR r.out_date <= :edate)")
+    Page<RoomReserveItem> findMyRoomReserveBySearch(
+            @Param("email") String email,
+            @Param("reserve_id") String reserve_id,
+            @Param("hotel_name") String hotel_name,
+            @Param("room_name") String room_name,
+            @Param("state") CheckState state,
+            @Param("sdate") LocalDateTime sdate,
+            @Param("edate") LocalDateTime edate,
+            Pageable pageable);
 
     @Query("SELECT r FROM RoomReserveItem r WHERE r.room.hotel.hotel_num = :hotel_num "
             + "AND (:reserve_id IS NULL OR r.roomReserve.reserve_id LIKE %:reserve_id%) "
