@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 
 //2. 보안권한 설정, 암호화, 로그인, 로그아웃, csrf
 @Configuration
@@ -49,6 +48,7 @@ public class SecurityConfig {
             //인증된 사용자만 접근 가능
             auth.requestMatchers("/member/changePW", "/member/adMypage", "/member/adMypageModify", "/member/adMypagePasswordCheck").authenticated(); //정보변경
             auth.requestMatchers("/member/mypage", "/member/mypageModify", "/member/mypagePasswordCheck").hasAuthority("USER"); //유저정보변경
+            auth.requestMatchers("/menu/allMenuList", "/menu/koreanMenuList", "/menu/chineseMenuList", "/menu/japaneseMenuList","/menu/westernMenuList", "/menu/snackMenuList", "/menu/drinkMenuList", "/menu/etcMenuList", "/care/findCareList").hasAuthority("USER");
             auth.requestMatchers("/member/memberList", "/member/adPowerList").hasAuthority("SUPERADMIN"); //멤버전체리스트, 최초치프 권한승인리스트
             auth.requestMatchers("/member/cmPowerList").hasAuthority("CHIEF"); //멤버전체리스트, 최초치프 권한승인리스트
 
