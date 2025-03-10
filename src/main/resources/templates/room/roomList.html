@@ -176,15 +176,17 @@
                         <td th:text="${roomDTO.room_price}"></td>
                         <td>
                             <div class="room-state-container">
-                                <form action="/room/updateRoomState" method="post">
-                                    <input type="hidden" name="room_num" value="${roomDTO.room_num}">
-                                    <select class="custom-select" name="room_state">
-                                        <option value="YES">이용 가능</option>
-                                        <option value="NO">이용 불가</option>
-                                        <option value="PREPARE">준비 중</option>
-                                    </select>
-                                    <button class="btn btn-success save-btn" type="submit">저장</button>
-                                </form>
+                                <div class="room-state-container">
+                                    <form action="/room/updateRoomState" method="post">
+                                        <input type="hidden" name="room_num" value="${roomDTO.room_num}">
+                                        <select class="custom-select" name="room_state">
+                                            <option value="YES" ${roomDTO.room_state == 'YES' ? 'selected' : ''}>이용 가능</option>
+                                            <option value="NO" ${roomDTO.room_state == 'NO' ? 'selected' : ''}>이용 불가</option>
+                                            <option value="PREPARE" ${roomDTO.room_state == 'PREPARE' ? 'selected' : ''}>준비 중</option>
+                                        </select>
+                                        <button class="btn btn-success save-btn" type="submit">저장</button>
+                                    </form>
+                                </div>
                             </div>
                         </td>
                         <td th:text="${#temporals.format(roomDTO.in_time, 'HH'+'시')}"></td>
@@ -286,15 +288,17 @@
                        <td th:text="${roomDTO.room_price}"></td>
                        <td>
                            <div class="room-state-container">
-                               <form action="/room/updateRoomState" method="post">
-                                   <input type="hidden" name="room_num" value="${roomDTO.room_num}">
-                                   <select class="custom-select" name="room_state">
-                                       <option value="YES">이용 가능</option>
-                                       <option value="NO">이용 불가</option>
-                                       <option value="PREPARE">준비 중</option>
-                                   </select>
-                                   <button class="btn btn-success save-btn" type="submit">저장</button>
-                               </form>
+                               <div class="room-state-container">
+                                   <form action="/room/updateRoomState" method="post">
+                                       <input type="hidden" name="room_num" th:value="${roomDTO.room_num}">
+                                       <select class="custom-select" name="room_state">
+                                           <option value="YES" th:selected="${roomDTO.room_state.name().equals('YES')}">이용 가능</option>
+                                           <option value="NO" th:selected="${roomDTO.room_state.name().equals('NO') }">이용 불가</option>
+                                           <option value="PREPARE" th:selected="${roomDTO.room_state.name().equals('PREPARE')}">준비 중</option>
+                                       </select>
+                                       <button class="btn btn-success save-btn" type="submit">저장</button>
+                                   </form>
+                               </div>
                            </div>
                        </td>
                        <td th:text="${#temporals.format(roomDTO.in_time, 'HH'+'시')}"></td>
@@ -343,7 +347,12 @@
     </div>
 </th:block>
 
-<script th:inline="javascript">
+<script th:inline="javascript" layout:fragment="script">
+
+    let message = [[${message}]]
+    if (message) {
+        alert(message)
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
         const savedQuery = localStorage.getItem('searchQuery');

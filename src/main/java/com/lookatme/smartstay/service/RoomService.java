@@ -277,6 +277,11 @@ public class RoomService {
 
     public void updateRoomState(Long room_num, RoomState room_state) {
 
-        roomRepository.updateRoomState(room_num, room_state);
+        try {
+            roomRepository.updateRoomState(room_num, room_state);
+            log.info("업데이트 완료");
+        } catch (Exception e) {
+            log.error("룸 상태 업데이트에 실패했습니다.", e);
+        }
     }
 }

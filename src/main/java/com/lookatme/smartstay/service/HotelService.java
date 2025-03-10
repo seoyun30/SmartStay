@@ -62,6 +62,11 @@ public class HotelService {
                     HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
                     BrandDTO brandDTO = modelMapper.map(hotel.getBrand(), BrandDTO.class);
                     hotelDTO.setBrandDTO(brandDTO);
+                    List<Room> rooms = roomRepository.findRoomsByHotelNum(hotel.getHotel_num());
+                    List<RoomDTO> roomDTOS = rooms.stream()
+                            .map(room -> modelMapper.map(room, RoomDTO.class))
+                            .collect(Collectors.toList());
+                    hotelDTO.setRooms(roomDTOS);
                     Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
                     hotelDTO.setLowestPrice(lowestPrice);
                     ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
@@ -311,6 +316,11 @@ public class HotelService {
         List<HotelDTO> hotelDTOS = hotels.stream()
                         .map(hotel -> {
                                     HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+                                    List<Room> rooms = roomRepository.findRoomsByHotelNum(hotel.getHotel_num());
+                                    List<RoomDTO> roomDTOS = rooms.stream()
+                                            .map(room -> modelMapper.map(room, RoomDTO.class))
+                                            .collect(Collectors.toList());
+                                    hotelDTO.setRooms(roomDTOS);
                                     Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
                                     hotelDTO.setLowestPrice(lowestPrice);
                                     ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());

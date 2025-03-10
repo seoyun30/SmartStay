@@ -126,9 +126,18 @@ public class RoomController {
             model.addAttribute("isSearch", true);
         } else {
             PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotelDTO, pageRequestDTO, sortField, sortDir);
+
+            List<RoomDTO> roomDTOList = pageResponseDTO.getDtoList();
+            for (RoomDTO roomDTO : roomDTOList) {
+                RoomDTO latestRoomDTO = roomService.roomRead(roomDTO.getRoom_num());
+
+                roomDTO.setRoom_state(latestRoomDTO.getRoom_state());
+            }
+
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("isSearch", false);
         }
+
         return "room/roomList";
     }
 
@@ -256,24 +265,22 @@ public class RoomController {
     }
 
     @PostMapping("/updateRoomState")
-    public String updateRoomState(@RequestParam("room_num") String roomNumStr, @RequestParam("room_state") String roomStateStr, RedirectAttributes redirectAttributes) {
+    public String updateRoomState(@RequestParam("room_num") Long room_num, @RequestParam("room_state") String roomStateStr, RedirectAttributes redirectAttributes) {
 
-        log.info("입력된 룸 번호 문자열: {}", roomNumStr);
+        log.info("입력된 룸 번호 문자열: {}", room_num);
+        log.info("룸 상태 : " + roomStateStr);
 
         try {
-            if (roomNumStr == null || roomNumStr.trim().isEmpty()) {
+            if (room_num == null ) {
                 redirectAttributes.addFlashAttribute("error", "룸 번호를 입력해주세요.");
                 return "redirect:/room/roomList";
             }
 
-            roomNumStr = roomNumStr.trim();
-
-            Long room_num = Long.parseLong(roomNumStr);
             RoomState room_state = RoomState.valueOf(roomStateStr);
 
             roomService.updateRoomState(room_num, room_state);
 
-            redirectAttributes.addFlashAttribute("message", "룸 상태가 성공적으로 업데이트되었습니다.");
+            redirectAttributes.addFlashAttribute("message", "룸 상태가 성공적으로 변경되었습니다.");
 
         } catch (NumberFormatException e) {
             redirectAttributes.addFlashAttribute("error", "잘못된 룸 번호 형식입니다. 숫자를 입력해주세요.");
