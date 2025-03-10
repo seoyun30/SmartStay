@@ -35,10 +35,6 @@ public class OrderReserveController {
     public String orderReserveRegisterGet(Principal principal, Long roomreserveitem_num,
                                           Model model, RedirectAttributes redirectAttributes) {
 
-        if (principal == null) {
-            return "redirect:/member/login";
-        }
-
         RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(roomreserveitem_num, principal.getName());
 
         if (!roomReserveItemDTO.getRoomReserveDTO().getCheck_state().name().equals("IN")){
@@ -52,7 +48,7 @@ public class OrderReserveController {
     }
 
     @GetMapping("/orderReserveList")
-    public String orderReserveList(PageRequestDTO pageRequestDTO, Principal principal, Model model) {
+    public String orderReserveList(PageRequestDTO pageRequestDTO, Principal principal, ReserveSearchDTO reserveSearchDTO, Model model) {
 
         if (principal == null) {
             return "redirect:/member/login";
@@ -63,6 +59,7 @@ public class OrderReserveController {
 
         PageResponseDTO<OrderReserveItemDTO> pageResponseDTO = orderReserveService.findOrderReservePage(principal.getName(), pageRequestDTO);
         model.addAttribute("pageResponseDTO", pageResponseDTO);
+        model.addAttribute("reserveSearchDTO", reserveSearchDTO);
 
         return "orderreserve/orderReserveList";
     }
