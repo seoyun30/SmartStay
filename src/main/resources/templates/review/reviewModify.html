@@ -11,7 +11,7 @@
         .starpoint_wrap{display:inline-block;}
         .starpoint_box{position:relative;background:url(https://ido-archive.github.io/svc/etc/element/img/sp_star.png) 0 0 no-repeat;font-size:0;}
         .starpoint_box .starpoint_bg{display:block;position:absolute;top:0;left:0;height:18px;background:url(https://ido-archive.github.io/svc/etc/element/img/sp_star.png) 0 -20px no-repeat;pointer-events:none;}
-        .starpoint_box .label_star{display:inline-block;width:10px;height:18px;box-sizing:border-box;}
+        .starpoint_box .label_star{display:inline-block;width:10px;height:10px;box-sizing:border-box;}
         .starpoint_box .star_radio{opacity:0;width:0;height:0;position:absolute;}
         .starpoint_box .star_radio:nth-of-type(1):hover ~ .starpoint_bg,
         .starpoint_box .star_radio:nth-of-type(1):checked ~ .starpoint_bg{width:10%;}
@@ -35,6 +35,35 @@
         .starpoint_box .star_radio:nth-of-type(10):checked ~ .starpoint_bg{width:100%;}
 
         .blind{position:absolute;clip:rect(0 0 0 0);margin:-1px;width:1px;height: 1px;overflow:hidden;}
+
+        .starpoint_wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /*.starpoint_box i {*/
+        /*    font-size: 2rem;*/
+        /*    cursor: pointer;*/
+        /*    margin-right: 5px;*/
+        /*}*/
+
+        /*.starpoint_box i.bi-star {*/
+        /*    color: #ccc; !* 빈 별 색 *!*/
+        /*}*/
+
+        /*.starpoint_box i.bi-star-fill {*/
+        /*    color: #ffcc00; !* 찬 별 색 *!*/
+        /*}*/
+
+        /*.starpoint_box i.bi-star-half {*/
+        /*    color: #ffcc00; !* 반 별 색 *!*/
+        /*}*/
+
+        /*.review-form .star a.on { color: #f2cb61; }*/
+
+
+
     </style>
 </head>
 <body>
@@ -46,6 +75,7 @@
                 <div class="row">
                     <input type="hidden" th:field="*{rev_num}">
                     <div class="col-12">
+
                         <input type="hidden" name="hotel_num" th:value="${reviewDTO.hotelDTO.hotel_num}" id="hotel_num">
                         <h2 th:text="${reviewDTO.hotelDTO.hotel_name}" id="hotel_name"></h2>
                     </div>
@@ -63,7 +93,6 @@
                     <!--별점-->
                     <div class="mb-3 starpoint_wrap">
                         <div class="starpoint_box">
-                            <!-- 별점 라벨 -->
                             <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>
                             <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>
                             <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>
@@ -75,32 +104,31 @@
                             <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
                             <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
 
-                            <!-- 리뷰가 수정될 때 기존 별점이 표시되도록 설정 -->
+                            <!-- 리뷰의 score 값에 따라 체크 -->
                             <input type="radio" name="score" value="0.5" id="starpoint_1" class="star_radio"
-                                   th:checked="${reviewDTO.score == 0.5}">
+                                   th:checked="${reviewDTO.score == '0.5'}">
                             <input type="radio" name="score" value="1" id="starpoint_2" class="star_radio"
-                                   th:checked="${reviewDTO.score == 1}">
+                                   th:checked="${reviewDTO.score == '1'}">
                             <input type="radio" name="score" value="1.5" id="starpoint_3" class="star_radio"
-                                   th:checked="${reviewDTO.score == 1.5}">
+                                   th:checked="${reviewDTO.score == '1.5'}">
                             <input type="radio" name="score" value="2" id="starpoint_4" class="star_radio"
-                                   th:checked="${reviewDTO.score == 2}">
+                                   th:checked="${reviewDTO.score == '2'}">
                             <input type="radio" name="score" value="2.5" id="starpoint_5" class="star_radio"
-                                   th:checked="${reviewDTO.score == 2.5}">
+                                   th:checked="${reviewDTO.score == '2.5'}">
                             <input type="radio" name="score" value="3" id="starpoint_6" class="star_radio"
-                                   th:checked="${reviewDTO.score == 3}">
+                                   th:checked="${reviewDTO.score == '3'}">
                             <input type="radio" name="score" value="3.5" id="starpoint_7" class="star_radio"
-                                   th:checked="${reviewDTO.score == 3.5}">
+                                   th:checked="${reviewDTO.score == '3.5'}">
                             <input type="radio" name="score" value="4" id="starpoint_8" class="star_radio"
-                                   th:checked="${reviewDTO.score == 4}">
+                                   th:checked="${reviewDTO.score == '4'}">
                             <input type="radio" name="score" value="4.5" id="starpoint_9" class="star_radio"
-                                   th:checked="${reviewDTO.score == 4.5}">
+                                   th:checked="${reviewDTO.score == '4.5'}">
                             <input type="radio" name="score" value="5" id="starpoint_10" class="star_radio"
-                                   th:checked="${reviewDTO.score == 5}">
-
+                                   th:checked="${reviewDTO.score == '5'}">
 
                             <span class="starpoint_bg"></span>
                         </div>
-
+                    </div>
                         <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}">
                             <p>별점</p>
                         </div>
