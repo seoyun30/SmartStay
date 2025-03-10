@@ -17,6 +17,7 @@ import java.util.Date;
 public class ReserveSearchDTO {
 
     private String reserve_id;
+    private String hotel_name;
     private String room_name;
     private String reserve_name;
     private String state;
