@@ -48,6 +48,20 @@
         .Listbtn{
             margin-right: 10px;
         }
+        /* 본문 카드와 답변 카드 사이에 여백을 추가 */
+        #comment-section {
+            margin-top: 30px; /* 댓글 섹션 위에 여백을 추가 */
+        }
+
+        /* .card-body 또는 .card에 추가적인 여백을 설정하여 답변과 본문 카드 간격을 벌리기 */
+        .card {
+            margin-bottom: 30px; /* 카드 간 여백 */
+        }
+
+        /* .card-body에 아래쪽 여백을 추가하여 본문 카드 아래쪽 여백을 설정 */
+        .card-body {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 
@@ -97,8 +111,8 @@
                                 </div>
                                 <!-- 버튼 영역 -->
                                 <div class="button-container">
-                                    <button type="button" class="btn btn-dark modBtn" style="float:right" th:if="${qnaDTO.writer.equals(loggedInEmail)}">수정</button>
-                                    <button type="button" class="btn btn-dark listBtn" style="float:right">목록</button>
+                                    <button type="button" class="btn btn-dark modBtn" style="float:right; margin-right: 10px;" th:if="${qnaDTO.writer.equals(loggedInEmail)}">수정</button>
+                                    <button type="button" class="btn btn-dark listBtn" style="float:right; margin-right: 10px;">목록</button>
                                 </div>
                             </div>
                         </div>
@@ -106,12 +120,12 @@
                 </form>
 
                 <!-- 댓글 작성 폼 -->
-                <form id="comment-form">
+                <form id="comment-form" class="mt-5">
                     <div class="form-group">
                         <label for="comment">답변</label>
                         <textarea class="form-control" id="comment" rows="3"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="qrbtn" style="float:right; margin-left: 10px;">답변 등록</button>
+                    <button type="submit" sec:authorize="hasAnyAuthority('CHIEF, MANAGER')" class="btn btn-primary" id="qrbtn" style="float:right; margin-left: 10px;">답변 등록</button>
                 </form>
                 <!-- 댓글 섹션 끝 -->
 
@@ -189,6 +203,7 @@
                 success: function (response) {
                     alert('댓글이 성공적으로 등록되었습니다.');
                     location.replace('/qna/qnaRead?qna_num=' + qna_num); // 성공 시 QnA 상세 페이지로 이동
+                    $('#comment-section').css('margin-top', '30px');
                 },
                 error: function (xhr, status, error) {
                     console.error('댓글 등록 실패:', error);
@@ -218,8 +233,8 @@
                             <div class="card-body">
                                 <p>${response.comment}</p>
                                 <small class="text-muted">작성자: ${response.writer} | 작성일: ${response.reg_date}</small>
-                                <button type="button" value="${response.qnaReply_num}" class="btn btn-warning replyEditBtn">수정</button>
-                                <button type="button" value="${response.qnaReply_num}" class="btn btn-danger replyDelBtn">삭제</button>
+                                <button type="button" value="${response.qnaReply_num}" class="btn btn-dark replyEditBtn">수정</button>
+                                <button type="button" value="${response.qnaReply_num}" class="btn btn-dark replyDelBtn">삭제</button>
                             </div>
                         </div>
                         `;
@@ -239,10 +254,15 @@
         $(document).on('click', '.replyEditBtn', function () {
             let qnaReply_num = $(this).val();
             console.log('수정 버튼 클릭 - qnaReply_num:', qnaReply_num);
+            let userRole = $("button[data-role]").data("role");
+            if (userRole === 'ROLE_USER') {
+                $('.modBtn').hide();  // 수정 버튼 숨기기
+            }
             let commentText = $('#comment-text').text();
             $('#comment').val(commentText);
             $('#comment-form').show();
             $('#qrbtn').hide();
+
 
             if ($('#update-btn').length === 0) {
                 $('#comment-form').append('<button type="button" id="update-btn" class="btn btn-success" style="float:right;">수정 완료</button>');
