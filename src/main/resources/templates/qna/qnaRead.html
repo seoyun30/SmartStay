@@ -231,8 +231,8 @@
                         let commentHTML = `
                         <div class="card mb-2">
                             <div class="card-body">
-                                <p>${response.comment}</p>
-                                <small class="text-muted">작성자: ${response.writer} | 작성일: ${response.reg_date}</small>
+                                <p style="font-size: 20px;">${response.comment}</p> <!-- 글자 크기 설정 -->
+                                <small class="text-muted">작성자: ${response.writer} | 작성일: ${response.reg_date.substring(0,10)}</small>
                                 <button type="button" value="${response.qnaReply_num}" class="btn btn-dark replyEditBtn">수정</button>
                                 <button type="button" value="${response.qnaReply_num}" class="btn btn-dark replyDelBtn">삭제</button>
                             </div>
