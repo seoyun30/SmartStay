@@ -32,6 +32,51 @@
         .form-select option {
             white-space: nowrap;
         }
+
+        .room-state-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .custom-select {
+            appearance: none;
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 18px !important;
+            color: #495057; /
+            cursor: pointer;
+            height: 40px;
+            width: 120px;
+        }
+
+        .custom-select:hover {
+            border-color: #adb5bd;
+        }
+
+        .custom-select:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+        }
+
+        .save-btn {
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 16px !important;
+            cursor: pointer;
+            height: 40px;
+        }
+
+        .save-btn:hover {
+            background-color: #28a745;
+        }
+
     </style>
 </head>
 <body>
@@ -130,15 +175,17 @@
                         <td th:text="${roomDTO.room_bed}"></td>
                         <td th:text="${roomDTO.room_price}"></td>
                         <td>
-                            <select th:id="'roomState_' + ${roomDTO.room_num}"
-                                    th:attr="data-room-num=${roomDTO.room_num}"
-                                    onchange="updateRoomState(this)">
-                                <option th:each="state : ${roomStates}"
-                                        th:value="${state}"
-                                        th:text="${state}"
-                                        th:selected="${state == roomDTO.room_state ? 'selected' : null}">
-                                </option>
-                            </select>
+                            <div class="room-state-container">
+                                <form action="/room/updateRoomState" method="post">
+                                    <input type="hidden" name="room_num" value="${roomDTO.room_num}">
+                                    <select class="custom-select" name="room_state">
+                                        <option value="YES">이용 가능</option>
+                                        <option value="NO">이용 불가</option>
+                                        <option value="PREPARE">준비 중</option>
+                                    </select>
+                                    <button class="btn btn-success save-btn" type="submit">저장</button>
+                                </form>
+                            </div>
                         </td>
                         <td th:text="${#temporals.format(roomDTO.in_time, 'HH'+'시')}"></td>
                         <td th:text="${#temporals.format(roomDTO.out_time, 'HH'+'시')}"></td>
@@ -238,15 +285,17 @@
                        <td th:text="${roomDTO.room_bed}"></td>
                        <td th:text="${roomDTO.room_price}"></td>
                        <td>
-                           <select th:id="'roomState_' + ${roomDTO.room_num}"
-                                   th:attr="data-room-num=${roomDTO.room_num}"
-                                   onchange="updateRoomState(this)">
-                               <option th:each="state : ${roomStates}"
-                                       th:value="${state}"
-                                       th:text="${state}"
-                                       th:selected="${state == roomDTO.room_state ? 'selected' : null}">
-                               </option>
-                           </select>
+                           <div class="room-state-container">
+                               <form action="/room/updateRoomState" method="post">
+                                   <input type="hidden" name="room_num" value="${roomDTO.room_num}">
+                                   <select class="custom-select" name="room_state">
+                                       <option value="YES">이용 가능</option>
+                                       <option value="NO">이용 불가</option>
+                                       <option value="PREPARE">준비 중</option>
+                                   </select>
+                                   <button class="btn btn-success save-btn" type="submit">저장</button>
+                               </form>
+                           </div>
                        </td>
                        <td th:text="${#temporals.format(roomDTO.in_time, 'HH'+'시')}"></td>
                        <td th:text="${#temporals.format(roomDTO.out_time, 'HH'+'시')}"></td>
@@ -295,41 +344,17 @@
 </th:block>
 
 <script th:inline="javascript">
+
     document.addEventListener('DOMContentLoaded', () => {
         const savedQuery = localStorage.getItem('searchQuery');
         if (savedQuery) {
             document.getElementById('search-input').value = savedQuery;
         }
     });
+
     function saveSearchQuery() {
         const query = document.getElementById('search-input').value;
         localStorage.setItem('searchQuery', query);
-    }
-
-    function updateRoomState(selectElement) {
-        const roomNum = selectElement.getAttribute('data-room-num');
-        const newState = selectElement.value;
-
-        console.log("AJAX 요청 시작:", { roomNum, newState }); // 요청 데이터 확인
-
-        $.ajax({
-            url: '/updateState',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                room_num: roomNum,
-                room_state: newState,
-            }),
-            success: function (response) {
-                console.log("AJAX 요청 성공:", response); // 응답 데이터 확인
-                alert(response.message);
-                selectElement.value = newState; // 상태 업데이트
-            },
-            error: function (xhr) {
-                console.error("AJAX 요청 실패:", xhr.responseJSON || xhr.statusText); // 에러 로그
-                alert('룸 상태 변경에 실패했습니다: ' + (xhr.responseJSON?.error || 'Unknown error'));
-            },
-        });
     }
 </script>
 </body>

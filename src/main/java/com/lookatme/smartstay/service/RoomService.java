@@ -275,23 +275,8 @@ public class RoomService {
         return roomDTOList;
     }
 
-    public ImageDTO getRoomMainImage(Long room_num) {
-        List<Image> imageList = imageRepository.findByTarget("room", room_num);
-        if (imageList != null && !imageList.isEmpty()) {
-            return modelMapper.map(imageList.get(0), ImageDTO.class);
-        }
-        return null;
-    }
+    public void updateRoomState(Long room_num, RoomState room_state) {
 
-    public void updateRoomState(Long room_num, RoomState newState) {
-        Room room = roomRepository.findById(room_num)
-                .orElseThrow(() -> new EntityNotFoundException("Room not found with id: " + room_num));
-
-        room.setRoom_state(newState);
-        try {
-            roomRepository.save(room);
-        } catch (Exception e) {
-            System.out.println("저장 실패: " + e.getMessage());
-        }
+        roomRepository.updateRoomState(room_num, room_state);
     }
 }

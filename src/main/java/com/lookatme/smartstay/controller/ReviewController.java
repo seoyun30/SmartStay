@@ -161,6 +161,7 @@ public class ReviewController {
 
         //리뷰 등록 처리
         try {
+            // 리뷰 등록 서비스 호출(이미지 다중 업로드)
             reviewService.reviewRegister(reviewDTO, principal.getName(), multipartFiles, mainImageIndex);
             redirectAttributes.addFlashAttribute("msg", "등록이 완료 되었습니다.");
             log.info("호텔 : {}", hotel_num);
