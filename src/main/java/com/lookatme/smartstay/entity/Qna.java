@@ -54,9 +54,6 @@ public class Qna extends BaseEntity{
    /* @OneToMany(mappedBy = "qna", cascade = CascadeType.ALL)
     private List<QnaReply> qnaReplyList = new ArrayList<>(); //qna*/
 
-//    @OneToMany(mappedBy = "qna", cascade = CascadeType.ALL)
-//    private List<Image> imageList = new ArrayList<>(); //이미지
-
     // Lombok의 @ToString 제거 후 직접 작성
     @Override
     public String toString() {

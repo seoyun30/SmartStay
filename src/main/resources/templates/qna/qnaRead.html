@@ -97,8 +97,8 @@
                                 </div>
                                 <!-- 버튼 영역 -->
                                 <div class="button-container">
-                                    <button type="button" class="btn btn-dark Modbtn" style="float:right" th:if="${qnaDTO.writer.equals(loggedInEmail)}">수정</button>
-                                    <button type="button" class="btn btn-dark Listbtn" style="float:right">목록</button>
+                                    <button type="button" class="btn btn-dark modBtn" style="float:right" th:if="${qnaDTO.writer.equals(loggedInEmail)}">수정</button>
+                                    <button type="button" class="btn btn-dark listBtn" style="float:right">목록</button>
                                 </div>
                             </div>
                         </div>
@@ -112,19 +112,13 @@
                         <textarea class="form-control" id="comment" rows="3"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary" id="qrbtn" style="float:right; margin-left: 10px;">답변 등록</button>
-                    <a href="#" class="btn btn-primary float-end modiBtn" data-bs-toggle="modal" data-bs-target="#replyModal" style="display:none">수정</a>
+                    <button type="button" class="btn btn-dark rmodBtn" style="float:right" th:if="${qnaDTO.writer.equals(loggedInEmail)}">수정</button>
+                    <button type="button" class="btn btn-danger">삭제</button>
                 </form>
                 <!-- 댓글 섹션 끝 -->
 
                 <div id="comment-section">
-                    <th:block th:each="reply : ${replies}">
-                        <div class="card mb-2">
-                            <div class="card-body">
-                                <p th:text="${reply.content}"></p>
-                                <small class="text-muted">작성자: <span th:text="${reply.writer}"></span> | 작성일: <span th:text="${reply.createdDate}"></span></small>
-                            </div>
-                        </div>
-                    </th:block>
+
                 </div>
 
             </div>
@@ -133,68 +127,65 @@
 </th:block>
 
 <script th:inline="javascript" layout:fragment="script">
-    let qna_num = document.getElementById("qna_num").value;
 
     /* jQuery */
     $(document).ready(function() {
+        let qna_num = $("#qna_num").val();
+
+        //본문 목록 버튼 클릭시
+        $(".listBtn").on("click", function () {
+            location.href = "/qna/qnaList";
+        });
+
+        //본문 수정 버튼 클릭시
+        $(".modBtn").on("click", function () {
+            let loggedInUser = $("#loggedInUser").val(); // 로그인한 사용자 정보
+            let writer = $("#writer").val(); // 게시글 작성자 정보
+            let qna_num = $("#qna_num").val(); // 게시글 번호 가져오기
+
+            if (loggedInUser === writer) {
+                location.href = "/qna/qnaModify?qna_num=" + qna_num;
+            } else {
+                alert("수정 권한이 없습니다.");
+            }
+        });
+
         $('textarea').on('keyup', function () {
             $(this).css('height', 'auto');
             $(this).height(this.scrollHeight);
         });
+
         $('textarea').keyup();
-    });
 
-    // 목록 버튼 클릭시
-    $(".Listbtn").on("click", function () {
-        location.href = "/qna/qnaList";
-    });
 
-    //수정 버튼 클릭시
-    $(".Modbtn").on("click", function () {
-        let loggedInUser = $("#loggedInUser").val(); // 로그인한 사용자 정보
-        let writer = $("#writer").val(); // 게시글 작성자 정보
-        let qna_num = $("#qna_num").val(); // 게시글 번호 가져오기
+        //댓글
+        // 댓글 등록
+        $("#qrbtn").on("click", function (e) {
+            e.preventDefault();
+           replyRegister();
+        })
 
-        if (loggedInUser === writer) {
-            location.href = "/qna/qnaModify?qna_num=" + qna_num;
-        } else {
-            alert("수정 권한이 없습니다.");
-        }
-    });
-
-    //댓글
-    // 댓글 등록
-    const createCommentButton = document.getElementById('qrbtn');
-
-    if (createCommentButton) {
-        createCommentButton.addEventListener('click', function(event) {
-            event.preventDefault();
-
-            const commentContent = $('#comment').val().trim();
+        function replyRegister(){
+            let commentContent = $('#comment').val().trim();
             if (!commentContent) {
                 alert("댓글 내용을 입력해주세요.");
                 return;
             }
-
-            // QnA 번호 가져오기 (URL에서 추출)
-            const urlParams = new URLSearchParams(window.location.search);
-            const qna_num = urlParams.get('qna_num'); // URL에서 qna_num 추출
-
             if (!qna_num) {
                 alert("QnA 번호를 확인할 수 없습니다.");
                 return;
             }
 
-            const body = {
+            let qnaReplyDTO = {
+                qna_num: qna_num,
                 comment: commentContent
-            };
+            }
 
-            // AJAX 요청
             $.ajax({
-                url: '/qnareply/register?qna_num=' + qna_num, // QnA 번호를 쿼리 파라미터로 전달
+                url: '/qnaReply/register?qna_num=' + qna_num, // QnA 번호를 쿼리 파라미터로 전달
                 type: 'POST',
-                contentType: 'application/json', // 요청 본문 타입
-                data: JSON.stringify(body), // JSON 데이터로 변환하여 전송
+                contentType: "application/json; charset=utf-8", // 요청 본문 타입
+                data: JSON.stringify(qnaReplyDTO), // JSON 데이터로 변환하여 전송
                 success: function (response) {
                     alert('댓글이 성공적으로 등록되었습니다.');
                     location.replace('/qna/qnaRead?qna_num=' + qna_num); // 성공 시 QnA 상세 페이지로 이동
@@ -205,83 +196,73 @@
                     location.replace('/qna/qnaRead?qna_num=' + qna_num); // 실패 시에도 QnA 상세 페이지로 이동
                 }
             });
-        });
-    } else {
-        console.error("댓글 등록 버튼을 찾을 수 없습니다.");
-    };
+        }
+        replyRead();
 
-    // 쿠키를 가져오는 함수
-    function getCookie(key) {
-        var result = null;
-        var cookie = document.cookie.split(';');
-        cookie.some(function (item) {
-            item = item.trim();
+        // 댓글 리드
+        function replyRead() {
+            $.ajax({
+                url: '/qnaReply/qnaRead',
+                type: 'GET',
+                data: {qna_num: qna_num},
+                success: function (response) {
+                    let commentForm = $('#comment-form');
+                    commentForm.hide()
+                    let commentSection = $('#comment-section'); // 댓글 표시 영역
+                    commentSection.empty(); // 기존 댓글 초기화
+                    if (`${response.comment}`){
+                        console.log(response)
 
-            var dic = item.split('=');
+                        let commentHTML = `
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <p>${response.comment}</p>
+                                <small class="text-muted">작성자: ${response.writer} | 작성일: ${response.reg_date}</small>
+                                <button type="button" value="${response.qnaReply_num}" class="btn btn-danger replydelBtn">삭제</button>
+                            </div>
+                        </div>
+                        `;
+                        commentSection.html(commentHTML);
+                    } else {
+                        commentSection.html("등록된 답변이 없습니다.");
+                    }
 
-            if (key === dic[0]) {
-                result = dic[1];
-                return true;
-            }
-        });
+                },
+                error: function (xhr, status, error) {
+                    console.error('댓글 목록 가져오기 실패:', error);
+                }
+            });
+        }
 
-        return result;
-    }
-    function httpRequest(method, url, body, success, fail) {
-        alert("success");
+        // 댓글 삭제
+        $(document).on('click', '.replydelBtn', function () {
+            let qnaReply_num = $(this).val()
+            console.log(qnaReply_num)
+            $.ajax({
+                url: '/qnaReply/del/' + qnaReply_num,
+                    type: 'DELETE',
+                data: {qnaReply_num: qnaReply_num},
+                success: function (response) {
+                   alert("삭제되었습니다.")
+                    history.go(0);
+                },
+                error: function (xhr, status, error) {
+                    console.error('댓글 삭제 실패:', error);
+                }
+            });
+        })
 
-        fetch(url, {
-            method: method,
-            headers: { // 로컬 스토리지에서 액세스 토큰 값을 가져와 헤더에 추가
-                Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-                'Content-Type': 'application/json',
-            },
-            body: body,
-        }).then(response => {
-            if (response.status === 200 || response.status === 201) {
-                return success();
-            }
-            const refresh_token = getCookie('refresh_token');
-            if (response.status === 401 && refresh_token) {
-                fetch('/api/token', {
-                    method: 'POST',
-                    headers: {
-                        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        refreshToken: getCookie('refresh_token'),
-                    }),
-                })
-                    .then(res => {
-                        if (res.ok) {
-                            return res.json();
-                        }
-                    })
-                    .then(result => { // 재발급이 성공하면 로컬 스토리지값을 새로운 액세스 토큰으로 교체
-                        localStorage.setItem('access_token', result.accessToken);
-                        httpRequest(method, url, body, success, fail);
-                    })
-                    .catch(error => fail());
-            } else {
-                return fail();
-            }
-        });
-    }
 
-    $(document).ready(function() {
-        // 페이지 로드 시 댓글 목록 가져오기
-        const qna_num = new URLSearchParams(window.location.search).get('qna_num'); // URL에서 qna_num 추출
+        function list() {
+            $.ajax({
+                url: '/qnaReply/list?qna_num=' + qna_num, // 댓글 목록 API 호출
+                type: 'GET',
+                success: function (response) {
+                    const commentSection = $('#comment-section'); // 댓글 표시 영역
+                    commentSection.empty(); // 기존 댓글 초기화
 
-        $.ajax({
-            url: '/qnareply/list?qna_num=' + qna_num, // 댓글 목록 API 호출
-            type: 'GET',
-            success: function(response) {
-                const commentSection = $('#comment-section'); // 댓글 표시 영역
-                commentSection.empty(); // 기존 댓글 초기화
-
-                response.forEach(comment => {
-                    const commentHTML = `
+                    response.forEach(comment => {
+                        const commentHTML = `
                     <div class="card mb-2">
                         <div class="card-body">
                             <p>${comment.content}</p>
@@ -289,14 +270,84 @@
                         </div>
                     </div>
                 `;
-                    commentSection.append(commentHTML);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('댓글 목록 가져오기 실패:', error);
-            }
-        });
+                        commentSection.append(commentHTML);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('댓글 목록 가져오기 실패:', error);
+                }
+            });
+        }
+
+
+        // 댓글 수정
+
+
+        // 쿠키를 가져오는 함수
+        function getCookie(key) {
+            var result = null;
+            var cookie = document.cookie.split(';');
+            cookie.some(function (item) {
+                item = item.trim();
+
+                var dic = item.split('=');
+
+                if (key === dic[0]) {
+                    result = dic[1];
+                    return true;
+                }
+            });
+
+            return result;
+        }
+        function httpRequest(method, url, body, success, fail) {
+            alert("success");
+
+            fetch(url, {
+                method: method,
+                headers: { // 로컬 스토리지에서 액세스 토큰 값을 가져와 헤더에 추가
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                    'Content-Type': 'application/json',
+                },
+                body: body,
+            }).then(response => {
+                if (response.status === 200 || response.status === 201) {
+                    return success();
+                }
+                const refresh_token = getCookie('refresh_token');
+                if (response.status === 401 && refresh_token) {
+                    fetch('/api/token', {
+                        method: 'POST',
+                        headers: {
+                            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            refreshToken: getCookie('refresh_token'),
+                        }),
+                    })
+                        .then(res => {
+                            if (res.ok) {
+                                return res.json();
+                            }
+                        })
+                        .then(result => { // 재발급이 성공하면 로컬 스토리지값을 새로운 액세스 토큰으로 교체
+                            localStorage.setItem('access_token', result.accessToken);
+                            httpRequest(method, url, body, success, fail);
+                        })
+                        .catch(error => fail());
+                } else {
+                    return fail();
+                }
+            });
+        }
+
+
+
     });
+
+
+
 </script>
 </body>
 </html>
