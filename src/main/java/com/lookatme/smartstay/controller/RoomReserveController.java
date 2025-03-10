@@ -6,7 +6,6 @@ import com.lookatme.smartstay.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +23,6 @@ public class RoomReserveController {
     private final RoomService roomService;
     private final RoomReserveService roomReserveService;
 
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/roomReserveRegister")
     public String roomReserveRegisterGet(Long room_num, Model model) {
 
@@ -37,21 +35,23 @@ public class RoomReserveController {
     }
 
     //관리자 룸예약 목록
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/roomReserveList")
-    public String roomReserveList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
+    public String roomReserveList(Principal principal, PageRequestDTO pageRequestDTO,
+                                  ReserveSearchDTO reserveSearchDTO,Model model) {
+
+        log.info("목록 진입");
 
         List<RoomDTO> roomDTOList = roomService.findmyRoom(principal.getName());
         model.addAttribute("roomDTOList", roomDTOList);
 
-        PageResponseDTO<RoomReserveItemDTO> pageResponseDTO = roomReserveService.findRoomReservePage(principal.getName(), pageRequestDTO);
+        PageResponseDTO<RoomReserveItemDTO> pageResponseDTO = roomReserveService.findRoomReservePageSearch(principal.getName(), pageRequestDTO, reserveSearchDTO);
         model.addAttribute("pageResponseDTO", pageResponseDTO);
+        model.addAttribute("reserveSearchDTO", reserveSearchDTO);
 
         return "roomreserve/roomReserveList";
     }
 
     //관리자 룸예약 정보 불러오기
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/findRoomReserve")
     @ResponseBody
     public ResponseEntity<List<RoomReserveItemDTO>> findRoomReserve(@RequestParam("room_num") Long room_num) {
@@ -59,7 +59,6 @@ public class RoomReserveController {
         return ResponseEntity.ok(roomReserveItemDTOList);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/roomReserveRead")
     public String roomReserveRead(Long roomreserveitem_num, Model model) {
 
@@ -69,7 +68,6 @@ public class RoomReserveController {
         return "roomreserve/roomReserveRead";
     }
 
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/state")
     @ResponseBody
     public ResponseEntity<?> stateChange(RoomReserveDTO roomReserveDTO) {
@@ -78,7 +76,6 @@ public class RoomReserveController {
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/checkReserve/{room_num}")
     public ResponseEntity<?> getReserveDatesForm(@PathVariable Long room_num) {
         if (room_num == null) {
