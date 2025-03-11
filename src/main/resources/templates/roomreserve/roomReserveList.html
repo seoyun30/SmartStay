@@ -10,7 +10,7 @@
 <body>
 
 <th:block layout:fragment="content">
-    <div class="container d-flex justify-content-center align-items-center">
+    <div class="container">
         <div class="row mt-5">
             <h1 class="mb-3 fw-bold text-center">룸 예약 상태</h1>
 
@@ -58,34 +58,61 @@
                 </div>
             </div>
 
-            <div class="card col-12 mt-3">
-                <form action="#" method="get">
-                    <h3 class="text-center fw-bold mt-3">검색 조건</h3>
-                    <div class="input-group p-3">
-                        <span class="input-group-text">호텔 이름</span>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div class="input-group p-3">
-                        <span class="input-group-text">방 이름</span>
-                        <input type="text" class="form-control">
-                    </div>
+            <div class="col-12 mt-3">
 
-                    <div class="input-group p-3">
-                        <span class="input-group-text">시작일</span>
-                        <input type="date" class="form-control" name="sdate"
-                        > <!--예약시작일-->
+                <div class="accordion" style="--bs-accordion-border-color: #a2aec7" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                <h3 class="fw-bold">예약 검색</h3>
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <form action="/roomreserve/roomReserveList" method="get">
 
-                        <span class="input-group-text">종료일</span>
-                        <input type="date" class="form-control" name="edate"
-                        > <!--예약종료일-->
+                                    <div class="input-group p-3">
+                                        <span class="input-group-text">예약 번호</span>
+                                        <input type="text" th:value="${reserveSearchDTO.reserve_id}" name="reserve_id" class="form-control">
+                                    </div>
+                                    <div class="input-group p-3">
+                                        <span class="input-group-text">방 이름</span>
+                                        <input type="text" th:value="${reserveSearchDTO.room_name}" name="room_name" class="form-control">
+                                    </div>
+                                    <div class="input-group p-3">
+                                        <span class="input-group-text">예약자명</span>
+                                        <input type="text" th:value="${reserveSearchDTO.reserve_name}" name="reserve_name" class="form-control">
+                                    </div>
+                                    <div class="input-group p-3">
+                                        <label class="input-group-text" for="inputGroupSelect01">예약 상태</label>
+                                        <select class="form-select" name="state" id="inputGroupSelect01">
+                                            <option value="" th:selected="${reserveSearchDTO.state == null}">전체</option>
+                                            <option value="RESERVE" th:selected="${reserveSearchDTO.state == 'RESERVE'}">예약 접수</option>
+                                            <option value="IN" th:selected="${reserveSearchDTO.state == 'IN'}">체크인</option>
+                                            <option value="OUT" th:selected="${reserveSearchDTO.state == 'OUT'}">체크아웃</option>
+                                            <option value="CANCEL" th:selected="${reserveSearchDTO.state == 'CANCEL'}">예약 취소</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="input-group p-3">
+                                        <span class="input-group-text">체크인</span>
+                                        <input type="date" th:value="${reserveSearchDTO.sdate}" class="form-control" name="sdate">
+
+                                        <span class="input-group-text">체크아웃</span>
+                                        <input type="date" th:value="${reserveSearchDTO.edate}" class="form-control" name="edate">
+                                    </div>
+
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
+                                        <button type="submit" class="btn btn-primary">검색</button>
+                                        <button type="reset" class="btn btn-secondary">초기화</button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
-                        <button type="submit" class="btn btn-primary">검색</button>
-                        <button type="reset" class="btn btn-secondary">초기화</button>
-                    </div>
-
-                </form>
             </div>
 
             <div class="card col-12 mt-3">

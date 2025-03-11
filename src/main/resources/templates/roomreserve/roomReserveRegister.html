@@ -104,7 +104,8 @@
                 </div>
 
                 <div class="text-end mb-3">
-                    <span>1박 금액 </span> <input type="hidden" class="day" name="day">
+                    <input type="hidden" class="day" name="day">
+                    <span>1박 금액 </span>
                     <span class="fs-5 fw-bold price" th:text="${roomDTO.room_price}">10000</span>
                     <span>원</span>
                     <h3 class="fw-bold">총 금액 <span class="text-danger totalPrice" th:text="${roomDTO.room_price}">10000</span>원</h3>
@@ -149,6 +150,7 @@
                     });
                     console.log(reservedDates)
                     disableReservedDates();
+                    totalpriceChange();
                 },
                 error: function () {
                     console.error("예약된 날짜를 가져오는 데 실패했습니다.");
@@ -196,15 +198,23 @@
                 dateFormat: "Y-m-d",
                 disable: Array.from(reservedDates), // 예약된 날짜 비활성화
                 minDate: todayStr,
-                defaultDate: todayStr
+                defaultDate: todayStr,
+                onChange: function () {
+                    totalpriceChange();
+                }
             });
 
             flatpickr("#out_date", {
                 dateFormat: "Y-m-d",
                 disable: Array.from(reservedDates), // 예약된 날짜 비활성화
                 minDate: tomorrowStr,
-                defaultDate: tomorrowStr
+                defaultDate: tomorrowStr,
+                onChange: function () {
+                    totalpriceChange();
+                }
             });
+
+            totalpriceChange();
         }
 
         //현재 이전 날짜 설정 불가 함수
@@ -259,6 +269,7 @@
             $(".day").val(dayDifference)
             $(".totalPrice").text(roundedPrice)
         }
+        totalpriceChange();
 
         //장바구니 추가 실행
         function addCart(room_num, in_date, out_date, day, count, reserve_request) {

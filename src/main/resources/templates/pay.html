@@ -276,16 +276,18 @@
             let reserveText = $(this).find('.reserveDate');  // 예약 날짜 텍스트를 삽입할
             let reserveDayInput = $(this).find('.reserveDay');
 
-            if (!reserveDay && inDate && outDate) {
-                let checkInDate = new Date(inDate);
-                let checkOutDate = new Date(outDate);
-                reserveDay = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));  // 날짜 차이 계산
-                if (reserveDay <= 1) {
+            if (inDate && outDate) {
+                let checkInDate = new Date(inDate.split(" ")[0]); // 날짜(YYYY-MM-DD)만 추출
+                let checkOutDate = new Date(outDate.split(" ")[0]); // 날짜(YYYY-MM-DD)만 추출
+                checkInDate.setHours(0, 0, 0, 0);
+                checkOutDate.setHours(0, 0, 0, 0);
+                reserveDay = (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24);  // 날짜 차이 계산
+                if (reserveDay < 1) {
                     reserveDay = 1;
                 }
             }
 
-            let reserveDayText = (reserveDay === 1) ? '1박' : `${reserveDay}박`;
+            let reserveDayText = `${reserveDay}박`;
 
             // 1박과 연박 구분하여 가격 계산
             let price = roomPrice * reserveDay;

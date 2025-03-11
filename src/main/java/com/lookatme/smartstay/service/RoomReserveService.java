@@ -19,8 +19,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -112,8 +116,57 @@ public class RoomReserveService {
         return reserveItemDTOPageResponseDTO;
     }
 
-    //관리자 전체보기
-    //회원의 룸예약 페이징처리 전체 조회
+    //회원의 룸예약 페이징처리 검색 포함
+    public PageResponseDTO<RoomReserveItemDTO> findMyRoomReservePageSearch (String email, PageRequestDTO pageRequestDTO, ReserveSearchDTO reserveSearchDTO) {
+
+        Pageable pageable = pageRequestDTO.getPageable("roomreserveitem_num");
+        LocalDateTime sdate = null;
+        LocalDateTime edate = null;
+        CheckState checkState = null;
+
+        if (reserveSearchDTO.getSdate() != null && !reserveSearchDTO.getSdate().toString().isEmpty()){
+            sdate = reserveSearchDTO.getSdateAsLocalDateTime();
+            log.info(sdate.toString());
+        }
+        if (reserveSearchDTO.getEdate() != null && !reserveSearchDTO.getEdate().toString().isEmpty()){
+            edate = reserveSearchDTO.getEdateAsLocalDateTime();
+            log.info(edate.toString());
+        }
+        if (reserveSearchDTO.getState() != null && !reserveSearchDTO.getState().isEmpty()) {
+            checkState = CheckState.valueOf(reserveSearchDTO.getState());
+        }
+
+        Page<RoomReserveItem> result = roomReserveItemRepository.findMyRoomReserveBySearch(
+                email,
+                reserveSearchDTO.getReserve_id(),
+                reserveSearchDTO.getHotel_name(),
+                reserveSearchDTO.getRoom_name(),
+                checkState,
+                sdate, edate, pageable);
+
+        List<RoomReserveItemDTO> roomReserveItemDTOList = result.stream()
+                .map(roomReserveItem -> modelMapper.map(roomReserveItem, RoomReserveItemDTO.class)
+                        .setRoomDTO(modelMapper.map(roomReserveItem.getRoom(), RoomDTO.class)
+                                .setHotelDTO(modelMapper.map(roomReserveItem.getRoom().getHotel(),HotelDTO.class)))
+                        .setRoomReserveDTO(modelMapper.map(roomReserveItem.getRoomReserve(), RoomReserveDTO.class)
+                                .setMemberDTO(modelMapper.map(roomReserveItem.getRoomReserve().getMember(), MemberDTO.class)))
+                        .setPayDTO(modelMapper.map(roomReserveItem.getPay(), PayDTO.class))
+                ).collect(Collectors.toList());
+
+        if (roomReserveItemDTOList.isEmpty()) {
+            roomReserveItemDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<RoomReserveItemDTO> reserveItemDTOPageResponseDTO = PageResponseDTO.<RoomReserveItemDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(roomReserveItemDTOList)
+                .total((int) result.getTotalElements())
+                .build();
+
+        return reserveItemDTOPageResponseDTO;
+    }
+
+    //관리자 룸예약 페이징처리 전체 조회
     public PageResponseDTO<RoomReserveItemDTO> findRoomReservePage (String email, PageRequestDTO pageRequestDTO) {
 
         Pageable pageable = pageRequestDTO.getPageable("roomreserveitem_num");
@@ -143,6 +196,58 @@ public class RoomReserveService {
 
         return reserveItemDTOPageResponseDTO;
     }
+
+    //관리자 룸예약 페이징처리 검색 포함
+    public PageResponseDTO<RoomReserveItemDTO> findRoomReservePageSearch (String email, PageRequestDTO pageRequestDTO, ReserveSearchDTO reserveSearchDTO) {
+
+        Pageable pageable = pageRequestDTO.getPageable("roomreserveitem_num");
+        Member member = memberRepository.findByEmail(email);
+        LocalDateTime sdate = null;
+        LocalDateTime edate = null;
+        CheckState checkState = null;
+
+        if (reserveSearchDTO.getSdate() != null && !reserveSearchDTO.getSdate().toString().isEmpty()){
+            sdate = reserveSearchDTO.getSdateAsLocalDateTime();
+            log.info(sdate.toString());
+        }
+        if (reserveSearchDTO.getEdate() != null && !reserveSearchDTO.getEdate().toString().isEmpty()){
+            edate = reserveSearchDTO.getEdateAsLocalDateTime();
+            log.info(edate.toString());
+        }
+        if (reserveSearchDTO.getState() != null && !reserveSearchDTO.getState().isEmpty()) {
+            checkState = CheckState.valueOf(reserveSearchDTO.getState());
+        }
+
+        Page<RoomReserveItem> result = roomReserveItemRepository.findRoomReserveBySearch(
+                member.getHotel().getHotel_num(),
+                reserveSearchDTO.getReserve_id(),
+                reserveSearchDTO.getRoom_name(),
+                reserveSearchDTO.getReserve_name(),
+                checkState,
+                sdate, edate, pageable);
+
+        List<RoomReserveItemDTO> roomReserveItemDTOList = result.stream()
+                .map(roomReserveItem -> modelMapper.map(roomReserveItem, RoomReserveItemDTO.class)
+                        .setRoomDTO(modelMapper.map(roomReserveItem.getRoom(), RoomDTO.class)
+                                .setHotelDTO(modelMapper.map(roomReserveItem.getRoom().getHotel(),HotelDTO.class)))
+                        .setRoomReserveDTO(modelMapper.map(roomReserveItem.getRoomReserve(), RoomReserveDTO.class)
+                                .setMemberDTO(modelMapper.map(roomReserveItem.getRoomReserve().getMember(), MemberDTO.class)))
+                        .setPayDTO(modelMapper.map(roomReserveItem.getPay(), PayDTO.class))
+                ).collect(Collectors.toList());
+
+        if (roomReserveItemDTOList.isEmpty()) {
+            roomReserveItemDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<RoomReserveItemDTO> reserveItemDTOPageResponseDTO = PageResponseDTO.<RoomReserveItemDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(roomReserveItemDTOList)
+                .total((int) result.getTotalElements())
+                .build();
+
+        return reserveItemDTOPageResponseDTO;
+    }
+
 
     //회원 룸예약 상세보기
     public RoomReserveItemDTO findRoomReserveItem(Long roomreserveitem_num, String email) {

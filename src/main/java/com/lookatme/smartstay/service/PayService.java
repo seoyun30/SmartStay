@@ -139,12 +139,23 @@ public class PayService {
             Room room = roomRepository.findById(roomItemDTO.getRoom_num())
                     .orElseThrow(() -> new IllegalArgumentException("해당 방이 존재하지 않습니다. room_num: " + roomItemDTO.getRoom_num()));
 
+            boolean isRoomReserved = roomReserveItemRepository.isRoomAlreadyReserve(
+                    room.getRoom_num(),
+                    roomItemDTO.getIn_date(),
+                    roomItemDTO.getOut_date()
+            );
+
+            if (isRoomReserved) {
+                throw new IllegalArgumentException("해당 방은 이미 예약되어 있습니다. (체크인: " + roomItemDTO.getIn_date() + ", 체크아웃: " + roomItemDTO.getOut_date() + ")");
+            }
+
             // 해당 방이 장바구니(RoomItem)에 있는지 확인하고 삭제 준비
-            RoomItem roomItem = roomItemRepository.findByRoomRoom_num(roomItemDTO.getRoom_num());
-            log.info(roomItem);
-            if (roomItem != null) {
+            List<RoomItem> roomItems = roomItemRepository.findByRoom_numAndIn_dateAndOut_date(
+                    roomItemDTO.getRoom_num(), roomItemDTO.getIn_date(), roomItemDTO.getOut_date());
+            for (RoomItem roomItem : roomItems) {
+                log.info("삭제할 예약: " + roomItem);
                 roomItemRepository.delete(roomItem);
-                roomItemRepository.flush();  //즉시 반영
+                roomItemRepository.flush();  // 즉시 반영
             }
 
             // RoomReserve(예약) 생성 및 설정
