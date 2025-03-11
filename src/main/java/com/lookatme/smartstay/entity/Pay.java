@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.entity;
 
+import com.lookatme.smartstay.constant.OrderState;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,9 @@ public class Pay extends BaseEntity {
     private String pay_method; //결제 방법
 
     private BigDecimal amount; //총 결제 금액
+
+    @Enumerated(EnumType.STRING)
+    private OrderState pay_state; //결제 상태
 
     @OneToMany(mappedBy = "pay", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)

@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.dto;
 
+import com.lookatme.smartstay.constant.OrderState;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -23,6 +24,8 @@ public class PayDTO {
     private String pay_method; //결제 방법
 
     private BigDecimal amount; //총 결제 금액
+
+    private OrderState pay_state; //결제 상태
 
     private List<RoomItemDTO> roomItemDTOList = new ArrayList<>();
 

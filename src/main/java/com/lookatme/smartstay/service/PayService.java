@@ -276,6 +276,7 @@ public class PayService {
         pay.getRoomReserveItemList().addAll(roomReserveItems);
         pay.getOrderReserveItemList().clear();
         pay.getOrderReserveItemList().addAll(orderReserveItems);
+        pay.setPay_state(OrderState.COMPLETE);
         payRepository.save(pay);
 
     }
