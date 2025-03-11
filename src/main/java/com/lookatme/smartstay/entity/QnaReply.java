@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class QnaReply extends BaseEntity{
 
     @Id
@@ -39,12 +40,5 @@ public class QnaReply extends BaseEntity{
     }
 
     // Lombok의 @ToString 제거 후 직접 작성
-    @Override
-    public String toString() {
-        return "QnaReply{" +
-                "qnaReply_num=" + qnaReply_num +
-                ", comment='" + comment + '\'' +
-                ", writer='" + writer + '\'' +
-                '}';
-    }
+
 }
