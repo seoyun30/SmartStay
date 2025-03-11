@@ -125,7 +125,7 @@ public class BrandController {
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
         log.info("수정 완료");
-        return "redirect:/brand/brandList";
+        return "redirect:/brand/brandRead?brand_num=" + brandDTO.getBrand_num();
     }
     //삭제
     @PostMapping("/brandDelete")

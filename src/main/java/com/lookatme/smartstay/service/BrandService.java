@@ -35,14 +35,13 @@ public class BrandService {
     private final ModelMapper modelMapper;
     private final ImageService imageService;
     private final MemberRepository memberRepository; //추가
-    private final HotelRepository hotelRepository;
     private final ImageRepository imageRepository;
 
     //brand 등록
     public void insert(BrandDTO brandDTO, String email,
                        List<MultipartFile> multipartFiles) throws Exception {
 
-        Member member = memberRepository.findByEmail(email); // 추가
+        Member member = memberRepository.findByEmail(email);
 
         if(member.getRole() == Role.CHIEF && member.getBrand() != null) {
             throw new IllegalStateException("이미 등록된 브랜드가 있습니다. 추가등록 불가");
@@ -50,12 +49,8 @@ public class BrandService {
 
         Brand brand = modelMapper.map(brandDTO, Brand.class);
         brand.setActive_state(ActiveState.ACTIVE);
-
-
-
         Brand brand1 = brandRepository.save(brand);
-
-        member.setBrand(brand1); //추가
+        member.setBrand(brand1);
         //이미지
         if(multipartFiles != null && multipartFiles.size() > 0) {
             imageService.saveImage(multipartFiles, "brand", brand1.getBrand_num());
