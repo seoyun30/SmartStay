@@ -84,26 +84,35 @@
                 </tr>
                 </thead>
                 <tbody>
-                <th:block th:each="qna: ${pageResponseDTO.dtoList}">
-                    <tr class="align-middle">
-                        <td th:text="${qna.qna_num}"></td>
-                        <td>
-                            <a href="#" class="increment-view-btn" th:data-qna_num="${qna.qna_num}">
-                                [[${qna.title}]]
-                            </a>
-                        </td>
-                        <td class="hotel" th:text="${qna.hotelDTO != null ? qna.hotelDTO.hotel_name : '정보 없음'}"></td>
-                        <td class="writer" th:text="${qna.writer}"></td>
-                        <td th:text="${qna.viewCount}"></td>
-                        <td>
-                            <!-- post 방식의 삭제버튼 -->
-                            <form sec:authorize="hasAnyAuthority('USER')" action="/qna/qnaDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                <input type="hidden" name="qna_num" th:value="${qna.qna_num}"> <!-- 삭제할 qna의 ID를 hidden 필드로 전달 -->
-                                <input type="hidden" class="qna-writer" th:value="${qna.writer}">
-                                <button type="submit" th:value="${qna.writer}" class="btn btn-dark delbtn" style="background-color: red;">삭제</button>
-                            </form>
-                        </td>
-                    </tr>
+                <th:block th:if="${pageResponseDTO != null}">
+                    <th:block th:if="${pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}">
+                        <tr>
+                            <td colspan="12" class="text-center">
+                                <h5 th:text="${pageRequestDTO.keyword != null and pageRequestDTO.keyword != ''} ? '검색결과가 없습니다.' : '등록된 문의 사항이 없습니다.'"></h5>
+                            </td>
+                        </tr>
+                    </th:block>
+                    <th:block th:each="qna: ${pageResponseDTO.dtoList}">
+                        <tr class="align-middle">
+                            <td th:text="${qna.qna_num}"></td>
+                            <td>
+                                <a href="#" class="increment-view-btn" th:data-qna_num="${qna.qna_num}">
+                                    [[${qna.title}]]
+                                </a>
+                            </td>
+                            <td class="hotel" th:text="${qna.hotelDTO != null ? qna.hotelDTO.hotel_name : '정보 없음'}"></td>
+                            <td class="writer" th:text="${qna.writer}"></td>
+                            <td th:text="${qna.viewCount}"></td>
+                            <td>
+                                <!-- post 방식의 삭제버튼 -->
+                                <form sec:authorize="hasAnyAuthority('USER')" action="/qna/qnaDelete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                    <input type="hidden" name="qna_num" th:value="${qna.qna_num}"> <!-- 삭제할 qna의 ID를 hidden 필드로 전달 -->
+                                    <input type="hidden" class="qna-writer" th:value="${qna.writer}">
+                                    <button type="submit" th:value="${qna.writer}" class="btn btn-dark delbtn" style="background-color: red;">삭제</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </th:block>
                 </th:block>
                 </tbody>
             </table>
