@@ -46,7 +46,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="address" class="form-label">주소</label>
-                            <input type="text" class="form-control" th:field="*{address}" id="address" placeholder="주소를 입력하세요." required readonly>
+                            <input type="text" class="form-control" th:field="*{address}" id="address" placeholder="주소를 입력하세요." required>
 
                             <div class="d-flex">
                                 <input type="text" id="sample6_postcode" class="form-control me-2" placeholder="우편번호" readonly>
@@ -111,7 +111,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="tel" class="form-label">연락처</label>
-                            <input type="text" class="form-control" th:field="*{tel}" id="tel" placeholder="번호만 입력하세요.">
+                            <input type="text" class="form-control" th:field="*{tel}" id="tel" placeholder="번호만 입력하세요." required>
                             <p id="telError" class="text-danger" style="display: none;">유효한 전화번호를 입력하세요.(예: 031-123-4567)</p>
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
