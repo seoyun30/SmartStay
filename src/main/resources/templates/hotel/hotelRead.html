@@ -115,17 +115,26 @@
                                     <script>
                                         let hotel_num = document.getElementById("hotel_num").value;
 
-                                        $(".adhBtn").on("click", function () {
-                                            location.href = "/adMain";
-                                        })
+                                        if($(".adhBtn")){
+                                            $(".adhBtn").on("click", function () {
+                                                location.href = "/adMain";
+                                            })
+                                        }
 
-                                        $(".lisBtn").on("click", function () {
-                                            location.href = "/hotel/hotelList";
-                                        })
+                                        if($(".lisBtn")){
+                                            $(".lisBtn").on("click", function () {
+                                                location.href = "/hotel/hotelList";
+                                            })
 
-                                        $(".modBtn").on("click", function () {
-                                            location.href = "/hotel/hotelModify?hotel_num=" + hotel_num;
-                                        })
+                                        }
+
+                                        if( $(".modBtn")){
+                                            $(".modBtn").on("click", function () {
+                                                location.href = "/hotel/hotelModify?hotel_num=" + hotel_num;
+                                            })
+
+                                        }
+
                                     </script>
                                 </div>
 
