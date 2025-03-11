@@ -103,6 +103,14 @@
                                     </li>
 
                                     <li th:if="${brandNum != null}" sec:authorize="hasAuthority('CHIEF')" class="has-sub">
+
+                                        <a th:href="@{/brand/brandRead(brand_num=${brandNum})}" class="sidenav-item-link">
+                                            <i class="bi bi-brightness-alt-high"></i>
+                                            <span class="nav-text">총판 정보</span>
+                                        </a>
+                                    </li>
+
+                                    <li th:if="${brandNum != null}" sec:authorize="hasAuthority('CHIEF')" class="has-sub">
                                         <a class="sidenav-item-link" data-bs-target="#hotel-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
                                             <i class="bi bi-circle"></i>
                                             <span class="nav-text">호텔 관리</span>
