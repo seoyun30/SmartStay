@@ -7,6 +7,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <!-- Bootstrap Icons CDN 추가 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 <th:block layout:fragment="content">
@@ -17,11 +19,14 @@
             <th:block th:if="${brandDTO != null}" class="col-8">
                 <div class="row">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column align-items-center">
                             <img th:src="${brandDTO.mainImage.thumbnail_url}" class="mb-5 img-fluid" alt="총판 이미지" />
-                            <h5 class="card-title">
-                                <a th:href="@{/brand/brandRead(brand_num=${brandDTO.brand_num})}" th:text="${brandDTO.brand_name}">총판 이름</a>
-                            </h5>
+                            <h1 class="card-title text-center fs-1">
+                                <a th:href="@{/brand/brandRead(brand_num=${brandDTO.brand_num})}" style="text-decoration: none; color: #742ed3;">
+                                    <i class="bi bi-shop-window" style="color: #742ed3;"></i>
+                                    <span th:text="${brandDTO.brand_name}">총판 이름</span>
+                                </a>
+                            </h1>
                         </div>
                     </div>
                 </div>
@@ -29,7 +34,7 @@
 
             <th:block th:unless="${brandDTO != null}">
                 <div>
-                    <p>소속 정보가 없습니다. 총판을 등록해주세요.</p>
+                    <p class="text-center">소속 정보가 없습니다. 총판을 등록해주세요.</p>
                 </div>
             </th:block>
         </div>
@@ -40,9 +45,12 @@
                     <div class="card">
                         <div class="card-body">
                             <img th:src="${hotelDTO.mainImage.thumbnail_url}" class="mb-5 img-fluid" alt="호텔 이미지" />
-                            <h5 class="card-title">
-                                <a th:href="@{/hotel/hotelRead(hotel_num=${hotelDTO.hotel_num})}" th:text="${hotelDTO.hotel_name}">호텔 이름</a>
-                            </h5>
+                            <h1 class="card-title text-center fs-1">
+                                <a th:href="@{/hotel/hotelRead(hotel_num=${hotelDTO.hotel_num})}" style="text-decoration: none; color: #742ed3;">
+                                    <i class="bi bi-shop-window" style="color: #742ed3;"></i>
+                                    <span th:text="${hotelDTO.hotel_name}">호텔 이름</span>
+                                </a>
+                            </h1>
                         </div>
                     </div>
                 </div>
@@ -50,7 +58,7 @@
 
             <th:block th:unless="${hotelDTO != null}">
                 <div>
-                    <p>호텔 정보가 없습니다.</p>
+                    <p class="text-center">등록된 호텔 정보가 없습니다.</p>
                 </div>
             </th:block>
         </div>

@@ -25,12 +25,10 @@ import java.util.stream.Collectors;
 public class HotelService {
 
     private final HotelRepository hotelRepository;
-    private final BrandRepository brandRepository;
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
     private final ImageService imageService;
     private final RoomRepository roomRepository;
-    private final EmailService emailService;
     private final ImageRepository imageRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewService reviewService;
@@ -38,14 +36,14 @@ public class HotelService {
     //hotel 등록
     public void insert(HotelDTO hotelDTO, String email,
                        List<MultipartFile> multipartFiles) throws Exception {
+        Member member = memberRepository.findByEmail(email);
+
         Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
         hotel.setActive_state(ActiveState.ACTIVE);
 
-        Member member = memberRepository.findByEmail(email); //추가
-        Brand brand =  member.getBrand(); //추가
-        hotel.setBrand(brand); //추가
+        Brand brand =  member.getBrand();
+        hotel.setBrand(brand);
         Hotel hotel1 = hotelRepository.save(hotel);
-
         //이미지
         if (multipartFiles != null && multipartFiles.size() > 0) {
             imageService.saveImage(multipartFiles, "hotel", hotel1.getHotel_num());
@@ -341,7 +339,6 @@ public class HotelService {
     public ImageDTO getHotelMainImage(Long hotel_num) {
 
         List<Image> imageList = imageService.findImagesByTarget("hotel", hotel_num);
-
         if (imageList != null && !imageList.isEmpty()) {
             return modelMapper.map(imageList.get(0), ImageDTO.class);
         }
