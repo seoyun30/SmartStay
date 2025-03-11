@@ -1,5 +1,6 @@
 package com.lookatme.smartstay.service;
 
+import com.lookatme.smartstay.dto.MemberDTO;
 import com.lookatme.smartstay.dto.QnaDTO;
 import com.lookatme.smartstay.dto.QnaReplyDTO;
 import com.lookatme.smartstay.dto.QnaReplyRequest;
@@ -60,7 +61,8 @@ public class QnaReplyService {
         QnaReply qnaReply = qnaReplyRepository.findByQnaNum(qna_num);
         log.info("qnaReply: {}", qnaReply);
 
-        QnaReplyDTO qnaReplyDTO = modelMapper.map(qnaReply, QnaReplyDTO.class);
+        QnaReplyDTO qnaReplyDTO = modelMapper.map(qnaReply, QnaReplyDTO.class)
+                .setMemberDTO(modelMapper.map(qnaReply.getMember(), MemberDTO.class));
         //  return qna.getQnaReply(); // 단일 QnaReply 반환
         return qnaReplyDTO;
     }

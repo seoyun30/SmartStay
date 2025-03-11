@@ -82,6 +82,7 @@
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <input type="hidden" id="loggedInUser" th:value="${loggedInEmail}">
+                                            <input type="hidden" id="loginRole" th:value="${loginUserDTO.role}">
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text" style="width: 140px">번호</span>
                                                 <input type="text"  class="form-control" id="qna_num" th:value="*{qna_num}">
@@ -125,11 +126,11 @@
                         <label for="comment">답변</label>
                         <textarea class="form-control" id="comment" rows="3"></textarea>
                     </div>
-                    <button type="submit" sec:authorize="hasAnyAuthority('CHIEF, MANAGER')" class="btn btn-primary" id="qrbtn" style="float:right; margin-left: 10px;">답변 등록</button>
+                    <button type="submit" class="btn btn-primary" id="qrbtn" style="float:right; margin-left: 10px;">답변 등록</button>
                 </form>
                 <!-- 댓글 섹션 끝 -->
 
-                <div id="comment-section">
+                <div id="comment-section" class="text-center">
 
                 </div>
 
@@ -144,7 +145,7 @@
     /* jQuery */
     $(document).ready(function() {
         let qna_num = $("#qna_num").val();
-
+        let loginRole = $("#loginRole").val();
         // 목록 버튼 클릭 시
         $(".listBtn").on("click", function () {
             // 브라우저의 히스토리에서 이전 페이지로 이동
@@ -170,6 +171,13 @@
         });
 
         $('textarea').keyup();
+
+        if (loginRole === "USER") {
+            $("#comment-form").hide()
+        } else {
+            $("#comment-form").show()
+        }
+
 
 
         //댓글
@@ -221,6 +229,7 @@
                 type: 'GET',
                 data: {qna_num: qna_num},
                 success: function (response) {
+                    console.log(response)
                     let commentForm = $('#comment-form');
                     commentForm.hide()
                     let commentSection = $('#comment-section'); // 댓글 표시 영역
@@ -232,14 +241,24 @@
                          <h3 class="mb-4">답변</h3>
                         <div class="card mb-2">
                             <div class="card-body">
-                                <p style="font-size: 20px;">${response.comment}</p> <!-- 글자 크기 설정 -->
-                                <small class="text-muted">작성자: ${response.writer} | 작성일: ${response.reg_date.substring(0,10)}</small>
-                                <button type="button" value="${response.qnaReply_num}" class="btn btn-dark replyEditBtn">수정</button>
-                                <button type="button" value="${response.qnaReply_num}" class="btn btn-dark replyDelBtn">삭제</button>
+                               <small class="text-muted">작성자: ${response.writer} | 작성일: ${response.reg_date.substring(0,10)}</small>
+                               <p style="font-size: 20px;">${response.comment}</p>
+                               <button type="button" value="${response.qnaReply_num}" data-role="${loginRole}" class="btn btn-dark roleBtn replyEditBtn">수정</button>
+                               <button type="button" value="${response.qnaReply_num}" data-role="${loginRole}" class="btn btn-dark roleBtn replyDelBtn">삭제</button>
                             </div>
                         </div>
                         `;
                         commentSection.html(commentHTML);
+
+                        $(".roleBtn").each(function () {
+                            let userRole = $(this).data("role"); // 개별 버튼의 role 가져오기
+                            if (userRole === "USER") {
+                                $(this).hide();
+                            } else {
+                                $(this).show();
+                            }
+                        });
+
                     } else {
                         commentSection.html("등록된 답변이 없습니다.");
                     }
@@ -247,6 +266,15 @@
                 },
                 error: function (xhr, status, error) {
                     console.error('댓글 목록 가져오기 실패:', error);
+                    if (loginRole === "USER") {
+                        $("#comment-form").hide()
+                    } else {
+                        $("#comment-form").show()
+                    }
+                    let commentSection = $('#comment-section'); // 댓글 표시 영역
+                    commentSection.empty(); // 기존 댓글 초기화
+                    commentSection.html("등록된 답변이 없습니다.");
+
                 }
             });
         }
@@ -256,9 +284,6 @@
             let qnaReply_num = $(this).val();
             console.log('수정 버튼 클릭 - qnaReply_num:', qnaReply_num);
             let userRole = $("button[data-role]").data("role");
-            if (userRole === 'ROLE_USER') {
-                $('.modBtn').hide();  // 수정 버튼 숨기기
-            }
             let commentText = $('#comment-text').text();
             $('#comment').val(commentText);
             $('#comment-form').show();
