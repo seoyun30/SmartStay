@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>호텔 상세보기</title>
 
     <style>
         .main-image {
@@ -31,42 +32,47 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-    <h1 class="text-center mt-5 mb-3">호텔 상세보기</h1>
+
     <div class="d-flex">
         <div class="container my-auto">
             <div class=" row justify-content-center">
-
                 <form action="/hotel/hotelRegister" method="post" th:object="${hotelDTO}">
                     <div class="row mt-5">
                         <div class="col-8 offset-2">
                             <div class="row">
                                 <div class="col text-center">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <input id="hotel_num" type="hidden" th:value="${hotelDTO.hotel_num}">
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">호텔 이름</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.hotel_name}" readonly>
-                                            </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">법인사업자번호</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.business_num}" readonly>
-                                            </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">대표자</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.owner}" readonly>
-                                            </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">주소</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.address}" readonly>
-                                            </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">전화번호</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.tel}" readonly>
-                                            </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">별점</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.score}">
+                                    <div class="mb-3 text-center">
+                                        <h1 class="text-center mt-5 mb-3">호텔 상세보기</h1>
+                                    </div>
+                                    <div class="col text-center">
+                                        <div class="card mt-3">
+                                            <div class="card-body">
+                                                <input id="hotel_num" type="hidden" th:value="${hotelDTO.hotel_num}">
+
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" style="width: 150px">호텔 이름</span>
+                                                    <input type="text" class="form-control" th:value="${hotelDTO.hotel_name}" readonly>
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" style="width: 150px">법인사업자번호</span>
+                                                    <input type="text" class="form-control" th:value="${hotelDTO.business_num}" readonly>
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" style="width: 150px">대표자</span>
+                                                    <input type="text" class="form-control" th:value="${hotelDTO.owner}" readonly>
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" style="width: 150px">주소</span>
+                                                    <input type="text" class="form-control" th:value="${hotelDTO.address}" readonly>
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" style="width: 150px">전화번호</span>
+                                                    <input type="text" class="form-control" th:value="${hotelDTO.tel}" readonly>
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" style="width: 150px">별점</span>
+                                                    <input type="text" class="form-control" th:value="${hotelDTO.score}">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -79,7 +85,7 @@
                                                 <th:block th:if="${img.repimg_yn == 'Y'}">
                                                     <label class="col-12 form-label">
                                                         대표 이미지<br>
-                                                        <img class="main-image mt-3" th:src="${img.thumbnail_url}" alt="대표 이미지">
+                                                        <img class="main-image mt-3" th:src="${img.thumbnail_url}" alt="대표 이미지" style="display: block; margin: 0 auto;">
                                                     </label>
                                                 </th:block>
                                             </th:block>
@@ -103,17 +109,22 @@
 
 
                                 <div class="col-12 mt-3 text-center">
-                                    <button type="button" class="btn btn-primary Listbtn">목록</button>
-                                    <button type="button" class="btn btn-dark Modbtn">수정</button>
+                                    <button type="button" sec:authorize="hasAnyAuthority('MANAGER')"class="btn btn-primary adhBtn">관리자홈</button>
+                                    <button type="button" sec:authorize="hasAnyAuthority('CHIEF')" class="btn btn-primary lisBtn">목록</button>
+                                    <button type="button" sec:authorize="hasAnyAuthority('CHIEF')"class="btn btn-dark modBtn">수정</button>
                                     <script>
                                         let hotel_num = document.getElementById("hotel_num").value;
 
-                                        $(".Listbtn").on("click", function () {
+                                        $(".adhBtn").on("click", function () {
+                                            location.href = "/adMain";
+                                        })
+
+                                        $(".lisBtn").on("click", function () {
                                             location.href = "/hotel/hotelList";
                                         })
 
-                                        $(".Modbtn").on("click", function () {
-                                            location.href = "/hotel/hotelModify?hotel_num="+hotel_num;
+                                        $(".modBtn").on("click", function () {
+                                            location.href = "/hotel/hotelModify?hotel_num=" + hotel_num;
                                         })
                                     </script>
                                 </div>

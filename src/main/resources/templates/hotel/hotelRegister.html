@@ -5,7 +5,7 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>호텔 등록</title>
 </head>
 <body>
 <th:block layout:fragment="content">
@@ -136,16 +136,102 @@
                     </div>
 
                     <div class="col-12 text-center">
-                        <button type="button" class="btn btn-primary Listbtn">목록</button>
+                        <button type="button" class="btn btn-primary listBtn">목록</button>
                         <button type="submit" class="btn btn-dark">등록</button>
                         <script>
-                            $(".Listbtn").on("click", function () {
+                            $(".listBtn").on("click", function () {
                                 location.href = "/hotel/hotelList";
                             })
 
                             document.addEventListener("DOMContentLoaded", function() {
+                                const formFile = document.getElementById('formFile');
+                                const imgPreview = document.querySelector('.imgpreview');
+                                const removeMainImage = document.getElementById('removeMainImage');
+                                const formFilede = document.getElementById('formFilede');
+                                const imgPreviewInput = document.querySelector('.imgpreviewinput');
 
-                                const form = document.getElementById('hotelForm');
+                                formFile.addEventListener('change', function (event) {
+                                    const file = event.target.files[0];
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = function (e) {
+                                            const img = document.createElement('img');
+                                            img.src = e.target.result;
+                                            img.alt = file.name;
+                                            img.style.width = '350px';
+                                            img.style.height = 'auto';
+                                            img.style.objectFit = 'cover';
+
+                                            imgPreview.innerHTML = '';
+                                            imgPreview.appendChild(img);
+
+                                            removeMainImage.style.display = 'block';
+                                        };
+                                        reader.readAsDataURL(file);
+                                    }
+                                });
+
+                                removeMainImage.addEventListener('click', function () {
+                                    formFile.value = '';
+                                    imgPreview.innerHTML = '';
+                                    removeMainImage.style.display = 'none';
+                                });
+
+                                formFilede.addEventListener('change', function (event) {
+                                    const files = event.target.files;
+
+                                    Array.from(files).forEach((file, index) => {
+                                        if (file) {
+                                            const reader = new FileReader();
+
+                                            reader.onload = function (e) {
+                                                const imgWrapper = document.createElement('div');
+                                                imgWrapper.classList.add('img-wrapper');
+                                                imgWrapper.style.position = 'relative';
+                                                imgWrapper.style.display = 'inline-block';
+                                                imgWrapper.style.marginRight = '10px';
+
+                                                const img = document.createElement('img');
+                                                img.src = e.target.result;
+                                                img.alt = file.name;
+                                                img.style.width = '200px';
+                                                img.style.height = 'auto';
+                                                img.style.objectFit = 'cover';
+
+                                                const removeButton = document.createElement('button');
+                                                removeButton.type = 'button';
+                                                removeButton.textContent = '올리지 않기';
+                                                removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+                                                removeButton.style.top = '5px';
+                                                removeButton.style.right = '5px';
+
+                                                removeButton.addEventListener('click', function () {
+                                                    imgWrapper.remove();
+
+                                                    const dataTransfer = new DataTransfer();
+                                                    Array.from(formFilede.files).forEach((f, i) => {
+                                                        if (i !== index) {
+                                                            dataTransfer.items.add(f);
+                                                        }
+                                                    });
+                                                    formFilede.files = dataTransfer.files;
+                                                });
+
+                                                imgWrapper.appendChild(img);
+                                                imgWrapper.appendChild(removeButton);
+                                                imgPreviewInput.appendChild(imgWrapper);
+                                            };
+
+                                            reader.readAsDataURL(file);
+
+                                        }
+                                    });
+                                });
+                            });
+
+
+                            document.addEventListener("DOMContentLoaded", function () {
+
                                 const businessNumInput = document.getElementById('business_num');
                                 const businessNumError = document.getElementById("businessNumError");
                                 const telInput = document.getElementById('tel');
@@ -154,11 +240,7 @@
                                 const hotelNameError = document.getElementById("hotelNameError");
                                 const ownerInput = document.getElementById("owner");
                                 const ownerError = document.getElementById("ownerError");
-                                const formFile = document.getElementById('formFile');
-                                const imgPreview = document.querySelector('.imgpreview');
-                                const removeMainImage = document.getElementById('removeMainImage');
-                                const formFilede = document.getElementById('formFilede');
-                                const imgPreviewInput = document.querySelector('.imgpreviewinput');
+
 
                                 // 사업자번호 자동 하이픈 추가 + 유효성 검사
                                 businessNumInput.addEventListener('input', function () {
@@ -167,7 +249,8 @@
                                     // 하이픈 자동 추가
                                     if (value.length > 3) {
                                         value = value.replace(/(\d{3})(\d{0,2})(\d{0,5})/, '$1-$2-$3');
-                                    }this.value = value;
+                                    }
+                                    this.value = value;
                                     // 유효성 검사: 정확히 10자리인지 확인
                                     businessNumError.style.display = value.replace(/-/g, '').length === 10 ? "none" : "block";
                                 });
@@ -224,101 +307,6 @@
                                     ownerError.style.display = valid ? "none" : "block"; // 유효성 검사
                                 });
 
-                                // 폼 제출 시 유효성 검사
-                                form.addEventListener("submit", function(event) {
-                                    const hotelNameValid = /^[a-zA-Z가-힣\s]+$/.test(hotelNameInput.value.trim());
-                                    const ownerValid = /^[a-zA-Z가-힣]+$/.test(ownerInput.value.trim());
-                                    const businessNumValid = businessNumInput.value.replace(/-/g, '').length === 10;
-                                    const telValid = telPattern.test(telInput.value);
-
-                                    // 유효성 검사 실패 시, 제출 방지
-                                    if (!hotelNameValid || !ownerValid || !businessNumValid || !telValid) {
-                                        event.preventDefault(); // 폼 제출 방지
-                                        alert("입력값을 확인하세요. 호텔 이름, 대표자 이름, 사업자번호, 전화번호가 올바르지 않습니다.");
-                                        if (!hotelNameValid) hotelNameInput.focus();
-                                        if (!ownerValid) ownerInput.focus();
-                                        if (!businessNumValid) businessNumInput.focus();
-                                        if (!telValid) telInput.focus();
-                                    }
-                                });
-
-                                formFile.addEventListener('change', function(event) {
-                                    const file = event.target.files[0];
-                                    if (file) {
-                                        const reader = new FileReader();
-                                        reader.onload = function(e) {
-                                            const img = document.createElement('img');
-                                            img.src = e.target.result;
-                                            img.alt = file.name;
-                                            img.style.width = '350px';
-                                            img.style.height = 'auto';
-                                            img.style.objectFit = 'cover';
-
-                                            imgPreview.innerHTML = '';
-                                            imgPreview.appendChild(img);
-
-                                            removeMainImage.style.display = 'block';
-                                        };
-                                        reader.readAsDataURL(file);
-                                    }
-                                });
-
-                                removeMainImage.addEventListener('click', function() {
-                                    formFile.value = '';
-                                    imgPreview.innerHTML = '';
-                                    removeMainImage.style.display = 'none';
-                                });
-
-                                formFilede.addEventListener('change', function(event) {
-                                    const files = event.target.files;
-
-                                    Array.from(files).forEach((file, index) => {
-                                        if (file) {
-                                            const reader = new FileReader();
-
-                                            reader.onload = function (e) {
-                                                const imgWrapper = document.createElement('div');
-                                                imgWrapper.classList.add('img-wrapper');
-                                                imgWrapper.style.position = 'relative';
-                                                imgWrapper.style.display = 'inline-block';
-                                                imgWrapper.style.marginRight = '10px';
-
-                                                const img = document.createElement('img');
-                                                img.src = e.target.result;
-                                                img.alt = file.name;
-                                                img.style.width = '200px';
-                                                img.style.height = 'auto';
-                                                img.style.objectFit = 'cover';
-
-                                                const removeButton = document.createElement('button');
-                                                removeButton.type = 'button';
-                                                removeButton.textContent = '올리지 않기';
-                                                removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
-                                                removeButton.style.top = '5px';
-                                                removeButton.style.right = '5px';
-
-                                                removeButton.addEventListener('click', function () {
-                                                    imgWrapper.remove();
-
-                                                    const dataTransfer = new DataTransfer();
-                                                    Array.from(formFilede.files).forEach((f, i) => {
-                                                        if (i !== index) {
-                                                            dataTransfer.items.add(f);
-                                                        }
-                                                    });
-                                                    formFilede.files = dataTransfer.files;
-                                                });
-
-                                                imgWrapper.appendChild(img);
-                                                imgWrapper.appendChild(removeButton);
-                                                imgPreviewInput.appendChild(imgWrapper);
-                                            };
-
-                                            reader.readAsDataURL(file);
-
-                                        }
-                                    });
-                                });
                             });
                         </script>
                     </div>

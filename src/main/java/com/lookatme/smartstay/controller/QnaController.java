@@ -1,14 +1,12 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.dto.PageResponseDTO;
-import com.lookatme.smartstay.dto.QnaDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.HotelService;
 import com.lookatme.smartstay.service.ImageService;
+import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.QnaService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -39,6 +37,7 @@ public class QnaController {
     private final ImageService imageService;
     private final MemberRepository memberRepository;
     private final HotelRepository hotelRepository;
+    private final MemberService memberService;
     private final HotelService hotelService;
 
     //등록
@@ -163,7 +162,9 @@ public class QnaController {
 
         try {
             QnaDTO qnaDTO = qnaService.read(qna_num);
+            MemberDTO memberDTO = memberService.findbyEmail(principal.getName());
             model.addAttribute("qnaDTO", qnaDTO);
+            model.addAttribute("loginUserDTO", memberDTO);
         } catch (EntityNotFoundException e) {
             log.info("id로 값을 찾지 못함");
             redirectAttributes.addFlashAttribute("errorMessage", "해당 게시글을 찾을 수 없습니다.");

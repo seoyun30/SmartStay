@@ -106,7 +106,7 @@ public class HotelController {
         redirectAttributes.addFlashAttribute("msg", "수정 완료되었습니다.");
 
         log.info("수정 완료");
-        return "redirect:/hotel/hotelList";
+        return "redirect:/hotel/hotelRead?hotel_num="+hotelDTO.getHotel_num();
     }
     //삭제
     @PostMapping("/hotelDelete")

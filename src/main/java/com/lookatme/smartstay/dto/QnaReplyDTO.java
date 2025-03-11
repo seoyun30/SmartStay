@@ -43,4 +43,9 @@ public class QnaReplyDTO {
         this.qnaDTO = qnaDTO;
         return this;
     }
+
+    public QnaReplyDTO setMemberDTO(MemberDTO memberDTO) {
+        this.memberDTO = memberDTO;
+        return this;
+    }
 }

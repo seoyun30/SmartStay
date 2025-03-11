@@ -5,7 +5,7 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>호텔 수정</title>
 </head>
 <body>
 <th:block layout:fragment="content">
@@ -19,14 +19,14 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="hotel_name" class="form-label">호텔 이름</label>
-                            <input type="text" class="form-control" th:field="*{hotel_name}" required id="hotel_name" >
+                            <input type="text" class="form-control" th:field="*{hotel_name}" id="hotel_name" required>
                             <p th:if="${#fields.hasErrors('hotel_name')}" th:errors="*{hotel_name}" class="fieldError"></p>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="business_num" class="form-label">법인사업자번호</label>
-                            <input type="text" min="0" class="form-control" th:field="*{business_num}" id="business_num">
+                            <input type="text" min="0" class="form-control" th:field="*{business_num}" id="business_num" required>
                             <p id="businessNumError" class="text-danger" style="display: none;">유효한 사업자번호를 입력하세요.(예: 123-11-45678)</p>
                             <p th:if="${#fields.hasErrors('business_num')}" th:errors="*{business_num}" class="fieldError"></p>
                         </div>
@@ -34,7 +34,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="owner" class="form-label">대표자</label>
-                            <input type="text" min="0" class="form-control" th:field="*{owner}" id="owner">
+                            <input type="text" min="0" class="form-control" th:field="*{owner}" id="owner" required>
                             <p th:if="${#fields.hasErrors('owner')}" th:errors="*{owner}" class="fieldError"></p>
                         </div>
                     </div>
@@ -129,7 +129,7 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="tel" class="form-label">연락처</label>
-                            <input type="text" min="0" class="form-control" th:field="*{tel}" id="tel">
+                            <input type="text" min="0" class="form-control" th:field="*{tel}" id="tel" required>
                             <p id="telError" class="text-danger" style="display: none;">유효한 전화번호를 입력하세요.(예: 031-123-4567)</p>
                             <p th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="fieldError"></p>
                         </div>
@@ -178,10 +178,10 @@
                             </div>
 
                             <div class="col-12 mt-3 text-center">
-                                <button type="button" class="btn btn-primary Listbtn">목록</button>
+                                <button type="button" class="btn btn-primary lisBtn">목록</button>
                                 <button type="submit" class="btn btn-dark">저장</button>
                                 <script>
-                                    $(".Listbtn").on("click", function () {
+                                    $(".lisBtn").on("click", function () {
                                         location.href = "/hotel/hotelList";
                                     })
                                     document.addEventListener("DOMContentLoaded", function() {
