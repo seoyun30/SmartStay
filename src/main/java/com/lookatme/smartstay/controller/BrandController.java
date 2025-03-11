@@ -56,12 +56,12 @@ public class BrandController {
 
             brandService.insert(brandDTO, principal.getName(), multi);
             redirectAttributes.addFlashAttribute("msg", "등록이 완료되었습니다.");
-            return "redirect:/brand/brandList";
+            return "redirect:/adMain";
 
         } catch (IllegalStateException e) {         //브랜드 중복가입시 에러메시지 알림 추가
             log.error("브랜드 등록 오류: " + e.getMessage());
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/brand/brandRegister";
+            return "redirect:/brand/brandList";
         }catch (Exception e) {
             log.error("예상치 못한 오류 발생 : " + e.getMessage());
             redirectAttributes.addFlashAttribute("error", "브랜드 등록 중 오류가 발생했습니다.");
