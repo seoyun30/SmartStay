@@ -53,29 +53,22 @@
                                 <div id="image-main">
                                     <label class="form-label">
                                         첨부 이미지<br>
-                                        <div class="row row-cols-md-2">
-                                        <th:block th:each="img : ${noticeDTO.imageDTOList}">
-
+                                        <div class="row row-cols-md-1">
+                                            <th:block th:each="img : ${noticeDTO.imageDTOList}">
                                                 <div class="col position-relative">
-                                                    <img th:src="${img.image_url}" alt="Main Image" width="100%">
-                                                    <button type="button" th:value="${img.image_id}" class="btn btn-dark delete_image_btn position-absolute  top-0 end-0 me-3">삭제</button>
+                                                    <img th:src="${img.image_url}" alt="Main Image" width="250px">
+                                                    <button type="button" th:value="${img.image_id}" class="btn btn-sm btn-outline-danger delete_image_btn">삭제</button>
                                                 </div>
-
-
-                                        </th:block>
+                                            </th:block>
                                         </div>
                                     </label>
                                 </div>
-
-
                             </div>
-
                         </div>
 
                         <div class="aa mb-3">
                             <label for="imgpreviewinput" class="form-label">이미지 추가</label>
-                            <input type="file" name="multipartFileList" id="imgpreviewinput" class="form-control imgpreviewinput" ><br>
-
+                            <input type="file" name="multipartFileList" id="imgpreviewinput" class="form-control imgpreviewinput"><br>
                         </div>
 
 
@@ -133,7 +126,7 @@
 
                     let str = `<div class="preview">
                                                 <img width="300px"  src="${e.target.result}">
-                                                <button type="button" class="bb btn-sm btn-secondary">올리지 않기</button>
+                                                <button type="button" class="bb btn-sm btn-secondary" style="padding: 10px 20px; font-size: 12px;">올리지 않기</button>
                                               </div>`
                     $(".imgpreviewinput").val("")
                     $(".aa").append(str)
