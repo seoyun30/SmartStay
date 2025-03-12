@@ -1,10 +1,7 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.Util.PagenationUtil;
-import com.lookatme.smartstay.dto.BrandDTO;
-import com.lookatme.smartstay.dto.HotelDTO;
-import com.lookatme.smartstay.dto.ImageDTO;
-import com.lookatme.smartstay.dto.PageRequestDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.repository.ImageRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.BrandService;
@@ -61,15 +58,13 @@ public class HotelController {
 
     //목록
     @GetMapping("/hotelList") //슈퍼어드민만 사용
-    public String hotelList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
-        log.info("목록진입");
+    public String hotelList( Model model, PageRequestDTO pageRequestDTO, Principal principal) {
+        log.info("pageRequestDTO : " + pageRequestDTO);
 
-        List<HotelDTO> hotelDTOList =  hotelService.myHotelList(principal.getName());
-        if (hotelDTOList.isEmpty()) {
-            hotelDTOList = new ArrayList<>();
-        }
+        PageResponseDTO<HotelDTO> pageResponseDTO= hotelService.hotelList(pageRequestDTO, principal.getName());
+        log.info("pageResponseDTO : " + pageResponseDTO);
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
 
-        model.addAttribute("hotelDTOList", hotelDTOList);
         return "hotel/hotelList";
     }
 

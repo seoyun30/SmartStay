@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,6 +54,58 @@ public class HotelService {
     }
 
     //chief 목록
+    public PageResponseDTO<HotelDTO> hotelList(PageRequestDTO pageRequestDTO, String email) {
+        log.info("진입:" + pageRequestDTO);
+
+        Pageable pageable = pageRequestDTO.getPageable("hotel_num");
+        Member member = memberRepository.findByEmail(email);
+        Long brand_num = member.getBrand().getBrand_num();
+        Page<Hotel> hotelPage = null;
+
+        if (pageRequestDTO.getType() == null || pageRequestDTO.getKeyword() == null || pageRequestDTO.getKeyword().equals("")) {
+            hotelPage = hotelRepository.hotelPage(brand_num, pageable);
+        } else if (pageRequestDTO.getType().equals("n")) {
+            log.info("호텔 이름으로 검색 검색키워드는" + pageRequestDTO.getKeyword());
+            hotelPage = hotelRepository.findByB_numAndHotel_name(brand_num, pageRequestDTO.getKeyword(), pageable);
+
+        } else if (pageRequestDTO.getType().equals("o")) {
+            log.info("대표자로 검색 검색키워드는" + pageRequestDTO.getKeyword());
+            hotelPage = hotelRepository.findByB_numAndOwner(brand_num, pageRequestDTO.getKeyword(), pageable);
+
+        } else if (pageRequestDTO.getType().equals("a")) {
+            log.info("주소로 검색으로  검색키워드는" + pageRequestDTO.getKeyword());
+            hotelPage = hotelRepository.findByB_numAndAddress(brand_num, pageRequestDTO.getKeyword(), pageable);
+
+        } else if (pageRequestDTO.getType().equals("all")) {
+            log.info("전체 검색으로  검색키워드는" + pageRequestDTO.getKeyword());
+            hotelPage = hotelRepository.findByAllSearch(brand_num, pageRequestDTO.getKeyword(), pageable);
+        }
+        List<Hotel> hotels = hotelPage.getContent();
+        hotels.forEach(hotel -> log.info(hotel));
+        List<HotelDTO> hotelDTOS = hotels.stream()
+                .map(hotel -> {
+                    HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+                    BrandDTO brandDTO = modelMapper.map(hotel.getBrand(), BrandDTO.class);
+                    hotelDTO.setBrandDTO(brandDTO);
+                    List<Room> rooms = roomRepository.findRoomsByHotelNum(hotel.getHotel_num());
+                    List<RoomDTO> roomDTOS = rooms.stream()
+                            .map(room -> modelMapper.map(room, RoomDTO.class))
+                            .collect(Collectors.toList());
+                    hotelDTO.setRooms(roomDTOS);
+                    Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
+                    hotelDTO.setLowestPrice(lowestPrice);
+                    ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
+                    hotelDTO.setMainImage(mainImage);
+                    return hotelDTO;
+                })
+                .collect(Collectors.toList());
+        return PageResponseDTO.<HotelDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(hotelDTOS)
+                .total((int) hotelPage.getTotalElements())
+                .build();
+    }
+
     public List<HotelDTO> hotelList() {
         List<Hotel> hotels = hotelRepository.findAll();
         hotels.forEach(hotel -> log.info(hotel));
@@ -74,6 +128,27 @@ public class HotelService {
                 .collect(Collectors.toList());
 
         return hotelDTOS;
+    }
+
+    //목록에서 내가 속한 호텔만 보기
+    public List<HotelDTO> myHotelList(String email){
+        Member member = memberRepository.findByEmail(email);
+        if (member == null || member.getBrand() == null) {
+            List<HotelDTO> hotelDTOList = new ArrayList<>();
+            return hotelDTOList;
+        }
+
+        Brand brand = member.getBrand();
+
+        List<Hotel> hotels = hotelRepository.findByMyBrand(brand);
+        return hotels.stream()
+                .map(hotel -> {
+                    HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+                    Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
+                    hotelDTO.setLowestPrice(lowestPrice);
+                    return hotelDTO;
+                })
+                .collect(Collectors.toList());
     }
 
     //활성된 호텔만 유저 보이기
@@ -107,31 +182,6 @@ public class HotelService {
                 .collect(Collectors.toList());
 
         return hotelDTOS;
-    }
-
-    //목록에서 내가 속한 호텔만 보기
-    public List<HotelDTO> myHotelList(String email){
-        Member member = memberRepository.findByEmail(email);
-        if (member == null || member.getBrand() == null) {
-            List<HotelDTO> hotelDTOList = new ArrayList<>();
-            return hotelDTOList;
-        }
-
-        Brand brand = member.getBrand();
-
-        List<Hotel> hotels = hotelRepository.findByMyBrand(brand);
-        return hotels.stream()
-                .map(hotel -> {
-                    HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
-                    Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
-                    hotelDTO.setLowestPrice(lowestPrice);
-                    return hotelDTO;
-                })
-                .collect(Collectors.toList());
-       /* List<Hotel> hotels = hotelRepository.findByMyBrand(brand);
-        List<HotelDTO> hotelDTOS = hotels.stream()
-                .map(brand -> modelMapper.map(hotels, HotelDTO.class)).collect(Collectors.toList());
-        return hotelDTOS;*/
     }
 
     //chief 상세보기
@@ -204,7 +254,6 @@ public class HotelService {
 
         return hotelDTO;
     }
-
 
     //chief 수정
     public void update(HotelDTO hotelDTO,
@@ -285,28 +334,6 @@ public class HotelService {
     }
 
 
-    public List<HotelDTO> getHotelByMember(MemberDTO memberDTO) {
-
-        Member member = memberRepository.findByEmail(memberDTO.getEmail());
-
-        log.info("멤버 : " + member);
-
-        List<Hotel> hotels = hotelRepository.findByEmail(member.getEmail());
-
-        if (hotels.isEmpty()) {
-            log.info("해당 사용자의 호텔 정보가 없습니다.");
-        } else {
-            log.info("호텔 목록 크기: {}", hotels.size());
-        }
-
-        // 호텔 리스트를 HotelDTO로 변환
-        List<HotelDTO> hotelDTOS = hotels.stream()
-                .map(hotel -> modelMapper.map(hotel, HotelDTO.class)
-                ).collect(Collectors.toList());
-
-        return hotelDTOS;
-    }
-
     public List<HotelDTO> searchList(String query) {
 
         List<Hotel> hotels = hotelRepository.findByHotel_nameIgnoreCaseOrAddressContainingIgnoreCase(query);
@@ -345,10 +372,4 @@ public class HotelService {
         return null;
     }
 
-    public List<HotelDTO> getHotelsSortedByPrice(String order) {
-        Sort sort = Sort.by(order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, "lowestPrice");
-        List<Hotel> hotels = hotelRepository.findAll(sort);
-
-        return hotels.stream().map(hotel -> modelMapper.map(hotel, HotelDTO.class)).collect(Collectors.toList());
-    }
 }
