@@ -95,12 +95,15 @@ public class MenuController {
         if (hotelDTO == null){
             return "redirect:/adMain";
         }
+
+        Long hotelNum = hotelDTO.getHotel_num();
+
         model.addAttribute("hotel_name", hotelDTO.getHotel_name());
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
 
         if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
-            PageResponseDTO<MenuDTO> pageResponseDTO = menuService.searchList(searchType, searchKeyword, sortField, sortDir, pageRequestDTO);
+            PageResponseDTO<MenuDTO> pageResponseDTO = menuService.searchList(hotelNum, searchType, searchKeyword, sortField, sortDir, pageRequestDTO);
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("searchType", searchType);
             model.addAttribute("searchKeyword", searchKeyword);

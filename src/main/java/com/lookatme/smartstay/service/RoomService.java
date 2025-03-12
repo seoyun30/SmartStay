@@ -184,7 +184,7 @@ public class RoomService {
         log.info("룸이 삭제되었습니다. room_num: " + id);
     }
 
-    public PageResponseDTO<RoomDTO> searchList(String searchType, String searchKeyword, String sortField, String sortDir, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<RoomDTO> searchList(Long hotelNum, String searchType, String searchKeyword, String sortField, String sortDir, PageRequestDTO pageRequestDTO) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
@@ -192,16 +192,16 @@ public class RoomService {
 
         switch (searchType) {
             case "keyword":
-                result = roomRepository.findByRoom_nameContainingIgnoreCaseOrRoom_infoContainingIgnoreCaseOrRoom_typeContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                result = roomRepository.findByRoom_nameContainingIgnoreCaseOrRoom_infoContainingIgnoreCaseOrRoom_typeContainingIgnoreCase(hotelNum, searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "roomName":
-                result = roomRepository.findByRoom_nameContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                result = roomRepository.findByRoom_nameContainingIgnoreCase(hotelNum, searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "roomInfo":
-                result = roomRepository.findByRoom_infoContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                result = roomRepository.findByRoom_infoContainingIgnoreCase(hotelNum, searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "roomType":
-                result = roomRepository.findByRoom_typeContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                result = roomRepository.findByRoom_typeContainingIgnoreCase(hotelNum, searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             default:
                 result = roomRepository.findAll(PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));

@@ -5,7 +5,7 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>공지사항</title>
+    <title>SmartStay</title>
 </head>
 <body>
 
@@ -106,24 +106,17 @@
                     let str = `<input name="notice_num" value="${notice_num}">`
                     formObj.html(str);
                     formObj.submit();
-
-
                 }
             })
 
 
 
             delete_image_btn.on("click", function () {
-
                 $(this).parent().hide()
 
                 let str = `<input name="delnumList" type="hidden" value="${delete_image_btn.val()}">`
                 formObj.append(str)
-
-
             })
-
-
         })
 
     </script>

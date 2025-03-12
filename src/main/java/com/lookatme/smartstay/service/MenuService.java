@@ -463,7 +463,7 @@ public class MenuService {
         log.info("메뉴가 삭제되었습니다. menu_num:" + id);
     }
 
-    public PageResponseDTO<MenuDTO> searchList(String searchType, String searchKeyword, String sortField, String sortDir, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<MenuDTO> searchList(Long hotelNum, String searchType, String searchKeyword, String sortField, String sortDir, PageRequestDTO pageRequestDTO) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
@@ -471,16 +471,16 @@ public class MenuService {
 
         switch (searchType) {
             case "keyword":
-                result = menuRepository.findByMenu_nameContainingIgnoreCaseOrMenu_detailContainingIgnoreCaseOrMenu_sortContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                result = menuRepository.findByMenu_nameContainingIgnoreCaseOrMenu_detailContainingIgnoreCaseOrMenu_sortContainingIgnoreCase(hotelNum, searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "menuName":
-                result = menuRepository.findByMenu_nameContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                result = menuRepository.findByMenu_nameContainingIgnoreCase(hotelNum, searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "menuDetail":
-                result = menuRepository.findByMenu_detailContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                result = menuRepository.findByMenu_detailContainingIgnoreCase(hotelNum, searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "menuSort":
-                result = menuRepository.findByMenu_sortContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                result = menuRepository.findByMenu_sortContainingIgnoreCase(hotelNum, searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             default:
                 result = menuRepository.findAll(PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
