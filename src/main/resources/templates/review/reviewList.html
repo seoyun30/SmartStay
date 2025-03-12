@@ -81,12 +81,13 @@
                     <div class="container d-flex flex-column align-items-center">
                         <!-- 리뷰 카드 -->
                         <div class="card mb-3 p-3" style="width: 55rem;">
+                            <input type="hidden" th:text="${review.rev_num}">
 
-                            <div class="review-container">
+                            <div class="review-container" >
                                 <!-- 첫 번째 칸: 별점과 날짜 -->
                                 <div class="review-info d-flex justify-content-between mb-1 starpoint_wrap">
                                     <!-- 별점 -->
-                                    <div class="starpoint_box">
+                                    <div class="starpoint_box" >
                                         <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>
                                         <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>
                                         <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>
@@ -122,6 +123,8 @@
 
                                         <span class="starpoint_bg"></span>
                                     </div>
+
+                                    <span class="star-rating" id="data-score" th:text="${review.score}"></span>
                                     <!-- 작성 날짜 -->
                                     <div class="review-date">
                                         <p th:text="${review.FormattedReg_date}"></p>
@@ -181,18 +184,53 @@
 </th:block>
 <script th:inline="javascript" layout:fragment="script">
 
-    // $(document).ready(function (){
-    //     let removeBtn = $(".removeBtn"); // 삭제 버튼
-    //     let form = $(".delform");
-    //     let rev_num = $(".num").val()
-    //
-    //     $(".score").each(function () {
-    //         var score = parseFloat($(this).text()); // 점수 가져오기 (0.5~5)
-    //         var fullStars = Math.floor(score); // 가득 찬 별 개수
-    //         var halfStar = (score % 1 !== 0); // 0.5점 여부 확인
-    //         var emptyStars = 5 - fullStars - (halfStar ? 1 : 0); // 빈 별 개수
+
+    //별점을 each로 가져온다
+    // $(document).ready(function () {
+    //     $(".starpoint_box").each(function () {
+    //         var score = parseFloat($(this).find(".star-rating").text()); // 점수 가져오기 (0.5 ~ 5)
+    //         var revNum = $(this).data("rev_num"); // 리뷰 번호 가져오기
+    //         var percentage = (score / 5) * 100; // 퍼센트 계산 (배경 바 표시용)
     //
     //         var starHtml = "";
+    //
+    //         // ⭐ 라벨 생성 (0.5점 단위로 10개)
+    //         for (var i = 1; i <= 10; i++) {
+    //             var value = (i * 0.5).toFixed(1);
+    //             starHtml += `
+    //             <label for="starpoint_${revNum}_${i}" class="label_star" title="${value}">
+    //                 <span class="blind">${value}점</span>
+    //             </label>
+    //         `;
+    //         }
+    //
+    //         // ⭐ 라디오 버튼 생성 (체크 여부 확인)
+    //         for (var i = 1; i <= 10; i++) {
+    //             var value = (i * 0.5).toFixed(1);
+    //             starHtml += `
+    //             <input type="radio" name="score_${revNum}" value="${value}" id="starpoint_${revNum}_${i}"
+    //                    class="star_radio" ${score == value ? 'checked' : ''} readonly>
+    //         `;
+    //         }
+    //
+    //         // ⭐ 배경 바 추가 (점수에 따른 비율로 표시)
+    //         starHtml += `<span class="starpoint_bg" style="width: ${percentage}%;"></span>`;
+    //
+    //         // 기존 요소에 삽입
+    //         $(this).html(starHtml);
+    //     });
+    // });
+
+
+
+
+    // $(".score").each(function () {
+        //     var score = parseFloat($(this).text()); // 점수 가져오기 (0.5~5)
+        //     var fullStars = Math.floor(score); // 가득 찬 별 개수
+        //     var halfStar = (score % 1 !== 0); // 0.5점 여부 확인
+        //     var emptyStars = 5 - fullStars - (halfStar ? 1 : 0); // 빈 별 개수
+
+            // var starHtml = "";
     //
     //         // 가득 찬 별(⭐) 추가
     //         for (var i = 0; i < fullStars; i++) {

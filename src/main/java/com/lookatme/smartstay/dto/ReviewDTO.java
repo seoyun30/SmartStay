@@ -27,13 +27,6 @@ public class ReviewDTO {
     @NotBlank(message = "별점은 0.5점 부터 시작합니다")
     private String score; //별점
 
-    public String getScore() {
-        return score;
-    }
-    public void setScore(String score) {
-        this.score = score;
-    }
-
     @NotNull
     private Long roomreserveitem_num;
 
@@ -41,22 +34,34 @@ public class ReviewDTO {
 
 //    private Long brand_num;
 
+    private MemberDTO memberDTO; //회원 조인
+
+    private HotelDTO hotelDTO; //호텔 조인
+
+    private RoomDTO roomDTO;
+
+    // 작성일
+    private LocalDateTime reg_date;
+
+    // 수정일
+    private LocalDateTime modi_date;
+
+    private String create_by;
+
+    private String modified_by;
+
+    //이미지
+    public List<ImageDTO> imageDTOList = new ArrayList<>(); //여러 이미지를 담는 용
+
+    private List<Long> imageIdList = new ArrayList<>(); // 이미지 식별용(이미지 ID를 저장하는 리스트)
+
+    private ImageDTO mainImage;
+
     // 룸 예약 설정
     public ReviewDTO setRoomReserveDTO(RoomReserveDTO roomReserveDTO) {
         this.roomReserveDTO = roomReserveDTO;
         return this;
     }
-
-    private MemberDTO memberDTO; //회원 조인
-
-//    public ReviewDTO setMemberDTO(MemberDTO memberDTO) {
-//        this.memberDTO = memberDTO;
-//        return this;
-//    }
-
-    private HotelDTO hotelDTO; //호텔 조인
-
-    private RoomDTO roomDTO;
 
     // 호텔 설정
     public ReviewDTO setHotelDTO(HotelDTO hotelDTO) {
@@ -68,9 +73,6 @@ public class ReviewDTO {
         this.roomDTO = roomDTO;
         return this;
     }
-
-    // 작성일
-    private LocalDateTime reg_date;
 
     // 경과 시간 계산
     public  String getFormattedReg_date() {
@@ -90,38 +92,6 @@ public class ReviewDTO {
             return (seconds / 86400) + "일 전";
         }
     }
-
-    private LocalDateTime getReg_date() {
-        return reg_date;
-    }
-    public void setReg_date(LocalDateTime reg_date) {
-        this.reg_date = reg_date;
-    }
-
-
-    // 수정일
-    private LocalDateTime modi_date;
-
-
-    private String create_by;
-
-    private String modified_by;
-
-    //이미지
-    public List<ImageDTO> imageDTOList = new ArrayList<>(); //여러 이미지를 담는 용
-
-    private List<Long> imageIdList = new ArrayList<>(); // 이미지 식별용(이미지 ID를 저장하는 리스트)
-
-    private ImageDTO mainImage;
-
-    public ImageDTO getMainImage() {
-        return mainImage;
-    }
-
-    public void setMainImageDTO(ImageDTO mainImage) {
-        this.mainImage = mainImage;
-    }
-
 
 
 }

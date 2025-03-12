@@ -1,6 +1,5 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.*;
 import com.lookatme.smartstay.repository.*;
@@ -10,16 +9,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,31 +38,41 @@ public class ReviewService {
     private final ImageService imageService;
     private final RoomReserveRepository roomReserveRepository; // 호텔예약정보 필요
     private final RoomReserveItemRepository roomReserveItemRepository;
-    private final FileService fileService;
 
-    @Value("${imgUploadLocation}")
-    private String imgUploadLocation;
+    // 관리자 (호텔리뷰 : 페이징)
+    public PageResponseDTO<ReviewDTO> getAdHotelReviewList (HotelDTO hotelDTO, PageRequestDTO pageRequestDTO, String sortField, String sortDir) {
 
-    //리뷰의 전체 조회
-    //관리자 리뷰 전체 목록 (관리자 리뷰 페이지 치프, 매니저)
-    public List<ReviewDTO> getBrandReviewList (Long brand_num, String email) {
+        Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
 
-        List<Review> brandReviews = reviewRepository.findByHotelorBrand(brand_num);
+        // 정렬 설정
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
-        // 리뷰가 없는 경우 빈 리스트 반환
-        if (brandReviews.isEmpty()) {
-            return Collections.emptyList();
-        }
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() -1, pageRequestDTO.getSize(), sort);
 
-        // 리뷰(entity) 목록을 ReviewDTO 목록으로 변환
-        List<ReviewDTO> reviewDTOList = brandReviews.stream()
-                .map(review -> modelMapper.map(review, ReviewDTO.class)
-                        .setRoomDTO(modelMapper.map(review.getRoom(), RoomDTO.class)
-                                .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class)))
-                )
+        // DB에서 리뷰 목록 조회
+        Page<Review> result = reviewRepository.findByAdHotel(hotel, pageable);
+        log.info("PageResult: " + result);
+
+        // 조회된 리뷰 목록 DTO로 변환
+        List<ReviewDTO> reviewDTOList = result.stream()
+                .map(review -> {
+                    ReviewDTO reviewDTO = modelMapper.map(review, ReviewDTO.class);
+                    return reviewDTO;
+                })
                 .collect(Collectors.toList());
 
-        return reviewDTOList;
+        if (reviewDTOList == null) {
+            reviewDTOList = Collections.emptyList();
+        }
+
+        PageResponseDTO<ReviewDTO> reviewDTOPageResponseDTO =
+                PageResponseDTO.<ReviewDTO>withAll().pageRequestDTO(pageRequestDTO)
+                .dtoList(reviewDTOList).total((int) result.getTotalElements())
+                .build();
+
+        log.info("PageResponseDTO: " + reviewDTOPageResponseDTO);
+
+        return reviewDTOPageResponseDTO;
     }
 
     //호텔에 있는 리뷰 전체 조회
@@ -100,8 +107,6 @@ public class ReviewService {
     }
 
 
-
-
     //유저 리뷰 전체 목록 (유저 my 페이지)
     public List<ReviewDTO> userMyReviewList(String email) {
 
@@ -130,7 +135,6 @@ public class ReviewService {
 
         return reviewDTOList;
     }
-
 
     //리뷰 등록<작성>(룸 예약을 한 유저만 등록 가능)
     public void reviewRegister(ReviewDTO reviewDTO, String email, List<MultipartFile> multipartFiles, Long mainImageIndex) throws Exception {
@@ -223,29 +227,28 @@ public class ReviewService {
         return reviewDTO;
     }
 
-
     //리뷰 수정(리뷰를 등록한 유저만 가능)
     public void reviewModify(ReviewDTO reviewDTO, List<MultipartFile> multipartFiles, List<Long> delnumList) throws Exception {
 
         log.info(" 리뷰 수정 요청 : {} " , reviewDTO);
 
-//        // 별점 유효성 체크
-//        String scoreStr = reviewDTO.getScore(); // 클라이언트에서 받은 별점
-//        if (scoreStr == null || scoreStr.trim().isEmpty()) {
-//            throw new IllegalArgumentException("별점은 필수 입력값입니다.");
-//        }
-//
-//        double score;
-//        try {
-//            score = Double.parseDouble(scoreStr); // 별점을 숫자로 변환
-//        } catch (NumberFormatException e) {
-//            throw new IllegalArgumentException("별점은 숫자여야 합니다.");
-//        }
-//
-//        // 별점 유효성 체크
-//        if (score < 1.0 || score > 5.0 || score * 10 % 5 != 0) {
-//            throw new IllegalArgumentException("별점은 1~5점 사이여야 하고, 0.5 단위 입력도 가능합니다.");
-//        }
+        // 별점 유효성 체크
+        String scoreStr = reviewDTO.getScore(); // 클라이언트에서 받은 별점
+        if (scoreStr == null || scoreStr.trim().isEmpty()) {
+            throw new IllegalArgumentException("별점은 필수 입력값입니다.");
+        }
+
+        double score;
+        try {
+            score = Double.parseDouble(scoreStr); // 별점을 숫자로 변환
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("별점은 숫자여야 합니다.");
+        }
+
+        // 별점 유효성 체크
+        if (score < 1.0 || score > 5.0 || score * 10 % 5 != 0) {
+            throw new IllegalArgumentException("별점은 1~5점 사이여야 하고, 0.5 단위 입력도 가능합니다.");
+        }
 
         //리뷰 조회 , 없으면 예외발생
         Review review = reviewRepository.findById(reviewDTO.getRev_num()).orElseThrow(EntityNotFoundException::new);
@@ -302,18 +305,57 @@ public class ReviewService {
 
         // 1. 리뷰 조회
 
-
         reviewRepository.deleteById(id);
         log.info("리뷰 삭제 완료 rev_num : " + id);
     }
 
+    public PageResponseDTO<ReviewDTO> searchList(String email, PageRequestDTO pageRequestDTO, ReserveSearchDTO reserveSearchDTO) {
 
-    //페이지네이션 (리스트가 3개여서 나눠서 작성)
-    //관리자 리뷰 페이지네이션
-    public PageResponseDTO<ReviewDTO> adMyReviewList(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = pageRequestDTO.getPageable();
 
+        // 정렬 기준을 설정하는 부분
+        if ("t".equals(pageRequestDTO.getType())) {
+            // 시간순 정렬 (작성일 기준)
+            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "reg_date"));
+        } else if ("s".equals(pageRequestDTO.getType())) {
+            // 별점순 정렬
+            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "score"));
+        } else {
+            // 기본 정렬 (rev_num 기준)
+            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "rev_num"));
+        }
 
-        return null;
+        Member member = memberRepository.findByEmail(email);
+        //방이름
+        //작성자 검색
+        Page<Review> result = reviewRepository.findReviewBySearch(
+                member.getHotel().getHotel_num(),
+                reserveSearchDTO.getHotel_name(),
+                reserveSearchDTO.getRoom_name(),
+                pageable
+        );
+
+        List<ReviewDTO> reviewDTOList = result.stream()
+                .map(review -> modelMapper.map(review, ReviewDTO.class)
+                        .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class))
+                        .setRoomDTO(modelMapper.map(review.getRoom(), RoomDTO.class)))
+                .collect(Collectors.toList());
+
+        for (ReviewDTO reviewDTO : reviewDTOList) {
+            List<Image> reviewImageList = imageService.findImagesByTarget("review", reviewDTO.getRev_num() );
+            if (!reviewImageList.isEmpty()) {
+                List<ImageDTO> reviewImageDTOList = reviewImageList.stream()
+                        .map(image -> modelMapper.map(image, ImageDTO.class)).collect(Collectors.toList());
+                reviewDTO.setImageDTOList(reviewImageDTOList);
+            } else {
+                reviewDTO.setImageDTOList(null);
+            }
+        }
+
+        PageResponseDTO<ReviewDTO> reviewDTOPageResponseDTO = PageResponseDTO.<ReviewDTO>withAll()
+                .pageRequestDTO(pageRequestDTO).dtoList(reviewDTOList).total((int)result.getTotalElements()).build();
+
+        return reviewDTOPageResponseDTO;
     }
 
 

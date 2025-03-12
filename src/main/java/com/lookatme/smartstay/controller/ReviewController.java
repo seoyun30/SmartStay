@@ -1,8 +1,6 @@
 package com.lookatme.smartstay.controller;
 
-import com.lookatme.smartstay.dto.PageRequestDTO;
-import com.lookatme.smartstay.dto.ReviewDTO;
-import com.lookatme.smartstay.dto.RoomReserveItemDTO;
+import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
@@ -50,33 +48,51 @@ public class ReviewController {
 
     //관리자 리뷰 목록 페이지(chief, manager권한)
     @GetMapping("/adMyReviewList")
-    public String adMyReviewList(Principal principal,
-                                 @RequestParam(value = "brand_num", required = false) Long brand_num,
-                                 @RequestParam(value = "hotel_num", required = false) Long hotel_num, PageRequestDTO pageRequestDTO, Model model) {
+    public String adMyReviewList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
+                                 @RequestParam(defaultValue = "rev_num") String sortField,
+                                 @RequestParam(defaultValue = "asc") String sortDir,
+                                 @RequestParam(required = false) String searchType,
+                                 @RequestParam(required = false) String searchKeyword) {
 
         if (principal == null) {
             return "redirect:/member/login";
-            //권한 : Chief(브랜드 별 리뷰목록)
         }
 
-        Member member = memberRepository.findByEmail(principal.getName());
-        if (member.getRole().name().equals("CHIEF")) {
-            List<ReviewDTO> reviewDTOList = reviewService.getBrandReviewList(brand_num, principal.getName());
-            model.addAttribute("reviewDTOList", reviewDTOList);
-            reviewDTOList.forEach(reviewDTO -> log.info("reviewDTO: {}", reviewDTO));
-            return "review/adMyReviewList";
-
-            //권한 : 매니저(호텔 별 리뷰목록)
-        } else if (member.getRole().name().equals("MANAGER")) {
-            List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num);
-            model.addAttribute("reviewDTOList", reviewDTOList);
-            reviewDTOList.forEach(reviewDTO -> log.info("reviewDTO: {}", reviewDTO));
-            return "review/adMyReviewList";
+        //로그인한 사용자 정보로 호텔 조회
+        HotelDTO hotelDTO = hotelService.myHotel(principal.getName());
+        if (hotelDTO == null) {
+            return "redirect:/adMain";
         }
 
-        //권한이 없는 경우 에러
-        model.addAttribute("errorMessage", "접근 권한이 없습니다.");
-        return "redirect:/member/login";
+        model.addAttribute("hotel_name", hotelDTO.getHotel_name());
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+
+        //권한 : 매니저(호텔 별 리뷰목록)
+
+            if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
+                PageResponseDTO<ReviewDTO> pageResponseDTO = reviewService.getAdHotelReviewList(hotelDTO, pageRequestDTO, sortField, sortDir);
+                model.addAttribute("pageResponseDTO", pageResponseDTO);
+                model.addAttribute("pageRequestDTO", pageRequestDTO);
+                model.addAttribute("searchType", searchType);
+                model.addAttribute("searchKeyword", searchKeyword);
+                model.addAttribute("isSearch", true);
+            } else {
+                PageResponseDTO<ReviewDTO> pageResponseDTO = reviewService.getAdHotelReviewList(hotelDTO, pageRequestDTO, sortField, sortDir);
+
+                List<ReviewDTO> reviewDTOList = pageResponseDTO.getDtoList();
+                for (ReviewDTO reviewDTO : reviewDTOList) {
+                    ReviewDTO latesReviewDTO = reviewService.reviewRead(reviewDTO.getRev_num());
+
+                    reviewDTO.setRoomDTO(latesReviewDTO.getRoomDTO());
+                }
+
+                model.addAttribute("pageResponseDTO", pageResponseDTO);
+                model.addAttribute("pageRequestDTO", pageRequestDTO);
+                model.addAttribute("isSearch", false);
+            }
+            return "review/admyReviewList"; //리뷰 리스트 페이지 반환
+
     }
 
     //호텔 리뷰 목록

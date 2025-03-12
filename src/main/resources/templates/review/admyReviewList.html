@@ -3,112 +3,203 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/userlayout}">
+      layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
 <th:block layout:fragment="content">
-    <h1 class="text-center mb-3 mt-5"></h1>
-    <!--    <div sec:authorize="hasAnyAuthority('USER')" class="row mt-3">-->
-    <!--        <div class="col text-end">-->
-    <!--            <button type="button" onclick="location.href='/review/reviewModify'" class="btn btn-dark">수정</button>-->
-    <!--        </div>-->
-    <!--    </div>-->
-
     <div class="row mt-5">
-        <div class="col">
-            <table class="table table-striped table-hover text-center">
-                <thead>
-                <tr>
-                                        <th>번호</th>
-                                        <th>작성자</th>
-                                        <th>이미지</th>
-                                        <th></th>
-                                        <th>내용</th>
-                                        <th>작성일</th>
-                </tr>
-                </thead>
-                <tbody>
-                <th:block th:each="review :${reviewDTOList}">
-                    <tr class="align-middle">
-                        <div class="card" style="width: 18rem;">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">
-                                    <input type="hidden" th:value="${review.hotelDTO.brand_num}" >
-                                    <a th:text="${review.create_by}"></a>
-                                    <p th:text="${review.roomDTO.hotelDTO.hotel_name}">
-                                        <p class="score" th:text="${review.score}"></p>
-                                    </p>
-                                </li>
-                            </ul>
-                            <img src="..." class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <p class="card-text" th:text="${review.content}"></p>
-                            </div>
-
-                            <div class="card" style="width: 18rem;">
-                                <div class="carousel-inner">
-                                    <th:block th:each="img: ${review.imageDTOList}">
-                                        <th:block th:if="${img.repimg_yn == 'Y'}">
-                                            <div class="carousel-item active d-flex justify-content-center"  data-bs-interval="5000">
-                                                <div class="col-12">
-                                                    <img width="100%" th:src="${img.thumbnail_url}" class="card-img-top" alt="대표 이미지" style="height: 500px;">
-                                                </div>
-                                            </div>
-                                        </th:block>
-                                    </th:block>
-                                </div>
-                                <img src="..." class="card-img-top" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title">Card title</h5>
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                </div>
-                            </div>
-                            <div class="card" style="width: 18rem;">
-                                <td th:text="${review.reg_date}">
-                                    <a href="" class="text-center-xxl-end"> <p class="fs-6">>>자세히 보기<< </p></a>
-
-
-                                    <div class="card-body">
-
-                                    </div>
-                            </div>
-                        </div>
-
-                        <!--                        <td>-->
-                        <!--                            <form class="delform " sec:authorize="hasAnyAuthority('USER')" action="/review/reviewDelete"  method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">-->
-                        <!--                                <input type="hidden" name="rev_num" th:value="${review.rev_num}" class="num">-->
-                        <!--                                <button type="button" class="btn btn-secondary removeBtn fw-bold">삭제</button>-->
-                        <!--                            </form>-->
-                        <!--                        </td>-->
-                    </tr>
-                </th:block>
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="col-12">
+                <div class="mb-3 text-center fw-bold">
+                    <th:block th:if="hotel_name != null">
+                        <h1 th:text="${hotel_name} + ' 리뷰 목록'"></h1>
+                    </th:block>
+                </div>
+            </div>
         </div>
     </div>
+
+    <nav class="navbar" id="navbar">
+        <div class="navbar-right">
+            <div class="search-form">
+                <form th:action="@{/review/adMyReviewList}" method="get">
+                    <div class="input-group" id="input-group-search">
+                        <select class="form-select" name="searchType">
+                            <option value="keyword" th:selected="${searchType == 'keyword'}">전체</option>
+                            <option value="room_name" th:selected="${searchType == 'room_name'}">룸 이름</option>
+                            <option value="create_by" th:selected="${searchType == 'create_by'}">리뷰 작성자</option>
+                        </select>
+                        <input type="text" name="searchKeyword" class="form-control" placeholder="검색어를 입력하세요" th:value="${searchKeyword}">
+                        <input type="hidden" name="sortField" th:value="${sortField}">
+                        <input type="hidden" name="sortDir" th:value="${sortDir}">
+                        <div class="input-group-append">
+                            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mr-6 text-end">
+        <!-- 디자인 맞추는 용도-->
+    </div>
+
+    <div th:if="${isSearch}">
+        <h3 class="text-center mt-3 mb-3">검색 결과</h3>
+        <div class="row mt-3">
+            <div class="col">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr class="text-center text-black fw-bold">
+                        <td>번호</td>
+                        <td>작성자</td>
+                        <td>룸 이름</td>
+                        <td>
+                            <a th:href="@{/review/admyReviewList(page=1, size=${pageResponseDTO.size}, sortField='review_score', sortDir=${sortDir == 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                                별점
+                                <span th:if="${sortField == 'review_score'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a th:href="@{/review/admyReviewList(page=1, size=${pageResponseDTO.size}, sortField='reg_date', sortDir=${sortDTr == 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                                작성일
+                                <span th:if="${sortField == 'reg_date'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${pageResponseDTO == null or pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}" class="text-center">
+                        <td colspan="7">검색 결과가 없습니다.</td>
+                    </tr>
+                    <tr th:if="${pageResponseDTO != null}" th:each="reviewDTO : ${pageResponseDTO.dtoList}" class="text-center">
+                        <td th:text="${reviewDTO.rev_num}"></td>
+                        <td>
+                            <a th:href="@{/review/reviewRead(rev_num=${reviewDTO.rev_num})}" th:text="${reviewDTO.create_by}"></a>
+                        </td>
+                        <th:block th:if="${reviewDTO.roomDTO != null}">
+                            <td th:text="${reviewDTO.roomDTO.room_name}"></td>
+                        </th:block>
+                        <td th:text="${reviewDTO.score}"></td>
+                        <td th:text="${reviewDTO.formattedReg_date}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row mt-3" th:if="${isSearch}">
+            <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList !=null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
+                <div class="row">
+                    <div class="col-12">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <th:block th:if="${pageResponseDTO.prev}">
+                                    <li class="page-item"><a class="page-link" th:href="@{/review/admyReviewList(page=${pageResponseDTO.start-1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, serchType=${searchType}, searchKeyword=${searchKeyword})}">이전</a></li>
+                                </th:block>
+
+                                <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+                                    <li class="page-item">
+                                        <a class="page-link" th:href="@{/review/admyReviewList(page=${num}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">[[${num}]]</a>
+                                    </li>
+                                </th:block>
+
+                                <th:block th:if="${pageResponseDTO.next}">
+                                    <li class="page-item"><a class="page-link" th:href="@{/review/admyReviewList(page=${pageResponseDTO.end+1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">다음</a></li>
+                                </th:block>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+
+    <div th:if="${!isSearch}">
+        <div class="row mt-3">
+            <div class="col">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr class="text-center text-black fw-bold">
+                        <td>번호</td>
+                        <td>작성자</td>
+                        <td>룸 이름</td>
+                        <td>
+                            <a th:href="@{/review/admyReviewList(page=1, size=${pageResponseDTO.size}, sortField='review_score', sortDir=${sortDir == 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                                별점
+                                <span th:if="${sortField == 'review_score'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a th:href="@{/review/admyReviewList(page=1, size=${pageResponseDTO.size}, sortField='reg_date', sortDir=${sortDTr == 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                                작성일
+                                <span th:if="${sortField == 'reg_date'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${pageResponseDTO == null or pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}" class="text-center">
+                        <td colspan="7">등록된 리뷰가 없습니다.</td>
+                    </tr>
+                    <tr th:if="${pageResponseDTO != null}" th:each="reviewDTO : ${pageResponseDTO.dtoList}" class="text-center">
+                        <td th:text="${reviewDTO.rev_num}"></td>
+                        <td>
+                            <a th:href="@{/review/reviewRead(rev_num=${reviewDTO.rev_num})}">
+                                [[${reviewDTO.create_by}]]
+                            </a>
+                        </td>
+                        <th:block th:if="${reviewDTO.roomDTO != null}">
+                            <td th:text="${reviewDTO.roomDTO.room_name}"></td>
+                        </th:block>
+                        <td th:text="${reviewDTO.score}"></td>
+                        <td th:text="${reviewDTO.formattedReg_date}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3" th:if="${!isSearch}"></div>
 
 </th:block>
 <script th:inline="javascript" layout:fragment="script">
 
-    $(document).ready(function (){
-        let removeBtn = $(".removeBtn"); // 삭제 버튼
-        let form = $(".delform");
-        let rev_num = $(".num").val()
+    // $(document).ready(function (){
+    //     let removeBtn = $(".removeBtn"); // 삭제 버튼
+    //     let form = $(".delform");
+    //     let rev_num = $(".num").val()
+    //
+    //
+    //
+    //     removeBtn.on("click", function () {
+    //         console.log("클릭")
+    //         console.log(rev_num)
+    //         form.action = "/review/reviewDelete";
+    //         form.method = "post";
+    //         form.submit();
+    //     });
+    // })
 
+    let message = [[${message}]]
+    if (message) {
+        alert(message)
+    }
 
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedQuery = localStorage.getItem('searchQuery');
+        if (savedQuery) {
+            document.getElementById('search-input').value = savedQuery;
+        }
+    });
 
-        removeBtn.on("click", function () {
-            console.log("클릭")
-            console.log(rev_num)
-            form.action = "/review/reviewDelete";
-            form.method = "post";
-            form.submit();
-        });
-    })
+    function saveSearchQuery() {
+        const query = document.getElementById('search-input').value;
+        localStorage.setItem('searchQuery', query);
+    }
 
 
 </script>
