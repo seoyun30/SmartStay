@@ -7,7 +7,6 @@
     <meta charset="UTF-8">
     <title>SmartStay</title>
 
-    <!-- 스타일 추가 부분 -->
     <style>
         .form-control {
             background-color: #ffffff; /* 배경색을 흰색으로 */
@@ -45,20 +44,18 @@
             border-radius: 4px; /* 버튼에도 라운드 처리 */
         }
 
-        .Listbtn{
+        .listBtn{
             margin-right: 10px;
         }
-        /* 본문 카드와 답변 카드 사이에 여백을 추가 */
+
         #comment-section {
             margin-top: 30px; /* 댓글 섹션 위에 여백을 추가 */
         }
 
-        /* .card-body 또는 .card에 추가적인 여백을 설정하여 답변과 본문 카드 간격을 벌리기 */
         .card {
             margin-bottom: 30px; /* 카드 간 여백 */
         }
 
-        /* .card-body에 아래쪽 여백을 추가하여 본문 카드 아래쪽 여백을 설정 */
         .card-body {
             margin-bottom: 20px;
         }
@@ -68,7 +65,7 @@
 <body>
 <th:block layout:fragment="content">
 
-    <div class="d-flex vh-100">
+    <div class="d-flex">
         <div class="container my-auto">
             <div class="row justify-content-center">
                 <form action="/qna/qnaRead" method="post" th:object="${qnaDTO}">
@@ -126,7 +123,7 @@
                         <label for="comment">답변</label>
                         <textarea class="form-control" id="comment" rows="3"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="qrbtn" style="float:right; margin-left: 10px;">답변 등록</button>
+                    <button type="submit" class="btn btn-primary" id="qrBtn" style="float:right; margin-left: 10px;">답변 등록</button>
                 </form>
                 <!-- 댓글 섹션 끝 -->
 
@@ -182,7 +179,7 @@
 
         //댓글
         // 댓글 등록
-        $("#qrbtn").on("click", function (e) {
+        $("#qrBtn").on("click", function (e) {
             e.preventDefault();
            replyRegister();
         })
@@ -238,17 +235,24 @@
                         console.log(response)
 
                         let commentHTML = `
-                         <h3 class="mb-4">답변</h3>
-                        <div class="card mb-2">
-                            <div class="card-body">
-                               <small class="text-muted">작성자: ${response.writer} | 작성일: ${response.reg_date.substring(0,10)}</small>
-                               <p style="font-size: 20px;">${response.comment}</p>
-                               <button type="button" value="${response.qnaReply_num}" data-role="${loginRole}" class="btn btn-dark roleBtn replyEditBtn">수정</button>
-                               <button type="button" value="${response.qnaReply_num}" data-role="${loginRole}" class="btn btn-dark roleBtn replyDelBtn">삭제</button>
+                            <div class="row justify-content-center"> <!-- 본문과 동일한 너비로 맞추기 위해 row와 col을 사용 -->
+                                <div class="col-8"> <!-- col-8로 카드의 너비를 설정 (본문과 동일한 너비로 설정) -->
+                                    <h3 class="mb-4">답변</h3>
+                                    <div class="card mb-2"> <!-- 카드의 너비는 기본적으로 100%로 설정됨 -->
+                                        <div class="card-body position-relative">
+                                            <p style="font-size: 20px; color: black;">${response.comment}</p>
+                                            <small class="text-muted">작성자: ${response.modified_by} | 작성일: ${response.modi_date.substring(0, 16).replace('T', ' ')}</small>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <button type="button" value="${response.qnaReply_num}" data-role="${loginRole}" class="btn btn-dark roleBtn replyEditBtn me-2 mb-2" style="font-size: 19.2px; padding: 8.9px 24px;">수정</button>
+                                            <button type="button" value="${response.qnaReply_num}" data-role="${loginRole}" class="btn btn-danger roleBtn replyDelBtn mb-2 me-2" style="font-size: 19.2px; padding: 8.9px 24px;">삭제</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
                         `;
                         commentSection.html(commentHTML);
+
 
                         $(".roleBtn").each(function () {
                             let userRole = $(this).data("role"); // 개별 버튼의 role 가져오기
@@ -301,7 +305,11 @@
                     return;
                 }
 
-                let qnaReplyDTO = { qnaReply_num: qnaReply_num, comment: updatedComment };
+                let qnaReplyDTO = {
+                    qnaReply_num: qnaReply_num,
+                    comment: updatedComment,
+                    modified_by: userRole,
+                    modified_date: new Date().toISOString()};
                 console.log('수정 요청 데이터:', qnaReplyDTO);
 
                 $.ajax({
