@@ -6,6 +6,7 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/assets/img/hotel-solid.png">
     <title>SmartStay</title>
 
     <style>
@@ -20,8 +21,7 @@
         }
         .mb-4 {
             margin-bottom: 1.5rem;
-
-
+        }
     </style>
 </head>
 <body>
@@ -47,23 +47,23 @@
 
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text" style="width: 150px">호텔 이름</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.hotel_name}" readonly>
+                                                <input type="text" class="form-control" th:value="${hotelDTO.hotel_name}" >
                                             </div>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text" style="width: 150px">법인사업자번호</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.business_num}" readonly>
+                                                <input type="text" class="form-control" th:value="${hotelDTO.business_num}" >
                                             </div>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text" style="width: 150px">대표자</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.owner}" readonly>
+                                                <input type="text" class="form-control" th:value="${hotelDTO.owner}" >
                                             </div>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text" style="width: 150px">주소</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.address}" readonly>
+                                                <input type="text" class="form-control" th:value="${hotelDTO.address}" >
                                             </div>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text" style="width: 150px">전화번호</span>
-                                                <input type="text" class="form-control" th:value="${hotelDTO.tel}" readonly>
+                                                <input type="text" class="form-control" th:value="${hotelDTO.tel}" >
                                             </div>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text" style="width: 150px">별점</span>
@@ -106,7 +106,7 @@
                                 </div>
 
 
-                                <div class="mt-6 text-center">
+                                <div class="mt-3 text-center">
                                     <button type="button" sec:authorize="hasAnyAuthority('MANAGER')"class="btn btn-primary adhBtn">관리자 홈</button>
                                     <button type="button" sec:authorize="hasAnyAuthority('CHIEF')" class="btn btn-primary lisBtn">목록</button>
                                     <button type="button" sec:authorize="hasAnyAuthority('CHIEF')"class="btn btn-dark modBtn">수정</button>
