@@ -5,6 +5,7 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/assets/img/hotel-solid.png">
     <title>SmartStay</title>
 </head>
 <body>
@@ -24,7 +25,7 @@
                         </h2>
                         <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                <form action="/orderreserve/orderReserveList" method="get">
+                                <form class="searchForm" action="/orderreserve/orderReserveList" method="get">
 
                                     <div class="input-group p-3">
                                         <span class="input-group-text">주문 번호</span>
@@ -59,7 +60,7 @@
 
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
                                         <button type="submit" class="btn btn-primary">검색</button>
-                                        <button type="reset" class="btn btn-secondary">초기화</button>
+                                        <button type="reset" class="btn btn-secondary resetBtn">초기화</button>
                                     </div>
 
                                 </form>
@@ -149,38 +150,21 @@
         </div>
     </div>
 
-
-    <div class="modal fade" id="orderModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">주문 내역 상세보기</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div>주문 번호</th>
-                    <div>주문 방</div>
-                    <div>주문자</div>
-                    <div>주문일</div>
-                    <div>주문 내역</div>
-                    <div>요청 사항</div>
-                    <div>결제 금액</div>
-                    <div>주문 상태</div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    </div>
 </th:block>
 <script th:inline="javascript" layout:fragment="script">
 
     $(document).ready(function () {
         let activeSelect = null;
+
+        $(".resetBtn").click(function (event) {
+            event.preventDefault(); // 폼 리셋 기본 동작 방지
+
+            let form = $(".searchForm");
+            form.find("input[type='text'], input[type='date']").val("");
+            form.find("select").prop("selectedIndex", 0);
+
+            form.find("input, select").removeAttr("th:value");
+        });
 
         $(document).on("click", ".stateBtn", function(event) {
             event.stopPropagation();

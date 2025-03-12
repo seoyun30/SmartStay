@@ -1,14 +1,13 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.constant.CheckState;
+import com.lookatme.smartstay.constant.OrderState;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Member;
+import com.lookatme.smartstay.entity.Pay;
 import com.lookatme.smartstay.entity.RoomReserve;
 import com.lookatme.smartstay.entity.RoomReserveItem;
-import com.lookatme.smartstay.repository.MemberRepository;
-import com.lookatme.smartstay.repository.RoomRepository;
-import com.lookatme.smartstay.repository.RoomReserveItemRepository;
-import com.lookatme.smartstay.repository.RoomReserveRepository;
+import com.lookatme.smartstay.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,7 @@ public class RoomReserveService {
 
     private final RoomReserveRepository roomReserveRepository;
     private final RoomReserveItemRepository roomReserveItemRepository;
-    private final RoomRepository roomRepository;
+    private final PayRepository payRepository;
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
 
@@ -248,7 +247,6 @@ public class RoomReserveService {
         return reserveItemDTOPageResponseDTO;
     }
 
-
     //회원 룸예약 상세보기
     public RoomReserveItemDTO findRoomReserveItem(Long roomreserveitem_num, String email) {
         RoomReserveItem roomReserveItem = roomReserveItemRepository.findByReserveItemNumAndEmail(roomreserveitem_num, email);
@@ -280,6 +278,14 @@ public class RoomReserveService {
                 .orElseThrow(EntityNotFoundException::new);
 
         roomReserve.setCheck_state(roomReserveDTO.getCheck_state());
+        if (roomReserveDTO.getCheck_state().equals(CheckState.CANCEL)){
+            RoomReserveItem roomReserveItem = roomReserveItemRepository.findById(roomReserve.getReserve_num())
+                    .orElseThrow(EntityNotFoundException::new);
+            Pay pay = payRepository.findById(roomReserveItem.getPay().getPay_num())
+                    .orElseThrow(EntityNotFoundException::new);
+            pay.setPay_state(OrderState.CANCEL);
+            payRepository.save(pay);
+        }
 
         roomReserve = roomReserveRepository.save(roomReserve);
         return modelMapper.map(roomReserve, RoomReserveDTO.class);

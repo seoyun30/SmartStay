@@ -7,9 +7,6 @@
     <meta charset="UTF-8">
     <link rel="icon" href="/assets/img/hotel-solid.png">
     <title>SmartStay</title>
-    <style layout:fragment="css">
-
-    </style>
 </head>
 <body>
 
@@ -72,7 +69,7 @@
                         </h2>
                         <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                <form action="/roomreserve/roomReserveList" method="get">
+                                <form class="searchForm" action="/roomreserve/roomReserveList" method="get">
 
                                     <div class="input-group p-3">
                                         <span class="input-group-text">예약 번호</span>
@@ -107,7 +104,7 @@
 
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
                                         <button type="submit" class="btn btn-primary">검색</button>
-                                        <button type="reset" class="btn btn-secondary">초기화</button>
+                                        <button type="reset" class="btn btn-secondary resetBtn">초기화</button>
                                     </div>
 
                                 </form>
@@ -158,7 +155,7 @@
                                     <td th:text="${#temporals.format(roomReserveItemDTO.roomReserveDTO.reg_date, 'yyyy.MM.dd HH:mm')}">예약일</td>
                                     <td th:text="${#temporals.format(roomReserveItemDTO.in_date, 'yyyy.MM.dd HH:mm')}">체크인 날짜</td>
                                     <td th:text="${#temporals.format(roomReserveItemDTO.out_date, 'yyyy.MM.dd HH:mm')}">체크아웃 날짜</td>
-                                    <td th:text="${#numbers.formatInteger(roomReserveItemDTO.payDTO.amount, 0) + '원'}" >결제 금액</td>
+                                    <td th:text="${roomReserveItemDTO.day * roomReserveItemDTO.roomDTO.room_price + '원'}" >결제 금액</td>
                                     <td th:switch="${roomReserveItemDTO.roomReserveDTO.check_state}" class="text-nowrap" > <!--주문 상태-->
                                         <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}" th:case="${roomReserveItemDTO.roomReserveDTO.check_state.RESERVE}">접수</button>
                                         <button type="button" class="btn btn-warning stateBtn" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}" th:case="${roomReserveItemDTO.roomReserveDTO.check_state.IN}">체크인</button>
@@ -214,6 +211,16 @@
 
         readWindow.hide();
         roomRead.removeClass('col-9').addClass('col-12');
+
+        $(".resetBtn").click(function (event) {
+            event.preventDefault(); // 폼 리셋 기본 동작 방지
+
+            let form = $(".searchForm");
+            form.find("input[type='text'], input[type='date']").val("");
+            form.find("select").prop("selectedIndex", 0);
+
+            form.find("input, select").removeAttr("th:value");
+        });
 
         // readWindow가 표시되거나 숨겨질 때 클래스를 동적으로 업데이트
         $(".toggleReadWindow").on("click", function () {

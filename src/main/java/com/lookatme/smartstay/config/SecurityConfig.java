@@ -76,8 +76,8 @@ public class SecurityConfig {
             auth.requestMatchers("/review/adMyReviewList").hasAuthority("MANAGER"); //관리자 리뷰관리
 
             auth.requestMatchers("/roomreserve/roomReserveRegister", "/roomreserve/checkReserve/**", "/orderreserve/orderReserveRegister").hasAuthority("USER");
-            auth.requestMatchers("/roomreserve/roomReserveList", "/roomreserve/roomReserveRead", "/orderreserve/orderReserveList", "orderreserve/orderReserveRead").hasAuthority("MANAGER"); //예약
-            auth.requestMatchers("/member/myRoomReserveList", "member/myRoomReserveRead", "member/myOrderReserveList", "member/myOrderReserveRead").hasAuthority("USER"); //예약정보
+            auth.requestMatchers("/roomreserve/roomReserveList", "/roomreserve/roomReserveRead", "/orderreserve/orderReserveList", "/orderreserve/orderReserveRead").hasAuthority("MANAGER"); //예약
+            auth.requestMatchers("/member/myRoomReserveList", "/member/myRoomReserveRead", "/member/myOrderReserveList", "/member/myOrderReserveRead").hasAuthority("USER"); //예약정보
             auth.requestMatchers("/cart/**").authenticated(); //cart로 시작하는 모든 맵핑에 제한
             auth.requestMatchers("/pay/**").authenticated(); //pay로 시작하는 모든 맵핑에 제한
             auth.anyRequest().authenticated();
