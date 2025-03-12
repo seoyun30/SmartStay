@@ -23,8 +23,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByHotel(Long hotel_num);
 
     //페이지 형식으로 호텔 리스트
-    @Query("select r from  Review r where r.hotel =:hotel")
-    Page<Review> findByAdHotel(@Param("hotel") Hotel hotel, Pageable pageable);
+    @Query("select r from  Review r where r.hotel.hotel_num =:hotel_num")
+    Page<Review> findByAdHotel(Long hotel_num, Pageable pageable);
 
     // 해당 유저의 모든 리뷰조회(이메일을 통해 조회)
     @Query("select r from Review r where r.member.email = :email")
@@ -37,11 +37,24 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // 검색 기능
     @Query("SELECT r FROM Review r WHERE r.room.hotel.hotel_num = :hotel_num "
             + "AND (:hotel_name IS NULL OR r.room.hotel.hotel_name LIKE %:hotel_name%) "
-            + "AND (:room_name IS NULL OR r.room.room_name LIKE %:room_name%) ")
+            + "AND (:room_name IS NULL OR r.room.room_name LIKE %:room_name%) "
+            + "AND (:rev_name IS NULL OR r.create_by LIKE %:rev_name%)")
     Page<Review> findReviewBySearch(
             @Param("hotel_num") Long hotel_num,
             @Param("hotel_name") String hotel_name,
             @Param("room_name") String room_name,
+            @Param("rev_name") String rev_name,
+            Pageable pageable);
+
+    @Query("SELECT r FROM Review r WHERE r.room.hotel.hotel_num = :hotel_num "
+            + "AND (:hotel_name IS NULL OR r.room.hotel.hotel_name LIKE %:hotel_name%) "
+            + "AND ((:room_name IS NULL OR r.room.room_name LIKE %:room_name%) "
+            + "OR (:rev_name IS NULL OR r.create_by LIKE %:rev_name%))")
+    Page<Review> findReviewBySearchAll(
+            @Param("hotel_num") Long hotel_num,
+            @Param("hotel_name") String hotel_name,
+            @Param("room_name") String room_name,
+            @Param("rev_name") String rev_name,
             Pageable pageable);
 
     /**리뷰를 시간순, 별점 순, ,.. 으로 조회하기 **/

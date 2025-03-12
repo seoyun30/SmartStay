@@ -1,7 +1,6 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.*;
-import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.ReviewRepository;
@@ -54,6 +53,7 @@ public class ReviewController {
                                  @RequestParam(required = false) String searchType,
                                  @RequestParam(required = false) String searchKeyword) {
 
+        //로그인 회원조회
         if (principal == null) {
             return "redirect:/member/login";
         }
@@ -68,31 +68,44 @@ public class ReviewController {
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
 
-        //권한 : 매니저(호텔 별 리뷰목록)
+        String create_by = "";
+        ReserveSearchDTO reserveSearchDTO = new ReserveSearchDTO();
 
-            if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
-                PageResponseDTO<ReviewDTO> pageResponseDTO = reviewService.getAdHotelReviewList(hotelDTO, pageRequestDTO, sortField, sortDir);
-                model.addAttribute("pageResponseDTO", pageResponseDTO);
-                model.addAttribute("pageRequestDTO", pageRequestDTO);
-                model.addAttribute("searchType", searchType);
-                model.addAttribute("searchKeyword", searchKeyword);
-                model.addAttribute("isSearch", true);
-            } else {
-                PageResponseDTO<ReviewDTO> pageResponseDTO = reviewService.getAdHotelReviewList(hotelDTO, pageRequestDTO, sortField, sortDir);
-
-                List<ReviewDTO> reviewDTOList = pageResponseDTO.getDtoList();
-                for (ReviewDTO reviewDTO : reviewDTOList) {
-                    ReviewDTO latesReviewDTO = reviewService.reviewRead(reviewDTO.getRev_num());
-
-                    reviewDTO.setRoomDTO(latesReviewDTO.getRoomDTO());
-                }
-
-                model.addAttribute("pageResponseDTO", pageResponseDTO);
-                model.addAttribute("pageRequestDTO", pageRequestDTO);
-                model.addAttribute("isSearch", false);
+        if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
+            //검색 키워드 설정
+            if ("room_name".equals(searchType)) {
+                reserveSearchDTO.setRoom_name(searchKeyword);
+            } else if ("create_by".equals(searchType)) {
+                reserveSearchDTO.setReserve_name(searchKeyword);
+            } else if ("keyword".equals(searchType)) {
+                reserveSearchDTO.setRoom_name(searchKeyword);
+                reserveSearchDTO.setReserve_name(searchKeyword);
             }
-            return "review/admyReviewList"; //리뷰 리스트 페이지 반환
+            log.info("reserveSearchDTO: " + reserveSearchDTO);
 
+            PageResponseDTO<ReviewDTO> pageResponseDTO = reviewService.searchList(principal.getName(), pageRequestDTO, reserveSearchDTO, sortField, sortDir);
+            model.addAttribute("pageResponseDTO", pageResponseDTO);
+            model.addAttribute("pageRequestDTO", pageRequestDTO);
+            model.addAttribute("searchType", searchType);
+            model.addAttribute("searchKeyword", searchKeyword);
+            model.addAttribute("isSearch", true);
+        } else {
+            // 일반 조회
+            PageResponseDTO<ReviewDTO> pageResponseDTO = reviewService.getAdHotelReviewList(hotelDTO, pageRequestDTO, sortField, sortDir);
+
+            List<ReviewDTO> reviewDTOList = pageResponseDTO.getDtoList();
+            for (ReviewDTO reviewDTO : reviewDTOList) {
+                ReviewDTO latesReviewDTO = reviewService.reviewRead(reviewDTO.getRev_num());
+
+                reviewDTO.setRoomDTO(latesReviewDTO.getRoomDTO());
+                reviewDTO.setHotelDTO(latesReviewDTO.getHotelDTO());
+            }
+
+            model.addAttribute("pageResponseDTO", pageResponseDTO);
+            model.addAttribute("pageRequestDTO", pageRequestDTO);
+            model.addAttribute("isSearch", false);
+        }
+        return "review/adMyReviewList"; //리뷰 리스트 페이지 반환
     }
 
     //호텔 리뷰 목록
@@ -189,8 +202,8 @@ public class ReviewController {
         }
 
     }
-//
-    //상세 보기 페이지
+
+    //유저 상세 보기 페이지
     @GetMapping("/reviewRead")
     public String reviewRead(@RequestParam(required = false) Long rev_num, Long hotel_num,
                              Model model, RedirectAttributes redirectAttributes) {
@@ -220,6 +233,40 @@ public class ReviewController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("msg", "알 수 없는 오류가 발생 되었습니다.");
             return "redirect:/review/reviewList/" + hotel_num;
+        }
+    }
+
+
+    //관리자 상세 보기 페이지
+    @GetMapping("/adReviewRead")
+    public String adReviewRead(@RequestParam(required = false) Long rev_num, Long hotel_num,
+                             Model model, RedirectAttributes redirectAttributes) {
+
+        if (rev_num == null) {
+            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 리뷰입니다.");
+            return "redirect:/review/reviewList/" + hotel_num;
+        }
+
+        try {
+            log.info("개별읽기...");
+            ReviewDTO reviewDTO = reviewService.reviewRead(rev_num);
+
+            log.info("개별정보를 페이지에 전달...");
+            model.addAttribute("review", reviewDTO);
+            log.info("받은 정보 : {}", reviewDTO );
+
+            if (reviewDTO.getHotelDTO() != null) {
+                model.addAttribute("hotel_name", reviewDTO.getHotelDTO().getHotel_name());
+            } else {
+                model.addAttribute("hotel_name", "해당 호텔 정보가 없습니다.");
+            }
+            return "review/adReviewRead";
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("msg", "해당 리뷰를 찾을 수 없습니다..");
+            return "redirect:review/adMyReviewList";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("msg", "알 수 없는 오류가 발생 되었습니다.");
+            return "redirect:review/adMyReviewList";
         }
     }
 

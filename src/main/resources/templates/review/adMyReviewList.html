@@ -7,6 +7,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        #input-group-search .form-select {
+            font-size: 18px !important;
+            height: 45px;
+            padding: 8px 40px 8px 12px;
+            background-color: #f8f9fa;
+            color: black;
+            border: none;
+            position: relative;
+            appearance: none;
+            -webkit-appearance: none;
+            background-position: right 12px center;
+        }
+        .form-control {
+            font-size: 18px;
+            height: 45px;
+            padding: 8px 12px;
+            border: none;
+            flex: 3;
+        }
+        .input-group {
+            position: relative;
+        }
+        .form-select option {
+            white-space: nowrap;
+        }
+
+    </style>
 </head>
 <body>
 <th:block layout:fragment="content">
@@ -22,10 +50,14 @@
         </div>
     </div>
 
+    <div class="mr-6 text-end">
+        <!-- 디자인 맞추는 용도-->
+    </div>
+
     <nav class="navbar" id="navbar">
         <div class="navbar-right">
             <div class="search-form">
-                <form th:action="@{/review/adMyReviewList}" method="get">
+                <form th:action="@{/review/adMyReviewList}" method="get" onsubmit="saveSearchQuery()">
                     <div class="input-group" id="input-group-search">
                         <select class="form-select" name="searchType">
                             <option value="keyword" th:selected="${searchType == 'keyword'}">전체</option>
@@ -44,10 +76,6 @@
         </div>
     </nav>
 
-    <div class="mr-6 text-end">
-        <!-- 디자인 맞추는 용도-->
-    </div>
-
     <div th:if="${isSearch}">
         <h3 class="text-center mt-3 mb-3">검색 결과</h3>
         <div class="row mt-3">
@@ -58,14 +86,16 @@
                         <td>번호</td>
                         <td>작성자</td>
                         <td>룸 이름</td>
+                        <!-- 별점 정렬 -->
                         <td>
-                            <a th:href="@{/review/admyReviewList(page=1, size=${pageResponseDTO.size}, sortField='review_score', sortDir=${sortDir == 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                            <a th:href="@{/review/adMyReviewList(page=${pageRequestDTO.page}, size=${pageResponseDTO.size}, sortField='score', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
                                 별점
-                                <span th:if="${sortField == 'review_score'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                                <span th:if="${sortField == 'score'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                             </a>
                         </td>
+                        <!-- 작성일 정렬 -->
                         <td>
-                            <a th:href="@{/review/admyReviewList(page=1, size=${pageResponseDTO.size}, sortField='reg_date', sortDir=${sortDTr == 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                            <a th:href="@{/review/adMyReviewList(page=${pageRequestDTO.page}, size=${pageResponseDTO.size}, sortField='reg_date', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
                                 작성일
                                 <span th:if="${sortField == 'reg_date'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                             </a>
@@ -79,7 +109,9 @@
                     <tr th:if="${pageResponseDTO != null}" th:each="reviewDTO : ${pageResponseDTO.dtoList}" class="text-center">
                         <td th:text="${reviewDTO.rev_num}"></td>
                         <td>
-                            <a th:href="@{/review/reviewRead(rev_num=${reviewDTO.rev_num})}" th:text="${reviewDTO.create_by}"></a>
+                            <a th:href="@{/review/adReviewRead(rev_num=${reviewDTO.rev_num})}">
+                                [[${reviewDTO.create_by}]]
+                            </a>
                         </td>
                         <th:block th:if="${reviewDTO.roomDTO != null}">
                             <td th:text="${reviewDTO.roomDTO.room_name}"></td>
@@ -91,6 +123,7 @@
                 </table>
             </div>
         </div>
+        <!-- 페이지네이션 -->
         <div class="row mt-3" th:if="${isSearch}">
             <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList !=null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
                 <div class="row">
@@ -103,12 +136,12 @@
 
                                 <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
                                     <li class="page-item">
-                                        <a class="page-link" th:href="@{/review/admyReviewList(page=${num}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">[[${num}]]</a>
+                                        <a class="page-link" th:href="@{/review/adMyReviewList(page=${num}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">[[${num}]]</a>
                                     </li>
                                 </th:block>
 
                                 <th:block th:if="${pageResponseDTO.next}">
-                                    <li class="page-item"><a class="page-link" th:href="@{/review/admyReviewList(page=${pageResponseDTO.end+1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">다음</a></li>
+                                    <li class="page-item"><a class="page-link" th:href="@{/review/adMyReviewList(page=${pageResponseDTO.end+1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir}, searchType=${searchType}, searchKeyword=${searchKeyword})}">다음</a></li>
                                 </th:block>
                             </ul>
                         </nav>
@@ -128,13 +161,13 @@
                         <td>작성자</td>
                         <td>룸 이름</td>
                         <td>
-                            <a th:href="@{/review/admyReviewList(page=1, size=${pageResponseDTO.size}, sortField='review_score', sortDir=${sortDir == 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                            <a th:href="@{/review/adMyReviewList(page=${pageRequestDTO.page}, size=${pageResponseDTO.size}, sortField='score', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
                                 별점
-                                <span th:if="${sortField == 'review_score'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                                <span th:if="${sortField == 'score'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                             </a>
                         </td>
                         <td>
-                            <a th:href="@{/review/admyReviewList(page=1, size=${pageResponseDTO.size}, sortField='reg_date', sortDir=${sortDTr == 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
+                            <a th:href="@{/review/adMyReviewList(page=${pageRequestDTO.page}, size=${pageResponseDTO.size}, sortField='reg_date', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, searchType=${searchType}, searchKeyword=${searchKeyword})}">
                                 작성일
                                 <span th:if="${sortField == 'reg_date'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
                             </a>
@@ -148,7 +181,7 @@
                     <tr th:if="${pageResponseDTO != null}" th:each="reviewDTO : ${pageResponseDTO.dtoList}" class="text-center">
                         <td th:text="${reviewDTO.rev_num}"></td>
                         <td>
-                            <a th:href="@{/review/reviewRead(rev_num=${reviewDTO.rev_num})}">
+                            <a th:href="@{/review/adReviewRead(rev_num=${reviewDTO.rev_num})}">
                                 [[${reviewDTO.create_by}]]
                             </a>
                         </td>
@@ -163,26 +196,36 @@
             </div>
         </div>
     </div>
-    <div class="row mt-3" th:if="${!isSearch}"></div>
-
+    <div class="row mt-3" th:if="${!isSearch}">
+        <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <th:block th:if="${pageResponseDTO.prev}">
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/review/adMyReviewList(page=${pageResponseDTO.start-1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">이전</a>
+                                </li>
+                            </th:block>
+                            <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/review/adMyReviewList(page=${num}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">[[${num}]]</a>
+                                </li>
+                            </th:block>
+                            <th:block th:if="${pageResponseDTO.next}">
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/review/adMyReviewList(page=${pageResponseDTO.end+1}, size=${pageResponseDTO.size}, sortField=${sortField}, sortDir=${sortDir})}">다음</a>
+                                </li>
+                            </th:block>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </th:block>
+    </div>
 </th:block>
-<script th:inline="javascript" layout:fragment="script">
 
-    // $(document).ready(function (){
-    //     let removeBtn = $(".removeBtn"); // 삭제 버튼
-    //     let form = $(".delform");
-    //     let rev_num = $(".num").val()
-    //
-    //
-    //
-    //     removeBtn.on("click", function () {
-    //         console.log("클릭")
-    //         console.log(rev_num)
-    //         form.action = "/review/reviewDelete";
-    //         form.method = "post";
-    //         form.submit();
-    //     });
-    // })
+<script th:inline="javascript" layout:fragment="script">
 
     let message = [[${message}]]
     if (message) {
