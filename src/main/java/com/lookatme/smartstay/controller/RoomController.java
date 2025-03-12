@@ -113,13 +113,15 @@ public class RoomController {
             return "redirect:/adMain";
         }
 
+        Long hotelNum = hotelDTO.getHotel_num();
+
         model.addAttribute("hotel_name", hotelDTO.getHotel_name());
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("room_state", RoomState.values());
 
         if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
-            PageResponseDTO<RoomDTO> pageResponseDTO = roomService.searchList(searchType, searchKeyword, sortField, sortDir, pageRequestDTO);
+            PageResponseDTO<RoomDTO> pageResponseDTO = roomService.searchList(hotelNum, searchType, searchKeyword, sortField, sortDir, pageRequestDTO);
             model.addAttribute("pageResponseDTO", pageResponseDTO);
             model.addAttribute("searchType", searchType);
             model.addAttribute("searchKeyword", searchKeyword);

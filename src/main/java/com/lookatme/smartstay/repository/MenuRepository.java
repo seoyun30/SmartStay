@@ -13,20 +13,21 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("select m from Menu m where m.hotel = :hotel")
     Page<Menu> findByHotel(@Param("hotel") Hotel hotel, Pageable pageable);
 
-    @Query("SELECT m FROM Menu m WHERE LOWER(m.menu_name) LIKE LOWER(CONCAT('%', :menuName, '%'))")
-    Page<Menu> findByMenu_nameContainingIgnoreCase(@Param("menuName") String menuName, Pageable pageable);
+    @Query("SELECT m FROM Menu m WHERE m.hotel.hotel_num = :hotelNum AND LOWER(m.menu_name) LIKE LOWER(CONCAT('%', :menuName, '%'))")
+    Page<Menu> findByMenu_nameContainingIgnoreCase(@Param("hotelNum") Long hotelNum, @Param("menuName") String menuName, Pageable pageable);
 
-    @Query("SELECT m FROM Menu m WHERE LOWER(m.menu_detail) LIKE LOWER(CONCAT('%', :menuDetail, '%'))")
-    Page<Menu> findByMenu_detailContainingIgnoreCase(@Param("menuDetail") String menuDetail, Pageable pageable);
+    @Query("SELECT m FROM Menu m WHERE m.hotel.hotel_num = :hotelNum AND LOWER(m.menu_detail) LIKE LOWER(CONCAT('%', :menuDetail, '%'))")
+    Page<Menu> findByMenu_detailContainingIgnoreCase(@Param("hotelNum") Long hotelNum, @Param("menuDetail") String menuDetail, Pageable pageable);
 
-    @Query("SELECT m FROM Menu m WHERE LOWER(m.menu_sort) LIKE LOWER(CONCAT('%', :menuSort, '%'))")
-    Page<Menu> findByMenu_sortContainingIgnoreCase(@Param("menuSort") String menuDetail, Pageable pageable);
+    @Query("SELECT m FROM Menu m WHERE m.hotel.hotel_num = :hotelNum AND LOWER(m.menu_sort) LIKE LOWER(CONCAT('%', :menuSort, '%'))")
+    Page<Menu> findByMenu_sortContainingIgnoreCase(@Param("hotelNum") Long hotelNum, @Param("menuSort") String menuDetail, Pageable pageable);
 
     @Query("SELECT m FROM Menu m " +
-            "WHERE LOWER(m.menu_name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "WHERE m.hotel.hotel_num = :hotelNum " +
+            "AND LOWER(m.menu_name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(m.menu_detail) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(m.menu_sort) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    Page<Menu> findByMenu_nameContainingIgnoreCaseOrMenu_detailContainingIgnoreCaseOrMenu_sortContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
+    Page<Menu> findByMenu_nameContainingIgnoreCaseOrMenu_detailContainingIgnoreCaseOrMenu_sortContainingIgnoreCase(@Param("hotelNum") Long hotelNum, @Param("keyword") String keyword, Pageable pageable);
 
     //전체 메뉴
     @Query("select m from Menu m where m.hotel = :hotel")
