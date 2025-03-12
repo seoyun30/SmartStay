@@ -46,13 +46,11 @@
                 <form th:action="@{/qna/hcmQnaList}" method="get">
                     <div class="input-group" id="input-group-search">
                         <select class="form-select" name="type">
-                            <option th:selected="${type==null}">검색항목</option>
+                            <option value="all" th:selected="${type=='all'}">전체</option>
                             <option value="t" th:selected="${type=='t'}">제목</option>>
                             <option value="c" th:selected="${type=='c'}">내용</option>>
                             <option value="w" th:selected="${type=='w'}">작성자</option>>
                             <option value="h" th:selected="${type=='h'}">호텔</option>>
-                            <option value="tc" th:selected="${type=='tc'}">제목+내용</option>>
-                            <option value="tcw" th:selected="${type=='tcw'}">제목+내용+작성자</option>>
                         </select>
                         <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="Search" th:value="${pageRequestDTO.keyword}" style="width: 250px;">
                         <div class="input-group-append">

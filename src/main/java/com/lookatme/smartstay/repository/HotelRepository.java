@@ -3,6 +3,8 @@ package com.lookatme.smartstay.repository;
 import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Hotel;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,15 +34,35 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     List<Hotel> findByMyBrand(Brand brand);
 
     //호텔 활성화(관리자 전체 보여짐)
-    @Query("select h from Hotel h where h.create_by = :email and h.active_state = 'ACTIVE'")
-    List<Hotel> findMyActiveHotel(String email);
-
     @Query("SELECT h FROM Hotel h WHERE h.brand.active_state = 'ACTIVE' and h.active_state = 'ACTIVE'")
     List<Hotel> findActiveHotel();
 
-/*    //활성화 된 호텔 유저창 보임
-    @Query("select h from Hotel h where h.create_by = :email and h.brand.active_state = 'ACTIVE' and h.active_state = 'ACTIVE'")
-    List<Hotel> findInactiveHotel(String email);*/
+    //호텔 페이징 및 검색
+    @Query("select h from Hotel h where h.brand.brand_num = :brand_num")
+    Page<Hotel> hotelPage(Long brand_num, Pageable pageable);
+
+    //호텔명 검색 hotel_num
+    @Query("select h from Hotel h where h.brand.brand_num = :brand_num and h.hotel_name like concat('%', :keyword, '%') ")
+    public Page<Hotel> findByB_numAndHotel_name(Long brand_num, String keyword, Pageable pageable);
+
+    //대표자 이름 검색 owner
+    @Query("select h from Hotel h where h.brand.brand_num = :brand_num and h.owner like concat('%', :keyword, '%') ")
+    public Page<Hotel> findByB_numAndOwner(Long brand_num, String keyword, Pageable pageable);
+
+    //호텔 주소 address
+    @Query("select h from Hotel h where h.brand.brand_num = :brand_num and h.address like concat('%', :keyword, '%') ")
+    public Page<Hotel> findByB_numAndAddress(Long brand_num, String keyword, Pageable pageable);
+
+    //활성상태 active_state
+    @Query("select h from Hotel h where h.brand.brand_num = :brand_num " +
+            "and h.active_state = 'ACTIVE' "
+            + "and h.hotel_name like concat('%', :keyword, '%') ")
+    public Page<Hotel> findByB_numAndActive_stateContaining(Long brand_num, String keyword, Pageable pageable);
+
+    //전체
+    @Query("select h from Hotel h where h.brand.brand_num = :brand_num and h.hotel_name like concat('%', :str, '%') or h.owner like concat('%', :str, '%') "
+            + "or h.address like concat('%', :str, '%') or h.tel like concat('%', :str, '%') or h.business_num like concat('%', :str, '%') " )
+    public Page<Hotel> findByAllSearch(Long brand_num, String str, Pageable pageable);
 
 
 }

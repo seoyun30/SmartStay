@@ -8,17 +8,68 @@
   <meta charset="UTF-8">
   <link rel="icon" href="/assets/img/hotel-solid.png">
   <title>SmartStay</title>
+
+  <style>
+    #input-group-search .form-select {
+      font-size: 18px !important;
+      height: 45px;
+      padding: 8px 40px 8px 12px;
+      background-color: #f8f9fa;
+      color: black;
+      border: none;
+      position: relative;
+      appearance: none;
+      -webkit-appearance: none;
+      background-position: right 12px center;
+    }
+    .form-control {
+      font-size: 18px;
+      height: 45px;
+      padding: 8px 12px;
+      border: none;
+      flex: 3;
+    }
+    .input-group {
+      position: relative;
+    }
+    .form-select option {
+      white-space: nowrap;
+    }
+  </style>
+
 </head>
 <body>
 
 <th:block layout:fragment="content">
   <h1 class="text-center mt-5">호텔 목록</h1>
 
-  <div class="row mt-3">
-    <div sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="col text-end">
-      <button type="button" onclick="location.href='/hotel/hotelRegister'" class="btn btn-dark">호텔 등록</button>
+  <div sec:authorize="hasAnyAuthority('SUPERADMIN','CHIEF')" class="row mt-3">
+    <div  class="col text-end mr-6">
+      <button type="button" onclick="location.href='/hotel/hotelRegister'" class="btn btn-dark">등록</button>
     </div>
   </div>
+
+  <!--검색창-->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-right">
+      <div class="search-form">
+        <form th:action="@{/hotel/hotelList}" method="get">
+          <div class="input-group" id="input-group-search">
+            <select class="form-select" name="type">
+              <option value="all" th:selected="${type=='all'}">전체</option>
+              <option value="t" th:selected="${type=='n'}">호텔 이름</option>>
+              <option value="c" th:selected="${type=='o'}">대표자</option>>
+              <option value="w" th:selected="${type=='a'}">주소</option>>
+            </select>
+            <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="Search" th:value="${pageRequestDTO.keyword}" style="width: 250px;">
+            <div class="input-group-append">
+              <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
 
   <div class="row mt-3">
     <div class="col">
@@ -37,42 +88,66 @@
         </thead>
 
         <tbody>
-        <th:block th:if="${hotelDTOList == null or hotelDTOList.isEmpty()}">
-          <tr>
-            <td colspan="12" class="text-center align-middle">
-              <span class="h5 fw-bold">등록된 호텔이 없습니다.</span>
-            </td>
-          </tr>
-        </th:block>
-        <th:block th:unless="${hotelDTOList == null or hotelDTOList.isEmpty()}"
-                  th:each="hotel : ${hotelDTOList}">
-          <tr class="text-center">
-            <td th:text="${hotel.hotel_num}"></td>
-            <td>
-              <a th:href="@{/hotel/hotelRead(hotel_num=${hotel.hotel_num})}">
-                [[${hotel.hotel_name}]]
-              </a>
-            </td>
-            <td th:text="${hotel.business_num}"></td>
-            <td th:text="${hotel.owner}"></td>
-            <td th:text="${hotel.address}"></td>
-            <td th:text="${hotel.tel}"></td>
-            <td th:text="${hotel.score}"></td>
-            <td>
-              <button class="btn btn-danger togglebtn" th:value="${hotel.hotel_num}"
-                      th:data-num="${hotel.hotel_num}">
-                <th:block th:if="${hotel.active_state.name().equals('ACTIVE')}">활성화</th:block>
-                <th:block th:if="${hotel.active_state.name().equals('INACTIVE')}">비활성화</th:block>
-              </button>
-            </td>
-          </tr>
+        <th:block th:if="${pageResponseDTO != null}">
+          <th:block th:if="${pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}">
+            <tr>
+              <td colspan="12" class="text-center">
+                <h5 th:text="${pageRequestDTO.keyword != null and pageRequestDTO.keyword != ''} ? '검색결과가 없습니다.' : '등록된 호텔이 없습니다.'"></h5>
+              </td>
+            </tr>
+          </th:block>
+
+          <th:block th:each="hotel :${pageResponseDTO.dtoList}">
+            <tr class="text-center">
+              <td th:text="${hotel.hotel_num}"></td>
+              <td>
+                <a th:href="@{/hotel/hotelRead(hotel_num=${hotel.hotel_num})}">
+                  [[${hotel.hotel_name}]]
+                </a>
+              </td>
+              <td th:text="${hotel.business_num}"></td>
+              <td th:text="${hotel.owner}"></td>
+              <td th:text="${hotel.address}"></td>
+              <td th:text="${hotel.tel}"></td>
+              <td th:text="${hotel.score}"></td>
+              <td>
+                <button class="btn btn-danger togglebtn" th:value="${hotel.hotel_num}"
+                        th:data-num="${hotel.hotel_num}">
+                  <th:block th:if="${hotel.active_state.name().equals('ACTIVE')}">활성화</th:block>
+                  <th:block th:if="${hotel.active_state.name().equals('INACTIVE')}">비활성화</th:block>
+                </button>
+              </td>
+            </tr>
+          </th:block>
         </th:block>
         </tbody>
       </table>
     </div>
   </div>
-</th:block>
 
+  <div class="row mt-3">
+    <th:block th:if="${pageResponseDTO != null and pageResponseDTO.dtoList != null and !#lists.isEmpty(pageResponseDTO.dtoList)}">
+      <div class="row">
+        <div class="col-12">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+              <th:block th:if="${pageResponseDTO.prev}">
+                <li class="page-item"><a class="page-link" th:href="|@{'/hotel/hotelList(page=${pageResponseDTO.start-1})'}|">이전</a></li>
+              </th:block>
+
+              <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
+                <li class="page-item"><a class="page-link" th:href="|@{'/hotel/hotelList?page=' +${num}}|">[[${num}]]</a></li>
+              </th:block>
+
+              <th:block th:if="${pageResponseDTO.next}">
+                <li class="page-item"><a class="page-link" th:href="|@{'/hotel/hotelList(${pageResponseDTO.end+1}'}|">다음</a></li>
+              </th:block>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </th:block>
+  </div>
 </th:block>
 
 <script th:inline="javascript" layout:fragment="script">
