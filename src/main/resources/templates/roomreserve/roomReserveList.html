@@ -5,7 +5,8 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link rel="icon" href="/assets/img/hotel-solid.png">
+    <title>SmartStay</title>
     <style layout:fragment="css">
 
     </style>
@@ -35,7 +36,7 @@
                                             <input type="hidden" class="room_num" th:value="${room.room_num}">
                                             <span class="h5 card-title text-black fw-bold" th:text="${room.room_name}">룸 이름</span> <br>
                                             <span class="card-text text-black" th:text="${room.room_type + ' / 최대 ' + room.room_bed + '인'}">룸 타입 / 최대 n인</span> <br>
-                                            <span class="card-text text-black" th:text="${'숙박당 ' + room.room_price + '원'}">가격</span> <br>
+                                            <span class="card-text text-black" th:text="${'1박당 ' + room.room_price + '원'}">가격</span> <br>
 
                                             <small class="text-body-secondary fw-bold text-center"
                                                    th:text="${room.room_state.name().equals('YES')  ? '예약 가능' : '예약 불가'}">룸 상태</small>
@@ -291,7 +292,6 @@
         $(document).on("click", ".stateBtn", function(event) {
             event.stopPropagation();
             let target = $(event.target);
-            console.log("▶ 상태 변경 버튼 클릭됨");
             let button = $(this);
             let reserveNum = button.val();
             let currentStateText = button.text().trim();
@@ -312,24 +312,20 @@
 
             if (activeSelect && !target.is(activeSelect) && !target.is("option")) {
                 let reserveNum = activeSelect.data("reserve-num");
-                let currentState = activeSelect.find("option:selected").val();
-                let newButton = `<button type="button" class="btn ${getButtonClass(currentState)} stateBtn" value="${reserveNum}">${getStateText(currentState)}</button>`;
+                let originalState = activeSelect.data("original-state"); // 원래 상태 가져오기
+                let newButton = `<button type="button" class="btn ${getButtonClass(originalState)} stateBtn" value="${reserveNum}">${getStateText(originalState)}</button>`;
                 activeSelect.replaceWith(newButton);
-                activeSelect = null; // 활성화된 select 초기화
+                activeSelect = null;
             }
 
-            let availableStates = [];
-            if (currentState === "RESERVE") {
-                availableStates = ["IN", "OUT", "CANCEL"]; // "접수" → 체크인, 체크아웃, 취소 가능
-            } else if (currentState === "IN") {
-                availableStates = ["OUT", "CANCEL"]; // "체크인" → 체크아웃, 취소 가능
-            }
+            let availableStates = ["RESERVE", "IN", "OUT", "CANCEL"];
 
             // 기존 버튼을 숨기고, select 박스 추가
-            let selectHtml = `<select class="reserve-state-select" data-reserve-num="${reserveNum}">`;
+            let selectHtml = `<select class="reserve-state-select" data-reserve-num="${reserveNum}" data-original-state="${currentState}">`;
             availableStates.forEach(state => {
                 let selected = state === currentState ? "selected" : "";
-                selectHtml += `<option value="${state}" ${selected}>${states[state]}</option>`;
+                let disabled = state === currentState ? "disabled" : ""; // 현재 상태를 선택 가능하지만 비활성화
+                selectHtml += `<option value="${state}" ${selected} ${disabled}>${states[state]}</option>`;
             });
             selectHtml += `</select>`;
 
@@ -368,10 +364,10 @@
 
             if (activeSelect && !target.is(activeSelect) && !target.is("option")) {
                 let reserveNum = activeSelect.data("reserve-num");
-                let currentState = activeSelect.find("option:selected").val();
-                let newButton = `<button type="button" class="btn ${getButtonClass(currentState)} stateBtn" value="${reserveNum}">${getStateText(currentState)}</button>`;
+                let originalState = activeSelect.data("original-state"); // 원래 상태 가져오기
+                let newButton = `<button type="button" class="btn ${getButtonClass(originalState)} stateBtn" value="${reserveNum}">${getStateText(originalState)}</button>`;
                 activeSelect.replaceWith(newButton);
-                activeSelect = null; // 활성화된 select 초기화
+                activeSelect = null;
             }
         });
 
