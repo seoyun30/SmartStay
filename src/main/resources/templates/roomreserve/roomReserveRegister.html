@@ -5,17 +5,16 @@
       layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>룸예약</title>
+    <link rel="icon" href="/assets/img/hotel-solid.png">
+    <title>SmartStay</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style layout:fragment="css">
-        /* 부모 컨테이너 스타일 */
         .date-picker-wrapper {
             position: relative;
             display: inline-block;
             width: 100%;
         }
 
-        /* input 스타일 */
         .date-picker-wrapper input {
             width: 100%;
             padding: 10px 40px 10px 12px; /* 오른쪽 패딩을 줘서 아이콘과 겹치지 않게 함 */
@@ -25,7 +24,6 @@
             outline: none;
         }
 
-        /* 캘린더 아이콘 스타일 */
         .calendar-icon {
             position: absolute;
             right: 25px; /* input 내부의 끝부분에 배치 */
@@ -193,7 +191,6 @@
             checkOutDate.setDate(checkOutDate.getDate() + 1); // 체크아웃은 체크인 날짜의 다음 날
             tomorrowStr = checkOutDate.toISOString().split("T")[0];
 
-
             flatpickr("#in_date", {
                 dateFormat: "Y-m-d",
                 disable: Array.from(reservedDates), // 예약된 날짜 비활성화
@@ -249,7 +246,11 @@
             // 체크아웃 날짜가 체크인 날짜보다 같거나 이전이면 계산하지 않음
             if (checkOutDate <= checkInDate) {
                 alert("체크아웃 날짜는 체크인 날짜보다 이후여야 합니다.");
-                $(".out_date").val(""); // 잘못된 체크아웃 날짜 초기화
+                let nextDay = new Date(checkInDate);
+                nextDay.setDate(nextDay.getDate() + 1);
+                let nextDayStr = nextDay.toISOString().split("T")[0];
+                $("#out_date").flatpickr().setDate(nextDayStr);
+                $("#out_date").flatpickr().set("minDate", nextDayStr); // 잘못된 체크아웃 날짜 초기화
                 $(".totalPrice").text(price); // 기본 가격으로 되돌리기
                 return;
             }

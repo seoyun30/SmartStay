@@ -5,7 +5,8 @@
       layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link rel="icon" href="/assets/img/hotel-solid.png">
+    <title>SmartStay</title>
     <link th:href="@{/css/stikysidebar.css}" rel="stylesheet">
     <style layout:fragment="css">
         #contain {
@@ -39,6 +40,41 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .date-picker-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .date-picker-wrapper input {
+            width: 100%;
+            padding: 10px 40px 10px 12px; /* 오른쪽 패딩을 줘서 아이콘과 겹치지 않게 함 */
+            font-size: 16px;
+            border: 1px solid #a2aec7;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .flatpickr-input {
+            width: 100% !important; /* flatpickr 입력 필드 너비 100%로 강제 설정 */
+            padding: 10px 40px 10px 12px !important; /* 기존 스타일에 맞는 padding 적용 */
+            font-size: 16px;
+            border: 1px solid #a2aec7;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .calendar-icon {
+            position: absolute;
+            right: 25px; /* input 내부의 끝부분에 배치 */
+            top: 65%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #555;
+            cursor: pointer;
+            pointer-events: auto; /* 아이콘 클릭 가능하게 설정 */
         }
     </style>
 </head>
@@ -104,6 +140,8 @@
                             <div class="card-body reserveinfo" >
                                 <input type="hidden" class="roomItemNumber" name="roomItem_num" th:value="${roomItem.roomitem_num}">
                                 <input type="hidden" class="roomNumber" name="room_num" th:value="${roomItem.roomDTO.room_num}">
+                                <input type="hidden" class="in_time" th:value="${roomItem.roomDTO.in_time}">
+                                <input type="hidden" class="out_time" th:value="${roomItem.roomDTO.out_time}">
                                 <span class="reserveDate">[[${#temporals.format(roomItem.in_date, 'yyyy-MM-dd HH:mm')}]]~[[${#temporals.format(roomItem.out_date,'yyyy-MM-dd HH:mm')}]] | [[${roomItem.day}]]박</span> <br>
                                 <span class="fs-6 reserveCount">최대 [[${roomItem.roomDTO.room_bed}]]명 / 예약인원 [[${roomItem.count}]]명</span> <br>
                                 <span class="reserveRequest">요청사항 : [[${roomItem.reserve_request}]]</span>
@@ -281,13 +319,17 @@
                     <div class="row mb-3">
                         <input type="hidden" class="modalRoomItem_num" name="roomItem_num">
                         <input type="hidden" class="modalRoom_num" name="room_num">
+                        <input type="hidden" class="modalIn_time" name="in_time">
+                        <input type="hidden" class="modalOut_time" name="out_time">
                         <div class="col">
                             <span class="fs-6 text-secondary">체크인</span> <br>
-                            <input class="modalIn_date" type="datetime-local" name="in_date">
+                            <input class="modalIn_date" type="date" name="in_date" id="in_date">
+                            <i class="bi bi-calendar calendar-icon" data-target="#in_date"></i>
                         </div>
                         <div class="col">
                             <span class="fs-6 text-secondary">체크아웃</span> <br>
-                            <input class="modalOut_date" type="datetime-local" name="out_date">
+                            <input class="modalOut_date" type="date" name="out_date" id="out_date">
+                            <i class="bi bi-calendar calendar-icon" data-target="#in_date"></i>
                         </div>
                     </div>
 
@@ -356,7 +398,7 @@
 <script th:inline="javascript" layout:fragment="script">
 
     $(document).ready(function () {
-
+        flatpickr.localize(flatpickr.l10ns.ko);
         $('.reserveinfo').each(function() {
             let roomPrice = parseFloat($(this).find('.roomPrice').val());  // 방 가격
             let reserveDay = parseInt($(this).find('.reserveDay').val());  // 예약 일수
@@ -497,6 +539,8 @@
             // 현재 클릭된 요소에서 필요한 데이터 가져오기
             let roomItemNumber = $(this).find(".roomItemNumber").val();
             let roomNumber = $(this).find(".roomNumber").val();
+            let in_time = $(this).find(".in_time").val();
+            let out_time = $(this).find(".out_time").val();
             let checkInOutText = $(this).find(".reserveDate").text().trim();
             let maxPeopleText = $(this).find(".reserveCount").text().trim();
             let requestText = $(this).find(".reserveRequest").text().trim();
@@ -528,6 +572,8 @@
             $("#roomModal input.modalRoomItem_num").val(roomItemNumber);
             $("#roomModal input.modalRoom_num").val(roomNumber);
             $("#roomModal .roomHotel").html(hotelName + ' <span class="fs-4 fw-bold">' + roomInfoText + '</span>');
+            $("#roomModal input.modalIn_time").val(in_time);
+            $("#roomModal input.modalOut_time").val(out_time);
             $("#roomModal input.modalIn_date").val(checkInDate);
             $("#roomModal input.modalOut_date").val(checkOutDate);
             $("#roomModal textarea.modalReserve_request").val(requestContent);
@@ -540,8 +586,27 @@
             // 모달 창 띄우기
             $("#roomModal").modal("show");
 
+            // flatpickr 적용
+            flatpickr("#roomModal .modalIn_date", {
+                minDate: "today",
+                dateFormat: "Y-m-d", // 날짜 형식 지정 (YYYY-MM-DD)
+                defaultDate: checkInDate,  // 기본 체크인 날짜 설정
+                onChange: function(selectedDates, dateStr, instance) {
+                    totalpriceChange();
+                }
+            });
+
+            flatpickr("#roomModal .modalOut_date", {
+                minDate: "today",
+                dateFormat: "Y-m-d", // 날짜 형식 지정 (YYYY-MM-DD)
+                defaultDate: checkOutDate,  // 기본 체크아웃 날짜 설정
+                onChange: function(selectedDates, dateStr, instance) {
+                    totalpriceChange();
+                }
+            });
+
             // 모달이 열린 후 setMinDateTime 실행
-            setMinDateTime()
+            setMinDateTime();
         });
 
         //룸서비스 모달창 표시
@@ -692,36 +757,45 @@
         });
 
         //룸예약 총 가격 계산 함수
-        function totalpriceChange(){
+        function totalpriceChange() {
 
-            let in_date = $(".modal .in_date").val();
-            let out_date = $(".modal .out_date").val();
+            let inDate = $("#roomModal .modalIn_date").val();
+            let outDate = $("#roomModal .modalOut_date").val();
+            let dayCount = 0;
+            if (inDate && outDate) {
+                let inDateObj = new Date(inDate);
+                let outDateObj = new Date(outDate);
+                dayCount = (outDateObj - inDateObj) / (1000 * 60 * 60 * 24);  // 날짜 차이 계산 (일수)
+            }
 
             // 날짜가 모두 입력되지 않으면 계산하지 않음
-            if (!in_date || !out_date) {
-                $(".totalPrice").text($(".modal .price").text()); // 기본 1박 요금 표시
+            if (!inDate || !outDate) {
+                let nextDay = new Date(inDate);
+                nextDay.setDate(nextDay.getDate() + 1);
+                let nextDayStr = nextDay.toISOString().split("T")[0];
+                $("#roomModal .modalOut_date").flatpickr().setDate(nextDayStr);
+                $("#roomModal .modalOut_date").flatpickr().set("minDate", nextDayStr); // 잘못된 체크아웃 날짜 초기화
+                $("#roomModal .roomTotalPrice").text($("#roomModal .modalPrice").text()); // 기본 1박 요금 표시
                 return;
             }
 
-            // 날짜 차이 계산
-            let checkInDate = new Date(in_date);
-            let checkOutDate = new Date(out_date);
-            let dayDifference = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
-
             // 체크아웃 날짜가 체크인 날짜보다 같거나 이전이면 계산하지 않음
-            if (dayDifference <= 0) {
+            if (dayCount <= 0) {
                 alert("체크아웃 날짜는 체크인 날짜보다 이후여야 합니다.");
-                $(".modal .out_date").val(""); // 잘못된 체크아웃 날짜 초기화
-                $(".totalPrice").text($(".modal .price").text()); // 기본 가격으로 되돌리기
+                let nextDay = new Date(inDate);
+                nextDay.setDate(nextDay.getDate() + 1);
+                let nextDayStr = nextDay.toISOString().split("T")[0];
+                $("#roomModal .modalOut_date").flatpickr().setDate(nextDayStr);
+                $("#roomModal .modalOut_date").flatpickr().set("minDate", nextDayStr); // 잘못된 체크아웃 날짜 초기화
+                $("#roomModal .roomTotalPrice").text($("#roomModal .modalPrice").text()); // 기본 1박 요금 표시
                 return;
             }
 
             // 총 가격 계산
-            let price = parseInt($(".modal .price").text().replace(/[^0-9]/g, ''));
-            let totalPrice = price * dayDifference; // 소수점 올림
-
-            $(".modal .day").val(dayDifference);
-            $(".modal .totalPrice").text(totalPrice);
+            let price = parseInt($("#roomModal .modalPrice").text().replace(/[^0-9]/g, ''));
+            let totalPrice = price * dayCount;
+            $("#roomModal .roomTotalPrice").text(totalPrice);
+            $("#roomModal input.modalDay").val(dayCount);
         }
 
         let deletedCareItems = []; // 삭제할 룸케어 아이템 리스트
@@ -792,6 +866,7 @@
 
             let roomitem_num = $("#roomModal .modalRoomItem_num").val();
             let room_num = $("#roomModal .modalRoom_num").val();
+            let in_time = new Date($("#roomModal .modalIn_date").val());
             let in_date = new Date($("#roomModal .modalIn_date").val());
             let out_date = new Date($("#roomModal .modalOut_date").val());
             let day = $("#roomModal .modalDay").val();
@@ -849,7 +924,7 @@
             let roomItemDTO = {
                 roomitem_num : roomitem_num,
                 room_num : room_num,
-                in_date: formatDate(in_date),
+                in_date: in_date + T + in_Time,
                 out_date: formatDate(out_date),
                 day : day,
                 count : count,
