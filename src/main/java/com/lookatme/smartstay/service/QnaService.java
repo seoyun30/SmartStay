@@ -185,7 +185,7 @@ public class QnaService {
             log.info( "제목 + 작성자 검색 검색키워드는"  +pageRequestDTO.getKeyword() );
             qnaPage =  qnaRepository.findByTitleContainingOrWriterContaining(pageRequestDTO.getKeyword(),pageRequestDTO.getKeyword(), qnaPageable);
 
-        }else if(pageRequestDTO.getType().equals("tcw")){
+        }else if(pageRequestDTO.getType().equals("all")){
             log.info( "제목 + 내용 + 작성자으로 검색 검색키워드는"  +pageRequestDTO.getKeyword() );
             qnaPage =  qnaRepository.titleOrConOrWr(pageRequestDTO.getKeyword(), qnaPageable);
 
@@ -238,7 +238,7 @@ public class QnaService {
             log.info( "작성자로 검색으로  검색키워드는"  +pageRequestDTO.getKeyword() );
             qnaPage =  qnaRepository.selectlikeHotelAndWriter(pageRequestDTO.getKeyword(), email, qnaPageable);
 
-        }else if(pageRequestDTO.getType().equals("tc")){
+        }else if(pageRequestDTO.getType().equals("all")){
             log.info("제목 + 내용중에 검색  검색키워드는 " + pageRequestDTO.getKeyword());
             qnaPage = qnaRepository.titleOrConAndWriter(pageRequestDTO.getKeyword(), email, qnaPageable);
         }
@@ -303,7 +303,7 @@ public class QnaService {
         } else if (pageRequestDTO.getType().equals("cw")) {
             log.info("내용 + 작성자로 검색, 검색 키워드는: " + pageRequestDTO.getKeyword());
             qnaPage = qnaRepository.findByTitleContainingOrWriterContainingAndHotel_numContaining(pageRequestDTO.getKeyword(), pageRequestDTO.getKeyword(), adminHotelNum, qnaPageable);
-        } else if (pageRequestDTO.getType().equals("tcw")) {
+        } else if (pageRequestDTO.getType().equals("all")) {
             log.info("제목 + 내용 + 작성자로 검색, 검색 키워드는: " + pageRequestDTO.getKeyword());
             qnaPage = qnaRepository.titleOrConOrWrAnaHotel_numContaining(pageRequestDTO.getKeyword(), adminHotelNum, qnaPageable);
         }
@@ -373,7 +373,7 @@ public class QnaService {
         } else if (pageRequestDTO.getType().equals("cw")) {
             log.info("내용 + 작성자로 검색, 검색 키워드는: " + pageRequestDTO.getKeyword());
             qnaPage = qnaRepository.findByTitleContainingOrWriterContainingAndBrand_numContaining(pageRequestDTO.getKeyword(), pageRequestDTO.getKeyword(), adminBrandNum, qnaPageable);
-        } else if (pageRequestDTO.getType().equals("tcw")) {
+        } else if (pageRequestDTO.getType().equals("all")) {
             log.info("제목 + 내용 + 작성자로 검색, 검색 키워드는: " + pageRequestDTO.getKeyword());
             qnaPage = qnaRepository.titleOrConOrWrAnaBrand_numContaining(pageRequestDTO.getKeyword(), adminBrandNum, qnaPageable);
         }

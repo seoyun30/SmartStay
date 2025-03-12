@@ -53,7 +53,7 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
     @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') or q.writer like concat('%', :str, '%') ")
     public Page<Qna> titleOrConOrWr(String str, Pageable pageable);
 
-    //mylist용
+    //유저용
     @Query("select q from Qna q where q.title like concat('%', :keyword, '%')  and q.writer = :email ")
     public Page<Qna> findByTitleAndWriterContaining(String keyword, String email, Pageable pageable);
 
@@ -66,7 +66,7 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
     @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') and q.writer = :email ")
     public Page<Qna> titleOrConAndWriter(String str, String email, Pageable pageable);
 
-    //호텔로 검색 페이징
+    //호텔용
     @Query("select q from Qna q where q.hotel.hotel_num = :hotel_num")
     Page<Qna> findbyHotel(Long hotel_num, Pageable pageable);
 
@@ -88,7 +88,7 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
     @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') or q.writer like concat('%', :str, '%')and q.hotel.hotel_num = :hotel_num ")
     public Page<Qna> titleOrConOrWrAnaHotel_numContaining(String str, Long hotel_num, Pageable pageable);
 
-    //브랜드로 검색 페이징
+    //브랜드용
     @Query("select q from Qna q where q.hotel.brand.brand_num = :brand_num")
     Page<Qna> findbyBrand(Long brand_num, Pageable pageable);
 
@@ -112,6 +112,8 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
 
     @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') or q.writer like concat('%', :str, '%') and q.hotel.brand.brand_num = :brand_num ")
     public Page<Qna> titleOrConOrWrAnaBrand_numContaining(String str, Long brand_num, Pageable pageable);
+
+
 
 
 
