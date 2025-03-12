@@ -142,6 +142,11 @@ public class ReviewController {
                                     Principal principal, Model model) {
         log.info("입력폼 페이지 이동...");
 
+        boolean check = reviewService.validateReview(reserve_num, principal.getName());
+        if (check) {
+            return "redirect:/myReviewList";
+        }
+
         if (reserve_num == null) {
             log.error("reserve_num이 제공되지 않았습니다.");
             return "redirect:/errorPage"; //예외
@@ -169,29 +174,29 @@ public class ReviewController {
     @PostMapping("/reviewRegister/{reserve_num}")
     public String reviewRegisterPost(@Valid ReviewDTO reviewDTO, RedirectAttributes redirectAttributes,
                                      @PathVariable("reserve_num") Long reserve_num, Long hotel_num,
-                                     @RequestParam(value = "multipartFiles", required = false) List<MultipartFile> multipartFiles,
-                                     @RequestParam(value = "mainImageIndex", required = false, defaultValue = "0") Long mainImageIndex,
-                                     //BindingResult bindingResult,
+                                     @RequestParam("multipartFileList") List<MultipartFile> multipartFileList, Model model,
                                      Principal principal) throws Exception {
 
         System.out.println("받은 reserve_num: " + reserve_num);
         log.info("리뷰 등록 :{}", reviewDTO); // reviewDTO상태 확인
         log.info("principal: {}", principal);
 
-
-//        if (bindingResult.hasErrors()) {
-//            log.error("Binding errors: {}", bindingResult.getAllErrors());
-//            return "review/reviewRegister"; //오류가 있을 경우 등록페이지로 이동
-//        }
         if (!roomReserveService.validateroomResereve(reserve_num, principal.getName())) {
             log.error("예약 회원의 이메일과 로그인 이메일이 일치하지 앟습니다.");
             return "redirect:/member/myRoomReserveRead"; //
         };
 
+        if (multipartFileList != null && !multipartFileList.isEmpty()) {
+            log.info("파일있음");
+            multipartFileList.forEach(multipartFile -> log.info(multipartFile.getOriginalFilename()));
+        } else {
+            log.info("파일이 없음");
+        }
+
         //리뷰 등록 처리
         try {
             // 리뷰 등록 서비스 호출(이미지 다중 업로드)
-            reviewService.reviewRegister(reviewDTO, principal.getName(), multipartFiles, mainImageIndex);
+            reviewService.reviewRegister(reviewDTO, principal.getName(), multipartFileList);
             redirectAttributes.addFlashAttribute("msg", "등록이 완료 되었습니다.");
             log.info("호텔 : {}", hotel_num);
             return "redirect:/review/reviewList/" +hotel_num; // "문자열" + id = "redirect:/reviewList/" +hotel_num

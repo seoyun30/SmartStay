@@ -86,44 +86,23 @@
                             <div class="review-container" >
                                 <!-- 첫 번째 칸: 별점과 날짜 -->
                                 <div class="review-info d-flex justify-content-between mb-1 starpoint_wrap">
-                                    <!-- 별점 -->
-                                    <div class="starpoint_box" >
-                                        <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>
-                                        <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>
-                                        <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>
-                                        <label for="starpoint_4" class="label_star" title="2"><span class="blind">2점</span></label>
-                                        <label for="starpoint_5" class="label_star" title="2.5"><span class="blind">2.5점</span></label>
-                                        <label for="starpoint_6" class="label_star" title="3"><span class="blind">3점</span></label>
-                                        <label for="starpoint_7" class="label_star" title="3.5"><span class="blind">3.5점</span></label>
-                                        <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>
-                                        <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
-                                        <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
+                                    <!-- 별점 표시 영역 -->
+                                    <div class="starpoint_wrap" th:id="'starpoint_wrap_' + ${review.rev_num}" th:data-score="${review.score}">
+                                        <div class="starpoint_box">
+                                            <label class="label_star" title="0.5"><span class="blind">0.5점</span></label>
+                                            <label class="label_star" title="1"><span class="blind">1점</span></label>
+                                            <label class="label_star" title="1.5"><span class="blind">1.5점</span></label>
+                                            <label class="label_star" title="2"><span class="blind">2점</span></label>
+                                            <label class="label_star" title="2.5"><span class="blind">2.5점</span></label>
+                                            <label class="label_star" title="3"><span class="blind">3점</span></label>
+                                            <label class="label_star" title="3.5"><span class="blind">3.5점</span></label>
+                                            <label class="label_star" title="4"><span class="blind">4점</span></label>
+                                            <label class="label_star" title="4.5"><span class="blind">4.5점</span></label>
+                                            <label class="label_star" title="5"><span class="blind">5점</span></label>
 
-                                        <!-- 리뷰의 score 값에 따라 체크 -->
-                                        <input type="radio" name="score" value="0.5" id="starpoint_1" class="star_radio"
-                                               th:checked="${review.score == '0.5'}" readonly>
-                                        <input type="radio" name="score" value="1" id="starpoint_2" class="star_radio"
-                                               th:checked="${review.score == '1'}" readonly>
-                                        <input type="radio" name="score" value="1.5" id="starpoint_3" class="star_radio"
-                                               th:checked="${review.score == '1.5'}" readonly>
-                                        <input type="radio" name="score" value="2" id="starpoint_4" class="star_radio"
-                                               th:checked="${review.score == '2'}" readonly>
-                                        <input type="radio" name="score" value="2.5" id="starpoint_5" class="star_radio"
-                                               th:checked="${review.score == '2.5'}" readonly>
-                                        <input type="radio" name="score" value="3" id="starpoint_6" class="star_radio"
-                                               th:checked="${review.score == '3'}" readonly>
-                                        <input type="radio" name="score" value="3.5" id="starpoint_7" class="star_radio"
-                                               th:checked="${review.score == '3.5'}" readonly>
-                                        <input type="radio" name="score" value="4" id="starpoint_8" class="star_radio"
-                                               th:checked="${review.score == '4'}" readonly>
-                                        <input type="radio" name="score" value="4.5" id="starpoint_9" class="star_radio"
-                                               th:checked="${review.score == '4.5'}" readonly>
-                                        <input type="radio" name="score" value="5" id="starpoint_10" class="star_radio"
-                                               th:checked="${review.score == '5'}" readonly>
-
-                                        <span class="starpoint_bg"></span>
+                                            <span class="starpoint_bg"></span>
+                                        </div>
                                     </div>
-
                                     <span class="star-rating" id="data-score" th:text="${review.score}"></span>
                                     <!-- 작성 날짜 -->
                                     <div class="review-date">
@@ -184,102 +163,23 @@
 </th:block>
 <script th:inline="javascript" layout:fragment="script">
 
+    //별점을 반복해주는
+    document.addEventListener("DOMContentLoaded", function() {
+        // 모든 리뷰의 별점 표시
+        const starWrappers = document.querySelectorAll(".starpoint_wrap");
 
-    //별점을 each로 가져온다
-    // $(document).ready(function () {
-    //     $(".starpoint_box").each(function () {
-    //         var score = parseFloat($(this).find(".star-rating").text()); // 점수 가져오기 (0.5 ~ 5)
-    //         var revNum = $(this).data("rev_num"); // 리뷰 번호 가져오기
-    //         var percentage = (score / 5) * 100; // 퍼센트 계산 (배경 바 표시용)
-    //
-    //         var starHtml = "";
-    //
-    //         // ⭐ 라벨 생성 (0.5점 단위로 10개)
-    //         for (var i = 1; i <= 10; i++) {
-    //             var value = (i * 0.5).toFixed(1);
-    //             starHtml += `
-    //             <label for="starpoint_${revNum}_${i}" class="label_star" title="${value}">
-    //                 <span class="blind">${value}점</span>
-    //             </label>
-    //         `;
-    //         }
-    //
-    //         // ⭐ 라디오 버튼 생성 (체크 여부 확인)
-    //         for (var i = 1; i <= 10; i++) {
-    //             var value = (i * 0.5).toFixed(1);
-    //             starHtml += `
-    //             <input type="radio" name="score_${revNum}" value="${value}" id="starpoint_${revNum}_${i}"
-    //                    class="star_radio" ${score == value ? 'checked' : ''} readonly>
-    //         `;
-    //         }
-    //
-    //         // ⭐ 배경 바 추가 (점수에 따른 비율로 표시)
-    //         starHtml += `<span class="starpoint_bg" style="width: ${percentage}%;"></span>`;
-    //
-    //         // 기존 요소에 삽입
-    //         $(this).html(starHtml);
-    //     });
-    // });
+        starWrappers.forEach(wrapper => {
+            const scoreValue = parseFloat(wrapper.getAttribute("data-score")); // 별점 값 가져오기
+            const starBg = wrapper.querySelector(".starpoint_bg");
+
+            if (!isNaN(scoreValue) && starBg) {
+                const percentage = (scoreValue / 5) * 100; // 별점 값에 따른 백분율 계산
+                starBg.style.width = `${percentage}%`;  // 별점 배경 채우기
+            }
+        });
+    });
 
 
-
-
-    // $(".score").each(function () {
-        //     var score = parseFloat($(this).text()); // 점수 가져오기 (0.5~5)
-        //     var fullStars = Math.floor(score); // 가득 찬 별 개수
-        //     var halfStar = (score % 1 !== 0); // 0.5점 여부 확인
-        //     var emptyStars = 5 - fullStars - (halfStar ? 1 : 0); // 빈 별 개수
-
-            // var starHtml = "";
-    //
-    //         // 가득 찬 별(⭐) 추가
-    //         for (var i = 0; i < fullStars; i++) {
-    //             starHtml += "⭐";
-    //         }
-    //
-    //         // 반쪽 별(☆) 추가 (0.5점일 때)
-    //         if (halfStar) {
-    //             starHtml += "⭐";
-    //         }
-    //
-    //         // 빈 별(☆) 추가
-    //         for (var i = 0; i < emptyStars; i++) {
-    //             starHtml += "☆";
-    //         }
-    //
-    //         // 기존 점수 텍스트 대신 별점 UI 삽입
-    //         $(this).html(starHtml);
-    //     });
-    //
-    //     removeBtn.on("click", function () {
-    //         console.log("클릭")
-    //         console.log(rev_num)
-    //         form.action = "/review/reviewDelete";
-    //         form.method = "post";
-    //         form.submit();
-    //     });
-    //
-    // })
-
-    // $(".review").each(function () {
-    //     var score = parseFloat($(this).data("score")); // 각 리뷰의 점수를 가져옴 (DB에서 가져온 값)
-    //
-    //     var fullStars = Math.floor(score); // 가득 찬 별 개수
-    //     var halfStar = (score % 1 !== 0); // 0.5점 여부 확인
-    //     var emptyStars = 5 - fullStars - (halfStar ? 1 : 0); // 빈 별 개수
-    //
-    //     // 가득 찬 별(Full Star) 처리
-    //     for (var i = 1; i <= fullStars; i++) {
-    //         $('#starpoint_' + (i * 2 - 1)).prop('checked', true);
-    //     }
-    //
-    //     // 반 별(Half Star) 처리 (0.5점일 때)
-    //     if (halfStar) {
-    //         $('#starpoint_' + (fullStars * 2)).prop('checked', true);
-    //     }
-    //
-    //     // 빈 별 처리 (빈 별은 그대로 표시되므로 별도의 코드가 필요하지 않음)
-    // });
 
     $(document).ready(function () {
         $(".reviewContent").each(function () {

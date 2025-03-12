@@ -32,8 +32,6 @@ public class ReviewDTO {
 
     private RoomReserveDTO roomReserveDTO; //룸 예약 조인
 
-//    private Long brand_num;
-
     private MemberDTO memberDTO; //회원 조인
 
     private HotelDTO hotelDTO; //호텔 조인
@@ -50,12 +48,25 @@ public class ReviewDTO {
 
     private String modified_by;
 
-    //이미지
-    public List<ImageDTO> imageDTOList = new ArrayList<>(); //여러 이미지를 담는 용
-
+    //이미지 리스트들
+    public List<ImageDTO> imageDTOList = new ArrayList<ImageDTO>(); //여러 이미지를 담는 용
     private List<Long> imageIdList = new ArrayList<>(); // 이미지 식별용(이미지 ID를 저장하는 리스트)
 
-    private ImageDTO mainImage;
+    //리뷰 메인 이미지
+    private ImageDTO mainImageDTO;
+
+    // 리뷰 메인 이미지 getter
+    public ImageDTO getMainImageDTO() {
+        return mainImageDTO;
+    }
+
+    // 리뷰 메인 이미지 setter
+    public void setMainImageDTO(ImageDTO mainImageDTO) {
+        this.mainImageDTO = mainImageDTO;
+    }
+
+    //리뷰 이미지
+    private ImageDTO reviewImages;
 
     // 룸 예약 설정
     public ReviewDTO setRoomReserveDTO(RoomReserveDTO roomReserveDTO) {

@@ -76,6 +76,35 @@
 
                         <div class="mb-3"> <!--별점-->
                             <label for="score" class="form-label">별점</label>
+                            <!-- 별점 표시 영역 -->
+                            <div class="mb-3 starpoint_wrap">
+                                <div class="starpoint_box">
+                                    <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>
+                                    <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>
+                                    <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>
+                                    <label for="starpoint_4" class="label_star" title="2"><span class="blind">2점</span></label>
+                                    <label for="starpoint_5" class="label_star" title="2.5"><span class="blind">2.5점</span></label>
+                                    <label for="starpoint_6" class="label_star" title="3"><span class="blind">3점</span></label>
+                                    <label for="starpoint_7" class="label_star" title="3.5"><span class="blind">3.5점</span></label>
+                                    <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>
+                                    <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
+                                    <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
+
+                                    <input type="radio" name="score" value="0.5" data-score="0.5" id="starpoint_1" class="star_radio" disabled>
+                                    <input type="radio" name="score" value="1" data-score="1" id="starpoint_2" class="star_radio" disabled>
+                                    <input type="radio" name="score" value="1.5" data-score="1.5" id="starpoint_3" class="star_radio" disabled>
+                                    <input type="radio" name="score" value="2" data-score="2" id="starpoint_4" class="star_radio" disabled>
+                                    <input type="radio" name="score" value="2.5" data-score="2.5" id="starpoint_5" class="star_radio" disabled>
+                                    <input type="radio" name="score" value="3" data-score="3" id="starpoint_6" class="star_radio" disabled>
+                                    <input type="radio" name="score" value="3.5" data-score="3.5" id="starpoint_7" class="star_radio" disabled>
+                                    <input type="radio" name="score" value="4" data-score="4" id="starpoint_8" class="star_radio" disabled>
+                                    <input type="radio" name="score" value="4.5" data-score="4.5" id="starpoint_9" class="star_radio" disabled>
+                                    <input type="radio" name="score" value="5" data-score="5" id="starpoint_10" class="star_radio" disabled>
+
+                                    <span class="starpoint_bg"></span>
+                                </div>
+                            </div>
+                            <!--별점 확인용-->
                             <input type="number" min="0" class="form-control" th:value="${review.score}" id="score" readonly>
                         </div>
                     </div>
@@ -143,18 +172,22 @@
 </th:block>
 <script th:inline="javascript" layout:fragment="script">
 
-    // 예시로 리뷰 데이터가 객체로 주어졌을 때
-    var review = {
-        score: 3.5 // 이 값은 실제 서버에서 전달되는 별점 값
-    };
+    //전달된 별점 값을 가져와 처리
+    document.addEventListener("DOMContentLoaded", function() {
+        const score = [[${review.score}]];  // 서버에서 받은 score 값
+        const scoreValue = parseFloat(score);
 
-    // 각 별점 radio 버튼을 점수에 맞게 checked 처리
-    document.querySelectorAll('.star_radio').forEach(function(radio) {
-        if (parseFloat(radio.value) === review.score) {
-            radio.checked = true;
+        if (!isNaN(scoreValue)) {
+            const starIndex = Math.round(scoreValue * 2); // 별점에 해당하는 인덱스 계산 (0.5 단위)
+            const starInput = document.querySelector(`#starpoint_${starIndex}`);
+
+            if (starInput) {
+                starInput.checked = true;  // 해당 별점의 라디오 버튼 체크
+                const starBg = document.querySelector(".starpoint_bg");
+                starBg.style.width = `${(starIndex * 10)}%`; // 별점 배경 크기 설정
+            }
         }
     });
-
 
 
 </script>

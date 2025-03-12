@@ -30,9 +30,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("select r from Review r where r.member.email = :email")
     List<Review> findByUser(@Param("email") String email);
 
-//    // 브랜드의 모든 리뷰조회 (보류)
-//    @Query("select r from Review r where r.hotel.brand.brand_num =:brand_num")
-//    List<Review> findByHotelorBrand(@Param("brand") Long brand_num);
+    @Query("select r from Review r where r.member.email = :email and r.roomReserve.reserve_num = :reserve_num")
+    Review findByEmailAndReserveNum(String email, Long reserve_num);
 
     // 검색 기능
     @Query("SELECT r FROM Review r WHERE r.room.hotel.hotel_num = :hotel_num "
