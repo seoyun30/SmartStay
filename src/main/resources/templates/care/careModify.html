@@ -53,7 +53,7 @@
                                     <th:block th:each="img : ${careDTO.imageDTOList}">
                                         <th:block th:if="${img.repimg_yn == 'Y'}">
                                             <img th:src="${img.thumbnail_url}" alt="Main Image" width="250px">
-                                            <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
+                                            <button type="button" th:data-image-id="${img.image_id}" class="btn btn-sm btn-outline-danger delete-image-btn">삭제</button>
                                         </th:block>
                                     </th:block>
                                 </div>
@@ -63,7 +63,7 @@
                                 <label for="formFile" class="form-label">이미지 변경</label>
                                 <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file">
                                 <div class="row main imgpreview"></div>
-                                <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
+                                <button type="button" class="bb btn btn-sm btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
                             </div>
 
                             <div class="col-12 text-center">

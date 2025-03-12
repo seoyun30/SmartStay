@@ -95,7 +95,7 @@
                                     <th:block th:each="img : ${roomDTO.imageDTOList}">
                                         <th:block th:if="${img.repimg_yn == 'Y'}">
                                             <img th:src="${img.thumbnail_url}" alt="Main Image" width="250px">
-                                            <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
+                                            <button type="button" th:data-image-id="${img.image_id}" class="btn btn-sm btn-outline-danger delete-image-btn">삭제</button>
                                         </th:block>
                                     </th:block>
                                 </label>
@@ -108,7 +108,7 @@
                                         <th:block th:unless="${img.repimg_yn == 'Y'}">
                                             <div th:id="'image-' + ${img.image_id}">
                                                 <img th:src="${img.thumbnail_url}" alt="Detail Image" class="mb-1" width="200px">
-                                                <button type="button" th:data-image-id="${img.image_id}" class="btn btn-outline-danger delete-image-btn">삭제</button>
+                                                <button type="button" th:data-image-id="${img.image_id}" class="btn btn-sm btn-outline-danger delete-image-btn">삭제</button>
                                             </div>
                                         </th:block>
                                     </th:block>
@@ -120,7 +120,7 @@
                             <label for="formFile" class="form-label">대표 이미지 변경</label>
                             <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFiles" type="file">
                             <div class="row main imgpreview"></div>
-                            <button type="button" class="bb btn btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
+                            <button type="button" class="bb btn btn-sm btn-secondary" id="removeMainImage" style="display:none;">올리지 않기</button>
 
                             <label for="formFilede" class="form-label">상세 이미지 추가</label>
                             <input class="form-control imgInput" id="formFilede" accept="image/*" name="multipartFiles" type="file" multiple>
