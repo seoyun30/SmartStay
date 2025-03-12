@@ -2,10 +2,8 @@ package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.service.HotelService;
-import com.lookatme.smartstay.service.ImageService;
 import com.lookatme.smartstay.service.MemberService;
 import com.lookatme.smartstay.service.QnaService;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -34,9 +31,7 @@ import java.util.Map;
 public class QnaController {
 
     private final QnaService qnaService;
-    private final ImageService imageService;
     private final MemberRepository memberRepository;
-    private final HotelRepository hotelRepository;
     private final MemberService memberService;
     private final HotelService hotelService;
 
@@ -46,15 +41,14 @@ public class QnaController {
         QnaDTO qnaDTO = new QnaDTO();
 
         if (principal != null) {
-            String loggedInEmail = principal.getName(); // 현재 로그인한 사용자의 이메일
+            String loggedInEmail = principal.getName();
             log.info("현재 로그인한 사용자 이메일: " + loggedInEmail);
             Member member = memberRepository.findMemberByEmail(loggedInEmail)
                     .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-            qnaDTO.setWriter(member.getName()); // 이메일이 아닌 '이름'을 작성자로 설정
+            qnaDTO.setWriter(member.getName());
         }
 
-        // 호텔 목록을 가져오는 부분
-        List<HotelDTO> hotelList = hotelService.hotelList(); // 모든 호텔을 가져옴
+        List<HotelDTO> hotelList = hotelService.activeHotelList();
 
         model.addAttribute("qnaDTO", qnaDTO);
         model.addAttribute("hotelDTOList", hotelList);
@@ -62,7 +56,7 @@ public class QnaController {
     }
 
     @PostMapping("/qnaRegister")
-    public String qnaRegisterPost(@Valid QnaDTO qnaDTO, BindingResult bindingResult, MultipartFile[] multipartFiles) {
+    public String qnaRegisterPost(@Valid QnaDTO qnaDTO, BindingResult bindingResult) {
 
         log.info("컨트롤러로 들어온 값:" + qnaDTO);
 
@@ -72,9 +66,9 @@ public class QnaController {
 
             return "qna/qnaRegister";
         }
-        qnaService.register(qnaDTO, multipartFiles);
+        qnaService.register(qnaDTO);
 
-        return "redirect:/qna/qnaList";
+        return "redirect:/qna/myQnaList";
     }
 
     //목록
@@ -86,15 +80,15 @@ public class QnaController {
             loggedInEmail = principal.getName();
         }
         model.addAttribute("loggedInEmail", loggedInEmail);
-        // 페이징 처리된 QnA 목록을 반환받음 (호텔 정보 포함)
+
         PageResponseDTO<QnaDTO> pageResponseDTO = qnaService.pagelist(pageRequestDTO);
-        // QnA 목록을 모델에 추가
+
         model.addAttribute("pageResponseDTO", pageResponseDTO);
-        // 추가로, 페이지 관련 정보나 다른 데이터를 넘길 수 있음
-        // 예: 현재 페이지, 총 페이지 수, 이전/다음 페이지 상태 등
-        return "qna/qnaList";  // qnaList.html 또는 jsp 등으로 반환
+
+        return "qna/qnaList";
     }
 
+    //유저 페이지 목록
     @GetMapping("/myQnaList")
     public String myQnaList(Model model, PageRequestDTO pageRequestDTO ,Principal principal) {
         log.info("pageRequestDTO: " + pageRequestDTO);
@@ -107,7 +101,7 @@ public class QnaController {
 
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
-        return "qna/myQnaList";  // myQnaList.html 또는 jsp 등으로 반환
+        return "qna/myQnaList";
     }
 
     //매니저 소속 호텔용 목록
@@ -182,9 +176,7 @@ public class QnaController {
             log.info("들어온 qna_num이 이상함");
             return "redirect:/qna/qnaList"; //+pageRequestDTO.getLink();
         }
-        //try~chach문으로 이미지 넣을것
 
-        // QnaDTO를 가져와서 model에 추가
         try {
             QnaDTO qnaDTO = qnaService.read(qna_num);
             model.addAttribute("qnaDTO", qnaDTO);
@@ -197,18 +189,18 @@ public class QnaController {
     }
 
     @PostMapping("/qnaModify")
-    public String qnaModifyPost(QnaDTO qnaDTO, BindingResult bindingResult, Long[] delino, Model model) {
+    public String qnaModifyPost(QnaDTO qnaDTO, BindingResult bindingResult) {
         qnaService.modify(qnaDTO);
 
         log.info("업데이트포스"+qnaDTO);
         //log.info("업데이트포스"+pageRequestDTO);
         if (bindingResult.hasErrors()) {
             log.info("유효성검사 확인!!");
-            log.info(bindingResult.getAllErrors()); //유효성 내용 콘솔창에 출력
+            log.info(bindingResult.getAllErrors());
             return "redirect:qna/qnaModify";
         }
 
-        return "redirect:/qna/myQnaList"; //+pageRequestDTO.getLink()
+        return "redirect:/qna/myQnaList";
     }
 
     //삭제

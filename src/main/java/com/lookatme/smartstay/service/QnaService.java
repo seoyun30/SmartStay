@@ -18,11 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,10 +29,7 @@ import java.util.stream.Collectors;
 public class QnaService {
 
     private final QnaRepository qnaRepository;
-    private final ImageRepository imageRepository;
     private final ModelMapper modelMapper;
-    private final ImageService imageService;
-    private final QnaReplyRepository qnaReplyRepository;
     private final MemberRepository memberRepository;
     private final HotelRepository hotelRepository;
 
@@ -51,20 +43,16 @@ public class QnaService {
         return auth.getName(); // 로그인된 사용자의 이메일 (또는 사용자명) 반환
     }
 
-    
-    public void register(QnaDTO qnaDTO, MultipartFile[] multipartFiles) {
+    //등록
+    public void register(QnaDTO qnaDTO) {
         log.info("등록 서비스 들어온 값: " + qnaDTO);
-        log.info("등록된 서비스 들어온 파일 목록: " + Arrays.toString(multipartFiles));
 
-        // 로그인된 사용자 ID 가져오기
         String loggedInUser = getLoggedInUser();
         log.info("로그인된 사용자 ID: " + loggedInUser);
 
-        // Member 엔티티 조회
         Member member = memberRepository.findMemberByEmail(loggedInUser)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
-        // Hotel 엔티티 조회 (호텔 번호로 호텔 찾기)
         Hotel hotel = hotelRepository.findById(qnaDTO.getHotel_num())
                 .orElseThrow(() -> new EntityNotFoundException("호텔을 찾을 수 없습니다."));
 
@@ -72,31 +60,19 @@ public class QnaService {
         Qna qna = Qna.builder()
                 .title(qnaDTO.getTitle())
                 .content(qnaDTO.getContent())
-                .writer(loggedInUser)// 작성자 설정
+                .writer(loggedInUser)
                 .hotel(hotel)
                 .build();
 
         // Qna 저장
         qna = qnaRepository.save(qna);
         log.info("저장 후 Qna 정보: " + qna);
-
-        // 이미지가 있다면 저장
-        if (multipartFiles != null && multipartFiles.length > 0) {
-            List<MultipartFile> imageFileList = Arrays.asList(multipartFiles);
-            try {
-                imageService.saveImage(imageFileList, "qna", qna.getQna_num());
-            } catch (Exception e) {
-                log.error("이미지 저장 중 오류 발생: ", e);
-                throw new RuntimeException("이미지 저장 실패", e);
-            }
-        }
     }
 
-    
+    //상세보기
     public QnaDTO read(Long qna_num) {
         log.info("서비스 읽기로 들어온값 : " + qna_num);
 
-        // qna_num이 null이거나 유효하지 않으면 예외 처리
         if (qna_num == null || qna_num <= 0) {
             log.error("유효하지 않은 qna_num 값: " + qna_num);
             throw new EntityNotFoundException("잘못된 게시글 번호입니다.");
@@ -111,71 +87,13 @@ public class QnaService {
         QnaDTO qnaDTO = modelMapper.map(qna, QnaDTO.class)
                 .setHotelDTO(modelMapper.map(qna.getHotel(), HotelDTO.class));
 
-        // 이미지 리스트 추가
-        Optional.of(imageService.findImagesByTarget("qna", qna_num))
-                .map(imageList -> imageList.stream()
-                        .map(image -> {
-                            ImageDTO imageDTO = modelMapper.map(image, ImageDTO.class);
-                            imageDTO.setThumbnail_url(image.getThumbnail_url()); // 썸네일 URL 설정
-                            return imageDTO;
-                        })
-                        .collect(Collectors.toList()))
-                .ifPresent(qnaDTO::setImageDTOList);
-
         log.info("서비스에서 컨트롤러로 나간값 : " + qnaDTO);
 
         return qnaDTO;
     }
 
-
-    
-    public List<QnaDTO> list(PageRequestDTO pageRequestDTO) {
-        List<Qna> qnaList = qnaRepository.findAll();
-
-        // 조회한 QnA 리스트를 로깅
-        qnaList.forEach(qna -> log.info(qna.toString()));
-
-        List<QnaDTO> qnaDTOList = qnaList.stream().map( qna ->
-                modelMapper.map(qna, QnaDTO.class)
-                        .setHotelDTO(modelMapper.map(qna.getHotel(), HotelDTO.class))
-        ).collect(Collectors.toList());
-        // 변환된 DTO 리스트 로깅
-        qnaDTOList.forEach(qnaDTO -> log.info(qnaDTO.toString()));
-        return qnaDTOList;  // DTO 리스트 반환
-    }
-
-    public List<QnaDTO> myQnaList(String email) {
-
-        List<QnaDTO> qnaDTOList;
-        if (email != null) {
-            List<Qna> qnaList = qnaRepository.findByWriter(email);  // 작성자(email)로 QnA 목록 조회
-            qnaDTOList = qnaList.stream().map( qna ->
-                            modelMapper.map(qna, QnaDTO.class)
-                                    .setHotelDTO(modelMapper.map(qna.getHotel(), HotelDTO.class))
-                    )
-                    .collect(Collectors.toList());
-        } else {
-            qnaDTOList = new ArrayList<>();
-        }
-
-        return qnaDTOList;  // DTO 리스트 반환
-    }
-
-    private boolean checkIfManager() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            return false; // 인증되지 않은 경우 관리자 아님
-        }
-
-        return auth.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_MANAGER"));
-    }
-
-
-
-    
+    //수정
     public void modify(QnaDTO qnaDTO) {
-        //이미지 추가하게 되면 사용 메소드 MultipartFile[] multipartFiles, Long[] delino
         log.info("수정 서비스 들어온값:" + qnaDTO);
 
         Optional<Qna> optionalQna =
@@ -192,7 +110,7 @@ public class QnaService {
 
     }
 
-    
+    //삭제
     public void del(Long qna_num) {
         log.info("삭제로 들어온 값:" + qna_num);
         // 로그인한 사용자 확인
@@ -213,7 +131,6 @@ public class QnaService {
     }
 
     //조회수 증가 메서드
-    
     public void incrementViewCount(Long qna_num) {
         log.info("조회수 증가 서비스 호출 :"+qna_num);
 
@@ -225,7 +142,7 @@ public class QnaService {
         log.info("조회수 증가 후 QnA:" + qna);
     }
 
-    
+    //일반목록
     public PageResponseDTO<QnaDTO> pagelist(PageRequestDTO pageRequestDTO) {
 
         log.info("진입 : "+ pageRequestDTO);
@@ -293,7 +210,7 @@ public class QnaService {
         return qnaDTOPageResponseDTO;
     }
 
-    
+    //유저 마이페이지 목록
     public PageResponseDTO<QnaDTO> pagemylist(PageRequestDTO pageRequestDTO,String email) {
 
         log.info("진입 : "+ pageRequestDTO);
@@ -345,6 +262,7 @@ public class QnaService {
         return qnaDTOPageResponseDTO;
     }
 
+    //매니저 페이징 목록
     public PageResponseDTO<QnaDTO> pagehlist(PageRequestDTO pageRequestDTO, String email) {
 
         log.info("진입 : " + pageRequestDTO);
@@ -411,6 +329,7 @@ public class QnaService {
         return qnaDTOPageResponseDTO;
     }
 
+    //치프 페이징 목록
     public PageResponseDTO<QnaDTO> pageblist(PageRequestDTO pageRequestDTO, String email) {
 
         log.info("진입 : " + pageRequestDTO);
@@ -479,39 +398,5 @@ public class QnaService {
 
         return qnaDTOPageResponseDTO;
     }
-
-
-
-    public PageResponseDTO<QnaDTO> pageListsearchdsl(PageRequestDTO pageRequestDTO) {
-
-        log.info(pageRequestDTO);
-
-        Pageable pageable = pageRequestDTO.getPageable("qna_num");  //위의 주석 내용과 같은 개념(PageRequestDTO에 사용)
-        String[] types = pageRequestDTO.getTypes();
-        String keyword = pageRequestDTO.getKeyword();
-
-        Page<Qna> qnaPage = qnaRepository.selcetAll(pageable);
-
-        log.info(pageRequestDTO);
-
-        //변환
-        List<Qna> qnaList = qnaPage.getContent();
-        //dto변환
-        List<QnaDTO> qnaDTOList=
-                qnaList.stream().map(qna -> modelMapper.map(qna, QnaDTO.class))
-                        .collect(Collectors.toList());
-
-
-        PageResponseDTO<QnaDTO> qnaDTOPageResponseDTO
-                = PageResponseDTO.<QnaDTO>withAll()
-                .pageRequestDTO(pageRequestDTO)
-                .dtoList(qnaDTOList)
-                .total((int)qnaPage.getTotalElements())
-                .build();
-
-        return qnaDTOPageResponseDTO;
-    }
-
-
 
 }
