@@ -5,7 +5,7 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>SmartStay</title>
 </head>
 <body>
 
@@ -21,7 +21,6 @@
                             <th scope="col">예약 번호</th>
                             <th scope="col">호텔명</th>
                             <th scope="col">룸명</th>
-                            <th scope="col">예약자명</th>
                             <th scope="col">예약일</th>
                             <th scope="col">결제 상태</th>
                             <th scope="col">예약 상태</th>
@@ -32,7 +31,6 @@
                             <td th:text="${roomReserveItemDTO.roomReserveDTO.reserve_id}">예약 번호</td>
                             <td th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">호텔명</td>
                             <td th:text="${roomReserveItemDTO.roomDTO.room_name}">룸명</td>
-                            <td th:text="${roomReserveItemDTO.roomReserveDTO.memberDTO.name}">예약자명</td>
                             <td th:text="${#temporals.format(roomReserveItemDTO.reg_date, 'yyyy.MM.dd HH:mm')}">예약일</td>
                             <td th:switch="${roomReserveItemDTO.payDTO.pay_state}"> <!--결제 상태-->
                                 <span th:case="${roomReserveItemDTO.payDTO.pay_state.COMPLETE}">완료</span>
@@ -46,6 +44,24 @@
                                 <span th:case="${roomReserveItemDTO.roomReserveDTO.check_state.CANCEL}">취소</span>
                                 <span th:case="*">알 수 없음</span> <!-- 예외 처리 -->
                             </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-12 mb-3">
+                <div class="card text-center">
+                    <table class="table">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col">예약자명</th>
+                            <th scope="col">전화번호</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td th:text="${roomReserveItemDTO.roomReserveDTO.memberDTO.name}">예약자명</td>
+                            <td th:text="${roomReserveItemDTO.roomReserveDTO.memberDTO.tel}">전화번호</td>
                         </tr>
                         </tbody>
                     </table>

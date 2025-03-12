@@ -5,7 +5,7 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>SmartStay</title>
 </head>
 <body>
 
@@ -180,7 +180,11 @@
 <script th:inline="javascript" layout:fragment="script">
 
     $(document).ready(function () {
-        $(document).on("click", ".stateBtn", function() {
+        let activeSelect = null;
+
+        $(document).on("click", ".stateBtn", function(event) {
+            event.stopPropagation();
+            let target = $(event.target);
             let button = $(this);
             let orderNum = button.val();
             let currentStateText = button.text().trim();
@@ -199,15 +203,28 @@
                 return;
             }
 
+            // 기존 select 박스가 있으면 원래 버튼으로 복구
+            if (activeSelect && activeSelect !== button) {
+                let previousOrderNum = activeSelect.data("order-num");
+                let previousState = activeSelect.data("original-state"); // 원래 상태 가져오기
+                let newButton = `<button type="button" class="btn ${getButtonClass(previousState)} stateBtn" value="${previousOrderNum}">${getStateText(previousState)}</button>`;
+                activeSelect.replaceWith(newButton);
+                activeSelect = null;
+            }
+
+            let availableStates = ["ORDER", "PREPARE", "COMPLETE", "CANCEL"];
+
             // 기존 버튼을 숨기고, select 박스 추가
-            let selectHtml = `<select class="order-state-select" data-order-num="${orderNum}">`;
-            Object.keys(states).forEach(state => {
+            let selectHtml = `<select class="order-state-select" data-order-num="${orderNum}" data-original-state="${currentState}">`;
+            availableStates.forEach(state => {
                 let selected = state === currentState ? "selected" : "";
-                selectHtml += `<option value="${state}" ${selected}>${states[state]}</option>`;
+                let disabled = state === currentState ? "disabled" : ""; // 현재 상태는 비활성화
+                selectHtml += `<option value="${state}" ${selected} ${disabled}>${states[state]}</option>`;
             });
             selectHtml += `</select>`;
 
             button.replaceWith(selectHtml);
+            activeSelect = $(".order-state-select");
         });
 
         // 상태 변경 이벤트
@@ -232,6 +249,18 @@
                 });
             } else {
                 location.reload();
+            }
+        });
+
+        // 셀렉트 박스 외 클릭 시 원래 버튼으로 복구
+        $(document).on("click", function(event) {
+            let target = $(event.target);
+            if (activeSelect && !target.is(activeSelect) && !target.is("option")) {
+                let orderNum = activeSelect.data("order-num");
+                let originalState = activeSelect.data("original-state");
+                let newButton = `<button type="button" class="btn ${getButtonClass(originalState)} stateBtn" value="${orderNum}">${getStateText(originalState)}</button>`;
+                activeSelect.replaceWith(newButton);
+                activeSelect = null;
             }
         });
 

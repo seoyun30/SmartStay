@@ -41,7 +41,7 @@
                             <div class="row">
                                 <div class="col text-center">
                                     <div class="mb-3 text-center">
-                                        <h1 class="text-center mt-5 mb-3">총판 상세보기</h1>
+                                        <h1 class="text-center mt-3 mb-3">총판 상세보기</h1>
                                     </div>
                                     <div class="col text-center">
                                         <div class="card mb-3">
@@ -50,19 +50,19 @@
 
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text" style="width: 150px">총판 이름</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.brand_name}" readonly>
+                                                    <input type="text" class="form-control" th:value="${brandDTO.brand_name}" >
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text" style="width: 150px">법인사업자번호</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.business_num}" readonly>
+                                                    <input type="text" class="form-control" th:value="${brandDTO.business_num}" >
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text" style="width: 150px">대표자</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.owner}" readonly>
+                                                    <input type="text" class="form-control" th:value="${brandDTO.owner}" >
                                                 </div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text" style="width: 150px">전화번호</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.tel}" readonly>
+                                                    <input type="text" class="form-control" th:value="${brandDTO.tel}" >
                                                 </div>
                                             </div>
                                         </div>
@@ -74,8 +74,7 @@
                                         <div class="row">
                                             <th:block th:each="img: ${brandDTO.imageDTOList}">
                                                 <th:block th:if="${img.repimg_yn == 'Y'}">
-                                                    <label class="col-12 form-label">
-                                                        대표 이미지<br>
+                                                    <label class="col-12 form-label ms-3">대표 이미지<br>
                                                         <img class="main-image mt-3" th:src="${img.thumbnail_url}" alt="대표 이미지" style="display: block; margin: 0 auto;">
                                                     </label>
                                                 </th:block>
@@ -83,7 +82,7 @@
                                         </div>
                                         <div class="mt-3 row detail-images-container">
                                             <th:block th:if="${brandDTO.imageDTOList.?[repimg_yn != 'Y'].size() > 0}">
-                                                <label class="col-12 form-label">상세 이미지</label>
+                                                <label class="col-12 form-label" ms-3>상세 이미지</label>
                                             </th:block>
 
                                             <th:block th:each="img : ${brandDTO.imageDTOList}">
