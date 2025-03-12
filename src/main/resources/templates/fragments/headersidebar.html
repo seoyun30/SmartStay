@@ -103,10 +103,16 @@
                                     </li>
 
                                     <li th:if="${brandNum != null}" sec:authorize="hasAuthority('CHIEF')" class="has-sub">
-
                                         <a th:href="@{/brand/brandRead(brand_num=${brandNum})}" class="sidenav-item-link">
                                             <i class="bi bi-brightness-alt-high"></i>
                                             <span class="nav-text">총판 정보</span>
+                                        </a>
+                                    </li>
+
+                                    <li sec:authorize="hasAuthority('MANAGER')" class="has-sub">
+                                        <a  th:href="@{/hotel/hotelRead(hotel_num=${hotelNum})}" class="sidenav-item-link">
+                                            <i class="bi bi-brightness-alt-high"></i>
+                                            <span class="nav-text">호텔 정보</span>
                                         </a>
                                     </li>
 

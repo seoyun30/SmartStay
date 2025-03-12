@@ -76,4 +76,17 @@ public class GlobalControllerAdvice {
         }
         return null;
     }
+
+    @ModelAttribute("hotelNum")
+    public Long hotelNum() {
+        String email = adminEmail();
+        if (email == null || email.isEmpty()) {
+            return null;
+        }
+        Member member = memberRepository.findByEmail(email);
+        if (member != null && member.getHotel() != null) {
+            return member.getHotel().getHotel_num();
+        }
+        return null;
+    }
 }
