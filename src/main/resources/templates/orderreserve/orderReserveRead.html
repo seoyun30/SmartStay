@@ -5,7 +5,7 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>SmartStay</title>
 </head>
 <body>
 
@@ -46,6 +46,24 @@
                                 <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.CANCEL}">취소</span>
                                 <span th:case="*">알 수 없음</span> <!-- 예외 처리 -->
                             </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-12 mb-3">
+                <div class="card text-center">
+                    <table class="table">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col">주문자명</th>
+                            <th scope="col">전화번호</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td th:text="${orderReserveItemDTO.orderReserveDTO.memberDTO.name}">주문자</td>
+                            <td th:text="${orderReserveItemDTO.orderReserveDTO.memberDTO.tel}">전화번호</td>
                         </tr>
                         </tbody>
                     </table>
