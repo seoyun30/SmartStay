@@ -50,7 +50,7 @@ public class ReviewService {
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() -1, pageRequestDTO.getSize(), sort);
 
         // DB에서 리뷰 목록 조회
-        Page<Review> result = reviewRepository.findByAdHotel(hotel, pageable);
+        Page<Review> result = reviewRepository.findByAdHotel(hotel.getHotel_num(), pageable);
         log.info("PageResult: " + result);
 
         // 조회된 리뷰 목록 DTO로 변환
@@ -309,31 +309,43 @@ public class ReviewService {
         log.info("리뷰 삭제 완료 rev_num : " + id);
     }
 
-    public PageResponseDTO<ReviewDTO> searchList(String email, PageRequestDTO pageRequestDTO, ReserveSearchDTO reserveSearchDTO) {
+    public PageResponseDTO<ReviewDTO> searchList(String email, PageRequestDTO pageRequestDTO,
+                                                 ReserveSearchDTO reserveSearchDTO, String sortField, String sortDir) {
 
-        Pageable pageable = pageRequestDTO.getPageable();
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() -1, pageRequestDTO.getSize(), sort);
 
-        // 정렬 기준을 설정하는 부분
-        if ("t".equals(pageRequestDTO.getType())) {
-            // 시간순 정렬 (작성일 기준)
-            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "reg_date"));
-        } else if ("s".equals(pageRequestDTO.getType())) {
-            // 별점순 정렬
-            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "score"));
-        } else {
-            // 기본 정렬 (rev_num 기준)
-            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "rev_num"));
-        }
+//        // 정렬 기준을 설정하는 부분
+//        if ("t".equals(pageRequestDTO.getType())) {
+//            // 시간순 정렬 (작성일 기준)
+//            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "reg_date"));
+//        } else if ("s".equals(pageRequestDTO.getType())) {
+//            // 별점순 정렬
+//            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "score"));
+//        } else {
+//            // 기본 정렬 (rev_num 기준)
+//            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "rev_num"));
+//        }
 
         Member member = memberRepository.findByEmail(email);
-        //방이름
-        //작성자 검색
-        Page<Review> result = reviewRepository.findReviewBySearch(
-                member.getHotel().getHotel_num(),
-                reserveSearchDTO.getHotel_name(),
-                reserveSearchDTO.getRoom_name(),
-                pageable
-        );
+        Page<Review> result;
+        if (reserveSearchDTO.getRoom_name() != null && !reserveSearchDTO.getRoom_name().trim().isEmpty() && reserveSearchDTO.getReserve_name() != null && !reserveSearchDTO.getReserve_name().trim().isEmpty()) {
+            result = reviewRepository.findReviewBySearchAll(
+                    member.getHotel().getHotel_num(),
+                    reserveSearchDTO.getHotel_name(),
+                    reserveSearchDTO.getRoom_name(),
+                    reserveSearchDTO.getReserve_name(),
+                    pageable
+            );
+        } else {
+            result = reviewRepository.findReviewBySearch(
+                    member.getHotel().getHotel_num(),
+                    reserveSearchDTO.getHotel_name(),
+                    reserveSearchDTO.getRoom_name(),
+                    reserveSearchDTO.getReserve_name(),
+                    pageable
+            );
+        }
 
         List<ReviewDTO> reviewDTOList = result.stream()
                 .map(review -> modelMapper.map(review, ReviewDTO.class)
@@ -353,7 +365,10 @@ public class ReviewService {
         }
 
         PageResponseDTO<ReviewDTO> reviewDTOPageResponseDTO = PageResponseDTO.<ReviewDTO>withAll()
-                .pageRequestDTO(pageRequestDTO).dtoList(reviewDTOList).total((int)result.getTotalElements()).build();
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(reviewDTOList)
+                .total((int)result.getTotalElements())
+                .build();
 
         return reviewDTOPageResponseDTO;
     }
