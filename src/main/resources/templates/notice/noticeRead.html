@@ -20,7 +20,7 @@
                         <div class="col-8 offset-2">
                             <div class="row">
                                 <div class="mb-3 text-center">
-                                    <h2>공지사항</h2>
+                                    <h1>공지사항</h1>
                                 </div>
                                 <div class="col text-center">
                                     <div class="card mb-3">
@@ -65,7 +65,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12 text-center">
+                                <div class="mt-3 text-center">
                                     <button type="button" onclick="location.href='/notice/noticeList'" class="btn btn-primary">목록</button>
                                     <button type="button" th:onclick="|location.href='@{/notice/noticeModify(notice_num=${noticeDTO.notice_num})}'|" class="btn btn-dark">수정</button>
                                     <button type="button" class="btn btn-danger delnotice" >삭제</button>
