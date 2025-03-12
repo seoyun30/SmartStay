@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,11 +34,27 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final HotelRepository hotelRepository;
 
+    private final RoomReserveRepository roomReserveRepository; // 호텔예약정보 필요
+    private final RoomReserveItemRepository roomReserveItemRepository;
+
     //이미지 사용 시 필요
     private final ImageRepository imageRepository;
     private final ImageService imageService;
-    private final RoomReserveRepository roomReserveRepository; // 호텔예약정보 필요
-    private final RoomReserveItemRepository roomReserveItemRepository;
+    private final FileService fileService;
+
+    @Value("${imgUploadLocation}")
+    private String imgUploadLocation;
+
+    public boolean validateReview (Long reserve_num, String email) {
+
+        Review review = reviewRepository.findByEmailAndReserveNum(email, reserve_num);
+        if (review == null) {
+            return false;
+        }
+
+
+        return true;
+    }
 
     // 관리자 (호텔리뷰 : 페이징)
     public PageResponseDTO<ReviewDTO> getAdHotelReviewList (HotelDTO hotelDTO, PageRequestDTO pageRequestDTO, String sortField, String sortDir) {
@@ -106,7 +123,6 @@ public class ReviewService {
         return reviewDTOList;
     }
 
-
     //유저 리뷰 전체 목록 (유저 my 페이지)
     public List<ReviewDTO> userMyReviewList(String email) {
 
@@ -137,9 +153,10 @@ public class ReviewService {
     }
 
     //리뷰 등록<작성>(룸 예약을 한 유저만 등록 가능)
-    public void reviewRegister(ReviewDTO reviewDTO, String email, List<MultipartFile> multipartFiles, Long mainImageIndex) throws Exception {
+    public void reviewRegister(ReviewDTO reviewDTO, String email, List<MultipartFile> multipartFiles) throws Exception {
         log.info("리뷰 등록 요청 :{}" , reviewDTO);
         log.info("ReviewDTO: {}", reviewDTO);
+
         multipartFiles.forEach(multipartFile -> log.info("multipartFile: {}", multipartFile));
 
         //4. 별점 유효성 체크(0.1~ 5) / 따로 validateScore private로 빼야하는지 확인중
@@ -171,6 +188,7 @@ public class ReviewService {
         //조인 사용방법
         // 리뷰 객체 생성 및 데이터 설정
         Review review = modelMapper.map(reviewDTO, Review.class);
+
         //룸 예약 찾기
         RoomReserveItem roomReserveItem = roomReserveItemRepository.findById(reviewDTO.getRoomreserveitem_num())
                         .orElseThrow(EntityNotFoundException::new);
@@ -179,13 +197,24 @@ public class ReviewService {
         review.setHotel(roomReserveItem.getRoom().getHotel());  //호텔 정보 설정
         review.setRoom(roomReserveItem.getRoom()); //룸 정보 설정
         review.setMember(roomReserveItem.getRoomReserve().getMember());  // 회원 정보 설정
+
+
         //먼저 리뷰 저장
         review = reviewRepository.save(review);
+        log.info("저장후 결과를 가지고 있는 review" + review);
 
         // 저장된 리뷰의 `rev_num`을 target_id로 사용하여 이미지 저장
-        if (multipartFiles != null && !multipartFiles.isEmpty()) {
-            // // imageService의 saveImage 메소드로 다중 파일 처리
-            imageService.saveImage(multipartFiles, "review", review.getRev_num());
+        if (multipartFiles != null) {
+
+            for (MultipartFile multipartFile : multipartFiles) {
+                if (!multipartFile.isEmpty()) {
+                    //물리적인 저장
+                    String savedFileName =
+                            fileService.uploadFile(imgUploadLocation, multipartFile);
+                    //db저장
+                    imageService.saveImageOne(savedFileName, multipartFile, review);
+                }
+            }
         }
     }
 
@@ -282,7 +311,6 @@ public class ReviewService {
         }
     }
 
-
     //리뷰 삭제(작성한 본인 리뷰만 가능)
     @Transactional
     public void reviewDelete(Long id) {
@@ -372,7 +400,6 @@ public class ReviewService {
 
         return reviewDTOPageResponseDTO;
     }
-
 
     public List<ReviewDTO> getLimitedReviews (Long hotel_num, int limit) {
         Pageable pageable = PageRequest.of(0, limit);

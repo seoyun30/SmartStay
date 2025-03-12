@@ -248,6 +248,25 @@ public class ImageService {
 
     }
 
+    //리뷰 이미지
+    public  void saveImageOne(String savedFileName, MultipartFile multipartFile, Review review) {
+
+        //파일경로를 포함한uuid포함한 파일이름 ,원래 파일이름,  파일이름
+
+        String originalFilename = multipartFile.getOriginalFilename();
+        originalFilename =   originalFilename.substring(originalFilename.lastIndexOf("\\")+1);
+
+
+        Image image = new Image();
+        image.setImage_name(savedFileName);
+        image.setOrigin_name(originalFilename);
+        image.setImage_url("/images/" + savedFileName);
+        image.setReview(review);
+        image.setRepimg_yn("N");
+        imageRepository.save(image);
+
+    }
+
 
     public List<Image> getBannerImages() {
         List<Image> banners = imageRepository.findByTarget("banner");

@@ -34,9 +34,12 @@
                                 <button type="button" th:classappend="${roomReserveItemDTO.roomReserveDTO.check_state.name() == 'IN'} ? 'active' : 'disabled'"
                                         th:onclick="|location.href='@{/orderreserve/orderReserveRegister(roomreserveitem_num=${roomReserveItemDTO.roomreserveitem_num})}'|"
                                         class="mt-3 btn btn-primary">룸서비스 주문</button>
-                                <button type="button" th:classappend="${roomReserveItemDTO.roomReserveDTO.check_state.name() == 'OUT'} ? 'active' : 'disabled'"
+                                <button type="button"
+                                        th:classappend="${roomReserveItemDTO.roomReserveDTO.check_state.name() == 'OUT'} ? 'active' : 'disabled'"
+                                        th:disabled="${check}"
                                         th:onclick="|location.href='@{/review/reviewRegister(reserve_num=${roomReserveItemDTO.roomReserveDTO.reserve_num})}'|"
-                                        class="mt-3 btn btn-secondary">후기 작성하기</button>
+                                        class="mt-3 btn btn-secondary">후기 작성하기
+                                </button>
                             </div>
                         </div>
                     </div>

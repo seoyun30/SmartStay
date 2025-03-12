@@ -3,10 +3,7 @@ package com.lookatme.smartstay.controller;
 import com.lookatme.smartstay.dto.*;
 import com.lookatme.smartstay.repository.HotelRepository;
 import com.lookatme.smartstay.repository.MemberRepository;
-import com.lookatme.smartstay.service.HotelService;
-import com.lookatme.smartstay.service.MemberService;
-import com.lookatme.smartstay.service.OrderReserveService;
-import com.lookatme.smartstay.service.RoomReserveService;
+import com.lookatme.smartstay.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -30,7 +27,7 @@ public class MemberController {
     private final MemberRepository memberRepository;
     private final RoomReserveService roomReserveService;
     private final OrderReserveService orderReserveService;
-    private final HotelRepository hotelRepository;
+    private final ReviewService reviewService;
     private final HotelService hotelService;
 
     @GetMapping("/adMypage") // 마이페이지 정보보기(관리자)
@@ -411,6 +408,9 @@ public class MemberController {
         //내 룸예약 조회
         RoomReserveItemDTO roomReserveItemDTO = roomReserveService.findRoomReserveItem(roomreserveitem_num, principal.getName());
         model.addAttribute("roomReserveItemDTO", roomReserveItemDTO);
+
+        boolean check = reviewService.validateReview(roomReserveItemDTO.getRoomReserveDTO().getReserve_num(), principal.getName());
+        model.addAttribute("check", check);
 
         return "member/myRoomReserveRead";
     }
