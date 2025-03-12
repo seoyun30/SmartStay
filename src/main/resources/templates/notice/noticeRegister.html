@@ -4,7 +4,7 @@
       layout:decorate="~{layouts/adminlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>공지사항등록</title>
+    <title>SmartStay</title>
 
     <style>
         .fieldError {
@@ -111,8 +111,6 @@
                     $(".aa").append(str)
                     document.querySelector(".aa").lastChild.appendChild(inputtag)
                     inputtag.style.display = 'none'
-                    // document.getElementById('preview').src = e.target.result;
-                    // document.querySelector(".aa").innerHTML = "<button type='button' class='bb'>올리지 않기</button>"
                 };
                 reader.readAsDataURL(input.files[0]);
             }
