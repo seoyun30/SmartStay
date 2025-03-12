@@ -20,7 +20,7 @@
         <div sec:authorize="hasAuthority('CHIEF')">
             <th:block th:if="${brandDTO != null}" class="col-8">
                 <div class="row">
-                    <div class="card">
+                    <div class="card ml-8 text-center" style="width: 800px; height: auto;">
                         <div class="card-body d-flex flex-column align-items-center">
                             <img th:src="${brandDTO.mainImage.thumbnail_url}" class="mb-5 img-fluid" alt="총판 이미지" />
                             <h1 class="card-title text-center fs-1">
@@ -44,7 +44,7 @@
         <div sec:authorize="hasAuthority('MANAGER')">
             <th:block th:if="${hotelDTO != null}" class="col-8">
                 <div class="row">
-                    <div class="card">
+                    <div class="card ml-8 text-center" style="width: 800px; height: auto;">
                         <div class="card-body">
                             <img th:src="${hotelDTO.mainImage.thumbnail_url}" class="mb-5 img-fluid" alt="호텔 이미지" />
                             <h1 class="card-title text-center fs-1">
