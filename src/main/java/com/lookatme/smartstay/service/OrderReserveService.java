@@ -27,11 +27,10 @@ import java.util.stream.Collectors;
 public class OrderReserveService {
     private final OrderReserveRepository orderReserveRepository;
     private final OrderReserveItemRepository orderReserveItemRepository;
-    private final MenuRepository menuRepository;
     private final MenuReserveItemRepository menuReserveItemRepository;
-    private final CareRepository careRepository;
     private final CareReserveItemRepository careReserveItemRepository;
     private final MemberRepository memberRepository;
+    private final PayRepository payRepository;
     private final ImageRepository imageRepository;
     private final ModelMapper modelMapper;
 
@@ -588,6 +587,14 @@ public class OrderReserveService {
                 .orElseThrow(EntityNotFoundException::new);
 
         orderReserve.setOrder_state(orderReserveDTO.getOrder_state());
+        if (orderReserveDTO.getOrder_state().equals(OrderState.CANCEL)){
+            OrderReserveItem orderReserveItem = orderReserveItemRepository.findById(orderReserve.getOrder_num())
+                    .orElseThrow(EntityNotFoundException::new);
+            Pay pay = payRepository.findById(orderReserveItem.getPay().getPay_num())
+                    .orElseThrow(EntityNotFoundException::new);
+            pay.setPay_state(OrderState.CANCEL);
+            payRepository.save(pay);
+        }
 
         orderReserve = orderReserveRepository.save(orderReserve);
         return modelMapper.map(orderReserve, OrderReserveDTO.class);

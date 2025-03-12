@@ -5,8 +5,8 @@
       layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-
+    <link rel="icon" href="/assets/img/hotel-solid.png">
+    <title>SmartStay</title>
 </head>
 <body>
 
@@ -14,6 +14,9 @@
 
     <div class="row w-75">
         <h1 class="text-center fw-bold my-3">내 룸예약 이력</h1>
+        <div class="col-12 text-end mb-3">
+            <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-dark">마이 페이지</button>
+        </div>
         <div class="col-12 mb-3">
             <div class="accordion" style="--bs-accordion-border-color: #a2aec7" id="accordionExample">
                 <div class="accordion-item">
@@ -24,7 +27,7 @@
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <form action="/member/myRoomReserveList" method="get">
+                            <form class="searchForm" action="/member/myRoomReserveList" method="get">
 
                                 <div class="input-group p-3">
                                     <span class="input-group-text">예약 번호</span>
@@ -59,7 +62,7 @@
 
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end p-3">
                                     <button type="submit" class="btn btn-primary">검색</button>
-                                    <button type="reset" class="btn btn-secondary">초기화</button>
+                                    <button type="reset" class="btn btn-secondary resetBtn">초기화</button>
                                 </div>
 
                             </form>
@@ -68,32 +71,26 @@
                 </div>
             </div>
         </div>
-
-        <div class="col-12 text-end mb-3">
-            <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-primary">메인 마이페이지</button>
-        </div>
-
         <div class="col-12">
             <div class="card">
                 <div class="card-body table-responsive">
                     <table class="table table-hover table-fixed">
                         <thead>
                         <tr class="text-center">
-                            <th scope="col" class="w-10 text-nowrap">예약 번호</th>
-                            <th scope="col" class="w-15 text-nowrap">예약 호텔</th>
-                            <th scope="col" class="w-15 text-nowrap">예약 방</th>
-                            <th scope="col" class="w-12 text-nowrap">체크인 날짜</th>
-                            <th scope="col" class="w-12 text-nowrap">체크아웃 날짜</th>
-                            <th scope="col" class="w-8 text-nowrap">예약 인원</th>
-                            <th scope="col" class="w-12 text-nowrap">요청 사항</th>
-                            <th scope="col" class="w-12 text-nowrap">결제 금액</th>
-                            <th scope="col" class="w-12 text-nowrap">예약 상태</th>
+                            <th scope="col" class="text-nowrap">예약 번호</th>
+                            <th scope="col" class=" text-nowrap">예약 호텔</th>
+                            <th scope="col" class=" text-nowrap">예약 방</th>
+                            <th scope="col" class=" text-nowrap">예약일</th>
+                            <th scope="col" class=" text-nowrap">체크인 날짜</th>
+                            <th scope="col" class=" text-nowrap">체크아웃 날짜</th>
+                            <th scope="col" class=" text-nowrap">결제 금액</th>
+                            <th scope="col" class=" text-nowrap">예약 상태</th>
                         </tr>
                         </thead>
                         <tbody>
                         <th:block th:if="${pageResponseDTO ==null or pageResponseDTO.dtoList == null or pageResponseDTO.dtoList.isEmpty()}">
                             <tr>
-                                <td colspan="9" class="text-center align-middle">
+                                <td colspan="8" class="text-center align-middle">
                                     <span class="h5 fw-bold">예약 내역이 없습니다.</span>
                                 </td>
                             </tr>
@@ -108,16 +105,15 @@
                                     <a th:href="@{/searchRoomRead(room_num=${roomReserveItem.roomDTO.room_num})}"
                                        th:text="${roomReserveItem.roomDTO.room_name}">예약 방</a>
                                 </td>
+                                <td th:text="${#temporals.format(roomReserveItem.reg_date, 'yyyy.MM.dd HH:mm')}">예약일</td>
                                 <td th:text="${#temporals.format(roomReserveItem.in_date, 'yyyy.MM.dd HH:mm')}">체크인 날짜</td>
                                 <td th:text="${#temporals.format(roomReserveItem.out_date, 'yyyy.MM.dd HH:mm')}">체크아웃 날짜</td>
-                                <td th:text="${roomReserveItem.count}" class="w-8">예약 인원</td>
-                                <td th:text="${roomReserveItem.reserve_request}" class="w-12 text-truncate">요청 사항</td>
-                                <td th:text="${roomReserveItem.day * roomReserveItem.roomDTO.room_price}">결제 금액</td>
-                                <td th:switch="${roomReserveItem.roomReserveDTO.check_state}">
-                                    <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.RESERVE}">예약 접수</button>
+                                <td th:text="${roomReserveItem.day * roomReserveItem.roomDTO.room_price + '원'}">결제 금액</td>
+                                <td class="text-nowrap" th:switch="${roomReserveItem.roomReserveDTO.check_state}">
+                                    <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.RESERVE}">접수</button>
                                     <button type="button" class="btn btn-warning stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.IN}">체크인</button>
                                     <button type="button" class="btn btn-danger stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.OUT}">체크아웃</button>
-                                    <button type="button" class="btn btn-secondary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.CANCEL}">예약 취소</button>
+                                    <button type="button" class="btn btn-secondary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.CANCEL}">취소</button>
                                     <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="*">오류</button> <!-- 예외 처리 -->
                                 </td>
                             </tr>
@@ -154,51 +150,59 @@
         </div>
     </div>
 
-    <script th:inline="javascript" layout:fragment="script">
+</th:block>
+<script th:inline="javascript" layout:fragment="script">
 
-        $(document).ready(function () {
+    $(document).ready(function () {
+        $(".resetBtn").click(function (event) {
+            event.preventDefault(); // 폼 리셋 기본 동작 방지
 
-            $(document).on("click", ".stateBtn", function() {
-                let button = $(this);
-                let reserveNum = button.val();
-                let currentStateText = button.text().trim();
+            let form = $(".searchForm");
+            form.find("input[type='text'], input[type='date']").val("");
+            form.find("select").prop("selectedIndex", 0);
 
-                let states = {
-                    "RESERVE": "예약 접수",
-                    "IN": "체크인",
-                    "OUT": "체크아웃",
-                    "CANCEL": "예약 취소"
-                };
-
-                let currentState = Object.keys(states).find(key => states[key] === currentStateText);
-
-                if (currentState !== "RESERVE") {
-                    alert("예약 접수 상태에서만 취소할 수 있습니다.");
-                    return;
-                }
-
-                if (confirm("정말 예약을 취소하시겠습니까?")) {
-                    $.ajax({
-                        type: "POST",
-                        url: "/roomreserve/state",
-                        data: { reserve_num: reserveNum, check_state: "CANCEL" },
-                        success: function(response) {
-                            let newButton = `<button type="button" class="btn btn-secondary stateBtn" value="${reserveNum}">예약 취소</button>`;
-                            button.replaceWith(newButton);
-                        },
-                        error: function() {
-                            alert("변경 중 오류가 발생했습니다.");
-                            location.reload();
-                        }
-                    });
-                }
-            });
-
+            form.find("input, select").removeAttr("th:value");
         });
 
-    </script>
+        $(document).on("click", ".stateBtn", function() {
+            let button = $(this);
+            let reserveNum = button.val();
+            let currentStateText = button.text().trim();
 
-</th:block>
+            let states = {
+                "RESERVE": "접수",
+                "IN": "체크인",
+                "OUT": "체크아웃",
+                "CANCEL": "취소"
+            };
+
+            let currentState = Object.keys(states).find(key => states[key] === currentStateText);
+
+            if (currentState !== "RESERVE") {
+                alert("예약이 접수 상태일 때만 취소할 수 있습니다.");
+                return;
+            }
+
+            if (confirm("정말 예약을 취소하시겠습니까?")) {
+                $.ajax({
+                    type: "POST",
+                    url: "/roomreserve/state",
+                    data: { reserve_num: reserveNum, check_state: "CANCEL" },
+                    success: function(response) {
+                        let newButton = `<button type="button" class="btn btn-secondary stateBtn" value="${reserveNum}">예약 취소</button>`;
+                        button.replaceWith(newButton);
+                    },
+                    error: function() {
+                        alert("변경 중 오류가 발생했습니다.");
+                        location.reload();
+                    }
+                });
+            }
+        });
+
+    });
+
+</script>
 
 </body>
 </html>
