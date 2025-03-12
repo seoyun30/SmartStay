@@ -225,13 +225,11 @@ public class MemberController {
 
             if(memberDTO.getPassword().length() < 8  || memberDTO.getPassword().length() > 20){
                 //리다이렉트
-//                     리다이렉트시 메시지를 전달해야 한다.
-//                     메시지는 : 비밀번호는 8자 이상이여야 합니다.
+
                 log.info("비밀번호 유효성검사");
 
                 String  msg = "비밀번호는 8 ~ 20 글자로 입력해주세요.";
 //                redirectAttributes.addFlashAttribute("msg", msg);
-
 //                return "redirect:/member/mypage";
 
                 memberDTO = memberService.findbyEmail(memberDTO.getEmail());

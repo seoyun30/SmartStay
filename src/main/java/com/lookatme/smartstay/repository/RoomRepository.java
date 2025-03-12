@@ -31,18 +31,19 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("select min(r.room_price) from Room r where r.hotel.hotel_num = :hotel_num")
     Long findLowestRoomPriceByHotelNum(@Param("hotel_num") Long hotel_num);
 
-    @Query("SELECT r FROM Room r WHERE LOWER(r.room_name) LIKE LOWER(CONCAT('%', :roomName, '%'))")
-    Page<Room> findByRoom_nameContainingIgnoreCase(@Param("roomName") String roomName, Pageable pageable);
+    @Query("SELECT r FROM Room r WHERE r.hotel.hotel_num = :hotelNum AND LOWER(r.room_name) LIKE LOWER(CONCAT('%', :roomName, '%'))")
+    Page<Room> findByRoom_nameContainingIgnoreCase(@Param("hotelNum") Long hotelNum, @Param("roomName") String roomName, Pageable pageable);
 
-    @Query("SELECT r FROM Room r WHERE LOWER(r.room_info) LIKE LOWER(CONCAT('%', :roomInfo, '%'))")
-    Page<Room> findByRoom_infoContainingIgnoreCase(@Param("roomInfo") String roomInfo, Pageable pageable);
+    @Query("SELECT r FROM Room r WHERE r.hotel.hotel_num = :hotelNum AND LOWER(r.room_info) LIKE LOWER(CONCAT('%', :roomInfo, '%'))")
+    Page<Room> findByRoom_infoContainingIgnoreCase(@Param("hotelNum") Long hotelNum, @Param("roomInfo") String roomInfo, Pageable pageable);
 
-    @Query("SELECT r FROM Room r WHERE LOWER(r.room_type) LIKE LOWER(CONCAT('%', :roomType, '%'))")
-    Page<Room> findByRoom_typeContainingIgnoreCase(@Param("roomType") String roomType, Pageable pageable);
+    @Query("SELECT r FROM Room r WHERE r.hotel.hotel_num = :hotelNum AND LOWER(r.room_type) LIKE LOWER(CONCAT('%', :roomType, '%'))")
+    Page<Room> findByRoom_typeContainingIgnoreCase(@Param("hotelNum") Long hotelNum, @Param("roomType") String roomType, Pageable pageable);
 
     @Query("SELECT r FROM Room r " +
-            "WHERE LOWER(r.room_name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "WHERE r.hotel.hotel_num = :hotelNum " +
+            "AND (LOWER(r.room_name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(r.room_info) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "OR LOWER(r.room_type) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    Page<Room> findByRoom_nameContainingIgnoreCaseOrRoom_infoContainingIgnoreCaseOrRoom_typeContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
+            "OR LOWER(r.room_type) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    Page<Room> findByRoom_nameContainingIgnoreCaseOrRoom_infoContainingIgnoreCaseOrRoom_typeContainingIgnoreCase(@Param("hotelNum") Long hotelNum, @Param("keyword") String keyword, Pageable pageable);
 }

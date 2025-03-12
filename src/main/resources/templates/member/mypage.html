@@ -5,7 +5,7 @@
       layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>내 정보 관리</title>
+    <title>SmartStay</title>
 
 </head>
 <body>
@@ -19,7 +19,6 @@
 
 
                 <div class="row g-3 mt-3">
-
                     <th:block th:object="${memberDTO}">
                         <div class="mb-1">
                             <label for="email" class="form-label">Email</label>
@@ -44,11 +43,7 @@
                         <div class="col text-center d-flex justify-content-center gap-3 mt-4">
                             <button type="button" class="btn btn-primary" onclick="location.href='/'">홈</button>
                             <button type="button" class="btn btn-dark" onclick="location.href='/member/mypagePasswordCheck'">수정</button>
-
-
                         </div>
-
-
                     </th:block>
                 </div>
             </div>

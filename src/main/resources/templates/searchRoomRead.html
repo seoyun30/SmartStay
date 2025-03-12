@@ -5,7 +5,7 @@
       layout:decorate="~{layouts/userlayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>SmartStay</title>
 
     <style>
         .card img {
@@ -86,25 +86,6 @@
                             </div>
                         </div>
                     </th:block>
-                </div>
-            </div>
-
-            <div class="card container col-10 mb-5">
-                <div class="mt-5 mb-5">
-                    <div class="d-flex justify-content-end mb-3">
-                        <a th:href="@{/review/reviewList(hotel_num=${hotel_num}, room_num=${room_num})}"
-                           class="text-decoration-none text-primary fw-bold">
-                            전체 리뷰 보기
-                        </a>
-                    </div>
-                    <div class="review-list d-flex">
-                        <div th:each="review : ${reviews}" class="review-item card me-2">
-                            <div class="card-body">
-                                <p th:text="${review.content}" class="card-text text-black"></p>
-                                <span th:text="${#temporals.format(review.reg_date, 'yyyy-MM-dd')}" class="small"></span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 

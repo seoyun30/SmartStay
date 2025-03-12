@@ -171,7 +171,7 @@ public class CareService {
         log.info("케어가 삭제되었습니다. care_num:" + id);
     }
 
-    public PageResponseDTO<CareDTO> searchList(String searchType, String searchKeyword, String sortField, String sortDir, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<CareDTO> searchList(Long hotelNum, String searchType, String searchKeyword, String sortField, String sortDir, PageRequestDTO pageRequestDTO) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
@@ -179,13 +179,13 @@ public class CareService {
 
         switch (searchType) {
             case "keyword":
-                result = careRepository.findByCare_nameContainingIgnoreCaseOrCare_detailContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                result = careRepository.findByCare_nameContainingIgnoreCaseOrCare_detailContainingIgnoreCase(hotelNum, searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "careName":
-                result = careRepository.findByCare_nameContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                result = careRepository.findByCare_nameContainingIgnoreCase(hotelNum, searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             case "careDetail":
-                result = careRepository.findByCare_detailContainingIgnoreCase(searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
+                result = careRepository.findByCare_detailContainingIgnoreCase(hotelNum, searchKeyword, PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
                 break;
             default:
                 result = careRepository.findAll(PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort));
