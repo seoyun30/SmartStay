@@ -77,65 +77,74 @@
             <div class="col-8 offset-2">
               <div class="row">
                 <div class="mb-3 text-center">
-                  <h2 th:text="${hotel_name} + ' 리뷰 '"></h2>
+                  <h2 th:text="${hotel_name} + ' 리뷰 '"></h2> <!--호텔 이름-->
                 </div>
-                <div class="col text-center">
-                  <div class="card mb-3">
-                    <div class="card-body">
-<!--                      <div class="input-group mb-3">-->
-<!--                        <span class="input-group-text" style="width: 140px">번호</span>-->
-<!--                        <input type="hidden" class="form-control" th:value="${review.rev_num}">-->
-<!--                      </div>-->
-                      <div class="input-group mb-3"> <!--회원 이메일-->
-                        <span class="input-group-text" style="width: 140px">작성자</span>
-                        <input type="text" class="form-control" th:value="${review.create_by}">
-                      </div>
-                      <div class="input-group mb-3"> <!--호텔 이름-->
-                        <span class="input-group-text" style="width: 140px">호텔 이름</span>
-                        <input type="hidden" th:value="${review.hotelDTO.hotel_num}">
-                        <input type="text" class="form-control" th:value="${review.hotelDTO.hotel_name}">
-                      </div>
-                      <div class="input-group mb-3"> <!--별점-->
-                        <span class="input-group-text" style="width: 140px">별점</span>
-                        <input type="text" min="0" class="form-control" th:value="${review.score}" id="score">
-                      </div>
-                      <div class="input-group mb-3">  <!--룸 정보 -->
-                        <span class="input-group-text" style="width: 140px">룸 정보</span>
-                        <input type="text" class="form-control" th:value="${review.roomDTO.room_info}">
-                      </div>
-                      <div class="input-group mb-3"> <!--룸 타입-->
-                        <span class="input-group-text" style="width: 140px">룸 타입</span>
-                        <input type="text" class="form-control" th:value="${review.roomDTO.room_type}">
-                      </div>
-                      <div class="input-group mb-3">   <!--인원 수-->
-                        <span class="input-group-text" style="width: 140px">인원 수</span>
-                        <input type="text" class="form-control" th:value="${review.roomDTO.room_bed}">
-                      </div>
-                      <div class="input-group mb-3">   <!--작성일-->
-                        <span class="input-group-text" style="width: 140px">작성일</span>
-                        <input type="text" class="form-control" th:value="${#temporals.format(review.reg_date, 'yyyy-MM-dd')}">
-                      </div>
-                      <div class="input-group mb-3">  <!--내용-->
-                        <span class="input-group-text" style="width: 140px">리뷰 내용</span>
-                        <textarea class="form-control" th:text="${review.content}" required id="content"></textarea>
-                      </div>
-
-                      <div class="col-12">
-                        <div class="mt-5 mb-3 imgA">
-                          <div class="row">
-                            <th:block th:each="img: ${review.imageDTOList}">
-                              <th:block th:if="${img.repimg_yn == 'Y'}">
-                                <label class="col-12 form-label">
-                                  <img class="main-image mt-3" th:src="${img.thumbnail_url}" style="width: 100%; height: auto; object-fit: contain;">
-                                </label>
-                              </th:block>
-                            </th:block>
+                  <div class="col text-center">
+                      <div class="card mb-3">
+                          <div class="card-body">
+                              <div class="input-group mb-3"> <!--회원 이메일-->
+                                  <span class="input-group-text" style="width: 140px">작성자</span>
+                                  <input type="text" class="form-control" th:value="${review.create_by}">
+                              </div>
+                              <div class="input-group mb-3"> <!--별점-->
+                                  <span class="input-group-text" style="width: 140px">별점</span>
+                                  <input type="text" min="0" class="form-control" th:value="${review.score}" id="score">
+                              </div>
+                              <div class="input-group mb-3">  <!--룸 정보 -->
+                                  <span class="input-group-text" style="width: 140px">룸 정보</span>
+                                  <input type="text" class="form-control" th:value="${review.roomDTO.room_info}">
+                              </div>
+                              <div class="input-group mb-3"> <!-- 룸 타입 & 인원수 -->
+                                  <span class="input-group-text" style="width: 140px">룸 타입 & 인원수</span>
+                                  <input type="text" class="form-control"
+                                         th:value="${review.roomDTO.room_type} + '/' + ${review.roomDTO.room_bed}">
+                              </div>
+<!--                              <div class="input-group mb-3"> &lt;!&ndash;룸 타입&ndash;&gt;-->
+<!--                                  <span class="input-group-text" style="width: 140px">룸 타입</span>-->
+<!--                                  <input type="text" class="form-control" th:value="${review.roomDTO.room_type}">-->
+<!--                              </div>-->
+<!--                              <div class="input-group mb-3">   &lt;!&ndash;인원 수&ndash;&gt;-->
+<!--                                  <span class="input-group-text" style="width: 140px">인원 수</span>-->
+<!--                                  <input type="text" class="form-control" th:value="${review.roomDTO.room_bed}">-->
+<!--                              </div>-->
+                              <div class="input-group mb-3">  <!--내용-->
+                                  <span class="input-group-text" style="width: 140px">리뷰 내용</span>
+                                  <textarea class="form-control" th:text="${review.content}" required id="content"></textarea>
+                              </div>
+                              <div class="input-group mb-3">   <!--작성일-->
+                                  <span class="input-group-text" style="width: 140px">작성일</span>
+                                  <input type="text" class="form-control" th:value="${#temporals.format(review.reg_date, 'yyyy-MM-dd')}">
+                              </div>
                           </div>
-                        </div>
                       </div>
-                    </div>
                   </div>
-                </div>
+
+                  <div class="col-12">
+                      <div class="mt-5 mb-3 imgA">
+                          <div class="row">
+                              <th:block th:each="img: ${review.imageDTOList}">
+                                  <th:block th:if="${img.repimg_yn == 'Y'}">
+                                      <label class="col-12 form-label">
+                                          <img class="main-image mt-3" th:src="${img.thumbnail_url}" style="width: 100%; height: auto; object-fit: contain;">
+                                      </label>
+                                  </th:block>
+                              </th:block>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-12">
+                      <div class="mt-5 mb-3 imgA">
+                          <div class="row">
+                              <th:block th:each="img: ${review.imageDTOList}">
+                                  <th:block th:if="${img.repimg_yn == 'N'}">
+                                      <label class="col-12 form-label">
+                                          <img class="main-image mt-3" th:src="${img.thumbnail_url}" style="width: 100%; height: auto; object-fit: contain;">
+                                      </label>
+                                  </th:block>
+                              </th:block>
+                          </div>
+                      </div>
+                  </div>
 
 
                 <div class="col-12 text-center">

@@ -66,13 +66,13 @@
                         <div class="mb-3">
                             <input type="hidden" name="roomreserveitem_num" th:value="${roomReserveItemDTO.roomreserveitem_num}">
                             <input type="hidden" name="reserve_num" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">
+                            <!-- 리뷰 내용 입력 -->
                             <label for="exampleFormControlTextarea1" class="form-label">리뷰 내용</label>
                             <textarea class="form-control" th:field="*{content}" id="exampleFormControlTextarea1" rows="5"
-                                      placeholder="리뷰 내용을 적어주세요."></textarea>
+                                      placeholder="리뷰 내용을 적어주세요." required></textarea>
                             <div th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
                         </div>
                     </div>
-
 
                     <div class="mb-3 starpoint_wrap">
                         <div class="starpoint_box">
@@ -86,7 +86,8 @@
                             <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>
                             <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
                             <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
-                            <input type="radio" name="score" value="0.5" data-score="0.5" id="starpoint_1" class="star_radio">
+
+                            <input type="radio" name="score" value="0.5" data-score="0.5" id="starpoint_1" class="star_radio" required>
                             <input type="radio" name="score" value="1" data-score="1" id="starpoint_2" class="star_radio">
                             <input type="radio" name="score" value="1.5" data-score="1.5" id="starpoint_3" class="star_radio">
                             <input type="radio" name="score" value="2" data-score="2" id="starpoint_4" class="star_radio">
@@ -98,8 +99,11 @@
                             <input type="radio" name="score" value="5" data-score="5" id="starpoint_10" class="star_radio">
                             <span class="starpoint_bg"></span>
                             <input type="hidden" id="scoreInput" name="score">
+
+                            <!-- 유효성 검사 오류 메시지 -->
+                            <div id="scoreError" class="invalid-feedback">별점을 선택해주세요.</div>
+                            <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}"><p>별점</p></div>
                         </div>
-                        <div th:if="${#fields.hasErrors('score')}" th:errors="*{score}"><p>별점</p></div>
                     </div>
 
                     <!-- 이미지 업로드 폼 -->
@@ -117,11 +121,6 @@
                             <button type="submit" class="btn btn-primary">등록</button>
                         </form>
                         <button type="reset" class="btn btn-secondary">초기화</button>
-                        <!--                        <span th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">-->
-                        <!--                            <button type="button" class="btn btn-danger"-->
-                        <!--                                    th:onclick="|location.href='@{/member/myRoomReserveRead(id=${reserve_num})}'|">취소</button>-->
-                        <!--                        </span>-->
-                        <!--                        @{주소}, 문자열+주소 |문자열@{주소}|-->
                     </div>
                 </div>
             </div>
@@ -133,6 +132,7 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
 
+        <!--이미지-->
         $(document).ready(function () {
 
             let msg = [[${msg}]]
@@ -183,6 +183,48 @@
             document.addEventListener("DOMContentLoaded", function (){
 
             });
+
+        <!-- Bootstrap 유효성 검사 활성화 -->
+        (() => {
+            'use strict';
+
+            const forms = document.querySelectorAll('.needs-validation');
+
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    let isValid = true;
+
+                    // 리뷰 내용이 비어있는지 확인
+                    const contentField = form.querySelector('textarea[required]');
+                    if (!contentField.value.trim()) {
+                        contentField.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        contentField.classList.remove('is-invalid');
+                        contentField.classList.add('is-valid');
+                    }
+
+                    // 별점 선택 여부 확인
+                    const scoreRadios = form.querySelectorAll('input[name="score"]');
+                    const scoreError = document.getElementById('scoreError');
+                    const scoreSelected = Array.from(scoreRadios).some(radio => radio.checked);
+
+                    if (!scoreSelected) {
+                        scoreError.style.display = 'block';
+                        isValid = false;
+                    } else {
+                        scoreError.style.display = 'none';
+                    }
+
+                    if (!isValid) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
 
 
     </script>

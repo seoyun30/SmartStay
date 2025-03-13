@@ -104,5 +104,8 @@ public class ReviewDTO {
         }
     }
 
+    // 필요한 필드
+    private String reviewContent;
+
 
 }
