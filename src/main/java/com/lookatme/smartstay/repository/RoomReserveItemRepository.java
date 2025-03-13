@@ -29,7 +29,10 @@ public interface RoomReserveItemRepository extends JpaRepository<RoomReserveItem
     @Query("select r from RoomReserveItem r where r.room.hotel.hotel_num = :hotel_num")
     Page<RoomReserveItem> findByHotelPage (Long hotel_num, Pageable pageable);
     
-    @Query("select r from RoomReserveItem r where r.room.room_num = :room_num")
+    @Query("select r from RoomReserveItem r where r.room.room_num = :room_num " +
+            "and r.in_date <= current_date " +
+            "and r.out_date >= current_date " +
+            "and r.roomReserve.check_state <> 'CANCEL'")
     List<RoomReserveItem> findByRoomRoom_num(Long room_num);
 
     @Query("select r from RoomReserveItem r where r.room.room_num = :room_num " +

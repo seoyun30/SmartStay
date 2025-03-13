@@ -77,6 +77,7 @@ public class RoomReserveController {
     }
 
     @GetMapping("/checkReserve/{room_num}")
+    @ResponseBody
     public ResponseEntity<?> getReserveDatesForm(@PathVariable Long room_num) {
         if (room_num == null) {
             return ResponseEntity.badRequest().body(" 방 ID가 필요합니다.");

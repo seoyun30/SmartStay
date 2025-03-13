@@ -55,9 +55,8 @@ public class RoomReserveService {
 
     }
 
-    //룸에 있는 룸예약 전체 조회
+    //체크인, 체크아웃 날짜에 오늘이 포함된 취소 상태가 아닌 예약 찾기
     public List<RoomReserveItemDTO> findRoomReserve(Long room_num) {
-
         List<RoomReserveItem> roomReserveItemList = roomReserveItemRepository.findByRoomRoom_num(room_num);
         List<RoomReserveItemDTO> roomReserveItemDTOList = roomReserveItemList.stream()
                 .map(roomReserveItem -> modelMapper.map(roomReserveItem, RoomReserveItemDTO.class)
@@ -66,7 +65,6 @@ public class RoomReserveService {
                                 .setMemberDTO(modelMapper.map(roomReserveItem.getRoomReserve().getMember(), MemberDTO.class)))
                 )
                 .collect(Collectors.toList());
-
         return roomReserveItemDTOList;
     }
 
