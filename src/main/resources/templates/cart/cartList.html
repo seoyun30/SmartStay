@@ -225,7 +225,7 @@
                                             <th:block th:each="img: ${careItem.imageDTOList}">
                                                 <th:block th:if="${img.repimg_yn == 'Y'}">
                                                     <div class="square-image mb-3">
-                                                        <img class="img-fluid" th:src="${img.thumbnail_url}" alt="대표 이미지">
+                                                        <img class="img-fluid care_img" th:src="${img.thumbnail_url}" alt="대표 이미지">
                                                     </div>
                                                 </th:block>
                                             </th:block>
@@ -248,7 +248,7 @@
                                             <th:block th:each="img: ${menuItem.imageDTOList}">
                                                 <th:block th:if="${img.repimg_yn == 'Y'}">
                                                     <div class="square-image mb-3">
-                                                        <img class="img-fluid" th:src="${img.thumbnail_url}" alt="대표 이미지">
+                                                        <img class="img-fluid menu_img" th:src="${img.thumbnail_url}" alt="대표 이미지">
                                                     </div>
                                                 </th:block>
                                             </th:block>
@@ -586,18 +586,34 @@
             // 모달 창 띄우기
             $("#roomModal").modal("show");
 
+            let nextDay = new Date(checkInDate);
+            nextDay.setDate(nextDay.getDate() + 1);
+            let nextDayStr = nextDay.toISOString().split("T")[0];
+
             // flatpickr 적용
             flatpickr("#roomModal .modalIn_date", {
                 minDate: "today",
                 dateFormat: "Y-m-d", // 날짜 형식 지정 (YYYY-MM-DD)
                 defaultDate: checkInDate,  // 기본 체크인 날짜 설정
                 onChange: function(selectedDates, dateStr, instance) {
+                    let nextDay = new Date(dateStr);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    let nextDayStr = nextDay.toISOString().split("T")[0];
+
+                    $("#roomModal .modalOut_date").flatpickr().set("minDate", nextDayStr);
+
+                    // 체크인 날짜 변경 시 체크아웃 날짜 자동 조정
+                    let currentOutDate = $("#roomModal .modalOut_date").val();
+                    if (!currentOutDate || new Date(currentOutDate) <= new Date(dateStr)) {
+                        $("#roomModal .modalOut_date").flatpickr().setDate(nextDayStr);
+                    }
+
                     totalpriceChange();
                 }
             });
 
             flatpickr("#roomModal .modalOut_date", {
-                minDate: "today",
+                minDate: nextDayStr,
                 dateFormat: "Y-m-d", // 날짜 형식 지정 (YYYY-MM-DD)
                 defaultDate: checkOutDate,  // 기본 체크아웃 날짜 설정
                 onChange: function(selectedDates, dateStr, instance) {
@@ -611,20 +627,18 @@
 
         //룸서비스 모달창 표시
         $(".roomServiceInfo").on("click", function () {
-            // 해당 `.roomServiceInfo` 요소에서 필요한 데이터 가져오기
-            let hotelName = $(this).closest(".p-3").prev(".p-3").find(".h4.fw-bold").text().trim();
-            let roomName = $(this).closest(".p-3").find(".roomName").text().trim();
-            let serviceNum = $(this).closest(".p-3").find(".serviceRemoveBtn").val();
-            $("#serviceModal .roomServiceModifyBtn").val(serviceNum);
+            let parentBlock = $(this).closest(".p-3"); // 현재 `.p-3` 블록 찾기
+            let hotelName = parentBlock.find(".h4.fw-bold").first().text().trim(); // 호텔 이름 가져오기
+            let roomName = parentBlock.find(".roomName").text().trim(); // 룸 이름 가져오기
+            let serviceNum = parentBlock.find(".serviceRemoveBtn").val(); // 서비스 번호 가져오기
 
-            // 룸 정보 설정
+            $("#serviceModal .roomServiceModifyBtn").val(serviceNum);
             $("#serviceModal .serviceHotel").text(hotelName);
             $("#serviceModal .serviceRoom").text(roomName);
 
             // 기존 모달 데이터 초기화
-            $("#serviceModal .careService").empty();
-            $("#serviceModal .menuService").empty();
-            $("#serviceModal .modalMenu_request").val("").closest(".mb-3").show();
+            $("#serviceModal .careService, #serviceModal .menuService").empty();
+            $("#serviceModal .modalMenu_request").val(""); // 요청사항 초기화
             $("#serviceModal h4:contains('룸케어 서비스')").show();
             $("#serviceModal h4:contains('주문 메뉴')").show();
 
@@ -632,19 +646,19 @@
             let totalPrice = 0;
 
             //룸케어 서비스 추가
-            let careItems = $(this).find(".careitem_num");
+            let careItems = parentBlock.find(".careitem_num");
             if (careItems.length > 0) {
                 careItems.each(function () {
-                    let careName = $(this).siblings("p:first").text();
                     let careNum = $(this).val();
-                    let careCount = parseInt($(this).siblings(".care_count").text().replace("개", "").trim());
-                    let carePrice = $(this).siblings(".care_price").text().trim();
-                    let careImage =  $(this).closest(".col-md-10").prev(".col-md-2").find("img").attr("src"); // 대표 이미지 가져오기
+                    let careName = $(this).closest(".col-md-10").find("p.h5").eq(0).text().trim();
+                    let careCount = parseInt($(this).closest(".col-md-10").find(".care_count").text().replace("개", "").trim());
+                    let carePrice = $(this).closest(".col-md-10").find(".care_price").text().trim();
+                    let careImage = $(this).closest(".col-md-10").prev(".col-md-2").find("img").attr("src") || "";
 
                     let careHtml = `
                     <div class="row mb-3">
                         <div class="col-md-2 align-self-center">
-                         <button value="${careNum}" class="btn btn-outline-dark btn-sm careRemoveBtn" aria-label="Close">
+                            <button value="${careNum}" class="btn btn-outline-dark btn-sm careRemoveBtn" aria-label="Close">
                                 <i class="bi bi-x-lg"></i>
                             </button>
                         </div>
@@ -655,30 +669,27 @@
                             <p class="h5 mb-1">${careName} | ${carePrice}</p>
                             <div class="input-group mb-3">
                                 <span class="input-group-text">수량</span>
-                                <input type="number" class="form-control modalCare_count" value="${parseInt(careCount)}" min="1" max="100">
+                                <input type="number" class="form-control modalCare_count" value="${careCount}" min="1" max="100">
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
                     $("#serviceModal .careService").append(careHtml);
 
                     totalPrice += parseInt(carePrice.replace(/[^0-9]/g, "")) * careCount;
-
                 });
             } else {
                 $("#serviceModal h4:contains('룸케어 서비스')").hide();
             }
 
             //주문 메뉴 추가
-            let menuItems = $(this).find(".menuitem_num");
+            let menuItems = parentBlock.find(".menuitem_num");
             if (menuItems.length > 0) {
                 menuItems.each(function () {
-                    let menuName = $(this).siblings("p:first").text();
                     let menuNum = $(this).val();
-                    let menuCount = parseInt($(this).siblings(".menu_count").text().replace("개", "").trim());
-                    let menuPrice = $(this).siblings(".menu_price").text().trim();
-
-                    let menuImage =  $(this).closest(".col-md-10").prev(".col-md-2").find("img").attr("src"); // 대표 이미지 가져오기
+                    let menuName = $(this).closest(".col-md-10").find("p.h5").eq(0).text().trim();
+                    let menuCount = parseInt($(this).closest(".col-md-10").find(".menu_count").text().replace("개", "").trim());
+                    let menuPrice = $(this).closest(".col-md-10").find(".menu_price").text().trim();
+                    let menuImage = $(this).closest(".col-md-10").prev(".col-md-2").find("img").attr("src") || "";
 
                     let menuHtml = `
                     <div class="row">
@@ -694,24 +705,22 @@
                             <p class="h5 mb-1">${menuName} | ${menuPrice}</p>
                             <div class="input-group mb-3">
                                 <span class="input-group-text">수량</span>
-                                <input type="number" class="form-control modalMenu_count" value="${parseInt(menuCount)}" min="1" max="100">
+                                <input type="number" class="form-control modalMenu_count" value="${menuCount}" min="1" max="100">
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
                     $("#serviceModal .menuService").append(menuHtml);
 
                     totalPrice += parseInt(menuPrice.replace(/[^0-9]/g, "")) * menuCount;
-
                 });
-            } else {
+            }  else {
                 $("#serviceModal h4:contains('주문 메뉴')").hide();
             }
 
             //요청사항 설정
-            let menuRequest = $(this).closest(".p-3").find(".menu_request").text().trim();
-            if (menuRequest !== "요청사항 : ") {
-                $("#serviceModal .modalMenu_request").val(menuRequest.replace("요청사항 : ", ""));
+            let menuRequest = parentBlock.find(".menu_request").text().trim().replace("요청사항 : ", "");
+            if (menuRequest !== "") {
+                $("#serviceModal .modalMenu_request").val(menuRequest);
             } else {
                 $("#serviceModal .modalMenu_request").closest(".mb-3").hide();
             }
@@ -735,7 +744,7 @@
             $(".modal .out_date").attr("min", minDateTime);
         }
 
-        $(".in_date").on("change", function () {
+        $("#roomModal .modalIn_date").on("change", function () {
             let selectedDate = new Date($(this).val());
             let today = new Date();
 
@@ -752,7 +761,7 @@
         });
 
         // 날짜 변경 시 총 가격 업데이트
-        $(".in_date, .out_date").on("change", function () {
+        $("#roomModal .modalIn_date, #roomModal .modalOut_date").on("change", function () {
             totalpriceChange();
         });
 
@@ -761,24 +770,18 @@
 
             let inDate = $("#roomModal .modalIn_date").val();
             let outDate = $("#roomModal .modalOut_date").val();
-            let dayCount = 0;
-            if (inDate && outDate) {
-                let inDateObj = new Date(inDate);
-                let outDateObj = new Date(outDate);
-                dayCount = (outDateObj - inDateObj) / (1000 * 60 * 60 * 24);  // 날짜 차이 계산 (일수)
-            }
 
             // 날짜가 모두 입력되지 않으면 계산하지 않음
             if (!inDate || !outDate) {
-                let nextDay = new Date(inDate);
-                nextDay.setDate(nextDay.getDate() + 1);
-                let nextDayStr = nextDay.toISOString().split("T")[0];
-                $("#roomModal .modalOut_date").flatpickr().setDate(nextDayStr);
-                $("#roomModal .modalOut_date").flatpickr().set("minDate", nextDayStr); // 잘못된 체크아웃 날짜 초기화
-                $("#roomModal .roomTotalPrice").text($("#roomModal .modalPrice").text()); // 기본 1박 요금 표시
                 return;
             }
 
+            let inDateObj = new Date(inDate);
+            let outDateObj = new Date(outDate);
+            let dayCount = (outDateObj - inDateObj) / (1000 * 60 * 60 * 24);  // 날짜 차이 계산 (일수)
+            console.log(inDateObj)
+            console.log(outDateObj)
+            console.log(dayCount)
             // 체크아웃 날짜가 체크인 날짜보다 같거나 이전이면 계산하지 않음
             if (dayCount <= 0) {
                 alert("체크아웃 날짜는 체크인 날짜보다 이후여야 합니다.");
@@ -786,7 +789,7 @@
                 nextDay.setDate(nextDay.getDate() + 1);
                 let nextDayStr = nextDay.toISOString().split("T")[0];
                 $("#roomModal .modalOut_date").flatpickr().setDate(nextDayStr);
-                $("#roomModal .modalOut_date").flatpickr().set("minDate", nextDayStr); // 잘못된 체크아웃 날짜 초기화
+                $("#roomModal .modalDay").val(1); // 기본 1박
                 $("#roomModal .roomTotalPrice").text($("#roomModal .modalPrice").text()); // 기본 1박 요금 표시
                 return;
             }
@@ -794,6 +797,7 @@
             // 총 가격 계산
             let price = parseInt($("#roomModal .modalPrice").text().replace(/[^0-9]/g, ''));
             let totalPrice = price * dayCount;
+
             $("#roomModal .roomTotalPrice").text(totalPrice);
             $("#roomModal input.modalDay").val(dayCount);
         }
@@ -803,16 +807,12 @@
 
         //룸케어 아이템 삭제 (UI에서만 숨김)
         $("#serviceModal").on("click", ".careRemoveBtn", function () {
-            let careItemId = $(this).val();
-            deletedCareItems.push(careItemId); // 삭제 목록에 추가
             $(this).closest(".row").hide(); // UI에서 숨김 처리
             updateTotalPrice();
         });
 
         //메뉴 아이템 삭제 (UI에서만 숨김)
         $("#serviceModal").on("click", ".menuRemoveBtn", function () {
-            let menuItemId = $(this).val();
-            deletedMenuItems.push(menuItemId); // 삭제 목록에 추가
             $(this).closest(".row").hide(); // UI에서 숨김 처리
             updateTotalPrice();
         });
@@ -866,9 +866,12 @@
 
             let roomitem_num = $("#roomModal .modalRoomItem_num").val();
             let room_num = $("#roomModal .modalRoom_num").val();
-            let in_time = new Date($("#roomModal .modalIn_date").val());
-            let in_date = new Date($("#roomModal .modalIn_date").val());
-            let out_date = new Date($("#roomModal .modalOut_date").val());
+
+            let in_date = $("#roomModal .modalIn_date").val(); // 체크인 날짜 (YYYY-MM-DD)
+            let out_date = $("#roomModal .modalOut_date").val(); // 체크아웃 날짜 (YYYY-MM-DD)
+            let in_time = $("#roomModal input.modalIn_time").val(); // 체크인 시간 (HH:MM)
+            let out_time = $("#roomModal input.modalOut_time").val(); // 체크아웃 시간 (HH:MM)
+
             let day = $("#roomModal .modalDay").val();
             let reserve_request = $("#roomModal .modalReserve_request").val();
             let maxPeople = parseInt($("#roomModal .maxCount").text().replace("최대 ", "").replace("명 예약 가능", "").trim());
@@ -879,36 +882,32 @@
                 alert("잘못된 방 정보입니다.");
                 return;
             }
-            if (!in_date || isNaN(in_date.getTime())) {
+            if (!in_date) {
                 alert("체크인 날짜를 선택해주세요.");
                 return;
-            } else if (in_date < today) {
+            }
+            if (!out_date) {
+                alert("체크아웃 날짜를 선택해주세요.");
+                return;
+            }
+            if (new Date(in_date) < today) {
                 alert("이미 지난 날짜는 선택할 수 없습니다.");
                 $("#roomModal .modalIn_date").val(""); // 입력값 초기화
                 return;
             }
-
-            if (!out_date || isNaN(out_date.getTime())) {
-                alert("체크아웃 날짜를 선택해주세요.");
-                return;
-            }   else if (out_date < today) {
-                alert("이미 지난 날짜로 선택할 수 없습니다.");
-                $(".modal .out_date").val(""); // 입력값 초기화
-                return;
-            }
-            if (out_date <= in_date) {
+            if (new Date(out_date) <= new Date(in_date)) {
                 alert("체크아웃 날짜는 체크인 날짜보다 이후여야 합니다.");
                 $("#roomModal .modalOut_date").val(""); // 입력값 초기화
                 return;
             }
-
             if (!count || count < 1) {
                 alert("예약 인원 수를 입력해주세요.");
                 return;
-            } else if (count > maxPeople) {
+            }
+            if (count > maxPeople) {
                 alert("최대 예약 가능 인원을 초과할 수 없습니다. (최대 예약 가능 인원: " + maxPeople + "명)");
-                $("#roomModal .modalCount").val(maxPeople); // 최대 인원으로 값 변경
-                return; // 수정 요청 중단
+                $("#roomModal .modalCount").val(maxPeople);
+                return;
             }
 
             // 요청 사항이 비어 있을 경우 기본값 설정
@@ -916,16 +915,19 @@
                 reserve_request = "요청 사항 없음";
             }
 
-            //날짜를 "YYYY-MM-DDTHH:MM" 형식으로 변환
-            let formatDate = (date) => {
-                return date.toISOString().slice(0, 16);
+            // 날짜 + 시간 결합하여 LocalDateTime 형식으로 변환
+            let formatDateTime = (date, time) => {
+                return `${date}T${time}:00`;  // 초까지 맞추기 위해 `:00` 추가
             };
+
+            let formattedInDateTime = formatDateTime(in_date, in_time);
+            let formattedOutDateTime = formatDateTime(out_date, out_time);
 
             let roomItemDTO = {
                 roomitem_num : roomitem_num,
                 room_num : room_num,
-                in_date: in_date + T + in_Time,
-                out_date: formatDate(out_date),
+                in_date: formattedInDateTime,  // LocalDateTime 형식
+                out_date: formattedOutDateTime, // LocalDateTime 형식
                 day : day,
                 count : count,
                 reserve_request : reserve_request
@@ -938,7 +940,9 @@
                 type : "post",
                 data: roomItemDTO,
                 success : function (result) {
+                    alert("예약 정보가 수정되었습니다.")
                     $("#roomModal").modal("hide");
+
                     location.reload(); // 페이지 새로 고침
                 },
                 error : function (xhr) {
@@ -963,6 +967,9 @@
                         careitem_num: careItemNum,
                         care_count: careCount
                     });
+                } else {
+                    // 삭제된 케어 아이템을 삭제 목록에 추가
+                    deletedCareItems.push(careItemNum);
                 }
             });
 
@@ -976,12 +983,15 @@
                         menuitem_num: menuItemNum,
                         menu_count: menuCount
                     });
+                } else {
+                    // 삭제된 메뉴 아이템을 삭제 목록에 추가
+                    deletedMenuItems.push(menuItemNum);
                 }
             });
 
             //요청 사항이 비어 있으면 기본값 설정
             if (!menuRequest) {
-                menuRequest = "요청 사항 없음";
+                menuRequest = "없음";
             }
 
             //전송할 데이터 구성
@@ -1020,13 +1030,13 @@
                 let hasCareItems = $("#serviceModal .careService .row:visible").length > 0;
                 let hasMenuItems = $("#serviceModal .menuService .row:visible").length > 0;
 
-                // **(3) 모든 아이템이 삭제되었다면 orderItem도 삭제**
+                // **모든 아이템이 삭제되었다면 orderItem도 삭제**
                 if (!hasCareItems && !hasMenuItems) {
                     $.ajax({
                         url: `/cart/cartOrderReserveDelete/${serviceNum}`,
                         type: "DELETE",
                         success: function () {
-                            alert("주문이 삭제되었습니다.");
+                            alert("주문 정보가 삭제되었습니다.");
                             $("#serviceModal").modal("hide");
                             location.reload();
                         },
