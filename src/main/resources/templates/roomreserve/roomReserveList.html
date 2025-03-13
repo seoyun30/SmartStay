@@ -141,22 +141,22 @@
                             <th:block th:unless="${pageResponseDTO == null or pageResponseDTO.dtoList == null or pageResponseDTO.dtoList.isEmpty()}"
                                       th:each="roomReserveItemDTO : ${pageResponseDTO.dtoList}">
                                 <tr class="text-center align-middle">
-                                    <td>
+                                    <td class="align-middle">
                                         <a th:href="@{/roomreserve/roomReserveRead(roomreserveitem_num=${roomReserveItemDTO.roomreserveitem_num})}"
                                            th:text="${roomReserveItemDTO.roomReserveDTO.reserve_id}">
                                             예약 번호
                                         </a>
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         <a th:href="@{/room/roomRead(room_num=${roomReserveItemDTO.roomDTO.room_num})}"
                                            th:text="${roomReserveItemDTO.roomDTO.room_name}">예약룸</a>
                                     </td>
-                                    <td th:text="${roomReserveItemDTO.roomReserveDTO.memberDTO.name}">예약자명</td>
-                                    <td th:text="${#temporals.format(roomReserveItemDTO.roomReserveDTO.reg_date, 'yyyy.MM.dd HH:mm')}">예약일</td>
-                                    <td th:text="${#temporals.format(roomReserveItemDTO.in_date, 'yyyy.MM.dd HH:mm')}">체크인 날짜</td>
-                                    <td th:text="${#temporals.format(roomReserveItemDTO.out_date, 'yyyy.MM.dd HH:mm')}">체크아웃 날짜</td>
-                                    <td th:text="${roomReserveItemDTO.day * roomReserveItemDTO.roomDTO.room_price + '원'}" >결제 금액</td>
-                                    <td th:switch="${roomReserveItemDTO.roomReserveDTO.check_state}" class="text-nowrap" > <!--주문 상태-->
+                                    <td class="align-middle" th:text="${roomReserveItemDTO.roomReserveDTO.memberDTO.name}">예약자명</td>
+                                    <td class="align-middle" th:text="${#temporals.format(roomReserveItemDTO.roomReserveDTO.reg_date, 'yyyy.MM.dd HH:mm')}">예약일</td>
+                                    <td class="align-middle" th:text="${#temporals.format(roomReserveItemDTO.in_date, 'yyyy.MM.dd HH:mm')}">체크인 날짜</td>
+                                    <td class="align-middle" th:text="${#temporals.format(roomReserveItemDTO.out_date, 'yyyy.MM.dd HH:mm')}">체크아웃 날짜</td>
+                                    <td class="align-middle" th:text="${roomReserveItemDTO.day * roomReserveItemDTO.roomDTO.room_price + '원'}" >결제 금액</td>
+                                    <td class="text-nowrap align-middle" th:switch="${roomReserveItemDTO.roomReserveDTO.check_state}"> <!--주문 상태-->
                                         <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}" th:case="${roomReserveItemDTO.roomReserveDTO.check_state.RESERVE}">접수</button>
                                         <button type="button" class="btn btn-warning stateBtn" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}" th:case="${roomReserveItemDTO.roomReserveDTO.check_state.IN}">체크인</button>
                                         <button type="button" class="btn btn-danger stateBtn" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}" th:case="${roomReserveItemDTO.roomReserveDTO.check_state.OUT}">체크아웃</button>

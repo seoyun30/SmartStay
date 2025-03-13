@@ -15,14 +15,14 @@
     <div class="row w-75">
         <h1 class="text-center fw-bold my-3">내 룸서비스 주문 이력</h1>
         <div class="col-12 text-end mb-3">
-            <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-dark">마이페이지</button>
+            <button type="button" onclick="location.href='/member/userAllMyPage'"class="btn btn-dark">마이 페이지</button>
         </div>
         <div class="col-12 mb-3">
             <div class="accordion" style="--bs-accordion-border-color: #a2aec7" id="accordionExample">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                            <h3 class="fw-bold">예약 검색</h3>
+                            <h3 class="fw-bold">주문 검색</h3>
                         </button>
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -95,23 +95,32 @@
                         </th:block>
                         <th:block th:unless="${pageResponseDTO ==null or pageResponseDTO.dtoList == null or pageResponseDTO.dtoList.isEmpty()}" th:each="orderReserveItemDTO : ${pageResponseDTO.dtoList}">
                             <tr class="text-center align-middle">
-                                <td>
+                                <td class="align-middle">
                                     <a th:href="@{/member/myOrderReserveRead(serviceitem_num=${orderReserveItemDTO.serviceitem_num})}"
                                        th:text="${orderReserveItemDTO.orderReserveDTO.order_id}">주문 번호</a>
                                 </td>
-                                <td th:text="${orderReserveItemDTO.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">주문 호텔</td>
-                                <td>
+                                <td class="align-middle" th:text="${orderReserveItemDTO.roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">주문 호텔</td>
+                                <td class="align-middle">
                                     <a th:href="@{/searchRoomRead(room_num=${orderReserveItemDTO.roomReserveItemDTO.roomDTO.room_num})}"
                                        th:text="${orderReserveItemDTO.roomReserveItemDTO.roomDTO.room_name}">주문 방</a>
                                 </td>
-                                <td th:text="${#temporals.format(orderReserveItemDTO.orderReserveDTO.reg_date, 'yyyy.MM.dd HH:mm')}">주문일</td>
-                                <td th:text="${orderReserveItemDTO.orderReserveDTO.total_price + '원'}">결제 금액</td>
-                                <td class="text-nowrap" th:switch="${orderReserveItemDTO.orderReserveDTO.order_state}"> <!--주문 상태-->
-                                    <button type="button" class="btn btn-primary stateBtn" th:value="${orderReserveItemDTO.orderReserveDTO.order_num}" th:case="${orderReserveItemDTO.orderReserveDTO.order_state.ORDER}">접수</button>
-                                    <button type="button" class="btn btn-warning stateBtn" th:value="${orderReserveItemDTO.orderReserveDTO.order_num}" th:case="${orderReserveItemDTO.orderReserveDTO.order_state.PREPARE}">준비중</button>
-                                    <button type="button" class="btn btn-danger stateBtn" th:value="${orderReserveItemDTO.orderReserveDTO.order_num}" th:case="${orderReserveItemDTO.orderReserveDTO.order_state.COMPLETE}">완료</button>
-                                    <button type="button" class="btn btn-secondary stateBtn" th:value="${orderReserveItemDTO.orderReserveDTO.order_num}" th:case="${orderReserveItemDTO.orderReserveDTO.order_state.CANCEL}">취소</button>
-                                    <button type="button" class="btn btn-primary stateBtn" th:value="${orderReserveItemDTO.orderReserveDTO.order_num}" th:case="*">알 수 없음</button> <!-- 예외 처리 -->
+                                <td class="align-middle" th:text="${#temporals.format(orderReserveItemDTO.orderReserveDTO.reg_date, 'yyyy.MM.dd HH:mm')}">주문일</td>
+                                <td class="align-middle" th:text="${orderReserveItemDTO.orderReserveDTO.total_price + '원'}">결제 금액</td>
+                                <td class="text-nowrap align-middle" th:switch="${orderReserveItemDTO.orderReserveDTO.order_state}"> <!--주문 상태-->
+                                    <button type="button" class="btn btn-primary stateBtn" th:value="${orderReserveItemDTO.orderReserveDTO.order_num}"
+                                            th:data-state="${orderReserveItemDTO.orderReserveDTO.order_state.ORDER}"
+                                            th:case="${orderReserveItemDTO.orderReserveDTO.order_state.ORDER}">접수</button>
+                                    <button type="button" class="btn btn-warning stateBtn" th:value="${orderReserveItemDTO.orderReserveDTO.order_num}"
+                                            th:data-state="${orderReserveItemDTO.orderReserveDTO.order_state.PREPARE}"
+                                            th:case="${orderReserveItemDTO.orderReserveDTO.order_state.PREPARE}">준비중</button>
+                                    <button type="button" class="btn btn-danger stateBtn" th:value="${orderReserveItemDTO.orderReserveDTO.order_num}"
+                                            th:data-state="${orderReserveItemDTO.orderReserveDTO.order_state.COMPLETE}"
+                                            th:case="${orderReserveItemDTO.orderReserveDTO.order_state.COMPLETE}">완료</button>
+                                    <button type="button" class="btn btn-secondary stateBtn" th:value="${orderReserveItemDTO.orderReserveDTO.order_num}"
+                                            th:data-state="${orderReserveItemDTO.orderReserveDTO.order_state.CANCEL}"
+                                            th:case="${orderReserveItemDTO.orderReserveDTO.order_state.CANCEL}">취소</button>
+                                    <button type="button" class="btn btn-primary stateBtn" th:value="${orderReserveItemDTO.orderReserveDTO.order_num}"
+                                            th:case="*">오류</button> <!-- 예외 처리 -->
                                 </td>
                             </tr>
                         </th:block>
@@ -164,16 +173,12 @@
         $(document).on("click", ".stateBtn", function() {
             let button = $(this);
             let orderNum = button.val();
-            let currentStateText = button.text().trim(); // 현재 버튼의 텍스트 가져오기
+            let currentState = button.data("state");
 
-            let states = {
-                "접수": "ORDER",
-                "준비중": "PREPARE",
-                "완료": "COMPLETE",
-                "취소": "CANCEL"
-            };
-
-            let currentState = states[currentStateText];
+            if (currentState === "CANCEL") {
+                alert("이미 취소된 예약입니다.");
+                return;
+            }
 
             if (currentState !== "ORDER") {
                 alert("주문이 접수 상태일 때만 취소할 수 있습니다.");
@@ -186,6 +191,7 @@
                     url: "/orderreserve/state",
                     data: { order_num: orderNum, order_state: "CANCEL" },
                     success: function(response) {
+                        alert("주문이 취소되었습니다.")
                         let newButton = `<button type="button" class="btn btn-secondary stateBtn" value="${orderNum}">취소</button>`;
                         button.replaceWith(newButton);
                     },

@@ -78,6 +78,16 @@
                                                     <div class="card-body px-auto" style="color: #31343d">
                                                         <h5 class="card-title fw-bold" th:text="${roomReserveItemDTO.roomDTO.hotelDTO.hotel_name}">예약한 호텔</h5>
                                                         <h5 class="card-title" th:text="${roomReserveItemDTO.roomDTO.room_name}">예약한 방 이름</h5>
+                                                        <p class="card-text mb-1 fw-bold">
+                                                            예약 상태 :
+                                                            <span th:switch="${roomReserveItemDTO.roomReserveDTO.check_state}" class="text-nowrap" > <!--주문 상태-->
+                                                            <span th:case="${roomReserveItemDTO.roomReserveDTO.check_state.RESERVE}">접수</span>
+                                                            <span th:case="${roomReserveItemDTO.roomReserveDTO.check_state.IN}">체크인</span>
+                                                            <span th:case="${roomReserveItemDTO.roomReserveDTO.check_state.OUT}">체크아웃</span>
+                                                            <span th:case="${roomReserveItemDTO.roomReserveDTO.check_state.CANCEL}">취소</span>
+                                                            <span th:case="*">오류</span> <!-- 예외 처리 -->
+                                                        </span>
+                                                        </p>
                                                         <small class="card-text fw-bold">체크인 : </small>
                                                         <small class="card-text text-nowrap" th:text="${#temporals.format(roomReserveItemDTO.in_date, 'yyyy.MM.dd HH:mm')}">체크인 시간</small> <br>
                                                         <small class="card-text fw-bold">체크아웃 : </small>
@@ -118,8 +128,9 @@
                                                             <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.PREPARE}">준비중</span>
                                                             <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.COMPLETE}">완료</span>
                                                             <span th:case="${orderReserveItemDTO.orderReserveDTO.order_state.CANCEL}">취소</span>
-                                                            <span th:case="*">알 수 없음</span> <!-- 예외 처리 -->
-                                                        </span>
+                                                            <span th:case="*">오류</span> <!-- 예외 처리 -->
+                                                            </span>
+                                                        </p>
                                                         <p class="card-text mb-1" th:text="${'결제 금액 : ' + orderReserveItemDTO.orderReserveDTO.total_price + '원'}">결제 금액</p>
 
                                                         <a th:href="@{/member/myOrderReserveRead(serviceitem_num=${orderReserveItemDTO.serviceitem_num})}" class="btn btn-primary">주문 확인</a>
