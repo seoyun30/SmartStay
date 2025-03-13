@@ -45,10 +45,10 @@
                                     <label class="input-group-text" for="inputGroupSelect01">예약 상태</label>
                                     <select class="form-select" name="state" id="inputGroupSelect01">
                                         <option value="" th:selected="${reserveSearchDTO.state == null}">전체</option>
-                                        <option value="RESERVE" th:selected="${reserveSearchDTO.state == 'RESERVE'}">예약 접수</option>
+                                        <option value="RESERVE" th:selected="${reserveSearchDTO.state == 'RESERVE'}">접수</option>
                                         <option value="IN" th:selected="${reserveSearchDTO.state == 'IN'}">체크인</option>
                                         <option value="OUT" th:selected="${reserveSearchDTO.state == 'OUT'}">체크아웃</option>
-                                        <option value="CANCEL" th:selected="${reserveSearchDTO.state == 'CANCEL'}">예약 취소</option>
+                                        <option value="CANCEL" th:selected="${reserveSearchDTO.state == 'CANCEL'}">취소</option>
                                     </select>
                                 </div>
 
@@ -78,13 +78,13 @@
                         <thead>
                         <tr class="text-center">
                             <th scope="col" class="text-nowrap">예약 번호</th>
-                            <th scope="col" class=" text-nowrap">예약 호텔</th>
-                            <th scope="col" class=" text-nowrap">예약 방</th>
-                            <th scope="col" class=" text-nowrap">예약일</th>
-                            <th scope="col" class=" text-nowrap">체크인 날짜</th>
-                            <th scope="col" class=" text-nowrap">체크아웃 날짜</th>
-                            <th scope="col" class=" text-nowrap">결제 금액</th>
-                            <th scope="col" class=" text-nowrap">예약 상태</th>
+                            <th scope="col" class="text-nowrap">예약 호텔</th>
+                            <th scope="col" class="text-nowrap">예약 방</th>
+                            <th scope="col" class="text-nowrap">예약일</th>
+                            <th scope="col" class="text-nowrap">체크인 날짜</th>
+                            <th scope="col" class="text-nowrap">체크아웃 날짜</th>
+                            <th scope="col" class="text-nowrap">결제 금액</th>
+                            <th scope="col" class="text-nowrap">예약 상태</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -97,24 +97,33 @@
                         </th:block>
                         <th:block th:unless="${pageResponseDTO ==null or pageResponseDTO.dtoList == null or pageResponseDTO.dtoList.isEmpty()}" th:each="roomReserveItem : ${pageResponseDTO.dtoList}">
                             <tr class="text-center align-middle">
-                                <td>
+                                <td class="align-middle">
                                     <a th:href="@{/member/myRoomReserveRead(roomreserveitem_num=${roomReserveItem.roomreserveitem_num})}"
                                        th:text="${roomReserveItem.roomReserveDTO.reserve_id}">예약 번호</a></td>
                                 <td th:text="${roomReserveItem.roomDTO.hotelDTO.hotel_name}">예약 호텔</td>
-                                <td>
+                                <td class="align-middle">
                                     <a th:href="@{/searchRoomRead(room_num=${roomReserveItem.roomDTO.room_num})}"
                                        th:text="${roomReserveItem.roomDTO.room_name}">예약 방</a>
                                 </td>
-                                <td th:text="${#temporals.format(roomReserveItem.reg_date, 'yyyy.MM.dd HH:mm')}">예약일</td>
-                                <td th:text="${#temporals.format(roomReserveItem.in_date, 'yyyy.MM.dd HH:mm')}">체크인 날짜</td>
-                                <td th:text="${#temporals.format(roomReserveItem.out_date, 'yyyy.MM.dd HH:mm')}">체크아웃 날짜</td>
-                                <td th:text="${roomReserveItem.day * roomReserveItem.roomDTO.room_price + '원'}">결제 금액</td>
-                                <td class="text-nowrap" th:switch="${roomReserveItem.roomReserveDTO.check_state}">
-                                    <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.RESERVE}">접수</button>
-                                    <button type="button" class="btn btn-warning stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.IN}">체크인</button>
-                                    <button type="button" class="btn btn-danger stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.OUT}">체크아웃</button>
-                                    <button type="button" class="btn btn-secondary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="${roomReserveItem.roomReserveDTO.check_state.CANCEL}">취소</button>
-                                    <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}" th:case="*">오류</button> <!-- 예외 처리 -->
+                                <td class="align-middle" th:text="${#temporals.format(roomReserveItem.reg_date, 'yyyy.MM.dd HH:mm')}">예약일</td>
+                                <td class="align-middle" th:text="${#temporals.format(roomReserveItem.in_date, 'yyyy.MM.dd HH:mm')}">체크인 날짜</td>
+                                <td class="align-middle" th:text="${#temporals.format(roomReserveItem.out_date, 'yyyy.MM.dd HH:mm')}">체크아웃 날짜</td>
+                                <td class="align-middle" th:text="${roomReserveItem.day * roomReserveItem.roomDTO.room_price + '원'}">결제 금액</td>
+                                <td class="text-nowrap align-middle" th:switch="${roomReserveItem.roomReserveDTO.check_state}"> <!--주문 상태-->
+                                    <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}"
+                                            th:data-state="${roomReserveItem.roomReserveDTO.check_state.RESERVE}"
+                                            th:case="${roomReserveItem.roomReserveDTO.check_state.RESERVE}">접수</button>
+                                    <button type="button" class="btn btn-warning stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}"
+                                            th:data-state="${roomReserveItem.roomReserveDTO.check_state.IN}"
+                                            th:case="${roomReserveItem.roomReserveDTO.check_state.IN}">체크인</button>
+                                    <button type="button" class="btn btn-danger stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}"
+                                            th:data-state="${roomReserveItem.roomReserveDTO.check_state.OUT}"
+                                            th:case="${roomReserveItem.roomReserveDTO.check_state.OUT}">체크아웃</button>
+                                    <button type="button" class="btn btn-secondary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}"
+                                            th:data-state="${roomReserveItem.roomReserveDTO.check_state.CANCEL}"
+                                            th:case="${roomReserveItem.roomReserveDTO.check_state.CANCEL}">취소</button>
+                                    <button type="button" class="btn btn-primary stateBtn" th:value="${roomReserveItem.roomReserveDTO.reserve_num}"
+                                            th:case="*">오류</button> <!-- 예외 처리 -->
                                 </td>
                             </tr>
                         </th:block>
@@ -167,16 +176,12 @@
         $(document).on("click", ".stateBtn", function() {
             let button = $(this);
             let reserveNum = button.val();
-            let currentStateText = button.text().trim();
+            let currentState = button.data("state");
 
-            let states = {
-                "RESERVE": "접수",
-                "IN": "체크인",
-                "OUT": "체크아웃",
-                "CANCEL": "취소"
-            };
-
-            let currentState = Object.keys(states).find(key => states[key] === currentStateText);
+            if (currentState === "CANCEL") {
+                alert("이미 취소된 예약입니다.");
+                return;
+            }
 
             if (currentState !== "RESERVE") {
                 alert("예약이 접수 상태일 때만 취소할 수 있습니다.");
@@ -189,6 +194,7 @@
                     url: "/roomreserve/state",
                     data: { reserve_num: reserveNum, check_state: "CANCEL" },
                     success: function(response) {
+                        alert("예약이 취소되었습니다.")
                         let newButton = `<button type="button" class="btn btn-secondary stateBtn" value="${reserveNum}">예약 취소</button>`;
                         button.replaceWith(newButton);
                     },
