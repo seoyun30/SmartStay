@@ -102,12 +102,14 @@ public class ReviewService {
             return Collections.emptyList();
         }
 
+        // 리뷰 목록 변환
         List<ReviewDTO> reviewDTOList = hotelreviews.stream()
                         .map(review -> modelMapper.map(review, ReviewDTO.class)
                                 .setRoomDTO(modelMapper.map(review.getRoom(), RoomDTO.class)
                                         .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class)))
                         )
                 .collect(Collectors.toList());
+
         // 이미지
         for (ReviewDTO reviewDTO : reviewDTOList) {
             List<Image> reviewImageList = imageRepository.findByTarget("review", reviewDTO.getRev_num());
@@ -343,18 +345,6 @@ public class ReviewService {
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() -1, pageRequestDTO.getSize(), sort);
 
-//        // 정렬 기준을 설정하는 부분
-//        if ("t".equals(pageRequestDTO.getType())) {
-//            // 시간순 정렬 (작성일 기준)
-//            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "reg_date"));
-//        } else if ("s".equals(pageRequestDTO.getType())) {
-//            // 별점순 정렬
-//            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "score"));
-//        } else {
-//            // 기본 정렬 (rev_num 기준)
-//            pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "rev_num"));
-//        }
-
         Member member = memberRepository.findByEmail(email);
         Page<Review> result;
         if (reserveSearchDTO.getRoom_name() != null && !reserveSearchDTO.getRoom_name().trim().isEmpty() && reserveSearchDTO.getReserve_name() != null && !reserveSearchDTO.getReserve_name().trim().isEmpty()) {
@@ -401,6 +391,26 @@ public class ReviewService {
         return reviewDTOPageResponseDTO;
     }
 
+    //호텔별 리뷰 평균 별점 계산
+    public double calculateAverageRating(Long hotel_num) {
+       List<Review> reviews = reviewRepository.findByHotel(hotel_num);
+
+       if (reviews.isEmpty()) {
+           return 0.0;
+       }
+
+       double totalScore = 0;
+       for (Review review : reviews) {
+           try {
+               totalScore += Double.parseDouble(review.getScore());
+           } catch (NumberFormatException e) {
+               //score가 올바르지 않은 값인 경우 예외
+           }
+       }
+
+       return totalScore / reviews.size();  //평균 별점 계산
+    }
+
     public List<ReviewDTO> getLimitedReviews (Long hotel_num, int limit) {
         Pageable pageable = PageRequest.of(0, limit);
         List<Review> reviews = reviewRepository.findTopNByHotelNum(hotel_num, pageable);
@@ -418,5 +428,7 @@ public class ReviewService {
     public int getReviewCountByHotel (Long hotel_num) {
         return reviewRepository.countByHotelNum(hotel_num);
     }
+
+
 
 }
