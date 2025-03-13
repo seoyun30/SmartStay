@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -92,6 +93,11 @@ public class ReviewController {
         } else {
             // 일반 조회
             PageResponseDTO<ReviewDTO> pageResponseDTO = reviewService.getAdHotelReviewList(hotelDTO, pageRequestDTO, sortField, sortDir);
+
+            if (pageResponseDTO == null || pageResponseDTO.getDtoList() == null) {
+//                pageResponseDTO = new PageResponseDTO<>();
+                pageResponseDTO.setDtoList(Collections.emptyList());
+            }
 
             List<ReviewDTO> reviewDTOList = pageResponseDTO.getDtoList();
             for (ReviewDTO reviewDTO : reviewDTOList) {
