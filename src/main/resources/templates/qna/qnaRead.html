@@ -111,7 +111,7 @@
                                 <!-- 버튼 영역 -->
                                 <div class="button-container">
                                     <button type="button" class="btn btn-dark modBtn" style="float:right; margin-right: 10px;" th:if="${qnaDTO.writer.equals(loggedInEmail)}">수정</button>
-                                    <button type="button" class="btn btn-dark listBtn" style="float:right; margin-right: 10px;">목록</button>
+                                    <button type="button" class="btn btn-primary listBtn" style="float:right; margin-right: 10px;">목록</button>
                                 </div>
                             </div>
                         </div>
@@ -241,13 +241,13 @@
                                     <h3 class="mb-4">답변</h3>
                                     <div class="card mb-2"> <!-- 카드의 너비는 기본적으로 100%로 설정됨 -->
                                         <div class="card-body position-relative">
-                                            <p style="font-size: 20px; color: black;">${response.comment}</p>
+                                            <p class="text-start" style="font-size: 15px; color: black;">${response.comment}</p>
                                         </div>
                                         <div class="d-flex justify-content-end">
-                                            <small class="text-muted position-absolute bottom-0 start-0 p-1" style="margin-bottom: 10px;">
+                                            <small class="text-start position-absolute bottom-0 start-3 p-1" style="margin-bottom: 10px;">
                                                 작성자: ${response.modified_by} | 작성일: ${response.modi_date.substring(0, 16).replace('T', ' ')}</small>
-                                            <button type="button" value="${response.qnaReply_num}" data-role="${loginRole}" class="btn btn-dark roleBtn replyEditBtn me-2 mb-2" style="font-size: 19.2px; padding: 8.9px 24px;">수정</button>
-                                            <button type="button" value="${response.qnaReply_num}" data-role="${loginRole}" class="btn btn-danger roleBtn replyDelBtn mb-2 me-2" style="font-size: 19.2px; padding: 8.9px 24px;">삭제</button>
+                                            <button type="button" value="${response.qnaReply_num}" data-role="${loginRole}" class="btn btn-dark roleBtn replyEditBtn me-2 mb-7" style="font-size: 19.2px; padding: 8.9px 24px;">수정</button>
+                                            <button type="button" value="${response.qnaReply_num}" data-role="${loginRole}" class="btn btn-danger roleBtn replyDelBtn mb-7 me-2" style="font-size: 19.2px; padding: 8.9px 24px;">삭제</button>
                                         </div>
                                     </div>
                                 </div>
