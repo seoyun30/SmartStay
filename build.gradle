@@ -34,7 +34,9 @@ repositories {
 dependencies {
     //결제API 자바용 라이브러리
     implementation 'com.github.iamport:iamport-rest-client-java:0.2.21'
-
+    implementation 'software.amazon.awssdk:s3:2.20.40' // 최신 AWS SDK 사용
+    implementation 'software.amazon.awssdk:core:2.20.40' // AWS SDK 핵심 의존성
+    implementation 'software.amazon.awssdk:auth:2.20.40' // 인증 관련 의존성 (기본적으로 필요)
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     //보안 나중에 적용
     implementation 'org.springframework.boot:spring-boot-starter-security'
