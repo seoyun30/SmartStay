@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,7 +94,10 @@ public class ReviewService {
     }
 
     //호텔에 있는 리뷰 전체 조회
-    public List<ReviewDTO> gethotelReviewList(Long hotel_num) {
+    public List<ReviewDTO> gethotelReviewList(Long hotel_num, String sortField, String sortDir) {
+
+        Sort sort = Sort.by(Sort.Order.by(sortField));
+        sort = sortDir.equals("desc") ? sort.descending() : sort.ascending();
 
         List<Review> hotelreviews = reviewRepository.findByHotel(hotel_num);
 
@@ -109,6 +113,23 @@ public class ReviewService {
                                         .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class)))
                         )
                 .collect(Collectors.toList());
+
+        // Comparator를 사용하여 정렬
+        if ("score".equals(sortField)) {
+            if ("desc".equals(sortDir)) {
+                reviewDTOList.sort(Comparator.comparing(ReviewDTO::getScore).reversed());  // 내림차순
+            } else {
+                if ("asc".equals(sortDir)) {
+                    reviewDTOList.sort(Comparator.comparing(ReviewDTO::getScore));  // 오름차순
+                }
+            }
+        } else if ("reg_date".equals(sortField)) {
+            if ("desc".equals(sortDir)) {
+                reviewDTOList.sort(Comparator.comparing(ReviewDTO::getReg_date).reversed());  // 내림차순
+            } else {
+                reviewDTOList.sort(Comparator.comparing(ReviewDTO::getReg_date));  // 오름차순
+            }
+        }
 
         // 이미지
         for (ReviewDTO reviewDTO : reviewDTOList) {
