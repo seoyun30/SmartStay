@@ -28,7 +28,17 @@
           </tr>
           </thead>
           <tbody>
-          <th:block th:each="brand : ${brandDTOList}">
+          <!-- 브랜드 목록이 없을 경우 -->
+          <th:block th:if="${brandDTOList == null or brandDTOList.isEmpty()}">
+            <tr>
+              <td colspan="10" class="text-center align-middle">
+                <span class="h5 fw-bold">등록된 브랜드가 없습니다.</span>
+              </td>
+            </tr>
+          </th:block>
+
+          <!-- 브랜드 목록이 있을 경우 -->
+          <th:block th:unless="${brandDTOList == null or brandDTOList.isEmpty()}" th:each="brand : ${brandDTOList}">
             <tr class="text-center">
               <td th:text="${brand.brand_num}"></td>
               <td>
