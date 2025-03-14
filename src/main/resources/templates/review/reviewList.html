@@ -74,8 +74,21 @@
 <body>
 <th:block layout:fragment="content">
     <h1 class="text-center mb-3 mt-5">후기</h1>
+
     <div class="row mt-5">
         <div class="row"> <!--여기부터 카드 시작-->
+            <!-- 정렬 선택 폼 -->
+            <form method="get" th:action="@{/review/reviewList/{hotel_num}(hotel_num=${hotel_num})}">
+                <div class="mb-3">
+                    <select name="sortField" class="form-select" id="sortField" onchange="updateSortAndSubmit()">
+                        <option value="reg_date" th:selected="${sortField == 'reg_date'}">최신순</option>
+                        <option value="score" th:selected="${sortField == 'score' && sortDir == 'desc'}">별점 높은 순</option>
+                        <option value="score" th:selected="${sortField == 'score' && sortDir == 'asc'}">별점 낮은 순</option>
+                    </select>
+                    <!-- sortDir을 hidden input으로 전달 -->
+                    <input type="hidden" name="sortDir" id="sortDir" th:value="${sortDir}">
+                </div>
+            </form>
             <div class="col-12">
                 <th:block th:each="review :${reviewDTOList}">
 
@@ -211,6 +224,28 @@
     });
 
 
+    // 정렬
+    function updateSortAndSubmit() {
+        const selectElement = document.getElementById('sortField');
+        const sortDirInput = document.getElementById('sortDir');
+        const selectedValue = selectElement.value;  // 선택된 값
+
+        // sortDir 값을 동적으로 설정
+        if (selectedValue === 'score') {
+            const selectedText = selectElement.options[selectElement.selectedIndex].text;
+            if (selectedText === '별점 높은 순') {
+                sortDirInput.value = 'desc';
+            } else if (selectedText === '별점 낮은 순') {
+                sortDirInput.value = 'asc';
+            }
+        } else {
+            sortDirInput.value = 'desc';  // 기본 값: 최신순 -> desc
+        }
+
+        // 폼을 명시적으로 제출
+        const form = selectElement.closest('form');
+        form.submit();
+    }
 
 
 
