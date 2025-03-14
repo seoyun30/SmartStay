@@ -130,10 +130,12 @@ public class RoomController {
             PageResponseDTO<RoomDTO> pageResponseDTO = roomService.getRoomsByHotel(hotelDTO, pageRequestDTO, sortField, sortDir);
 
             List<RoomDTO> roomDTOList = pageResponseDTO.getDtoList();
-            for (RoomDTO roomDTO : roomDTOList) {
-                RoomDTO latestRoomDTO = roomService.roomRead(roomDTO.getRoom_num());
+            if (roomDTOList != null) {
+                for (RoomDTO roomDTO : roomDTOList) {
+                    RoomDTO latestRoomDTO = roomService.roomRead(roomDTO.getRoom_num());
 
-                roomDTO.setRoom_state(latestRoomDTO.getRoom_state());
+                    roomDTO.setRoom_state(latestRoomDTO.getRoom_state());
+                }
             }
 
             model.addAttribute("pageResponseDTO", pageResponseDTO);
