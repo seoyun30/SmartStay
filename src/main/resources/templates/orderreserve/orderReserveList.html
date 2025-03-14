@@ -20,7 +20,7 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                <h3 class="fw-bold">예약 검색</h3>
+                                <h3 class="fw-bold">주문 검색</h3>
                             </button>
                         </h2>
                         <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -43,10 +43,10 @@
                                         <label class="input-group-text" for="inputGroupSelect01">주문 상태</label>
                                         <select class="form-select" name="state" id="inputGroupSelect01">
                                             <option value="" th:selected="${reserveSearchDTO.state == null}">전체</option>
-                                            <option value="ORDER" th:selected="${reserveSearchDTO.state == 'ORDER'}">주문 접수</option>
-                                            <option value="PREPARE" th:selected="${reserveSearchDTO.state == 'PREPARE'}">주문 준비중</option>
-                                            <option value="COMPLETE" th:selected="${reserveSearchDTO.state == 'COMPLETE'}">주문 완료</option>
-                                            <option value="CANCEL" th:selected="${reserveSearchDTO.state == 'CANCEL'}">주문 취소</option>
+                                            <option value="ORDER" th:selected="${reserveSearchDTO.state == 'ORDER'}">접수</option>
+                                            <option value="PREPARE" th:selected="${reserveSearchDTO.state == 'PREPARE'}">준비중</option>
+                                            <option value="COMPLETE" th:selected="${reserveSearchDTO.state == 'COMPLETE'}">완료</option>
+                                            <option value="CANCEL" th:selected="${reserveSearchDTO.state == 'CANCEL'}">취소</option>
                                         </select>
                                     </div>
 

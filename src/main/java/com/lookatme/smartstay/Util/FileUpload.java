@@ -1,34 +1,35 @@
 package com.lookatme.smartstay.Util;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 //파일업드에 관련된 메소드를 담은 클래스
 //poster.jpg==>poster.jpg 저장, poster.jpg새로 저장==>poster.jpg 기존내용되고 새로운파일 저장
 //poster.jpg==>32423sd324dsrw3d.jpg 중복되지 않는 이름으로 파일 저장
 //UUID : 파일이름을 난수로 생성
+@Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class FileUpload {
 
-    private final S3Client s3Client;
-
-    // S3Client를 생성자 주입으로 받음
-    public FileUpload(S3Client s3Client) {
-        this.s3Client = s3Client;
-    }
+    private final AmazonS3Client amazonS3Client;
 
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
@@ -39,12 +40,141 @@ public class FileUpload {
     @Value("${thumbnailLocation}") // 썸네일을 저장할 위치
     private String thumbnailLocation;
 
+    private static final String THUMBNAIL_PREFIX = "thumb_";
+    private static final int THUMBNAIL_SIZE = 350;
+
+    /**
+     * 파일을 S3에 업로드하고, 필요하면 썸네일도 생성하여 업로드한다.
+     *
+     * //@param imageFile       업로드할 이미지 파일
+     * //@param createThumbnail 썸네일 생성 여부 ("Y"면 생성)
+     * //@return 업로드된 파일 이름
+     */
+
+    // 업로드 경로를 동적으로 설정하는 메소드
+    private String determineUploadPath(String filename) {
+        // dirName이 없으면 기본 경로를 사용하고, 있으면 해당 경로를 사용
+        String basePath = "uploads/images/";  // 기본 경로
+        return basePath + filename;
+    }
+
+    public String fileUpload(MultipartFile imageFile, String createThumbnail) {
+        String originalFilename = imageFile.getOriginalFilename();
+        if (originalFilename == null) {
+            throw new IllegalArgumentException("파일 이름이 없습니다.");
+        }
+
+        // 확장자 분리 및 새 파일명 생성
+        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String filename = UUID.randomUUID() + extension;
+
+        String uploadPath = determineUploadPath(filename);
+
+        try (InputStream inputStream = imageFile.getInputStream()) {
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(imageFile.getContentType());
+            metadata.setContentLength(imageFile.getSize());
+
+            // S3에 파일 업로드
+            amazonS3Client.putObject(new PutObjectRequest(bucketName, uploadPath, inputStream, metadata));
+            log.info("파일 업로드 완료: {}", filename);
+
+            // 썸네일 생성 여부 확인
+            if ("Y".equalsIgnoreCase(createThumbnail)) {
+                createThumbnail(filename);
+            }
+
+            return filename;
+
+        } catch (IOException e) {
+            log.error("파일 업로드 실패: {}", e.getMessage());
+            throw new RuntimeException("파일 업로드 중 오류 발생", e);
+        }
+    }
+
+    /**
+     * S3에 저장된 이미지를 가져와 썸네일을 생성한 후 업로드한다.
+     *
+     * @param filename 원본 파일명
+     */
+    private void createThumbnail(String filename) {
+        try {
+            // 원본 이미지 가져오기
+            String uploadPath = determineUploadPath(filename);
+            S3Object s3Object = amazonS3Client.getObject(bucketName, uploadPath);
+            BufferedImage img = ImageIO.read(s3Object.getObjectContent());
+
+            if (img == null) {
+                throw new IllegalArgumentException("이미지를 읽을 수 없습니다: " + filename);
+            }
+
+            // 원본 크기 가져오기
+            int originalWidth = img.getWidth();
+            int originalHeight = img.getHeight();
+
+            // 크기 비율 조정
+            double scaleFactor = Math.min(
+                    (double) THUMBNAIL_SIZE / originalWidth,
+                    (double) THUMBNAIL_SIZE / originalHeight
+            );
+            int newWidth = (int) (originalWidth * scaleFactor);
+            int newHeight = (int) (originalHeight * scaleFactor);
+
+            // 썸네일 생성
+            ByteArrayOutputStream thumbnailStream = new ByteArrayOutputStream();
+            Thumbnails.of(img)
+                    .size(newWidth, newHeight)
+                    .outputFormat("png")
+                    .toOutputStream(thumbnailStream);
+
+            // S3에 썸네일 업로드
+            String thumbnailFilename = THUMBNAIL_PREFIX + filename.substring(0, filename.lastIndexOf('.')) + ".png";
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType("image/png");
+            metadata.setContentLength(thumbnailStream.size());
+
+            String thumnailuploadPath = determineUploadPath(thumbnailFilename);
+
+            amazonS3Client.putObject(new PutObjectRequest(bucketName, thumnailuploadPath,
+                    new ByteArrayInputStream(thumbnailStream.toByteArray()), metadata));
+
+            log.info("썸네일 업로드 완료: {}", thumbnailFilename);
+
+        } catch (IOException e) {
+            log.error("썸네일 생성 실패: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * S3에서 원본 및 썸네일 이미지를 삭제한다.
+     *
+     * @param filename 삭제할 파일명
+     */
+    public void fileDelete(String filename) {
+        try {
+            String filePath = "uploads/images/" + filename;
+
+            amazonS3Client.deleteObject(bucketName, filePath);
+            log.info("파일 삭제 완료: {}", filename);
+
+            String thumbnailFilename = "uploads/images/" + THUMBNAIL_PREFIX + filename;
+            amazonS3Client.deleteObject(bucketName, thumbnailFilename);
+            log.info("썸네일 삭제 완료: {}", thumbnailFilename);
+
+        } catch (AmazonS3Exception e) {
+            log.error("파일 삭제 실패: {}", e.getMessage());
+        }
+    }
+
+
+
     /*---------------------------
     함수명 : String FileUpload(String imgLocation, MultipartFile imageFile)
     인수 : 저장될 위치, 이미지파일
     출력 : 저장후 생성된 새로운 파일명
     설명 : 이미지파일을 새로운 이름으로 지정된 폴더에 저장하고 새로운 이름을 전달
     */
+    /*
     public String fileUpload(MultipartFile imageFile, String createThumbnail) {
         // 이미지파일에 파일명을 읽어온다. sample.jpg
         String originalFilename = imageFile.getOriginalFilename();
@@ -128,6 +258,7 @@ public class FileUpload {
             e.printStackTrace();
         }
     }
+     */
 
     /*
     public String fileUpload(MultipartFile imageFile, String createThumbnail) {
@@ -232,7 +363,7 @@ public class FileUpload {
     출력 : 저장후 생성된 새로운 파일명
     설명 : 이미지파일을 새로운 이름으로 지정된 폴더에 저장하고 새로운 이름을 전달
     */
-
+    /*
     public void fileDelete(String imageFileName) {
         // S3에 저장된 파일 경로를 설정
         String imageFilePath = imgLocation + imageFileName; // 예: images/432erw-234w342.jpg
@@ -261,6 +392,8 @@ public class FileUpload {
             e.printStackTrace();
         }
     }
+
+     */
 
     /*
     public void fileDelete(String imageFileName) {
