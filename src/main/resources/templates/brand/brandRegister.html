@@ -109,11 +109,18 @@
 
                                     // 전화번호 형식 변환
                                     if (value.startsWith("02")) {
-                                        // '02' 지역번호는 10자리로 제한하고, 형식은 '02-xxx-xxxx'
-                                        if (value.length > 9) { // 02-xxx-xxxx (10자리로 제한)
-                                            value = value.substring(0, 9);
+                                        // '02' 지역번호는 9자리 또는 10자리로 제한하고, 형식은 '02-xxx-xxxx' 또는 '02-xxxx-xxxx'
+                                        if (value.length > 10) { // 10자리로 제한
+                                            value = value.substring(0, 10);
                                         }
-                                        value = value.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3'); // 02-xxx-xxxx 형식
+                                        if (value.length <= 8) {  // 9자리 형식 (02-xxx-xxxx)
+                                            value = value.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3');
+                                        } else if (value.length === 9) {  // 9자리 형식 (02-xxx-xxxx)
+                                            value = value.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3');
+                                        } else if (value.length === 10) { // 10자리 형식 (02-xxxx-xxxx)
+                                            value = value.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+                                        }
+
                                     } else if (["010", "011", "016", "017", "018", "019"].includes(value.substring(0, 3))) {
                                         // 휴대폰 번호 (11자리, 형식: 010-xxxx-xxxx)
                                         if (value.length > 11) { // 010-xxxx-xxxx (11자리로 제한)
@@ -121,11 +128,19 @@
                                         }
                                         value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'); // 010-xxxx-xxxx 형식
                                     } else {
-                                        // 지역번호 (다른 지역번호: 032-xxx-xxxx와 같은 10자리 형식)
-                                        if (value.length > 10) { // 10자리로 제한
-                                            value = value.substring(0, 10);
+                                        // 다른 지역번호 처리 (다른 지역번호: 032-xxx-xxxx와 같은 10자리 또는 11자리 형식)
+                                        if (value.length > 11) { // 11자리로 제한
+                                            value = value.substring(0, 11);
                                         }
-                                        value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'); // xxx-xxx-xxxx 형식
+
+                                        // 10자리 또는 11자리 지역번호 형식 처리
+                                        if (value.length <= 9) {  // 10자리 형식 (xxx-xxx-xxxx)
+                                            value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                                        } else if (value.length === 10) { // 10자리 형식 (xxx-xxx-xxxx)
+                                            value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                                        } else if (value.length === 11) { // 11자리 형식 (xxx-xxxx-xxxx)
+                                            value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                                        }
                                     }
 
                                     this.value = value;
@@ -133,15 +148,18 @@
                                     // 하이픈 제거 후 숫자만 남기기
                                     const numericValue = value.replace(/-/g, '');
 
-                                    // 유효성 검사 (휴대폰 번호는 11자리, 지역번호는 10자리만 허용)
+                                    // 유효성 검사 (휴대폰 번호는 11자리, 지역번호는 10자리 또는 11자리만 허용)
                                     if ((["010", "011", "016", "017", "018", "019"].includes(numericValue.substring(0, 3)) && numericValue.length === 11) ||
-                                        (numericValue.startsWith('02') && numericValue.length === 10) ||
-                                        (numericValue.length === 10 && !numericValue.startsWith('02'))) {
+                                        (numericValue.startsWith('02') && (numericValue.length === 9 || numericValue.length === 10)) ||
+                                        (numericValue.length === 10 && !numericValue.startsWith('02') && numericValue.length === 10) ||
+                                        (numericValue.length === 11 && numericValue.length !== 10)) {
                                         telError.style.display = "none"; // 유효하면 에러 메시지 숨기기
                                     } else {
                                         telError.style.display = "block"; // 유효하지 않으면 에러 메시지 보이기
                                     }
                                 });
+
+
 
                                 formFile.addEventListener('change', function(event) {
                                     const file = event.target.files[0];

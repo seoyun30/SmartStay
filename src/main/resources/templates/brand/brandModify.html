@@ -94,203 +94,219 @@
                             <div class="mt-3 text-center">
                                 <button type="submit" class="btn btn-dark">저장</button>
                                 <script>
-                                        document.addEventListener("DOMContentLoaded", function() {
-                                            const businessNumInput = document.getElementById("business_num");
-                                            const businessNumError = document.getElementById("businessNumError");
-                                            const telInput = document.getElementById("tel");
-                                            const telError = document.getElementById("telError");
+                                    document.addEventListener("DOMContentLoaded", function() {
+                                        const businessNumInput = document.getElementById("business_num");
+                                        const businessNumError = document.getElementById("businessNumError");
+                                        const telInput = document.getElementById("tel");
+                                        const telError = document.getElementById("telError");
 
-                                            // 사업자번호 자동 하이픈 추가 + 유효성 검사
-                                            businessNumInput.addEventListener('input', function () {
-                                                let value = this.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
-                                                if (value.length > 10) value = value.substring(0, 10); // 10자리 이상 입력 방지
-                                                // 하이픈 자동 추가
-                                                if (value.length > 3) {
-                                                    value = value.replace(/(\d{3})(\d{0,2})(\d{0,5})/, '$1-$2-$3');
-                                                }this.value = value;
-                                                // 유효성 검사: 정확히 10자리인지 확인
-                                                businessNumError.style.display = value.replace(/-/g, '').length === 10 ? "none" : "block";
-                                            });
-
-                                            // 전화번호 자동 하이픈 추가 + 유효성 검사
-                                            telInput.addEventListener('input', function () {
-                                                let value = this.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
-
-                                                // 전화번호 형식 변환
-                                                if (value.startsWith("02")) {
-                                                    // '02' 지역번호는 10자리로 제한하고, 형식은 '02-xxx-xxxx'
-                                                    if (value.length > 9) { // 02-xxx-xxxx (10자리로 제한)
-                                                        value = value.substring(0, 9);
-                                                    }
-                                                    value = value.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3'); // 02-xxx-xxxx 형식
-                                                } else if (["010", "011", "016", "017", "018", "019"].includes(value.substring(0, 3))) {
-                                                    // 휴대폰 번호 (11자리, 형식: 010-xxxx-xxxx)
-                                                    if (value.length > 11) { // 010-xxxx-xxxx (11자리로 제한)
-                                                        value = value.substring(0, 11);
-                                                    }
-                                                    value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'); // 010-xxxx-xxxx 형식
-                                                } else {
-                                                    // 지역번호 (다른 지역번호: 032-xxx-xxxx와 같은 10자리 형식)
-                                                    if (value.length > 10) { // 10자리로 제한
-                                                        value = value.substring(0, 10);
-                                                    }
-                                                    value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'); // xxx-xxx-xxxx 형식
-                                                }
-
-                                                this.value = value;
-
-                                                // 하이픈 제거 후 숫자만 남기기
-                                                const numericValue = value.replace(/-/g, '');
-
-                                                // 유효성 검사 (휴대폰 번호는 11자리, 지역번호는 10자리만 허용)
-                                                if ((["010", "011", "016", "017", "018", "019"].includes(numericValue.substring(0, 3)) && numericValue.length === 11) ||
-                                                    (numericValue.startsWith('02') && numericValue.length === 10) ||
-                                                    (numericValue.length === 10 && !numericValue.startsWith('02'))) {
-                                                    telError.style.display = "none"; // 유효하면 에러 메시지 숨기기
-                                                } else {
-                                                    telError.style.display = "block"; // 유효하지 않으면 에러 메시지 보이기
-                                                }
-                                            });
+                                        // 사업자번호 자동 하이픈 추가 + 유효성 검사
+                                        businessNumInput.addEventListener('input', function () {
+                                            let value = this.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
+                                            if (value.length > 10) value = value.substring(0, 10); // 10자리 이상 입력 방지
+                                            // 하이픈 자동 추가
+                                            if (value.length > 3) {
+                                                value = value.replace(/(\d{3})(\d{0,2})(\d{0,5})/, '$1-$2-$3');
+                                            }this.value = value;
+                                            // 유효성 검사: 정확히 10자리인지 확인
+                                            businessNumError.style.display = value.replace(/-/g, '').length === 10 ? "none" : "block";
                                         });
-                                        document.addEventListener('DOMContentLoaded', function () {
-                                            const deleteButtons = document.querySelectorAll('.delete-image-btn');
 
-                                            deleteButtons.forEach(button => {
-                                                button.addEventListener('click', function () {
-                                                    const imageId = this.getAttribute('data-image-id');
+                                        // 전화번호 자동 하이픈 추가 + 유효성 검사
+                                        telInput.addEventListener('input', function () {
+                                            let value = this.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
 
-                                                    if (!imageId) {
-                                                        alert('이미지 ID가 유효하지 않습니다.');
-                                                        return;
-                                                    }
+                                            // 전화번호 형식 변환
+                                            if (value.startsWith("02")) {
+                                                // '02' 지역번호는 9자리 또는 10자리로 제한하고, 형식은 '02-xxx-xxxx' 또는 '02-xxxx-xxxx'
+                                                if (value.length > 10) { // 10자리로 제한
+                                                    value = value.substring(0, 10);
+                                                }
+                                                if (value.length <= 8) {  // 9자리 형식 (02-xxx-xxxx)
+                                                    value = value.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3');
+                                                } else if (value.length === 9) {  // 9자리 형식 (02-xxx-xxxx)
+                                                    value = value.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3');
+                                                } else if (value.length === 10) { // 10자리 형식 (02-xxxx-xxxx)
+                                                    value = value.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+                                                }
 
-                                                    if (confirm('이미지를 삭제하시겠습니까?')) {
-                                                        fetch(`/brand/deleteImage/${imageId}`, {
-                                                            method: 'DELETE',
-                                                            headers: {
-                                                                'Content-Type': 'application/json'
+                                            } else if (["010", "011", "016", "017", "018", "019"].includes(value.substring(0, 3))) {
+                                                // 휴대폰 번호 (11자리, 형식: 010-xxxx-xxxx)
+                                                if (value.length > 11) { // 010-xxxx-xxxx (11자리로 제한)
+                                                    value = value.substring(0, 11);
+                                                }
+                                                value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'); // 010-xxxx-xxxx 형식
+                                            } else {
+                                                // 다른 지역번호 처리 (다른 지역번호: 032-xxx-xxxx와 같은 10자리 또는 11자리 형식)
+                                                if (value.length > 11) { // 11자리로 제한
+                                                    value = value.substring(0, 11);
+                                                }
+
+                                                // 10자리 또는 11자리 지역번호 형식 처리
+                                                if (value.length <= 9) {  // 10자리 형식 (xxx-xxx-xxxx)
+                                                    value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                                                } else if (value.length === 10) { // 10자리 형식 (xxx-xxx-xxxx)
+                                                    value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                                                } else if (value.length === 11) { // 11자리 형식 (xxx-xxxx-xxxx)
+                                                    value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                                                }
+                                            }
+
+                                            this.value = value;
+
+                                            // 하이픈 제거 후 숫자만 남기기
+                                            const numericValue = value.replace(/-/g, '');
+
+                                            // 유효성 검사 (휴대폰 번호는 11자리, 지역번호는 10자리 또는 11자리만 허용)
+                                            if ((["010", "011", "016", "017", "018", "019"].includes(numericValue.substring(0, 3)) && numericValue.length === 11) ||
+                                                (numericValue.startsWith('02') && (numericValue.length === 9 || numericValue.length === 10)) ||
+                                                (numericValue.length === 10 && !numericValue.startsWith('02') && numericValue.length === 10) ||
+                                                (numericValue.length === 11 && numericValue.length !== 10)) {
+                                                telError.style.display = "none"; // 유효하면 에러 메시지 숨기기
+                                            } else {
+                                                telError.style.display = "block"; // 유효하지 않으면 에러 메시지 보이기
+                                            }
+                                        });
+                                    });
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const deleteButtons = document.querySelectorAll('.delete-image-btn');
+
+                                        deleteButtons.forEach(button => {
+                                            button.addEventListener('click', function () {
+                                                const imageId = this.getAttribute('data-image-id');
+
+                                                if (!imageId) {
+                                                    alert('이미지 ID가 유효하지 않습니다.');
+                                                    return;
+                                                }
+
+                                                if (confirm('이미지를 삭제하시겠습니까?')) {
+                                                    fetch(`/brand/deleteImage/${imageId}`, {
+                                                        method: 'DELETE',
+                                                        headers: {
+                                                            'Content-Type': 'application/json'
+                                                        }
+                                                    })
+                                                        .then(response => {
+                                                            if (response.ok) {
+                                                                const isMainImage = this.closest('#image-main') !== null;
+
+                                                                if (isMainImage) {
+                                                                    const mainImageContainer = document.getElementById('image-main');
+                                                                    mainImageContainer.innerHTML = '<p>대표 이미지가 없습니다. 대표 이미지를 추가해 주세요.</p>';
+                                                                } else {
+                                                                    const imageElement = document.getElementById(`image-${imageId}`);
+                                                                    if (imageElement) {
+                                                                        imageElement.remove();
+                                                                    }
+                                                                }
+                                                                alert('이미지가 성공적으로 삭제되었습니다.');
+                                                            } else {
+                                                                alert('이미지 삭제에 실패했습니다.');
                                                             }
                                                         })
-                                                            .then(response => {
-                                                                if (response.ok) {
-                                                                    const isMainImage = this.closest('#image-main') !== null;
-
-                                                                    if (isMainImage) {
-                                                                        const mainImageContainer = document.getElementById('image-main');
-                                                                        mainImageContainer.innerHTML = '<p>대표 이미지가 없습니다. 대표 이미지를 추가해 주세요.</p>';
-                                                                    } else {
-                                                                        const imageElement = document.getElementById(`image-${imageId}`);
-                                                                        if (imageElement) {
-                                                                            imageElement.remove();
-                                                                        }
-                                                                    }
-                                                                    alert('이미지가 성공적으로 삭제되었습니다.');
-                                                                } else {
-                                                                    alert('이미지 삭제에 실패했습니다.');
-                                                                }
-                                                            })
-                                                            .catch(error => {
-                                                                console.error('Error:', error);
-                                                                alert('오류가 발생했습니다. 다시 시도해주세요.');
-                                                            });
-                                                    }
-                                                });
+                                                        .catch(error => {
+                                                            console.error('Error:', error);
+                                                            alert('오류가 발생했습니다. 다시 시도해주세요.');
+                                                        });
+                                                }
                                             });
                                         });
+                                    });
 
-                                        document.addEventListener("DOMContentLoaded", function() {
+                                    document.addEventListener("DOMContentLoaded", function() {
 
-                                            const formFile = document.getElementById('formFile');
-                                            const removeMainImage = document.getElementById('removeMainImage');
-                                            const imgPreview = document.querySelector('.imgpreview');
-                                            const formFilede = document.getElementById('formFilede');
-                                            const imgPreviewInput = document.querySelector('.imgpreviewinput');
+                                        const formFile = document.getElementById('formFile');
+                                        const removeMainImage = document.getElementById('removeMainImage');
+                                        const imgPreview = document.querySelector('.imgpreview');
+                                        const formFilede = document.getElementById('formFilede');
+                                        const imgPreviewInput = document.querySelector('.imgpreviewinput');
 
-                                            formFile.addEventListener('change', function(event) {
-                                                const file = event.target.files[0];
+                                        formFile.addEventListener('change', function(event) {
+                                            const file = event.target.files[0];
+                                            if (file) {
+                                                const reader = new FileReader();
+                                                reader.onload = function(e) {
+                                                    const img = document.createElement('img');
+                                                    img.src = e.target.result;
+                                                    img.alt = file.name;
+                                                    img.style.width = '350px';
+                                                    img.style.height = 'auto';
+                                                    img.style.objectFit = 'cover';
+
+                                                    imgPreview.innerHTML = '';
+                                                    imgPreview.appendChild(img);
+
+                                                    removeMainImage.style.display = 'block';
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        });
+
+                                        removeMainImage.addEventListener('click', function() {
+                                            formFile.value = '';
+                                            imgPreview.innerHTML = '';
+                                            removeMainImage.style.display = 'none';
+                                        });
+
+                                        formFilede.addEventListener('change', function(event) {
+                                            const files = event.target.files;
+
+                                            Array.from(files).forEach((file, index) => {
                                                 if (file) {
                                                     const reader = new FileReader();
-                                                    reader.onload = function(e) {
+
+                                                    reader.onload = function (e) {
+                                                        const imgWrapper = document.createElement('div');
+                                                        imgWrapper.classList.add('img-wrapper');
+                                                        imgWrapper.style.position = 'relative';
+                                                        imgWrapper.style.display = 'inline-block';
+                                                        imgWrapper.style.marginRight = '10px';
+
                                                         const img = document.createElement('img');
                                                         img.src = e.target.result;
                                                         img.alt = file.name;
-                                                        img.style.width = '350px';
+                                                        img.style.width = '200px';
                                                         img.style.height = 'auto';
                                                         img.style.objectFit = 'cover';
 
-                                                        imgPreview.innerHTML = '';
-                                                        imgPreview.appendChild(img);
+                                                        const removeButton = document.createElement('button');
+                                                        removeButton.type = 'button';
+                                                        removeButton.textContent = '올리지 않기';
+                                                        removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+                                                        removeButton.style.top = '5px';
+                                                        removeButton.style.right = '5px';
 
-                                                        removeMainImage.style.display = 'block';
+                                                        removeButton.addEventListener('click', function () {
+                                                            imgWrapper.remove();
+
+                                                            const dataTransfer = new DataTransfer();
+                                                            Array.from(formFilede.files).forEach((f, i) => {
+                                                                if (i !== index) {
+                                                                    dataTransfer.items.add(f);
+                                                                }
+                                                            });
+                                                            formFilede.files = dataTransfer.files;
+                                                        });
+
+                                                        imgWrapper.appendChild(img);
+                                                        imgWrapper.appendChild(removeButton);
+                                                        imgPreviewInput.appendChild(imgWrapper);
                                                     };
+
                                                     reader.readAsDataURL(file);
                                                 }
                                             });
-
-                                            removeMainImage.addEventListener('click', function() {
-                                                formFile.value = '';
-                                                imgPreview.innerHTML = '';
-                                                removeMainImage.style.display = 'none';
-                                            });
-
-                                            formFilede.addEventListener('change', function(event) {
-                                                const files = event.target.files;
-
-                                                Array.from(files).forEach((file, index) => {
-                                                    if (file) {
-                                                        const reader = new FileReader();
-
-                                                        reader.onload = function (e) {
-                                                            const imgWrapper = document.createElement('div');
-                                                            imgWrapper.classList.add('img-wrapper');
-                                                            imgWrapper.style.position = 'relative';
-                                                            imgWrapper.style.display = 'inline-block';
-                                                            imgWrapper.style.marginRight = '10px';
-
-                                                            const img = document.createElement('img');
-                                                            img.src = e.target.result;
-                                                            img.alt = file.name;
-                                                            img.style.width = '200px';
-                                                            img.style.height = 'auto';
-                                                            img.style.objectFit = 'cover';
-
-                                                            const removeButton = document.createElement('button');
-                                                            removeButton.type = 'button';
-                                                            removeButton.textContent = '올리지 않기';
-                                                            removeButton.classList.add('btn', 'btn-secondary', 'btn-sm');
-                                                            removeButton.style.top = '5px';
-                                                            removeButton.style.right = '5px';
-
-                                                            removeButton.addEventListener('click', function () {
-                                                                imgWrapper.remove();
-
-                                                                const dataTransfer = new DataTransfer();
-                                                                Array.from(formFilede.files).forEach((f, i) => {
-                                                                    if (i !== index) {
-                                                                        dataTransfer.items.add(f);
-                                                                    }
-                                                                });
-                                                                formFilede.files = dataTransfer.files;
-                                                            });
-
-                                                            imgWrapper.appendChild(img);
-                                                            imgWrapper.appendChild(removeButton);
-                                                            imgPreviewInput.appendChild(imgWrapper);
-                                                        };
-
-                                                        reader.readAsDataURL(file);
-                                                    }
-                                                });
-                                            });
-                                            document.querySelectorAll('.removeImage').forEach(button => {
-                                                button.addEventListener('click', function () {
-                                                    const imageId = this.getAttribute('data-id');
-                                                    if (confirm('이미지를 삭제하시겠습니까?')) {
-                                                        alert(`Deleting image with ID: ${imageId}`);
-                                                    }
-                                                });
+                                        });
+                                        document.querySelectorAll('.removeImage').forEach(button => {
+                                            button.addEventListener('click', function () {
+                                                const imageId = this.getAttribute('data-id');
+                                                if (confirm('이미지를 삭제하시겠습니까?')) {
+                                                    alert(`Deleting image with ID: ${imageId}`);
+                                                }
                                             });
                                         });
+                                    });
                                 </script>
                             </div>
                         </div>
