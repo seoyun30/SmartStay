@@ -89,7 +89,7 @@
                     <th:block th:if="${pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}">
                         <tr>
                             <td colspan="12" class="text-center">
-                                <h5 th:text="${pageRequestDTO.keyword != null and pageRequestDTO.keyword != ''} ? '검색결과가 없습니다.' : '공지사항 목록이 없습니다.'"></h5>
+                                <h5 th:text="${pageRequestDTO.keyword != null and pageRequestDTO.keyword != ''} ? '검색결과가 없습니다.' : '등록된 공지사항이 없습니다.'"></h5>
                             </td>
                         </tr>
                     </th:block>
