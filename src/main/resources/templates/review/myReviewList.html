@@ -8,6 +8,9 @@
     <meta charset="UTF-8">
     <link rel="icon" href="/assets/img/hotel-solid.png">
     <title>SmartStay</title>
+    <script src="https://cdn.jsdelivr.net/npm/keen-slider@latest/keen-slider.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@latest/keen-slider.min.css">
+
     <style layout:fragment="css">
         /*리뷰 별점 디자인*/
         .starpoint_wrap{display:inline-block;}
@@ -129,26 +132,51 @@
                                 <button class="toggleButton" style="display: none;">>>자세히 보기<<</button>
                             </div>
 
-                            <div class="mt-3 mb-3 imgA">
-                                <div class="row">
+<!--                            <div class="mt-3 mb-3 imgA">-->
+<!--                                <div class="row">-->
+<!--                                    <th:block th:each="img: ${review.imageDTOList}">-->
+<!--                                        <th:block th:if="${img.repimg_yn == 'Y'}">-->
+<!--                                            <div class="col-12 mt-3">-->
+<!--                                                <img class="img-fluid" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 100%; object-fit: cover;">-->
+<!--                                            </div>-->
+<!--                                        </th:block>-->
+<!--                                    </th:block>-->
+<!--                                </div>-->
+
+<!--                                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mt-3"> &lt;!&ndash; 가로 배치 설정 &ndash;&gt;-->
+<!--                                    <th:block th:each="img: ${review.imageDTOList}">-->
+<!--                                        <th:block th:if="${img.repimg_yn == 'N'}">-->
+<!--                                            <div class="col">-->
+<!--                                                <img class="img-fluid rounded" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 200px; object-fit: cover;">-->
+<!--                                            </div>-->
+<!--                                        </th:block>-->
+<!--                                    </th:block>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+                            <!-- 이미지 슬라이더 컨테이너 -->
+                            <div class="position-relative mt-3">
+                                <div class="keen-slider" th:if="${review.imageDTOList.size() > 0}">
                                     <th:block th:each="img: ${review.imageDTOList}">
-                                        <th:block th:if="${img.repimg_yn == 'Y'}">
-                                            <div class="col-12 mt-3">
-                                                <img class="img-fluid" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 100%; object-fit: cover;">
+                                        <th:block th:if="${img.repimg_yn == 'N'}">
+                                            <div class="keen-slider__slide">
+                                                <a th:href="@{/review/reviewRead(rev_num=${review.rev_num})}">
+                                                    <img class="img-fluid rounded" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 200px; object-fit: cover;">
+                                                </a>
                                             </div>
                                         </th:block>
                                     </th:block>
                                 </div>
 
-                                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mt-3"> <!-- 가로 배치 설정 -->
-                                    <th:block th:each="img: ${review.imageDTOList}">
-                                        <th:block th:if="${img.repimg_yn == 'N'}">
-                                            <div class="col">
-                                                <img class="img-fluid rounded" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 200px; object-fit: cover;">
-                                            </div>
-                                        </th:block>
-                                    </th:block>
-                                </div>
+                                <!-- 슬라이드 이동 버튼 -->
+                                <button id="prevSlide" class="btn btn-secondary position-absolute"
+                                        style="top: 50%; left: 0; transform: translateY(-50%); z-index: 10; background-color: rgba(0,0,0,0.5); border: none;">
+                                    &laquo;
+                                </button>
+                                <button id="nextSlide" class="btn btn-secondary position-absolute"
+                                        style="top: 50%; right: 0; transform: translateY(-50%); z-index: 10; background-color: rgba(0,0,0,0.5); border: none;">
+                                    &raquo;
+                                </button>
                             </div>
 
                             <div class="card" style="position: absolute; bottom: 10px; right: 20px; color: gray; border: none">
@@ -193,6 +221,7 @@
 
     })
 
+    // 내용 표시 토글
     $(document).ready(function () {
         $(".reviewContent").each(function () {
             let content = $(this);
@@ -235,6 +264,25 @@
                 starBg.style.width = `${percentage}%`;  // 별점 배경 채우기
             }
         });
+    });
+
+
+    //이미지 캐러셀
+    document.addEventListener("DOMContentLoaded", function () {
+        const sliderElement = document.querySelector(".keen-slider");
+
+        if (sliderElement) { // 이미지 슬라이더가 존재할 경우에만 초기화
+            const slider = new KeenSlider(sliderElement, {
+                loop: false,
+                slides: { perView: 5 , spacing: 15 }, // 한 번에 하나의 슬라이드만 표시
+            });
+
+            // 이전 버튼 클릭 시
+            document.getElementById("prevSlide").addEventListener("click", () => slider.prev());
+
+            // 다음 버튼 클릭 시
+            document.getElementById("nextSlide").addEventListener("click", () => slider.next());
+        }
     });
 
 
