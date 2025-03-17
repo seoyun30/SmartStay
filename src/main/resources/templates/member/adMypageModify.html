@@ -29,19 +29,19 @@
                         </div>
 
                         <div class="mb-1">
-                            <label for="name" class="form-label">Name</label>
+                            <label for="name" class="form-label">이름</label>
                             <input class="form-control" type="text" id="name" th:value="${memberDTO.name}" disabled readonly>
                             <input type="hidden" name="name" th:value="${memberDTO.name}">
                         </div>
 
                         <div class="mb-1">
-                            <label for="tel" class="form-label">tel update</label>
+                            <label for="tel" class="form-label">연락처 수정</label>
                             <input class="form-control" type="text" aria-label="With text" id="tel" th:field="*{tel}" placeholder="숫자만 입력하세요.">
                             <p id="tel-error" style="color:red; display: none;" class="fieldError">유효한 연락처가 아닙니다.</p>
                         </div>
 
                         <div class="mb-1">
-                            <label for="password" class="form-label">Password update</label>
+                            <label for="password" class="form-label">비밀번호 수정</label>
                             <input class="form-control" type="password" id="password" name="password" th:field="*{password}">
                             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">비밀번호 입력 오류</span>
                         </div>
