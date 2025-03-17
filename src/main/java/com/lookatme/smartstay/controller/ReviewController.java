@@ -95,7 +95,6 @@ public class ReviewController {
             PageResponseDTO<ReviewDTO> pageResponseDTO = reviewService.getAdHotelReviewList(hotelDTO, pageRequestDTO, sortField, sortDir);
 
             if (pageResponseDTO == null || pageResponseDTO.getDtoList() == null) {
-//                pageResponseDTO = new PageResponseDTO<>();
                 pageResponseDTO.setDtoList(Collections.emptyList());
             }
 
@@ -117,12 +116,23 @@ public class ReviewController {
     //호텔 리뷰 목록
     @GetMapping("/reviewList/{hotel_num}")
     public String reviewList(@PathVariable("hotel_num") Long hotel_num, Model model,
-                             PageRequestDTO pageRequestDTO, @RequestParam(value = "query", required = false) String query, Sort sort) {
+                             PageRequestDTO pageRequestDTO,
+                             @RequestParam(value = "query", required = false) String query,
+                             @RequestParam(value = "sortField", defaultValue = "reg_date") String sortField,
+                             @RequestParam(value = "sortDir", defaultValue = "desc") String sortDir, Sort sort) {
+
+//        if (sortDir == null || sortDir.isEmpty()) {
+//            sortDir = "desc";
+//        }
 
         log.info("hotel_num: " + hotel_num);
+        log.info("sortField: " + sortField);
+        log.info("sortDir: " + sortDir);
 
-        List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num);
+        List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num, sortField, sortDir);
         model.addAttribute("reviewDTOList", reviewDTOList);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
 
         reviewDTOList.forEach(reviewDTO -> log.info("reviewDTO: {}", reviewDTO));
 
