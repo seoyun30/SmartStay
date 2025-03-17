@@ -205,6 +205,7 @@
                                 </th:block>
                             </div>
 
+                            <a th:href="@{/review/reviewRead(rev_num=${review.rev_num})}" class="stretched-link">
                             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mt-3"> <!-- 가로 배치 설정 -->
                                 <th:block th:each="img: ${review.imageDTOList}">
                                     <th:block th:if="${img.repimg_yn == 'N'}">
@@ -214,6 +215,7 @@
                                     </th:block>
                                 </th:block>
                             </div>
+                            </a>
                         </div>
 
                     </div>
