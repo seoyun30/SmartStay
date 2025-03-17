@@ -123,22 +123,9 @@
                       <div class="mt-5 mb-3 imgA">
                           <div class="row">
                               <th:block th:each="img: ${review.imageDTOList}">
-                                  <th:block th:if="${img.repimg_yn == 'Y'}">
-                                      <label class="col-12 form-label">
-                                          <img class="main-image mt-3" th:src="${img.thumbnail_url}" style="width: 100%; height: auto; object-fit: contain;">
-                                      </label>
-                                  </th:block>
-                              </th:block>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col-12">
-                      <div class="mt-5 mb-3 imgA">
-                          <div class="row">
-                              <th:block th:each="img: ${review.imageDTOList}">
                                   <th:block th:if="${img.repimg_yn == 'N'}">
                                       <label class="col-12 form-label">
-                                          <img class="main-image mt-3" th:src="${img.thumbnail_url}" style="width: 100%; height: auto; object-fit: contain;">
+                                          <img class="main-image mt-3" th:src="${img.image_url}" style="width: 100%; height: auto; object-fit: contain;">
                                       </label>
                                   </th:block>
                               </th:block>
