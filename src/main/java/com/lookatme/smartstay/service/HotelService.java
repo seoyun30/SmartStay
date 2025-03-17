@@ -11,7 +11,6 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -172,7 +171,7 @@ public class HotelService {
                     if (averageScore != null) {
                         hotelDTO.setScore(String.format("%.2f", averageScore));
                     } else {
-                        hotelDTO.setScore("(0)");
+                        hotelDTO.setScore("");
                     }
                     int reviewCount = getReviewCount(hotel.getHotel_num());
                     hotelDTO.setReview_count(reviewCount);
