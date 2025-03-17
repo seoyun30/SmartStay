@@ -280,7 +280,7 @@ public class ReviewService {
     }
 
     //리뷰 수정(리뷰를 등록한 유저만 가능)
-    public void reviewModify(ReviewDTO reviewDTO, List<MultipartFile> multipartFiles, List<Long> delnumList) throws Exception {
+    public void reviewModify(ReviewDTO reviewDTO, List<MultipartFile> multipartFileList, List<Long> delnumList) throws Exception {
 
         log.info(" 리뷰 수정 요청 : {} " , reviewDTO);
 
@@ -311,27 +311,27 @@ public class ReviewService {
         review.setContent(reviewDTO.getContent()); //리뷰 내용
         reviewRepository.save(review);
 
-        boolean hasNewImages = multipartFiles != null && multipartFiles.stream().anyMatch(file -> !file.isEmpty());
-        boolean hasDeletedImages = delnumList != null && delnumList.isEmpty();
-
-        if (hasNewImages || hasDeletedImages) {
-            log.info("이미지 업데이트");
-            try {
-                imageService.updateImage(
-                        hasNewImages ? multipartFiles : null,
-                        hasDeletedImages ? delnumList : null,
-                        "review",
-                        review.getRev_num()
-                );
-            } catch (IndexOutOfBoundsException e) {
-                log.error("이미지 업데이트 중 인덱스 오류 발생: {}", e.getMessage());
-                throw new IllegalArgumentException("업로드된 파일이나 삭제 요청이 잘못되었습니다.");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+        //파일등록 리스트 > 반복해서 하나씩 저장
+        if (multipartFileList != null && !multipartFileList.isEmpty()) {
+            for (MultipartFile multipartFile : multipartFileList) {
+                if (!multipartFile.isEmpty()) {
+                    String savedFileName =
+                            fileService.uploadFile(imgUploadLocation, multipartFile);
+                    imageService.saveImageOne(savedFileName, multipartFile, review);
+                }
             }
-        } else {
-            log.info("이미지 업데이트 없이 수정");
         }
+        //파일삭제
+        if (delnumList != null){
+            for (Long delnum : delnumList) {
+
+                if (delnum != null) {
+                    log.info("삭제" + delnum);
+                    imageService.deleteImage(delnum);
+                }
+            }
+        }
+
     }
 
     //리뷰 삭제(작성한 본인 리뷰만 가능)
