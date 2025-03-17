@@ -316,26 +316,33 @@ public class ReviewController {
     @PostMapping("/reviewModify")
     public String reviewModifyPost(ReviewDTO reviewDTO, Principal principal, Model model,
                                    RedirectAttributes redirectAttributes, Long hotel_num,
-                                   @RequestParam(value = "multipartFiles", required = false) List<MultipartFile> multipartFiles,
+                                   @RequestParam(value = "multipartFileList", required = false) List<MultipartFile> multipartFileList,
                                    @RequestParam(value = "delnumList", required = false) List<Long> delnumList){
 
         log.info("수정 요청 : {}" , reviewDTO);
 
-        if (multipartFiles != null && multipartFiles.stream().allMatch(MultipartFile::isEmpty)) {
-            multipartFiles = null;
+        for (MultipartFile mutipartFile : multipartFileList) {
+            log.info(mutipartFile.getOriginalFilename());
+        }
+        log.info("삭제할 값");
+        log.info(delnumList);
+        log.info(delnumList);
+
+        if (multipartFileList != null && multipartFileList.stream().allMatch(MultipartFile::isEmpty)) {
+            multipartFileList = null;
         }
         if (delnumList != null && delnumList.isEmpty()) {
             delnumList = null;
         }
 
-        //getCreate_by를 못불러온다.. 수정 테스트 완료
-//        if (!reviewDTO.getCreate_by().equals(principal.getName())) {
-//            throw new SecurityException("수정 권한이 없습니다.");
-//        }
-
-
         try {
-            reviewService.reviewModify(reviewDTO, multipartFiles, delnumList);
+            if (multipartFileList != null && multipartFileList.isEmpty()){
+                log.info("업로드된 이미지 파일: " + multipartFileList.size());
+            } else {
+                log.info("이미지 파일이 없습니다.");
+            }
+
+            reviewService.reviewModify(reviewDTO, multipartFileList, delnumList);
             redirectAttributes.addFlashAttribute("msg", "리뷰가 수정되었습니다.");
             return "redirect:/review/reviewList/" + hotel_num;
         } catch (Exception e) {
