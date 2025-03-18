@@ -34,7 +34,7 @@
                                             <div class="row mb-2" >
                                                 <div class="d-flex justify-content-between align-items-center" style="padding-right: 25px; margin-top: 20px; font-size: 0.9rem;">
                                                     <span class="ml-1" th:text="${#temporals.format(noticeDTO.reg_date, 'yyyy-MM-dd')}">등록일자</span>
-                                                    <span th:text="${noticeDTO.hotelDTO != null ? noticeDTO.hotelDTO.hotel_name : (noticeDTO.brandDTO != null ? noticeDTO.brandDTO.brand_name : '정보 없음')}">호텔명</span>
+                                                    <span th:text="${noticeDTO.hotelDTO != null ? noticeDTO.hotelDTO.hotel_name : (noticeDTO.brandDTO != null ? noticeDTO.brandDTO.brand_name : '정보 없음')}">호텔 이름</span>
                                                 </div>
                                             </div>
 

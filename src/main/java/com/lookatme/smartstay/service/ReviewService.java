@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.thymeleaf.util.StringUtils;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -85,8 +84,8 @@ public class ReviewService {
 
         PageResponseDTO<ReviewDTO> reviewDTOPageResponseDTO =
                 PageResponseDTO.<ReviewDTO>withAll().pageRequestDTO(pageRequestDTO)
-                .dtoList(reviewDTOList).total((int) result.getTotalElements())
-                .build();
+                        .dtoList(reviewDTOList).total((int) result.getTotalElements())
+                        .build();
 
         log.info("PageResponseDTO: " + reviewDTOPageResponseDTO);
 
@@ -108,10 +107,10 @@ public class ReviewService {
 
         // 리뷰 목록 변환
         List<ReviewDTO> reviewDTOList = hotelreviews.stream()
-                        .map(review -> modelMapper.map(review, ReviewDTO.class)
-                                .setRoomDTO(modelMapper.map(review.getRoom(), RoomDTO.class)
-                                        .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class)))
-                        )
+                .map(review -> modelMapper.map(review, ReviewDTO.class)
+                        .setRoomDTO(modelMapper.map(review.getRoom(), RoomDTO.class)
+                                .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class)))
+                )
                 .collect(Collectors.toList());
 
         // Comparator를 사용하여 정렬
@@ -214,7 +213,7 @@ public class ReviewService {
 
         //룸 예약 찾기
         RoomReserveItem roomReserveItem = roomReserveItemRepository.findById(reviewDTO.getRoomreserveitem_num())
-                        .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(EntityNotFoundException::new);
 
         review.setRoomReserve(roomReserveItem.getRoomReserve());  // 예약 정보를 세팅
         review.setHotel(roomReserveItem.getRoom().getHotel());  //호텔 정보 설정
@@ -414,22 +413,22 @@ public class ReviewService {
 
     //호텔별 리뷰 평균 별점 계산
     public double calculateAverageRating(Long hotel_num) {
-       List<Review> reviews = reviewRepository.findByHotel(hotel_num);
+        List<Review> reviews = reviewRepository.findByHotel(hotel_num);
 
-       if (reviews.isEmpty()) {
-           return 0.0;
-       }
+        if (reviews.isEmpty()) {
+            return 0.0;
+        }
 
-       double totalScore = 0;
-       for (Review review : reviews) {
-           try {
-               totalScore += Double.parseDouble(review.getScore());
-           } catch (NumberFormatException e) {
-               //score가 올바르지 않은 값인 경우 예외
-           }
-       }
+        double totalScore = 0;
+        for (Review review : reviews) {
+            try {
+                totalScore += Double.parseDouble(review.getScore());
+            } catch (NumberFormatException e) {
+                //score가 올바르지 않은 값인 경우 예외
+            }
+        }
 
-       return totalScore / reviews.size();  //평균 별점 계산
+        return totalScore / reviews.size();  //평균 별점 계산
     }
 
     public List<ReviewDTO> getLimitedReviews (Long hotel_num, int limit) {

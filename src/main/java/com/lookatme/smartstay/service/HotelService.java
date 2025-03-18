@@ -339,16 +339,24 @@ public class HotelService {
 
         List<HotelDTO> hotelDTOS = hotels.stream()
                         .map(hotel -> {
-                                    HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
-                                    List<Room> rooms = roomRepository.findRoomsByHotelNum(hotel.getHotel_num());
-                                    List<RoomDTO> roomDTOS = rooms.stream()
-                                            .map(room -> modelMapper.map(room, RoomDTO.class))
-                                            .collect(Collectors.toList());
-                                    hotelDTO.setRooms(roomDTOS);
-                                    Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
-                                    hotelDTO.setLowestPrice(lowestPrice);
-                                    ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
-                                    hotelDTO.setMainImage(mainImage);
+                            HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+                            List<Room> rooms = roomRepository.findRoomsByHotelNum(hotel.getHotel_num());
+                            List<RoomDTO> roomDTOS = rooms.stream()
+                                    .map(room -> modelMapper.map(room, RoomDTO.class))
+                                    .collect(Collectors.toList());
+                            hotelDTO.setRooms(roomDTOS);
+                            Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
+                            hotelDTO.setLowestPrice(lowestPrice);
+                            ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
+                            hotelDTO.setMainImage(mainImage);
+                            Double averageScore = calculateAverageScore(hotel.getHotel_num());
+                            if (averageScore != null) {
+                                hotelDTO.setScore(String.format("%.2f", averageScore));
+                            } else {
+                                hotelDTO.setScore("");
+                            }
+                            int reviewCount = getReviewCount(hotel.getHotel_num());
+                            hotelDTO.setReview_count(reviewCount);
                                     return hotelDTO;
                                 })
                 .collect(Collectors.toList());

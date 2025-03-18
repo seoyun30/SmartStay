@@ -252,7 +252,7 @@
                                 }
 
                                 if (confirm('이미지를 삭제하시겠습니까?')) {
-                                    fetch(`/room/deleteImage/${imageId}`, {
+                                    fetch(`/deleteImage/${imageId}`, {
                                         method: 'DELETE',
                                         headers: {
                                             'Content-Type': 'application/json'

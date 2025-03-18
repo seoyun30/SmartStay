@@ -66,7 +66,7 @@
             </div>
             <div class="card-body">
                 <h3 class="card-title fw-bold" th:text="${roomDTO.hotelDTO.hotel_name}">호텔 매장 이름</h3>
-                <p class="card-text fs-4 fw-bold" th:text="${roomDTO.room_name}">룸 이름 / 룸 타입</p>
+                <p class="card-text fs-4 fw-bold" th:text="${roomDTO.room_name}">방 이름 / 방 타입</p>
                 <input type="hidden" class="room_num" th:value="${roomDTO.room_num}" name="room_num">
 
                 <div class="row mb-3">
@@ -159,19 +159,12 @@
 
         // 예약된 날짜 비활성화
         function disableReservedDates() {
-            // 오늘 날짜 계산
             let today = new Date();
-            let tomorrow = new Date();
-            tomorrow.setDate(today.getDate() + 1);
-
-            // 날짜 포맷 (YYYY-MM-DD)
-            let todayStr = today.toISOString().split("T")[0];
-            let tomorrowStr = tomorrow.toISOString().split("T")[0];
-
             let in_time = new Date(inTime);
             let out_time = new Date(outTime);
-
             let earliestAvailableDate = new Date(today);
+
+            let todayStr = today.toISOString().split("T")[0];
 
             if (reservedDates.has(todayStr)) {
                 // 오늘 날짜가 예약된 날짜에 포함되어 있으면, 그 이후 날짜로 설정
@@ -181,31 +174,37 @@
             } else {
                 if (today >= in_time && today < out_time) {
                     // 예약된 날짜가 오늘에 포함되지 않으면, 기본 날짜는 inTime 이후로 설정
-                    earliestAvailableDate = inTime;
+                    earliestAvailableDate = in_time;
                 }
             }
 
-            // 체크인 날짜와 체크아웃 날짜 설정
-            todayStr = earliestAvailableDate.toISOString().split("T")[0];
-            let checkOutDate = new Date(earliestAvailableDate);
-            checkOutDate.setDate(checkOutDate.getDate() + 1); // 체크아웃은 체크인 날짜의 다음 날
-            tomorrowStr = checkOutDate.toISOString().split("T")[0];
+            let checkInMinDate = earliestAvailableDate.toISOString().split("T")[0];
+            console.log(checkInMinDate)
 
             flatpickr("#in_date", {
                 dateFormat: "Y-m-d",
                 disable: Array.from(reservedDates), // 예약된 날짜 비활성화
-                minDate: todayStr,
-                defaultDate: todayStr,
-                onChange: function () {
+                minDate: checkInMinDate,
+                defaultDate: checkInMinDate,
+                onChange: function (selectedDates) {
                     totalpriceChange();
                 }
             });
 
+            // 초기 체크아웃 날짜 설정 (체크인 이후 예약되지 않은 날짜)
+            let initialCheckOutDate = new Date(checkInMinDate);
+            initialCheckOutDate.setDate(initialCheckOutDate.getDate() + 1);
+            while (reservedDates.has(initialCheckOutDate.toISOString().split("T")[0])) {
+                initialCheckOutDate.setDate(initialCheckOutDate.getDate() + 1);
+            }
+            let checkOutMinDate = initialCheckOutDate.toISOString().split("T")[0];
+            console.log(checkOutMinDate)
+
             flatpickr("#out_date", {
                 dateFormat: "Y-m-d",
                 disable: Array.from(reservedDates), // 예약된 날짜 비활성화
-                minDate: tomorrowStr,
-                defaultDate: tomorrowStr,
+                minDate: checkOutMinDate,
+                defaultDate: checkOutMinDate,
                 onChange: function () {
                     totalpriceChange();
                 }

@@ -1,9 +1,7 @@
 package com.lookatme.smartstay.repository;
 
-import com.lookatme.smartstay.constant.CheckState;
 import com.lookatme.smartstay.entity.Hotel;
 import com.lookatme.smartstay.entity.Review;
-import com.lookatme.smartstay.entity.RoomReserveItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -89,5 +86,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     int countByHotelNum(@Param("hotel_num") Long hotel_num);
 
 
-
+    long countByHotel(Hotel hotel);
 }
