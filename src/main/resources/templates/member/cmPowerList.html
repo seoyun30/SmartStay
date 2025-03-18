@@ -125,26 +125,13 @@
                         </th:block>
 
                         <td>
-<!--                            <span th:text="${memberDTO.power}"></span>-->
                             <button class="btn btn-danger togglebtn" th:value="${memberDTO.email}"
                                     data-email="${memberDTO.email}">
                                 <th:block th:if="${memberDTO.power.name() == 'NO'}">승인</th:block>
                                 <th:block th:if="${memberDTO.power.name() == 'YES'}">취소</th:block>
                             </button>
                         </td>
-<!--                       <td>-->
-<!--                            <th:block th:if="${memberDTO.power.name() == 'YES'}">-->
-<!--                                <span th:text="${memberDTO.power}"></span>-->
-<!--                            </th:block>-->
-<!--                            <th:block th:if="${memberDTO.power.name() == 'NO'}">-->
-<!--                                <span th:text="${memberDTO.power}"></span>-->
-<!--                            </th:block>-->
-<!--                            <th:block th:if="${memberDTO.power.name() == 'NO'}">-->
-<!--                                <button class="btn btn-primary powerbtn" th:value="${memberDTO.email}"-->
-<!--                                         data-email="${memberDTO.email}"> 승인 </button>-->
-<!--                            </th:block>-->
 
-<!--                        </td>-->
                     </tr>
                 </th:block>
                 </th:block>
@@ -191,25 +178,6 @@
         </th:block>
     </div>
 
-
-<!--    <div class="pagination-container">-->
-<!--        <div class="pagination mt-3" th:if="${pageResponseDTO != null and not #lists.isEmpty(pageResponseDTO.dtoList)}">-->
-<!--            <th:block th:if="${pageResponseDTO.prev}">-->
-<!--                <a class="pagingbtn" th:href="@{/member/cmPowerList(page=${pageResponseDTO.start -1}, keyword=${pageRequestDTO.keyword})}">이전</a>-->
-<!--            </th:block>-->
-
-<!--            <th:block th:each="i: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">-->
-<!--                <a class="pagingbtn" th:href="@{/member/cmPowerList(page=${i}, keyword=${pageRequestDTO.keyword})}">-->
-<!--                    [[${i}]]-->
-<!--                </a>-->
-<!--            </th:block>-->
-
-
-<!--            <th:block th:if="${pageResponseDTO.next}">-->
-<!--                <a class="pagingbtn" th:href="@{/member/cmPowerList.html(page=${pageResponseDTO.end + 1}, keyword=${pageRequestDTO.keyword})}">다음</a>-->
-<!--            </th:block>-->
-<!--        </div>-->
-<!--    </div>-->
 
 </th:block>
 
