@@ -25,7 +25,7 @@
                             <div class="row row-cols-1 row-cols-md-5 g-4" >
                                 <th:block th:if="${roomDTOList.isEmpty()}">
                                     <div class="mt-3">
-                                        <span class="h5 text-center fw-bold">등록된 룸이 없습니다.</span>
+                                        <span class="h5 text-center fw-bold">등록된 방이 없습니다.</span>
                                     </div>
                                 </th:block>
                                 <th:block th:unless="${roomDTOList.isEmpty()}" th:each="room : ${roomDTOList}">
@@ -33,12 +33,12 @@
                                         <div class="card toggleReadWindow" style="box-shadow: none;" th:data-room-num="${room.room_num}">
                                             <div class="card-body">
                                                 <input type="hidden" class="room_num" th:value="${room.room_num}">
-                                                <span class="h5 card-title text-black fw-bold" th:text="${room.room_name}">룸 이름</span> <br>
-                                                <span class="card-text text-black" th:text="${room.room_type + ' / 최대 ' + room.room_bed + '인'}">룸 타입 / 최대 n인</span> <br>
+                                                <span class="h5 card-title text-black fw-bold" th:text="${room.room_name}">방 이름</span> <br>
+                                                <span class="card-text text-black" th:text="${room.room_type + ' / 최대 ' + room.room_bed + '인'}">방 타입 / 최대 n인</span> <br>
                                                 <span class="card-text text-black" th:text="${'1박당 ' + room.room_price + '원'}">가격</span> <br>
 
                                                 <small class="text-body-secondary fw-bold text-center"
-                                                       th:text="${room.room_state.name().equals('YES')  ? '예약 가능' : '예약 불가'}">룸 상태</small>
+                                                       th:text="${room.room_state.name().equals('YES')  ? '예약 가능' : '예약 불가'}">방 상태</small>
                                             </div>
                                         </div>
                                     </div>
@@ -124,7 +124,7 @@
                             <thead>
                             <tr class="text-center">
                                 <th scope="col" class="text-nowrap">예약 번호</th>
-                                <th scope="col" class="text-nowrap">예약룸</th>
+                                <th scope="col" class="text-nowrap">예약 방</th>
                                 <th scope="col" class="text-nowrap">예약자</th>
                                 <th scope="col" class="text-nowrap">예약일</th>
                                 <th scope="col" class="text-nowrap">체크인 날짜</th>
@@ -152,7 +152,7 @@
                                     </td>
                                     <td class="align-middle">
                                         <a th:href="@{/room/roomRead(room_num=${roomReserveItemDTO.roomDTO.room_num})}"
-                                           th:text="${roomReserveItemDTO.roomDTO.room_name}">예약룸</a>
+                                           th:text="${roomReserveItemDTO.roomDTO.room_name}">예약 방</a>
                                     </td>
                                     <td class="align-middle" th:text="${roomReserveItemDTO.roomReserveDTO.memberDTO.name}">예약자명</td>
                                     <td class="align-middle" th:text="${#temporals.format(roomReserveItemDTO.roomReserveDTO.reg_date, 'yyyy.MM.dd HH:mm')}">예약일</td>
@@ -289,9 +289,9 @@
                 },
                 error: function () {
                     if (xhr.status === 404) {
-                        alert("해당 룸 예약 정보를 찾을 수 없습니다.");
+                        alert("해당 방 예약 정보를 찾을 수 없습니다.");
                     } else {
-                        alert("룸 예약 정보를 가져오는 데 실패했습니다.");
+                        alert("방 예약 정보를 가져오는 데 실패했습니다.");
                     }
                 }
             });

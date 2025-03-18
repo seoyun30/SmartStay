@@ -34,7 +34,7 @@
                                     <textarea class="form-control" th:text="${noticeDTO.content}" name="content"></textarea>
                                 </div>
                                 <div class="input-group mb-3">
-                                    <span class="input-group-text" style="width: 140px">호텔명</span>
+                                    <span class="input-group-text" style="width: 140px">호텔 이름</span>
                                     <input type="text" class="form-control"
                                            th:value="${noticeDTO.hotelDTO != null ? noticeDTO.hotelDTO.hotel_name : (noticeDTO.brandDTO != null ? noticeDTO.brandDTO.brand_name : '정보 없음')}" name="hotel">
                                 </div>
