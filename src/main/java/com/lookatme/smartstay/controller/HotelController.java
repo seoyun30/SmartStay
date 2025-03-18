@@ -64,6 +64,7 @@ public class HotelController {
         PageResponseDTO<HotelDTO> pageResponseDTO= hotelService.hotelList(pageRequestDTO, principal.getName());
         log.info("pageResponseDTO : " + pageResponseDTO);
         model.addAttribute("pageResponseDTO", pageResponseDTO);
+        model.addAttribute("pageRequestDTO", pageRequestDTO);
 
         return "hotel/hotelList";
     }

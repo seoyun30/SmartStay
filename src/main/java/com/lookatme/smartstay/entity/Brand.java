@@ -16,19 +16,19 @@ public class Brand extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long brand_num; //키
+    private Long brand_num;
 
     @Column(unique = true, nullable = false)
-    private String business_num; //법인 사업자번호
+    private String business_num;
 
     @Column(nullable = false)
-    private String brand_name; //브랜드 명
+    private String brand_name;
 
-    private String owner; //대표자 이름
+    private String owner;
 
-    private String tel; //연락처
+    private String tel;
 
     @Enumerated(EnumType.STRING)
-    private ActiveState active_state; //활성 비활성
+    private ActiveState active_state;
 
 }

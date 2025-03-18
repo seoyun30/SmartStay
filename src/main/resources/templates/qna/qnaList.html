@@ -156,11 +156,10 @@
             incrementViewCount(qna_num);
         });
 
-
         $(document).on("click", ".delbtn", function(e) {
-            var writer = $(this).val();  // 게시글 작성자
+            var writer = $(this).val();
             if (writer !== loggedInUser) {
-                e.preventDefault();  // 폼 제출을 막고
+                e.preventDefault();
                 alert("작성자만 삭제할 수 있습니다.");
             }
         });
@@ -173,13 +172,11 @@
             contentType: 'application/json',
             data: JSON.stringify({ qna_num: qna_num }),
             success: function(result) {
-                // 조회수 증가 후 상세 페이지로 이동
                 console.info(result)
                 window.location.href = '/qna/qnaRead?qna_num=' + qna_num;
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
-                // 오류가 발생하면 바로 상세 페이지로 이동
 
             }
         });

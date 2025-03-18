@@ -15,26 +15,21 @@ import java.util.List;
 @Builder
 public class QnaDTO {
 
-    private Long qna_num; //문의 번호
+    private Long qna_num;
 
     @NotBlank(message = "제목을 입력해주세요.")
-    private String title; //문의 제목
+    private String title;
 
     @NotBlank(message = "내용을 입력해주세요.")
-    private String content; //문의 내용
+    private String content;
 
-    private String writer; //문의 작성자
+    private String writer;
 
-    private int viewCount; // 조회수 추가
+    private int viewCount;
 
     private Long hotel_num;
 
     private HotelDTO hotelDTO;
-
-    public QnaDTO setHotelDTO(HotelDTO hotelDTO) {
-        this.hotelDTO = hotelDTO;
-        return this;
-    }
 
     public List<ImageDTO> imageDTOList = new ArrayList<>();
 
@@ -45,5 +40,10 @@ public class QnaDTO {
     private String create_by;
 
     private String modified_by;
+
+    public QnaDTO setHotelDTO(HotelDTO hotelDTO) {
+        this.hotelDTO = hotelDTO;
+        return this;
+    }
 }
 

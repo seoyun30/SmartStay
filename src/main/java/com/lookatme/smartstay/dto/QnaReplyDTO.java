@@ -21,11 +21,11 @@ public class QnaReplyDTO {
     @Size(min = 2, max = 255, message = "댓글은 2~255 글자 사이여야 합니다.")
     private String comment;
 
-    private String writer; //게시판을 통해서 회원을 참조
+    private String writer;
 
     private QnaDTO qnaDTO;
 
-    private MemberDTO memberDTO; //작성자
+    private MemberDTO memberDTO;
 
     private LocalDateTime reg_date;
 
