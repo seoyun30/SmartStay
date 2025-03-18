@@ -6,7 +6,6 @@ import com.lookatme.smartstay.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +25,6 @@ public class ImageService {
     private final ReviewRepository reviewRepository;
     private final QnaRepository qnaRepository;
     private final NoticeRepository noticeRepository;
-    private final ModelMapper modelMapper;
     private final FileUpload fileUpload; //파일업로드 클래스 상속
 
     //이미지 등록
@@ -42,8 +40,11 @@ public class ImageService {
 
                 String imageName = fileUpload.fileUpload(file, "Y");
                 String originalName = file.getOriginalFilename();
-                String imageUrl = "/images/" + imageName;
-                String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
+                //String imageUrl = "/images/" + imageName;
+                //String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
+                String imageUrl = "https://lookatmesmartstay.s3.ap-northeast-2.amazonaws.com/uploads/images/" + imageName;
+                String thumbnailUrl = "https://lookatmesmartstay.s3.ap-northeast-2.amazonaws.com/uploads/images/thumb_"
+                        + imageName.substring(0, imageName.lastIndexOf('.')) + ".png";
 
                 log.info("Image URL: {}", imageUrl);
                 log.info("Thumbnail URL: {}", thumbnailUrl);
@@ -149,8 +150,11 @@ public class ImageService {
 
                 String imageName = fileUpload.fileUpload(file, "Y");
                 String originalName = file.getOriginalFilename();
-                String imageUrl = "/images/" + imageName;
-                String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
+                //String imageUrl = "/images/" + imageName;
+                //String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
+                String imageUrl = "https://lookatmesmartstay.s3.ap-northeast-2.amazonaws.com/uploads/images/" + imageName;
+                String thumbnailUrl = "https://lookatmesmartstay.s3.ap-northeast-2.amazonaws.com/uploads/images/thumb_"
+                        + imageName.substring(0, imageName.lastIndexOf('.')) + ".png";
 
                 Image image = Image.builder()
                         .image_name(imageName)
@@ -228,20 +232,17 @@ public class ImageService {
         return imageRepository.findByTarget(targetType, targetId);
     }
 
-
-
-    public  void saveImageOne(String savedFileName, MultipartFile multipartFile, Notice notice) {
+    public void saveImageOne(String savedFileName, MultipartFile multipartFile, Notice notice) {
 
         //파일경로를 포함한uuid포함한 파일이름 ,원래 파일이름,  파일이름
-
         String originalFilename = multipartFile.getOriginalFilename();
-        originalFilename =   originalFilename.substring(originalFilename.lastIndexOf("\\")+1);
-
+        //originalFilename =   originalFilename.substring(originalFilename.lastIndexOf("\\")+1);
+        String imageUrl = "https://lookatmesmartstay.s3.ap-northeast-2.amazonaws.com/uploads/images/" + savedFileName;
 
         Image image = new Image();
         image.setImage_name(savedFileName);
         image.setOrigin_name(originalFilename);
-        image.setImage_url("/images/" + savedFileName);
+        image.setImage_url(imageUrl);
         image.setNotice(notice);
         image.setRepimg_yn("N");
         imageRepository.save(image);
@@ -249,24 +250,24 @@ public class ImageService {
     }
 
     //리뷰 이미지
-    public  void saveImageOne(String savedFileName, MultipartFile multipartFile, Review review) {
+    public void saveImageOne(String savedFileName, MultipartFile multipartFile, Review review) {
 
         //파일경로를 포함한uuid포함한 파일이름 ,원래 파일이름,  파일이름
 
         String originalFilename = multipartFile.getOriginalFilename();
-        originalFilename =   originalFilename.substring(originalFilename.lastIndexOf("\\")+1);
+       // originalFilename =   originalFilename.substring(originalFilename.lastIndexOf("\\")+1);
+        String imageUrl = "https://lookatmesmartstay.s3.ap-northeast-2.amazonaws.com/uploads/images/" + savedFileName;
 
 
         Image image = new Image();
         image.setImage_name(savedFileName);
         image.setOrigin_name(originalFilename);
-        image.setImage_url("/images/" + savedFileName);
+        image.setImage_url(imageUrl);
         image.setReview(review);
         image.setRepimg_yn("N");
         imageRepository.save(image);
 
     }
-
 
     public List<Image> getBannerImages() {
         List<Image> banners = imageRepository.findByTarget("banner");
@@ -293,8 +294,11 @@ public class ImageService {
         // 새 이미지를 저장소에 업로드
         String imageName = fileUpload.fileUpload(imageFile, "N");
         String originalName = imageFile.getOriginalFilename();
-        String imageUrl = "/images/" + imageName; // 모든 이미지를 /images/ 경로로 설정
-        String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
+        //String imageUrl = "/images/" + imageName; // 모든 이미지를 /images/ 경로로 설정
+        //String thumbnailUrl = "/images/thumb" + imageName.substring(0, imageName.lastIndexOf('.')) + ".jpg";
+        String imageUrl = "https://lookatmesmartstay.s3.ap-northeast-2.amazonaws.com/uploads/images/" + imageName;
+        String thumbnailUrl = "https://lookatmesmartstay.s3.ap-northeast-2.amazonaws.com/uploads/images/thumb_"
+                + imageName.substring(0, imageName.lastIndexOf('.')) + ".png";
 
         log.info("New Image URL: {}", imageUrl);
         log.info("Thumbnail URL: {}", thumbnailUrl);

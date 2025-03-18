@@ -1,13 +1,11 @@
 package com.lookatme.smartstay.dto;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,16 +53,6 @@ public class ReviewDTO {
     //리뷰 메인 이미지
     private ImageDTO mainImageDTO;
 
-    // 리뷰 메인 이미지 getter
-    public ImageDTO getMainImageDTO() {
-        return mainImageDTO;
-    }
-
-    // 리뷰 메인 이미지 setter
-    public void setMainImageDTO(ImageDTO mainImageDTO) {
-        this.mainImageDTO = mainImageDTO;
-    }
-
     //리뷰 이미지
     private ImageDTO reviewImages;
 
@@ -97,7 +85,7 @@ public class ReviewDTO {
             return "방금 전";
         } else if (seconds < 3600) {
             return (seconds / 60) + "분 전";
-        } else if (seconds < 86400) { //허루 (24시간) 이내
+        } else if (seconds < 86400) { // 하루 (24시간) 이내
             return (seconds /3600) + "시간 전";
         } else {
             return (seconds / 86400) + "일 전";

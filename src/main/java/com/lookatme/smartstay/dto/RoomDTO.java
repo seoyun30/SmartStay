@@ -65,22 +65,10 @@ public class RoomDTO {
 
     private List<Long> imageIdList = new ArrayList<>();
 
-    public HotelDTO getHotelDTO() {
-        return hotelDTO;
-    }
-
     public RoomDTO setHotelDTO(HotelDTO hotelDTO) {
         this.hotelDTO = hotelDTO;
         return this;
     }
 
     private ImageDTO mainImage;
-
-    public ImageDTO getMainImage() {
-        return mainImage;
-    }
-
-    public void setMainImage(ImageDTO mainImage) {
-        this.mainImage = mainImage;
-    }
 }

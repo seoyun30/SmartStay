@@ -14,15 +14,15 @@ import java.util.List;
 @ToString
 public class BrandDTO {
 
-    private Long brand_num; //키
+    private Long brand_num;
 
-    private String business_num; //법인 사업자번호
+    private String business_num;
 
-    private String brand_name; //브랜드 명
+    private String brand_name;
 
-    private String owner; //대표자 이름
+    private String owner;
 
-    private String tel; //연락처
+    private String tel;
 
     private LocalDateTime reg_date;
 
@@ -36,15 +36,7 @@ public class BrandDTO {
 
     private List<Long> imageIdList = new ArrayList<>();
 
-    private ActiveState active_state; //활성 비활성
+    private ActiveState active_state;
 
     private ImageDTO mainImage;
-
-    public ImageDTO getMainImage() {
-        return mainImage;
-    }
-
-    public void setMainImage(ImageDTO mainImage) {
-        this.mainImage = mainImage;
-    }
 }

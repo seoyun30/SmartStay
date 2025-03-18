@@ -11,7 +11,6 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -60,6 +59,7 @@ public class HotelService {
         Pageable pageable = pageRequestDTO.getPageable("hotel_num");
         Member member = memberRepository.findByEmail(email);
         Long brand_num = member.getBrand().getBrand_num();
+        log.info("brand_num:" + brand_num);
         Page<Hotel> hotelPage = null;
 
         if (pageRequestDTO.getType() == null || pageRequestDTO.getKeyword() == null || pageRequestDTO.getKeyword().equals("")) {
@@ -172,7 +172,7 @@ public class HotelService {
                     if (averageScore != null) {
                         hotelDTO.setScore(String.format("%.2f", averageScore));
                     } else {
-                        hotelDTO.setScore("(0)");
+                        hotelDTO.setScore("");
                     }
                     int reviewCount = getReviewCount(hotel.getHotel_num());
                     hotelDTO.setReview_count(reviewCount);
@@ -340,16 +340,24 @@ public class HotelService {
 
         List<HotelDTO> hotelDTOS = hotels.stream()
                         .map(hotel -> {
-                                    HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
-                                    List<Room> rooms = roomRepository.findRoomsByHotelNum(hotel.getHotel_num());
-                                    List<RoomDTO> roomDTOS = rooms.stream()
-                                            .map(room -> modelMapper.map(room, RoomDTO.class))
-                                            .collect(Collectors.toList());
-                                    hotelDTO.setRooms(roomDTOS);
-                                    Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
-                                    hotelDTO.setLowestPrice(lowestPrice);
-                                    ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
-                                    hotelDTO.setMainImage(mainImage);
+                            HotelDTO hotelDTO = modelMapper.map(hotel, HotelDTO.class);
+                            List<Room> rooms = roomRepository.findRoomsByHotelNum(hotel.getHotel_num());
+                            List<RoomDTO> roomDTOS = rooms.stream()
+                                    .map(room -> modelMapper.map(room, RoomDTO.class))
+                                    .collect(Collectors.toList());
+                            hotelDTO.setRooms(roomDTOS);
+                            Long lowestPrice = getHotelLowestPrice(hotel.getHotel_num());
+                            hotelDTO.setLowestPrice(lowestPrice);
+                            ImageDTO mainImage = getHotelMainImage(hotel.getHotel_num());
+                            hotelDTO.setMainImage(mainImage);
+                            Double averageScore = calculateAverageScore(hotel.getHotel_num());
+                            if (averageScore != null) {
+                                hotelDTO.setScore(String.format("%.2f", averageScore));
+                            } else {
+                                hotelDTO.setScore("");
+                            }
+                            int reviewCount = getReviewCount(hotel.getHotel_num());
+                            hotelDTO.setReview_count(reviewCount);
                                     return hotelDTO;
                                 })
                 .collect(Collectors.toList());

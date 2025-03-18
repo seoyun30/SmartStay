@@ -150,13 +150,11 @@
             contentType: 'application/json',
             data: JSON.stringify({ qna_num: qna_num }),
             success: function(result) {
-                // 조회수 증가 후 상세 페이지로 이동
                 console.info(result)
                 window.location.href = '/qna/qnaRead?qna_num=' + qna_num;
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
-                // 오류가 발생하면 바로 상세 페이지로 이동
 
             }
         });

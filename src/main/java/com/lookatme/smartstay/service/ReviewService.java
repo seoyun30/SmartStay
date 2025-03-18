@@ -15,9 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.thymeleaf.util.StringUtils;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,9 +32,6 @@ public class ReviewService {
 
     //권한 설정 시 필요
     private final MemberRepository memberRepository;
-    private final HotelRepository hotelRepository;
-
-    private final RoomReserveRepository roomReserveRepository; // 호텔예약정보 필요
     private final RoomReserveItemRepository roomReserveItemRepository;
 
     //이미지 사용 시 필요
@@ -84,8 +81,8 @@ public class ReviewService {
 
         PageResponseDTO<ReviewDTO> reviewDTOPageResponseDTO =
                 PageResponseDTO.<ReviewDTO>withAll().pageRequestDTO(pageRequestDTO)
-                .dtoList(reviewDTOList).total((int) result.getTotalElements())
-                .build();
+                        .dtoList(reviewDTOList).total((int) result.getTotalElements())
+                        .build();
 
         log.info("PageResponseDTO: " + reviewDTOPageResponseDTO);
 
@@ -93,7 +90,10 @@ public class ReviewService {
     }
 
     //호텔에 있는 리뷰 전체 조회
-    public List<ReviewDTO> gethotelReviewList(Long hotel_num) {
+    public List<ReviewDTO> gethotelReviewList(Long hotel_num, String sortField, String sortDir) {
+
+        Sort sort = Sort.by(Sort.Order.by(sortField));
+        sort = sortDir.equals("desc") ? sort.descending() : sort.ascending();
 
         List<Review> hotelreviews = reviewRepository.findByHotel(hotel_num);
 
@@ -104,11 +104,28 @@ public class ReviewService {
 
         // 리뷰 목록 변환
         List<ReviewDTO> reviewDTOList = hotelreviews.stream()
-                        .map(review -> modelMapper.map(review, ReviewDTO.class)
-                                .setRoomDTO(modelMapper.map(review.getRoom(), RoomDTO.class)
-                                        .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class)))
-                        )
+                .map(review -> modelMapper.map(review, ReviewDTO.class)
+                        .setRoomDTO(modelMapper.map(review.getRoom(), RoomDTO.class)
+                                .setHotelDTO(modelMapper.map(review.getHotel(), HotelDTO.class)))
+                )
                 .collect(Collectors.toList());
+
+        // Comparator를 사용하여 정렬
+        if ("score".equals(sortField)) {
+            if ("desc".equals(sortDir)) {
+                reviewDTOList.sort(Comparator.comparing(ReviewDTO::getScore).reversed());  // 내림차순
+            } else {
+                if ("asc".equals(sortDir)) {
+                    reviewDTOList.sort(Comparator.comparing(ReviewDTO::getScore));  // 오름차순
+                }
+            }
+        } else if ("reg_date".equals(sortField)) {
+            if ("desc".equals(sortDir)) {
+                reviewDTOList.sort(Comparator.comparing(ReviewDTO::getReg_date).reversed());  // 내림차순
+            } else {
+                reviewDTOList.sort(Comparator.comparing(ReviewDTO::getReg_date));  // 오름차순
+            }
+        }
 
         // 이미지
         for (ReviewDTO reviewDTO : reviewDTOList) {
@@ -193,7 +210,7 @@ public class ReviewService {
 
         //룸 예약 찾기
         RoomReserveItem roomReserveItem = roomReserveItemRepository.findById(reviewDTO.getRoomreserveitem_num())
-                        .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(EntityNotFoundException::new);
 
         review.setRoomReserve(roomReserveItem.getRoomReserve());  // 예약 정보를 세팅
         review.setHotel(roomReserveItem.getRoom().getHotel());  //호텔 정보 설정
@@ -220,7 +237,7 @@ public class ReviewService {
         }
     }
 
-    //리뷰 상세보기(보이는 리뷰가 있으면 모두 가능)
+    //리뷰 상세보기(모두 가능)
     public ReviewDTO reviewRead(Long rev_num) {
 
         Review review = reviewRepository.findById(rev_num)
@@ -259,7 +276,7 @@ public class ReviewService {
     }
 
     //리뷰 수정(리뷰를 등록한 유저만 가능)
-    public void reviewModify(ReviewDTO reviewDTO, List<MultipartFile> multipartFiles, List<Long> delnumList) throws Exception {
+    public void reviewModify(ReviewDTO reviewDTO, List<MultipartFile> multipartFileList, List<Long> delnumList) throws Exception {
 
         log.info(" 리뷰 수정 요청 : {} " , reviewDTO);
 
@@ -290,27 +307,27 @@ public class ReviewService {
         review.setContent(reviewDTO.getContent()); //리뷰 내용
         reviewRepository.save(review);
 
-        boolean hasNewImages = multipartFiles != null && multipartFiles.stream().anyMatch(file -> !file.isEmpty());
-        boolean hasDeletedImages = delnumList != null && delnumList.isEmpty();
-
-        if (hasNewImages || hasDeletedImages) {
-            log.info("이미지 업데이트");
-            try {
-                imageService.updateImage(
-                        hasNewImages ? multipartFiles : null,
-                        hasDeletedImages ? delnumList : null,
-                        "review",
-                        review.getRev_num()
-                );
-            } catch (IndexOutOfBoundsException e) {
-                log.error("이미지 업데이트 중 인덱스 오류 발생: {}", e.getMessage());
-                throw new IllegalArgumentException("업로드된 파일이나 삭제 요청이 잘못되었습니다.");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+        //파일등록 리스트 > 반복해서 하나씩 저장
+        if (multipartFileList != null && !multipartFileList.isEmpty()) {
+            for (MultipartFile multipartFile : multipartFileList) {
+                if (!multipartFile.isEmpty()) {
+                    String savedFileName =
+                            fileService.uploadFile(imgUploadLocation, multipartFile);
+                    imageService.saveImageOne(savedFileName, multipartFile, review);
+                }
             }
-        } else {
-            log.info("이미지 업데이트 없이 수정");
         }
+        //파일삭제
+        if (delnumList != null){
+            for (Long delnum : delnumList) {
+
+                if (delnum != null) {
+                    log.info("삭제" + delnum);
+                    imageService.deleteImage(delnum);
+                }
+            }
+        }
+
     }
 
     //리뷰 삭제(작성한 본인 리뷰만 가능)
@@ -332,8 +349,6 @@ public class ReviewService {
                 }
             }
         }
-
-        // 1. 리뷰 조회
 
         reviewRepository.deleteById(id);
         log.info("리뷰 삭제 완료 rev_num : " + id);
@@ -391,25 +406,6 @@ public class ReviewService {
         return reviewDTOPageResponseDTO;
     }
 
-    //호텔별 리뷰 평균 별점 계산
-    public double calculateAverageRating(Long hotel_num) {
-       List<Review> reviews = reviewRepository.findByHotel(hotel_num);
-
-       if (reviews.isEmpty()) {
-           return 0.0;
-       }
-
-       double totalScore = 0;
-       for (Review review : reviews) {
-           try {
-               totalScore += Double.parseDouble(review.getScore());
-           } catch (NumberFormatException e) {
-               //score가 올바르지 않은 값인 경우 예외
-           }
-       }
-
-       return totalScore / reviews.size();  //평균 별점 계산
-    }
 
     public List<ReviewDTO> getLimitedReviews (Long hotel_num, int limit) {
         Pageable pageable = PageRequest.of(0, limit);

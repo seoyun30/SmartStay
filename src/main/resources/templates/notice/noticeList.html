@@ -58,7 +58,7 @@
                         <select class="form-select" name="type">
                             <option value="" th:selected="${type == null}">전체</option>
                             <option value="1" th:selected="${type == '1'}">제목</option>
-                            <option value="2" th:selected="${type == '2'}">호텔명</option>
+                            <option value="2" th:selected="${type == '2'}">호텔 이름</option>
                         </select>
                         <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="검색어를 입력하세요" th:value="${pageRequestDTO.keyword}">
                         <div class="input-group-append">
@@ -89,7 +89,7 @@
                     <th:block th:if="${pageResponseDTO.dtoList == null or #lists.isEmpty(pageResponseDTO.dtoList)}">
                         <tr>
                             <td colspan="12" class="text-center">
-                                <h5 th:text="${pageRequestDTO.keyword != null and pageRequestDTO.keyword != ''} ? '검색결과가 없습니다.' : '공지사항 목록이 없습니다.'"></h5>
+                                <h5 th:text="${pageRequestDTO.keyword != null and pageRequestDTO.keyword != ''} ? '검색결과가 없습니다.' : '등록된 공지사항이 없습니다.'"></h5>
                             </td>
                         </tr>
                     </th:block>

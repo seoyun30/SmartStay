@@ -15,29 +15,29 @@ public class Hotel extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long hotel_num; //키
+    private Long hotel_num;
 
     @Column(unique = true, nullable = false)
-    private String business_num; //개인 사업자번호
+    private String business_num;
 
     @Column(nullable = false)
-    private String hotel_name; //호텔 명
+    private String hotel_name;
 
-    private String owner; //대표자 이름
+    private String owner;
 
-    private String address; //호텔 주소
+    private String address;
 
-    private String tel; //연락처
+    private String tel;
 
-    private String score; //별점
+    private String score;
 
     @Enumerated(EnumType.STRING)
-    private ActiveState active_state; //활성 비활성
+    private ActiveState active_state;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_num")
     @ToString.Exclude
-    private Brand brand; //브랜드
+    private Brand brand;
 
     private Long lowestPrice;
 }

@@ -32,7 +32,7 @@
           <th:block th:if="${brandDTOList == null or brandDTOList.isEmpty()}">
             <tr>
               <td colspan="10" class="text-center align-middle">
-                <span class="h5 fw-bold">등록된 브랜드가 없습니다.</span>
+                <span class="h5 fw-bold">등록된 총판이 없습니다.</span>
               </td>
             </tr>
           </th:block>
@@ -70,12 +70,6 @@
     if (messages.trim() !== "") {
     alert(messages);
   }
-      /* 기존 방법 (목록 불러오는 오류 떄문에)
-      let messages = [[${msg}]];
-    if (messages != null && messages.trim() !== "") {
-      alert(messages);
-    }*/
-
 
 let togglebtn = $(".togglebtn");
 

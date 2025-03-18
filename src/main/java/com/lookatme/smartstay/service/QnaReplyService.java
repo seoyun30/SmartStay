@@ -1,18 +1,14 @@
 package com.lookatme.smartstay.service;
 
 import com.lookatme.smartstay.dto.MemberDTO;
-import com.lookatme.smartstay.dto.QnaDTO;
 import com.lookatme.smartstay.dto.QnaReplyDTO;
-import com.lookatme.smartstay.dto.QnaReplyRequest;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.Qna;
 import com.lookatme.smartstay.entity.QnaReply;
 import com.lookatme.smartstay.repository.MemberRepository;
 import com.lookatme.smartstay.repository.QnaReplyRepository;
 import com.lookatme.smartstay.repository.QnaRepository;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -39,12 +35,10 @@ public class QnaReplyService {
         Member member = memberRepository.findByEmail(email);
         log.info("member: {}", member);
 
-        // Qna가 존재하는지 체크
         Qna qna = qnaRepository.findById(qna_num).orElseThrow(() ->
                 new IllegalArgumentException("댓글 쓰기 실패: 해당 질문이 존재하지 않습니다. " + qna_num));
         log.info("Qna 찾음, qna_num: {}", qna_num);
 
-        // QnaReply 저장
         QnaReply qnaReply = modelMapper.map(qnaReplyDTO, QnaReply.class);
         qnaReply.setWriter(member.getEmail());
         qnaReply.setMember(member);
@@ -64,7 +58,6 @@ public class QnaReplyService {
 
         QnaReplyDTO qnaReplyDTO = modelMapper.map(qnaReply, QnaReplyDTO.class)
                 .setMemberDTO(modelMapper.map(qnaReply.getMember(), MemberDTO.class));
-        //  return qna.getQnaReply(); // 단일 QnaReply 반환
         return qnaReplyDTO;
     }
 
@@ -72,11 +65,9 @@ public class QnaReplyService {
     @Transactional
     public void updateQnaReply(Long qna_num, QnaReplyDTO qnaReplyDTO) {
         log.info("updateQnaReply() 호출, qna_num: {}, qnaReplyDTO: {}", qna_num, qnaReplyDTO);
-        // qnaNum과 qnaReplyNum으로 댓글 조회
         QnaReply qnaReply = qnaReplyRepository.findByQnaNumAndQnaReplyNum(qna_num, qnaReplyDTO.getQnaReply_num())
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다. :" + qnaReplyDTO.getQnaReply_num()));
 
-        // 댓글 내용 업데이트
         qnaReply.update(qnaReplyDTO.getComment());
         log.info("댓글 수정 완료, qnaReplyDTO: {}", qnaReplyDTO);
     }

@@ -46,7 +46,7 @@ public class ReviewController {
     private final ImageService imageService;
 
 
-    //관리자 리뷰 목록 페이지(chief, manager권한)
+    //관리자 리뷰 목록 페이지( manager권한)
     @GetMapping("/adMyReviewList")
     public String adMyReviewList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                                  @RequestParam(defaultValue = "rev_num") String sortField,
@@ -95,7 +95,6 @@ public class ReviewController {
             PageResponseDTO<ReviewDTO> pageResponseDTO = reviewService.getAdHotelReviewList(hotelDTO, pageRequestDTO, sortField, sortDir);
 
             if (pageResponseDTO == null || pageResponseDTO.getDtoList() == null) {
-//                pageResponseDTO = new PageResponseDTO<>();
                 pageResponseDTO.setDtoList(Collections.emptyList());
             }
 
@@ -117,12 +116,30 @@ public class ReviewController {
     //호텔 리뷰 목록
     @GetMapping("/reviewList/{hotel_num}")
     public String reviewList(@PathVariable("hotel_num") Long hotel_num, Model model,
-                             PageRequestDTO pageRequestDTO, @RequestParam(value = "query", required = false) String query, Sort sort) {
+                             @RequestParam(value = "query", required = false) String query,
+                             @RequestParam(value = "sortField", defaultValue = "reg_date") String sortField,
+                             @RequestParam(value = "sortDir", defaultValue = "desc") String sortDir, Sort sort) {
+
+
 
         log.info("hotel_num: " + hotel_num);
+        log.info("sortField: " + sortField);
+        log.info("sortDir: " + sortDir);
 
-        List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num);
+        // 호텔 정보 가져오기 (별점 평균 , 리뷰 수 포함)
+        HotelDTO hotelDTO = hotelService.read(hotel_num);
+        List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num, sortField, sortDir);
+
+        // 리뷰가 없는 경우, 빈 리스트를 모델에 전달
+        if (reviewDTOList.isEmpty()) {
+            model.addAttribute("message", "이 호텔에 대한 리뷰가 없습니다." );
+        }
+
+        // 모델에 데이터 추가
+        model.addAttribute("hotelDTO", hotelDTO);
         model.addAttribute("reviewDTOList", reviewDTOList);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
 
         reviewDTOList.forEach(reviewDTO -> log.info("reviewDTO: {}", reviewDTO));
 
@@ -132,7 +149,7 @@ public class ReviewController {
 
     //마이 리뷰 목록(user권한)
     @GetMapping("/myReviewList")
-    public String myReviewList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
+    public String myReviewList(Principal principal, Model model) {
         log.info("My 리뷰");
         log.info("principal: " + principal.getName());
 
@@ -180,7 +197,7 @@ public class ReviewController {
     @PostMapping("/reviewRegister/{reserve_num}")
     public String reviewRegisterPost(@Valid ReviewDTO reviewDTO, RedirectAttributes redirectAttributes,
                                      @PathVariable("reserve_num") Long reserve_num, Long hotel_num,
-                                     @RequestParam("multipartFileList") List<MultipartFile> multipartFileList, Model model,
+                                     @RequestParam("multipartFileList") List<MultipartFile> multipartFileList,
                                      Principal principal) throws Exception {
 
         System.out.println("받은 reserve_num: " + reserve_num);
@@ -251,7 +268,7 @@ public class ReviewController {
     //관리자 상세 보기 페이지
     @GetMapping("/adReviewRead")
     public String adReviewRead(@RequestParam(required = false) Long rev_num, Long hotel_num,
-                             Model model, RedirectAttributes redirectAttributes) {
+                               Model model, RedirectAttributes redirectAttributes) {
 
         if (rev_num == null) {
             redirectAttributes.addFlashAttribute("msg", "존재하지 않는 리뷰입니다.");
@@ -304,28 +321,35 @@ public class ReviewController {
     }
 
     @PostMapping("/reviewModify")
-    public String reviewModifyPost(ReviewDTO reviewDTO, Principal principal, Model model,
+    public String reviewModifyPost(ReviewDTO reviewDTO,
                                    RedirectAttributes redirectAttributes, Long hotel_num,
-                                   @RequestParam(value = "multipartFiles", required = false) List<MultipartFile> multipartFiles,
+                                   @RequestParam(value = "multipartFileList", required = false) List<MultipartFile> multipartFileList,
                                    @RequestParam(value = "delnumList", required = false) List<Long> delnumList){
 
         log.info("수정 요청 : {}" , reviewDTO);
 
-        if (multipartFiles != null && multipartFiles.stream().allMatch(MultipartFile::isEmpty)) {
-            multipartFiles = null;
+        for (MultipartFile mutipartFile : multipartFileList) {
+            log.info(mutipartFile.getOriginalFilename());
+        }
+        log.info("삭제할 값");
+        log.info(delnumList);
+        log.info(delnumList);
+
+        if (multipartFileList != null && multipartFileList.stream().allMatch(MultipartFile::isEmpty)) {
+            multipartFileList = null;
         }
         if (delnumList != null && delnumList.isEmpty()) {
             delnumList = null;
         }
 
-        //getCreate_by를 못불러온다.. 수정 테스트 완료
-//        if (!reviewDTO.getCreate_by().equals(principal.getName())) {
-//            throw new SecurityException("수정 권한이 없습니다.");
-//        }
-
-
         try {
-            reviewService.reviewModify(reviewDTO, multipartFiles, delnumList);
+            if (multipartFileList != null && multipartFileList.isEmpty()){
+                log.info("업로드된 이미지 파일: " + multipartFileList.size());
+            } else {
+                log.info("이미지 파일이 없습니다.");
+            }
+
+            reviewService.reviewModify(reviewDTO, multipartFileList, delnumList);
             redirectAttributes.addFlashAttribute("msg", "리뷰가 수정되었습니다.");
             return "redirect:/review/reviewList/" + hotel_num;
         } catch (Exception e) {

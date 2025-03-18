@@ -46,14 +46,6 @@ public class MenuDTO {
 
     private ImageDTO mainImage;
 
-    public ImageDTO getMainImage() {
-        return mainImage;
-    }
-
-    public void setMainImage(ImageDTO mainImage) {
-        this.mainImage = mainImage;
-    }
-
     public MenuDTO setHotelDTO(HotelDTO hotelDTO) {
         this.hotelDTO = hotelDTO;
         return this;

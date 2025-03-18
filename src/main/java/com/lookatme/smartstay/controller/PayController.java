@@ -87,18 +87,13 @@ public class PayController {
     @ResponseBody
     public ResponseEntity<String> preparePay(@RequestBody PrePayDTO prePayDTO)
             throws IamportResponseException, IOException {
-        log.info("prePayDTO : " + prePayDTO);
         payService.postPrepare(prePayDTO);
         return ResponseEntity.ok("결제 사전 준비 완료");
     }
 
     @PostMapping("/pay/validate")
     @ResponseBody
-    public ResponseEntity<?> validatePay(@RequestBody PayDTO payDTO)
-            throws IamportResponseException, IOException {
-
-        log.info("결제 검증 요청 payDTO : " + payDTO);
-
+    public ResponseEntity<?> validatePay(@RequestBody PayDTO payDTO) {
         // 1. amount가 null인 경우 요청 거부
         if (payDTO.getAmount() == null) {
             log.error("amount 값이 null입니다. 결제 요청이 유효하지 않습니다.");
@@ -143,8 +138,6 @@ public class PayController {
     @PostMapping("/pay/order")
     @ResponseBody
     public ResponseEntity<String> payOrder(@RequestBody PayDTO payDTO){
-        log.info("주문 정보 payDTO : " + payDTO);
-
         // 1. amount가 null인 경우 요청 거부
         if (payDTO.getAmount() == null) {
             log.error("amount 값이 null입니다. 결제 요청이 유효하지 않습니다.");

@@ -1,11 +1,11 @@
 package com.lookatme.smartstay.controller;
 
 import com.lookatme.smartstay.dto.*;
-import com.lookatme.smartstay.repository.ImageRepository;
-import com.lookatme.smartstay.service.*;
+import com.lookatme.smartstay.service.HotelService;
+import com.lookatme.smartstay.service.OrderReserveService;
+import com.lookatme.smartstay.service.RoomReserveService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,12 +24,7 @@ import java.security.Principal;
 public class OrderReserveController {
     private final RoomReserveService roomReserveService;
     private final OrderReserveService orderReserveService;
-    private final MenuService menuService;
-    private final CareService careService;
     private final HotelService hotelService;
-    private final OrderItemService orderItemService;
-    private final ImageRepository imageRepository;
-    private final ModelMapper modelMapper;
 
     @GetMapping("/orderReserveRegister")
     public String orderReserveRegisterGet(Principal principal, Long roomreserveitem_num,

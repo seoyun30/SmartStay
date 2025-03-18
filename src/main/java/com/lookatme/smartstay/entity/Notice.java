@@ -22,7 +22,6 @@ public class Notice extends BaseEntity {
     @Column(nullable = false, length = 5000 )
     private String content; //내용
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_num")
     private Brand brand;

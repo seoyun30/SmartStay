@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/userlayout}">
 <head>
@@ -77,37 +76,25 @@
                             <div class="review-container" >
                                 <!-- 첫 번째 칸: 별점과 날짜 -->
                                 <div class="review-info d-flex justify-content-between mb-1 starpoint_wrap">
-                                    <label for="score" class="form-label">별점</label>
+<!--                                    <label for="score" class="form-label">별점</label>-->
                                     <!-- 별점 표시 영역 -->
-                                    <div class="mb-3 starpoint_wrap">
+                                    <div class="starpoint_wrap" th:id="'starpoint_wrap_' + ${review.rev_num}" th:data-score="${review.score}">
                                         <div class="starpoint_box">
-                                            <label for="starpoint_1" class="label_star" title="0.5"><span class="blind">0.5점</span></label>
-                                            <label for="starpoint_2" class="label_star" title="1"><span class="blind">1점</span></label>
-                                            <label for="starpoint_3" class="label_star" title="1.5"><span class="blind">1.5점</span></label>
-                                            <label for="starpoint_4" class="label_star" title="2"><span class="blind">2점</span></label>
-                                            <label for="starpoint_5" class="label_star" title="2.5"><span class="blind">2.5점</span></label>
-                                            <label for="starpoint_6" class="label_star" title="3"><span class="blind">3점</span></label>
-                                            <label for="starpoint_7" class="label_star" title="3.5"><span class="blind">3.5점</span></label>
-                                            <label for="starpoint_8" class="label_star" title="4"><span class="blind">4점</span></label>
-                                            <label for="starpoint_9" class="label_star" title="4.5"><span class="blind">4.5점</span></label>
-                                            <label for="starpoint_10" class="label_star" title="5"><span class="blind">5점</span></label>
+                                            <label class="label_star" title="0.5"><span class="blind">0.5점</span></label>
+                                            <label class="label_star" title="1"><span class="blind">1점</span></label>
+                                            <label class="label_star" title="1.5"><span class="blind">1.5점</span></label>
+                                            <label class="label_star" title="2"><span class="blind">2점</span></label>
+                                            <label class="label_star" title="2.5"><span class="blind">2.5점</span></label>
+                                            <label class="label_star" title="3"><span class="blind">3점</span></label>
+                                            <label class="label_star" title="3.5"><span class="blind">3.5점</span></label>
+                                            <label class="label_star" title="4"><span class="blind">4점</span></label>
+                                            <label class="label_star" title="4.5"><span class="blind">4.5점</span></label>
+                                            <label class="label_star" title="5"><span class="blind">5점</span></label>
 
-                                            <input type="radio" name="score" value="0.5" data-score="0.5" id="starpoint_1" class="star_radio" disabled>
-                                            <input type="radio" name="score" value="1" data-score="1" id="starpoint_2" class="star_radio" disabled>
-                                            <input type="radio" name="score" value="1.5" data-score="1.5" id="starpoint_3" class="star_radio" disabled>
-                                            <input type="radio" name="score" value="2" data-score="2" id="starpoint_4" class="star_radio" disabled>
-                                            <input type="radio" name="score" value="2.5" data-score="2.5" id="starpoint_5" class="star_radio" disabled>
-                                            <input type="radio" name="score" value="3" data-score="3" id="starpoint_6" class="star_radio" disabled>
-                                            <input type="radio" name="score" value="3.5" data-score="3.5" id="starpoint_7" class="star_radio" disabled>
-                                            <input type="radio" name="score" value="4" data-score="4" id="starpoint_8" class="star_radio" disabled>
-                                            <input type="radio" name="score" value="4.5" data-score="4.5" id="starpoint_9" class="star_radio" disabled>
-                                            <input type="radio" name="score" value="5" data-score="5" id="starpoint_10" class="star_radio" disabled>
-
+                                            <!-- 별점 배경 표시 -->
                                             <span class="starpoint_bg"></span>
                                         </div>
                                     </div>
-                                    <!--별점 확인용-->
-                                    <input type="number" min="0" class="form-control" th:value="${review.score}" id="score" readonly>
                                 </div>
                             </div>
 
@@ -133,33 +120,14 @@
                         </div>
                     </div>
 
-                    <div class="col-12">
-                        <div class="mt-5 mb-3 imgA">
-                            <div class="row">
-                                <th:block th:each="img: ${review.imageDTOList}">
-                                    <th:block th:if="${img.repimg_yn == 'Y'}">
-                                        <label class="col-12 form-label">
-                                            대표 이미지<br>
-                                            <img class="main-image mt-3" th:src="${img.thumbnail_url}" alt="대표 이미지">
-                                        </label>
-                                    </th:block>
-                                </th:block>
-                            </div>
-
-                            <div class="mt-3 row detail-images-container">
-                                <th:block th:if="${review.imageDTOList.?[repimg_yn != 'Y'].size() > 0}">
-                                    <label class="col-12 form-label">상세 이미지</label>
-                                </th:block>
-
-                                <th:block th:each="img, iterStat : ${review.imageDTOList}">
-                                    <th:block th:unless="${img.repimg_yn == 'Y'}">
-                                        <div class="col-6 col-md-6">
-                                            <img class="detail-image" th:src="${img.thumbnail_url}" alt="상세 이미지">
-                                        </div>
-                                    </th:block>
-                                </th:block>
-                            </div>
-                        </div>
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mt-3"> <!-- 가로 배치 설정 -->
+                        <th:block th:each="img: ${review.imageDTOList}">
+                            <th:block th:if="${img.repimg_yn == 'N'}">
+                                <div class="col">
+                                    <img class="img-fluid rounded" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 200px; object-fit: cover;">
+                                </div>
+                            </th:block>
+                        </th:block>
                     </div>
 
                     <div class="col-12">
@@ -177,22 +145,24 @@
 </th:block>
 <script th:inline="javascript" layout:fragment="script">
 
-    //전달된 별점 값을 가져와 처리
+    //별점 영역
     document.addEventListener("DOMContentLoaded", function() {
-        const score = [[${review.score}]];  // 서버에서 받은 score 값
-        const scoreValue = parseFloat(score);
+        // 모든 별점 표시 영역을 선택합니다.
+        const starpointWraps = document.querySelectorAll(".starpoint_wrap");
 
-        if (!isNaN(scoreValue)) {
-            const starIndex = Math.round(scoreValue * 2); // 별점에 해당하는 인덱스 계산 (0.5 단위)
-            const starInput = document.querySelector(`#starpoint_${starIndex}`);
+        starpointWraps.forEach(function(starpointWrap) {
+            // 데이터 속성으로부터 점수를 가져옵니다.
+            const score = parseFloat(starpointWrap.getAttribute("data-score") || "0");
 
-            if (starInput) {
-                starInput.checked = true;  // 해당 별점의 라디오 버튼 체크
-                const starBg = document.querySelector(".starpoint_bg");
-                starBg.style.width = `${(starIndex * 10)}%`; // 별점 배경 크기 설정
-            }
-        }
+            // 별점 배경 요소를 선택합니다.
+            const starpointBg = starpointWrap.querySelector(".starpoint_bg");
+
+            // 점수에 따라 배경의 너비를 설정합니다. (별점 5점 기준 100%)
+            const percentage = (score / 5) * 100;
+            starpointBg.style.width = percentage + "%";
+        });
     });
+
 
 
 </script>

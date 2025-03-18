@@ -1,6 +1,5 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.config.CustomAuthenticationFailureHandler;
 import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.*;
@@ -14,10 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.catalina.Manager;
-import org.junit.validator.PublicClassValidator;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.autoconfigure.context.LifecycleAutoConfiguration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,9 +28,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -50,8 +46,6 @@ public class MemberService implements UserDetailsService {
     private final BrandRepository brandRepository;
     private final HotelRepository hotelRepository;
     private final EmailService emailService;
-    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException, AuthenticationException {
@@ -219,8 +213,6 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
-
-
     private void validateDuplicateMember(MemberDTO memberDTO){
 
         Member member =
@@ -238,7 +230,6 @@ public class MemberService implements UserDetailsService {
 
 
     }
-
 
     public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO, String sortOrder, String orderType, String type){
         Pageable pageable = null;
@@ -299,10 +290,6 @@ public class MemberService implements UserDetailsService {
         return memberDTOPageResponseDTO;
     }
 
-
-
-
-
     public MemberDTO readMember(String email){ //회원마이페이지정보
         Member member = memberRepository.findByEmail(email);
 
@@ -333,9 +320,6 @@ public class MemberService implements UserDetailsService {
 
         return passwordEncoder.matches(password, member.getPassword());
     }
-
-
-
 
     public void updateMember(MemberDTO memberDTO){ //회원마이페이지 수정
 
@@ -429,7 +413,7 @@ public class MemberService implements UserDetailsService {
 
 
     public PageResponseDTO<MemberDTO> cmPowerList(PageRequestDTO pageRequestDTO, String email, String type) { //치프가 승인하는 권한리스트
-//로그인한 권한을 승인해줄 치프의 이메일과 페이징처리를 위한 내용을 받아서
+    //로그인한 권한을 승인해줄 치프의 이메일과 페이징처리를 위한 내용을 받아서
         Member member  = memberRepository.findByEmail(email);
 
         if (member == null || member.getBrand() == null) {      //내이메일로 찾아온 정보가 없거나 소속이 없다면
@@ -517,8 +501,6 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
     }
 
-
-
     public Member findID(String name, String tel){ //회원Email찾기
 
         log.info("name: " + name + " tel: " + tel);
@@ -566,8 +548,6 @@ public class MemberService implements UserDetailsService {
             throw new RuntimeException("가입 중 오류가 발생하였습니다.");
         }
     }
-
-
 
     private String generateTempPassword(int length){    //비밀번호생성기
 

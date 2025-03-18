@@ -72,18 +72,15 @@ public class BrandService {
         List<Brand> brands;
 
         if (member != null && member.getRole().name().equals("SUPERADMIN")) {
-            // 슈퍼어드민이면 모든 브랜드 조회
             brands = brandRepository.findAll();
         } else {
-            // CHIEF가 등록한 브랜드가 아니라도, 같은 brand_num을 가진 브랜드를 가져오기
             if (member.getBrand() != null) {
                 brands = brandRepository.findByBrandNum(member.getBrand().getBrand_num());
             } else {
-                brands = new ArrayList<>(); // 브랜드가 없는 경우 빈 리스트 반환
+                brands = new ArrayList<>();
             }
         }
 
-        // 브랜드 리스트를 BrandDTO로 변환
         return brands.stream()
                 .map(brand -> modelMapper.map(brand, BrandDTO.class))
                 .collect(Collectors.toList());

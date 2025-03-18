@@ -1,7 +1,6 @@
 package com.lookatme.smartstay.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,6 @@ import java.util.List;
 @ToString
 @Builder
 public class NoticeDTO {
-
 
     private Long notice_num; //공지 번호
 
@@ -51,16 +49,6 @@ public class NoticeDTO {
 
     //공지사항 메인 이미지
     private ImageDTO mainImage;
-
-    // 공지사항 메인 이미지 getter
-    public ImageDTO getMainImageDTO() {
-        return mainImage;
-    }
-
-    // 공지사항 메인 이미지 setter
-    public void setMainImageDTO(ImageDTO mainImage) {
-        this.mainImage = mainImage;
-    }
 
     //공지사항 이미지
     private ImageDTO noticeImages;
