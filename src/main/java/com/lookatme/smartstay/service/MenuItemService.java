@@ -1,6 +1,5 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.dto.MenuItemDTO;
 import com.lookatme.smartstay.entity.Member;
 import com.lookatme.smartstay.entity.MenuItem;
 import com.lookatme.smartstay.repository.MemberRepository;
@@ -46,16 +45,6 @@ public class MenuItemService {
 
         menuItemRepository.deleteById(menuitem_num);
 
-    }
-
-    public MenuItemDTO modifyMenuItemCount(MenuItemDTO menuItemDTO) {
-        MenuItem menuItem = menuItemRepository.findById(menuItemDTO.getMenuitem_num())
-                .orElseThrow(EntityNotFoundException::new);
-
-        menuItem.setMenu_count(menuItemDTO.getMenu_count());
-
-        menuItem = menuItemRepository.save(menuItem);
-        return modelMapper.map(menuItem, MenuItemDTO.class);
     }
 
 }

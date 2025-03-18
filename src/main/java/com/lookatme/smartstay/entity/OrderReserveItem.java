@@ -45,17 +45,4 @@ public class OrderReserveItem extends BaseEntity {
     @JoinColumn(name = "pay_num")
     private Pay pay;
 
-    public static OrderReserveItem creatOrederReserveItem(List<MenuReserveItem> menuReserveItemList, List<CareReserveItem> careReserveItemList,
-                                                          String menu_request, RoomReserveItem roomReserveItem) {
-
-        OrderReserveItem orderReserveItem = new OrderReserveItem();
-        orderReserveItem.setMenu_request(menu_request);
-        orderReserveItem.setRoomReserveItem(roomReserveItem);
-        orderReserveItem.setMenuReserveItemList(menuReserveItemList);
-        orderReserveItem.setCareReserveItemList(careReserveItemList);
-
-        return orderReserveItem;
-
-    }
-
 }

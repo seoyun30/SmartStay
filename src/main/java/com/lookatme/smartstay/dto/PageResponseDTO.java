@@ -29,8 +29,7 @@ public class PageResponseDTO<E> {
   //다음 페이지 존재 여부
   private boolean next;
 
-  private List<E> dtoList;  //목록에 대한 결과값, 제너럴 사용으로
-                            //다른곳에서도 사용이 가능함
+  private List<E> dtoList;  //목록에 대한 결과값
 
   @Builder(builderMethodName = "withAll")
   public PageResponseDTO(PageRequestDTO pageRequestDTO, List<E> dtoList, int total){

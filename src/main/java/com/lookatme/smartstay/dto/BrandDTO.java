@@ -39,12 +39,4 @@ public class BrandDTO {
     private ActiveState active_state; //활성 비활성
 
     private ImageDTO mainImage;
-
-    public ImageDTO getMainImage() {
-        return mainImage;
-    }
-
-    public void setMainImage(ImageDTO mainImage) {
-        this.mainImage = mainImage;
-    }
 }

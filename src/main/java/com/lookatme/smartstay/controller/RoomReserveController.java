@@ -27,7 +27,6 @@ public class RoomReserveController {
     public String roomReserveRegisterGet(Long room_num, Model model) {
 
         RoomDTO roomDTO = roomService.roomRead(room_num);
-        log.info("룸 정보: " + roomDTO);
 
         model.addAttribute("roomDTO", roomDTO);
 
@@ -38,8 +37,6 @@ public class RoomReserveController {
     @GetMapping("/roomReserveList")
     public String roomReserveList(Principal principal, PageRequestDTO pageRequestDTO,
                                   ReserveSearchDTO reserveSearchDTO,Model model) {
-
-        log.info("목록 진입");
 
         List<RoomDTO> roomDTOList = roomService.findmyRoom(principal.getName());
         model.addAttribute("roomDTOList", roomDTOList);

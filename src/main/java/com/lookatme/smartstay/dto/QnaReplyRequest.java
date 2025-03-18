@@ -1,14 +1,8 @@
 package com.lookatme.smartstay.dto;
 
-import com.lookatme.smartstay.entity.BaseEntity;
-import com.lookatme.smartstay.entity.QnaReply;
-import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.entity.Qna;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -28,13 +22,5 @@ public class QnaReplyRequest {
     private Long qna_num; // Qna 엔티티 참조
     private Long member_id; // Member 엔티티 참조
 
-    public QnaReply toEntity(Qna qna, Member member) {
-        return QnaReply.builder()
-                .comment(comment)
-                .writer(writer)
-                .qna(qna)
-                .member(member)
-                .build();
-    }
 }
 

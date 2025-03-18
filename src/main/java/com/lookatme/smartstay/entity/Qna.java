@@ -25,8 +25,6 @@ public class Qna extends BaseEntity{
 
     private String writer; //문의 작성자
 
-    //private String category;//카테고리
-
     @ColumnDefault("0")
     private int viewCount;
 
@@ -35,24 +33,10 @@ public class Qna extends BaseEntity{
         this.viewCount += 1;
     }
 
-//    // 1:1 관계 설정
-//    @OneToOne(mappedBy = "qna", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JsonIgnore
-//    private QnaReply qnaReply; // 하나의 문의에 하나의 답변만
-//
-//    // 댓글 추가 메서드 (1:1 관계에 맞추기 위해 수정)
-//    public void addReply(QnaReply reply) {
-//        this.qnaReply = reply; // 1:1 관계이므로 단일 답변만 설정
-//        reply.setQna(this); // Qna에 답변 설정
-//    }
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_num")
     @JsonIgnore
     private Hotel hotel; //호텔
-
-   /* @OneToMany(mappedBy = "qna", cascade = CascadeType.ALL)
-    private List<QnaReply> qnaReplyList = new ArrayList<>(); //qna*/
 
     // Lombok의 @ToString 제거 후 직접 작성
     @Override

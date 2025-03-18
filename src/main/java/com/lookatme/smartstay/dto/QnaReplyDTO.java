@@ -1,9 +1,5 @@
 package com.lookatme.smartstay.dto;
 
-import com.lookatme.smartstay.entity.BaseEntity;
-import com.lookatme.smartstay.entity.Member;
-import com.lookatme.smartstay.entity.Qna;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -38,11 +34,6 @@ public class QnaReplyDTO {
     private String create_by;
 
     private String modified_by;
-
-    public QnaReplyDTO setQnaDTO(QnaDTO qnaDTO) {
-        this.qnaDTO = qnaDTO;
-        return this;
-    }
 
     public QnaReplyDTO setMemberDTO(MemberDTO memberDTO) {
         this.memberDTO = memberDTO;

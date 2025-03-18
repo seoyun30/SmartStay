@@ -33,9 +33,6 @@ public class CartController {
     public ResponseEntity cartRoomReserveRegister(@Valid RoomItemDTO roomItemDTO, BindingResult bindingResult,
                                                   Principal principal) {
 
-        log.info("브라우저 roomItemDTO: " + roomItemDTO);
-        log.info("로그인 principal: " + principal);
-
         if (bindingResult.hasErrors()) {
 
             StringBuffer sb = new StringBuffer();
@@ -66,10 +63,6 @@ public class CartController {
     @PostMapping("/cartOrderReserveRegister")
     public ResponseEntity<?> cartOrderReserveRegister(@RequestBody OrderItemDTO orderItemDTO,
                                                       Principal principal) {
-
-        log.info("브라우저 orderItemDTO: " + orderItemDTO);
-        log.info("로그인 principal: " + principal);
-
         if (orderItemDTO.getRoomreserveitem_num() == null) {
             return new ResponseEntity<>("roomreserveitem_num 값이 필요합니다.", HttpStatus.BAD_REQUEST);
         }
@@ -115,8 +108,6 @@ public class CartController {
     public ResponseEntity cartRoomReserveModify (@Valid RoomItemDTO roomItemDTO, BindingResult bindingResult, Principal principal) {
 
         String email = principal.getName();
-
-        log.info("장바구니 수정 roomItemDTO: " + roomItemDTO);
 
         if (bindingResult.hasErrors()) {
             StringBuffer sb = new StringBuffer();
@@ -200,8 +191,6 @@ public class CartController {
     //룸서비스 수정
     @PostMapping("/cartOrderReserveModify")
     public ResponseEntity cartOrderReserveModify (@RequestBody OrderItemDTO orderItemDTO, Principal principal) {
-
-        log.info("orderItemDTO: " + orderItemDTO);
 
         if (!cartService.validateCartOrderItem(orderItemDTO.getService_num(), principal.getName())) {
             return new ResponseEntity<String>("수정권한이 없습니다.", HttpStatus.FORBIDDEN);
