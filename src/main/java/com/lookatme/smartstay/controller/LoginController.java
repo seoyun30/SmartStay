@@ -224,35 +224,6 @@ public class LoginController {
    }
 
 
-   /*@GetMapping("/adLogin") //로그인페이지(총판,매니져) 관리자들
-    public String adLoginGet(MemberDTO memberDTO, Principal principal){
-
-       if(principal != null){
-           log.info("========로그인중 ==============");
-
-       }
-
-       return "member/adLogin";
-        //return "member/adSignup";
-   }*/
-
-  /*  @PostMapping("/adLogin") //로그인
-    public String adLoginPost(MemberDTO memberDTO, Principal principal){
-
-
-        log.info("로그인");
-
-        return "redirect:/adMain";
-
-    }*/
-
-    /*@PostMapping("/adLogout") //로그아웃
-    public String adLogout(HttpSession session){
-
-        session.invalidate();
-
-        return "redirect:/adLogin";
-    }*/
 
    @GetMapping("/login") //로그인페이지
     public String loginGet(MemberDTO memberDTO, Principal principal){
@@ -314,26 +285,6 @@ public class LoginController {
         return "member/changePW";
     }
 
-
-//    @GetMapping("/changeMove")
-//    public String changeMoveGet(Principal principal, Model model){
-//
-//        if(principal == null){
-//            return "redirect:/member/loginPW";
-//        }
-//
-//        MemberDTO memberDTO = memberService.findbyEmail(principal.getName());
-//
-//        model.addAttribute("memberDTO", memberDTO);
-//
-//        String redirectUrl = "/"; // 기본값 (USER는 메인 페이지로 이동)
-//        if (memberDTO.getRole() == Role.SUPERADMIN || memberDTO.getRole() == Role.CHIEF || memberDTO.getRole() == Role.MANAGER) {
-//            redirectUrl = "/adMain"; // 관리자 계열은 /adMain으로 이동
-//        }
-//
-//        return "redirect:" + redirectUrl;
-//
-//    }
 
 
 

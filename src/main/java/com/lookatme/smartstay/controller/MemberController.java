@@ -24,7 +24,6 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
     private final RoomReserveService roomReserveService;
     private final OrderReserveService orderReserveService;
     private final ReviewService reviewService;
@@ -226,8 +225,7 @@ public class MemberController {
                 log.info("비밀번호 유효성검사");
 
                 String  msg = "비밀번호는 8 ~ 20 글자로 입력해주세요.";
-//                redirectAttributes.addFlashAttribute("msg", msg);
-//                return "redirect:/member/mypage";
+
 
                 memberDTO = memberService.findbyEmail(memberDTO.getEmail());
 
@@ -243,15 +241,7 @@ public class MemberController {
 
                 return "member/mypageModify";
             }
-
         }
-//        if(!passwordEncoder.matches(memberDTO.getPassword(), member.getPassword())){
-//            throw new IllegalStateException("현재 비밀번호가 일치하지 않습니다.");
-//        } else {
-//            passwordEncoder = new BCryptPasswordEncoder();
-//
-//            model.addAttribute("memberDTO", memberDTO);
-//        }
 
         try {
             memberService.updateMember(memberDTO);

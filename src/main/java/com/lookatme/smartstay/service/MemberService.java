@@ -239,23 +239,6 @@ public class MemberService implements UserDetailsService {
 
     }
 
-//    public List<MemberDTO> memberList() { //회웍목록리스트
-//
-//        List<Member> memberList = memberRepository.findAll();
-//        if(memberList.isEmpty()) {
-//            return new ArrayList<>();
-//
-//        }else {
-//            List<MemberDTO> memberDTOList = memberList.stream()
-//                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class))
-//                            .collect(Collectors.toList());
-//
-//            memberDTOList.forEach(dto -> log.info(dto));
-//
-//            return memberDTOList;
-//        }
-//
-//    }
 
     public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO, String sortOrder, String orderType, String type){
         Pageable pageable = null;
@@ -298,9 +281,6 @@ public class MemberService implements UserDetailsService {
         log.info("DB에서 가져온 회원 목록 : ");
         memberList.forEach(member -> log.info(member.toString()));
 
-//        if(memberList.isEmpty()) {
-//            memberList = new ArrayList<>();
-//        }
 
         List<MemberDTO> memberDTOList = memberList.stream().map(member -> modelMapper.map(member, MemberDTO.class) ).collect(Collectors.toList());
 
@@ -369,14 +349,6 @@ public class MemberService implements UserDetailsService {
 
         if(!memberDTO.getPassword().isEmpty()){
             log.info("비밀번호가 안비어있다. 비밀번호 변경예정");
-
-//            if(!passwordEncoder.matches(memberDTO.getPassword(), member.getPassword())){
-//                throw new IllegalStateException("현재 비밀번호가 일치하지 않습니다.");
-//            }
-//
-//            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-
             String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
             member.setPassword(encodedPassword);
             log.info("비밀번호 변경했음");
@@ -545,34 +517,6 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
     }
 
-
-   /* public void adPowerMember(String email) {
-
-        Member member = memberRepository.findByEmail(email);
-        log.info("파워승인파워승인" +email);
-        log.info(member);
-        if (member != null) {
-            member.setPower(Power.YES);
-            memberRepository.save(member);
-        }
-    }*/
-
-
-    public void powerMember(String email) { // 권한승인 목록
-
-        log.info("파워승인파워승인" + email);
-        if (email != null && !email.isEmpty()) {
-            Member member = memberRepository.findByEmail(email);
-            if (member != null) {
-                member.setPower(member.getPower() == Power.YES ? Power.NO : Power.YES);
-                memberRepository.save(member);
-                log.info("power 변경: " + email + " -> " + member.getPower());
-            } else {
-                log.info("해당 이메일로 회원을 찾을 수 없음: " + email);
-            }
-        }
-
-    }
 
 
     public Member findID(String name, String tel){ //회원Email찾기
