@@ -237,7 +237,7 @@ public class ReviewService {
         }
     }
 
-    //리뷰 상세보기(보이는 리뷰가 있으면 모두 가능)
+    //리뷰 상세보기(모두 가능)
     public ReviewDTO reviewRead(Long rev_num) {
 
         Review review = reviewRepository.findById(rev_num)
@@ -349,8 +349,6 @@ public class ReviewService {
                 }
             }
         }
-
-        // 1. 리뷰 조회
 
         reviewRepository.deleteById(id);
         log.info("리뷰 삭제 완료 rev_num : " + id);

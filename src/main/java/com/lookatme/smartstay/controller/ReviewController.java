@@ -46,7 +46,7 @@ public class ReviewController {
     private final ImageService imageService;
 
 
-    //관리자 리뷰 목록 페이지(chief, manager권한)
+    //관리자 리뷰 목록 페이지( manager권한)
     @GetMapping("/adMyReviewList")
     public String adMyReviewList(PageRequestDTO pageRequestDTO, Model model, Principal principal,
                                  @RequestParam(defaultValue = "rev_num") String sortField,
@@ -116,20 +116,27 @@ public class ReviewController {
     //호텔 리뷰 목록
     @GetMapping("/reviewList/{hotel_num}")
     public String reviewList(@PathVariable("hotel_num") Long hotel_num, Model model,
-                             PageRequestDTO pageRequestDTO,
                              @RequestParam(value = "query", required = false) String query,
                              @RequestParam(value = "sortField", defaultValue = "reg_date") String sortField,
                              @RequestParam(value = "sortDir", defaultValue = "desc") String sortDir, Sort sort) {
 
-//        if (sortDir == null || sortDir.isEmpty()) {
-//            sortDir = "desc";
-//        }
+
 
         log.info("hotel_num: " + hotel_num);
         log.info("sortField: " + sortField);
         log.info("sortDir: " + sortDir);
 
+        // 호텔 정보 가져오기 (별점 평균 , 리뷰 수 포함)
+        HotelDTO hotelDTO = hotelService.read(hotel_num);
         List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num, sortField, sortDir);
+
+        // 리뷰가 없는 경우, 빈 리스트를 모델에 전달
+        if (reviewDTOList.isEmpty()) {
+            model.addAttribute("message", "이 호텔에 대한 리뷰가 없습니다." );
+        }
+
+        // 모델에 데이터 추가
+        model.addAttribute("hotelDTO", hotelDTO);
         model.addAttribute("reviewDTOList", reviewDTOList);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
@@ -142,7 +149,7 @@ public class ReviewController {
 
     //마이 리뷰 목록(user권한)
     @GetMapping("/myReviewList")
-    public String myReviewList(Principal principal, PageRequestDTO pageRequestDTO, Model model) {
+    public String myReviewList(Principal principal, Model model) {
         log.info("My 리뷰");
         log.info("principal: " + principal.getName());
 
@@ -190,7 +197,7 @@ public class ReviewController {
     @PostMapping("/reviewRegister/{reserve_num}")
     public String reviewRegisterPost(@Valid ReviewDTO reviewDTO, RedirectAttributes redirectAttributes,
                                      @PathVariable("reserve_num") Long reserve_num, Long hotel_num,
-                                     @RequestParam("multipartFileList") List<MultipartFile> multipartFileList, Model model,
+                                     @RequestParam("multipartFileList") List<MultipartFile> multipartFileList,
                                      Principal principal) throws Exception {
 
         System.out.println("받은 reserve_num: " + reserve_num);
@@ -314,7 +321,7 @@ public class ReviewController {
     }
 
     @PostMapping("/reviewModify")
-    public String reviewModifyPost(ReviewDTO reviewDTO, Principal principal, Model model,
+    public String reviewModifyPost(ReviewDTO reviewDTO,
                                    RedirectAttributes redirectAttributes, Long hotel_num,
                                    @RequestParam(value = "multipartFileList", required = false) List<MultipartFile> multipartFileList,
                                    @RequestParam(value = "delnumList", required = false) List<Long> delnumList){
