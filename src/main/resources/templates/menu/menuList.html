@@ -107,7 +107,16 @@
                     </tr>
                     <tr th:if="${pageResponseDTO != null}" th:each="menu : ${pageResponseDTO.dtoList}" class="text-center">
                         <td th:text="${menu.menu_num}"></td>
-                        <td th:text="${menu.menu_sort}"></td>
+                        <td th:switch="${menu.menu_sort}">
+                            <span th:case="${menu.menu_sort.KOREAN}">한식</span>
+                            <span th:case="${menu.menu_sort.CHINESE}">중식</span>
+                            <span th:case="${menu.menu_sort.JAPANESE}">일식</span>
+                            <span th:case="${menu.menu_sort.WESTERN}">양식</span>
+                            <span th:case="${menu.menu_sort.SNACK}">분식</span>
+                            <span th:case="${menu.menu_sort.DRINK}">음료</span>
+                            <span th:case="${menu.menu_sort.ETC}">기타</span>
+                            <span th:case="*">알 수 없음</span> <!-- 예외 처리 -->
+                        </td>
                         <td>
                             <a th:href="@{/menu/menuRead(menu_num=${menu.menu_num})}">
                                 [[${menu.menu_name}]]
