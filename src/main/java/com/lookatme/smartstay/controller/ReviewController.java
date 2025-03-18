@@ -121,15 +121,17 @@ public class ReviewController {
                              @RequestParam(value = "sortField", defaultValue = "reg_date") String sortField,
                              @RequestParam(value = "sortDir", defaultValue = "desc") String sortDir, Sort sort) {
 
-//        if (sortDir == null || sortDir.isEmpty()) {
-//            sortDir = "desc";
-//        }
-
         log.info("hotel_num: " + hotel_num);
         log.info("sortField: " + sortField);
         log.info("sortDir: " + sortDir);
 
+        // 호텔 정보 가져오기 (별점 평균 , 리뷰 수 포함)
+        HotelDTO hotelDTO = hotelService.read(hotel_num);
+
         List<ReviewDTO> reviewDTOList = reviewService.gethotelReviewList(hotel_num, sortField, sortDir);
+
+        // // 모델에 데이터 추가
+        model.addAttribute("hotelDTO", hotelDTO);
         model.addAttribute("reviewDTOList", reviewDTOList);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);

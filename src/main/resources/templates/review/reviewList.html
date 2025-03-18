@@ -11,16 +11,13 @@
     <title>SmartStay</title>
     <!-- date-fns 라이브러리 로드 -->
     <script src="https://cdn.jsdelivr.net/npm/date-fns@2.28.0/dist/date-fns.min.js"></script>
-<!--    &lt;!&ndash; Bootstrap CSS (중복 제거) &ndash;&gt;-->
-<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">-->
-<!--    &lt;!&ndash; Bootstrap JS (필요한 경우) &ndash;&gt;-->
-<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>-->
-
-
     <!-- Keen Slider CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@6.0.0/keen-slider.min.css">
     <!-- Keen Slider JS -->
     <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.0.0/keen-slider.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/keen-slider@latest/keen-slider.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@latest/keen-slider.min.css">
 
 
 
@@ -90,10 +87,47 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-    <h1 class="text-center mb-3 mt-5">후기</h1>
+    <h1 class="text-center mb-3 mt-5" th:text="${hotelDTO.hotel_name} + ' 후기'"></h1>
 
     <div class="row mt-5">
         <div class="row"> <!--여기부터 카드 시작-->
+
+            <!-- 호텔 별점 평균과 리뷰 수 표시 -->
+            <div class="d-flex justify-content-center align-items-center mt-0 mb-3">
+                <div class="d-flex align-items-center text-center">
+                    <i class="text-black bi bi-star-fill me-1"></i>
+                    <span th:text="${hotelDTO.score}" class="text-black fw-bold"></span> <!-- 평균 별점 -->
+                    <span th:text="|(${hotelDTO.review_count})|" class="text-black"></span> <!-- 리뷰 수 표시 -->
+                </div>
+            </div>
+
+<!--            &lt;!&ndash; 리뷰 이미지 슬라이더 컨테이너 &ndash;&gt;-->
+<!--            <div class="position-relative mt-3">-->
+<!--                <div class="keen-slider" th:if="${reviewDTOList.size() > 0}">-->
+<!--                    <th:block th:each="review : ${reviewDTOList}">-->
+<!--                        <th:block th:each="img : ${review.imageDTOList}">-->
+<!--                            <th:block th:if="${img.repimg_yn == 'N'}">-->
+<!--                                <div class="keen-slider__slide" style="margin-right: 15px;">-->
+<!--                                    <a th:href="@{/review/reviewRead(rev_num=${review.rev_num})}">-->
+<!--                                        <img class="img-fluid rounded" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 200px; object-fit: cover;">-->
+<!--                                    </a>-->
+<!--                                </div>-->
+<!--                            </th:block>-->
+<!--                        </th:block>-->
+<!--                    </th:block>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; 슬라이드 이동 버튼 &ndash;&gt;-->
+<!--                <button id="prevSlide" class="btn btn-secondary position-absolute"-->
+<!--                        style="top: 50%; left: 0; transform: translateY(-50%); z-index: 10; background-color: rgba(0,0,0,0.5); border: none;">-->
+<!--                    &laquo;-->
+<!--                </button>-->
+<!--                <button id="nextSlide" class="btn btn-secondary position-absolute"-->
+<!--                        style="top: 50%; right: 0; transform: translateY(-50%); z-index: 10; background-color: rgba(0,0,0,0.5); border: none;">-->
+<!--                    &raquo;-->
+<!--                </button>-->
+<!--            </div>-->
+
 
             <!-- 정렬 선택 폼 -->
             <div class="col-10">
@@ -117,6 +151,7 @@
                     <div class="container d-flex flex-column align-items-center">
                         <!-- 리뷰 카드 -->
                         <div class="card mb-3 p-3" style="width: 55rem;">
+
                             <input type="hidden" th:value="${review.rev_num}">
 
                             <div class="review-container" >
@@ -169,30 +204,43 @@
                             </div>
 
 
-                            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3 mt-3">
-                                <th:block th:each="img: ${review.imageDTOList}">
-                                    <th:block th:if="${img.repimg_yn == 'N'}">
-                                        <div class="col">
-                                            <a th:href="@{/review/reviewRead(rev_num=${review.rev_num})}">
-                                                <img class="img-fluid rounded" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 200px; object-fit: cover;">
-                                            </a>
-                                        </div>
+                            <!--이전에 사용했던 이미지 ..-->
+<!--                            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3 mt-3">-->
+<!--                                <th:block th:each="img: ${review.imageDTOList}">-->
+<!--                                    <th:block th:if="${img.repimg_yn == 'N'}">-->
+<!--                                        <div class="col">-->
+<!--                                            <a th:href="@{/review/reviewRead(rev_num=${review.rev_num})}">-->
+<!--                                                <img class="img-fluid rounded" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 200px; object-fit: cover;">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+<!--                                    </th:block>-->
+<!--                                </th:block>-->
+<!--                            </div>-->
+
+                            <!-- 이미지 슬라이더 컨테이너 -->
+                            <div class="position-relative mt-3">
+                                <div class="keen-slider" th:if="${review.imageDTOList.size() > 0}">
+                                    <th:block th:each="img: ${review.imageDTOList}">
+                                        <th:block th:if="${img.repimg_yn == 'N'}">
+                                            <div class="keen-slider__slide">
+                                                <a th:href="@{/review/reviewRead(rev_num=${review.rev_num})}">
+                                                    <img class="img-fluid rounded" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 200px; object-fit: cover;">
+                                                </a>
+                                            </div>
+                                        </th:block>
                                     </th:block>
-                                </th:block>
+                                </div>
+
+                                <!-- 슬라이드 이동 버튼 -->
+                                <button id="prevSlide" class="btn btn-secondary position-absolute"
+                                        style="top: 50%; left: 0; transform: translateY(-50%); z-index: 10; background-color: rgba(0,0,0,0.5); border: none;">
+                                    &laquo;
+                                </button>
+                                <button id="nextSlide" class="btn btn-secondary position-absolute"
+                                        style="top: 50%; right: 0; transform: translateY(-50%); z-index: 10; background-color: rgba(0,0,0,0.5); border: none;">
+                                    &raquo;
+                                </button>
                             </div>
-
-                            <!--                            <div class="keen-slider">-->
-                            <!--                                <th:block th:each="img: ${review.imageDTOList}">-->
-                            <!--                                    <th:block th:if="${img.repimg_yn == 'N'}">-->
-                            <!--                                        <div class="keen-slider__slide">-->
-                            <!--                                            <a th:href="@{/review/reviewRead(rev_num=${review.rev_num})}">-->
-                            <!--                                                <img class="img-fluid rounded" th:src="${img.image_url}" alt="이미지" style="width: 100%; height: 200px; object-fit: cover;">-->
-                            <!--                                            </a>-->
-                            <!--                                        </div>-->
-                            <!--                                    </th:block>-->
-                            <!--                                </th:block>-->
-                            <!--                            </div>-->
-
 
 
                         </div>
@@ -280,7 +328,41 @@
     }
 
 
-    //캐러셀
+    //(rev_num을 기준으로 모든 이미지가져오기) 캐러셀
+    document.addEventListener("DOMContentLoaded", function () {
+        const sliderElement = document.querySelector(".keen-slider");
+
+        if (sliderElement) { // 이미지 슬라이더가 존재할 경우에만 초기화
+            const slider = new KeenSlider(sliderElement, {
+                loop: false,
+                slides: { perView: 5 , spacing: 15 }, // 한 번에 하나의 슬라이드만 표시
+            });
+
+            // 이전 버튼 클릭 시
+            document.getElementById("prevSlide").addEventListener("click", () => slider.prev());
+
+            // 다음 버튼 클릭 시
+            document.getElementById("nextSlide").addEventListener("click", () => slider.next());
+        }
+    });
+
+    // //(rev_num마다 이미지를 하나씩 가져오는 형식) 캐러셀
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     const sliderElement = document.querySelector(".keen-slider");
+    //
+    //     if (sliderElement) { // 이미지 슬라이더가 존재할 경우에만 초기화
+    //         const slider = new KeenSlider(sliderElement, {
+    //             loop: false,
+    //             slides: { perView: 5, spacing: 15 }, // 한 번에 5개의 슬라이드 표시, 슬라이드 사이 간격 15px
+    //         });
+    //
+    //         // 이전 버튼 클릭 시
+    //         document.getElementById("prevSlide").addEventListener("click", () => slider.prev());
+    //
+    //         // 다음 버튼 클릭 시
+    //         document.getElementById("nextSlide").addEventListener("click", () => slider.next());
+    //     }
+    // });
 
 
 
