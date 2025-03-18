@@ -190,7 +190,6 @@ public class MainController {
             System.out.println("검색 결과: " + results.size());
         }
 
-//        results = results.stream().filter(HotelDTO::hasAvailableRooms).collect(Collectors.toList());
         results = results.stream()
                 .peek(hotel -> System.out.println("Before filter: " + hotel))
                 .filter(HotelDTO::hasAvailableRooms)
