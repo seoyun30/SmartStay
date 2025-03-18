@@ -272,9 +272,6 @@ public class MemberService implements UserDetailsService {
         log.info("DB에서 가져온 회원 목록 : ");
         memberList.forEach(member -> log.info(member.toString()));
 
-//        if(memberList.isEmpty()) {
-//            memberList = new ArrayList<>();
-//        }
 
         List<MemberDTO> memberDTOList = memberList.stream().map(member -> modelMapper.map(member, MemberDTO.class) ).collect(Collectors.toList());
 
