@@ -240,7 +240,7 @@ public class ReviewService {
         }
     }
 
-    //리뷰 상세보기(보이는 리뷰가 있으면 모두 가능)
+    //리뷰 상세보기(모두 가능)
     public ReviewDTO reviewRead(Long rev_num) {
 
         Review review = reviewRepository.findById(rev_num)
@@ -353,8 +353,6 @@ public class ReviewService {
             }
         }
 
-        // 1. 리뷰 조회
-
         reviewRepository.deleteById(id);
         log.info("리뷰 삭제 완료 rev_num : " + id);
     }
@@ -411,25 +409,6 @@ public class ReviewService {
         return reviewDTOPageResponseDTO;
     }
 
-    //호텔별 리뷰 평균 별점 계산
-    public double calculateAverageRating(Long hotel_num) {
-        List<Review> reviews = reviewRepository.findByHotel(hotel_num);
-
-        if (reviews.isEmpty()) {
-            return 0.0;
-        }
-
-        double totalScore = 0;
-        for (Review review : reviews) {
-            try {
-                totalScore += Double.parseDouble(review.getScore());
-            } catch (NumberFormatException e) {
-                //score가 올바르지 않은 값인 경우 예외
-            }
-        }
-
-        return totalScore / reviews.size();  //평균 별점 계산
-    }
 
     public List<ReviewDTO> getLimitedReviews (Long hotel_num, int limit) {
         Pageable pageable = PageRequest.of(0, limit);

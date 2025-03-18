@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/userlayout}">
 <head>
@@ -43,28 +42,6 @@
             align-items: center;
         }
 
-        /*.starpoint_box i {*/
-        /*    font-size: 2rem;*/
-        /*    cursor: pointer;*/
-        /*    margin-right: 5px;*/
-        /*}*/
-
-        /*.starpoint_box i.bi-star {*/
-        /*    color: #ccc; !* 빈 별 색 *!*/
-        /*}*/
-
-        /*.starpoint_box i.bi-star-fill {*/
-        /*    color: #ffcc00; !* 찬 별 색 *!*/
-        /*}*/
-
-        /*.starpoint_box i.bi-star-half {*/
-        /*    color: #ffcc00; !* 반 별 색 *!*/
-        /*}*/
-
-        /*.review-form .star a.on { color: #f2cb61; }*/
-
-
-
     </style>
 </head>
 <body>
@@ -82,8 +59,6 @@
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
-<!--                            <input type="hidden" name="roomreserveitem_num" th:value="${roomReserveItemDTO.roomreserveitem_num}">-->
-<!--                            <input type="hidden" name="reserve_num" th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">-->
                             <label for="exampleFormControlTextarea1" class="form-label">리뷰 내용</label>
                             <textarea class="form-control" th:field="*{content}" id="exampleFormControlTextarea1" rows="5"
                                       placeholder="리뷰 내용을 적어주세요."></textarea>
@@ -186,11 +161,7 @@
                             <button type="submit" class="btn btn-primary">확인</button>
                         </form>
                         <button type="reset" class="btn btn-secondary">초기화</button>
-                        <!--                        <span th:value="${roomReserveItemDTO.roomReserveDTO.reserve_num}">-->
-                        <!--                            <button type="button" class="btn btn-danger"-->
-                        <!--                                    th:onclick="|location.href='@{/member/myRoomReserveRead(id=${reserve_num})}'|">취소</button>-->
-                        <!--                        </span>-->
-                        <!--                        @{주소}, 문자열+주소 |문자열@{주소}|-->
+
                     </div>
                 </div>
 
@@ -245,8 +216,7 @@
                     $(".aa").append(str)
                     document.querySelector(".aa").lastChild.appendChild(inputtag)
                     inputtag.style.display = 'none'
-                    // document.getElementById('preview').src = e.target.result;
-                    // document.querySelector(".aa").innerHTML = "<button type='button' class='bb'>올리지 않기</button>"
+
                 };
                 reader.readAsDataURL(input.files[0]);
             }

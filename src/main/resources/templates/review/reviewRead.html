@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/userlayout}">
 <head>
@@ -146,6 +145,7 @@
 </th:block>
 <script th:inline="javascript" layout:fragment="script">
 
+    //별점 영역
     document.addEventListener("DOMContentLoaded", function() {
         // 모든 별점 표시 영역을 선택합니다.
         const starpointWraps = document.querySelectorAll(".starpoint_wrap");

@@ -97,7 +97,7 @@ public class ReviewDTO {
             return "방금 전";
         } else if (seconds < 3600) {
             return (seconds / 60) + "분 전";
-        } else if (seconds < 86400) { //허루 (24시간) 이내
+        } else if (seconds < 86400) { // 하루 (24시간) 이내
             return (seconds /3600) + "시간 전";
         } else {
             return (seconds / 86400) + "일 전";
