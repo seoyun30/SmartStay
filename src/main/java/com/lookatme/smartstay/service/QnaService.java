@@ -38,9 +38,9 @@ public class QnaService {
     private String getLoggedInUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
-            return "redirect:/member/login"; // 인증되지 않은 경우 기본값 반환
+            return "redirect:/member/login";
         }
-        return auth.getName(); // 로그인된 사용자의 이메일 (또는 사용자명) 반환
+        return auth.getName();
     }
 
     //등록

@@ -25,12 +25,10 @@ public class QnaReply extends BaseEntity{
     @JoinColumn(name = "member_num")
     private Member member;
 
-    // QnA와 QnaReply의 N:1 관계 설정
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "qna_num") // 외래 키 컬럼 이름
+    @JoinColumn(name = "qna_num")
     private Qna qna;
 
-    //댓글수정
     public void update(String comment) {
         this.comment = comment;
     }

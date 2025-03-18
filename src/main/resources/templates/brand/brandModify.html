@@ -102,8 +102,8 @@
 
                                         // 사업자번호 자동 하이픈 추가 + 유효성 검사
                                         businessNumInput.addEventListener('input', function () {
-                                            let value = this.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
-                                            if (value.length > 10) value = value.substring(0, 10); // 10자리 이상 입력 방지
+                                            let value = this.value.replace(/[^0-9]/g, '');
+                                            if (value.length > 10) value = value.substring(0, 10);
                                             // 하이픈 자동 추가
                                             if (value.length > 3) {
                                                 value = value.replace(/(\d{3})(\d{0,2})(\d{0,5})/, '$1-$2-$3');
@@ -114,12 +114,12 @@
 
                                         // 전화번호 자동 하이픈 추가 + 유효성 검사
                                         telInput.addEventListener('input', function () {
-                                            let value = this.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
+                                            let value = this.value.replace(/[^0-9]/g, '');
 
                                             // 전화번호 형식 변환
                                             if (value.startsWith("02")) {
-                                                // '02' 지역번호는 9자리 또는 10자리로 제한하고, 형식은 '02-xxx-xxxx' 또는 '02-xxxx-xxxx'
-                                                if (value.length > 10) { // 10자리로 제한
+
+                                                if (value.length > 10) {
                                                     value = value.substring(0, 10);
                                                 }
                                                 if (value.length <= 8) {  // 9자리 형식 (02-xxx-xxxx)
@@ -131,23 +131,23 @@
                                                 }
 
                                             } else if (["010", "011", "016", "017", "018", "019"].includes(value.substring(0, 3))) {
-                                                // 휴대폰 번호 (11자리, 형식: 010-xxxx-xxxx)
-                                                if (value.length > 11) { // 010-xxxx-xxxx (11자리로 제한)
+
+                                                if (value.length > 11) {
                                                     value = value.substring(0, 11);
                                                 }
-                                                value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'); // 010-xxxx-xxxx 형식
+                                                value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
                                             } else {
-                                                // 다른 지역번호 처리 (다른 지역번호: 032-xxx-xxxx와 같은 10자리 또는 11자리 형식)
-                                                if (value.length > 11) { // 11자리로 제한
+
+                                                if (value.length > 11) { //
                                                     value = value.substring(0, 11);
                                                 }
 
                                                 // 10자리 또는 11자리 지역번호 형식 처리
-                                                if (value.length <= 9) {  // 10자리 형식 (xxx-xxx-xxxx)
+                                                if (value.length <= 9) {
                                                     value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-                                                } else if (value.length === 10) { // 10자리 형식 (xxx-xxx-xxxx)
+                                                } else if (value.length === 10) {
                                                     value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-                                                } else if (value.length === 11) { // 11자리 형식 (xxx-xxxx-xxxx)
+                                                } else if (value.length === 11) {
                                                     value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
                                                 }
                                             }
@@ -162,9 +162,9 @@
                                                 (numericValue.startsWith('02') && (numericValue.length === 9 || numericValue.length === 10)) ||
                                                 (numericValue.length === 10 && !numericValue.startsWith('02') && numericValue.length === 10) ||
                                                 (numericValue.length === 11 && numericValue.length !== 10)) {
-                                                telError.style.display = "none"; // 유효하면 에러 메시지 숨기기
+                                                telError.style.display = "none"; /
                                             } else {
-                                                telError.style.display = "block"; // 유효하지 않으면 에러 메시지 보이기
+                                                telError.style.display = "block";
                                             }
                                         });
                                     });

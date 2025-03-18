@@ -146,15 +146,14 @@
         let loginRole = $("#loginRole").val();
         // 목록 버튼 클릭 시
         $(".listBtn").on("click", function () {
-            // 브라우저의 히스토리에서 이전 페이지로 이동
             window.history.back();
         });
 
         //본문 수정 버튼 클릭시
         $(".modBtn").on("click", function () {
-            let loggedInUser = $("#loggedInUser").val(); // 로그인한 사용자 정보
-            let writer = $("#writer").val(); // 게시글 작성자 정보
-            let qna_num = $("#qna_num").val(); // 게시글 번호 가져오기
+            let loggedInUser = $("#loggedInUser").val();
+            let writer = $("#writer").val();
+            let qna_num = $("#qna_num").val();
 
             if (loggedInUser === writer) {
                 location.href = "/qna/qnaModify?qna_num=" + qna_num;
@@ -202,19 +201,19 @@
             }
 
             $.ajax({
-                url: '/qnaReply/register?qna_num=' + qna_num, // QnA 번호를 쿼리 파라미터로 전달
+                url: '/qnaReply/register?qna_num=' + qna_num,
                 type: 'POST',
-                contentType: "application/json; charset=utf-8", // 요청 본문 타입
-                data: JSON.stringify(qnaReplyDTO), // JSON 데이터로 변환하여 전송
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(qnaReplyDTO),
                 success: function (response) {
                     alert('댓글이 성공적으로 등록되었습니다.');
-                    location.replace('/qna/qnaRead?qna_num=' + qna_num); // 성공 시 QnA 상세 페이지로 이동
+                    location.replace('/qna/qnaRead?qna_num=' + qna_num);
                     $('#comment-section').css('margin-top', '30px');
                 },
                 error: function (xhr, status, error) {
                     console.error('댓글 등록 실패:', error);
                     alert('댓글 등록에 실패했습니다.');
-                    location.replace('/qna/qnaRead?qna_num=' + qna_num); // 실패 시에도 QnA 상세 페이지로 이동
+                    location.replace('/qna/qnaRead?qna_num=' + qna_num);
                 }
             });
         }
@@ -230,16 +229,16 @@
                     console.log(response)
                     let commentForm = $('#comment-form');
                     commentForm.hide()
-                    let commentSection = $('#comment-section'); // 댓글 표시 영역
-                    commentSection.empty(); // 기존 댓글 초기화
+                    let commentSection = $('#comment-section');
+                    commentSection.empty();
                     if (`${response.comment}`){
                         console.log(response)
 
                         let commentHTML = `
-                            <div class="row justify-content-center"> <!-- 본문과 동일한 너비로 맞추기 위해 row와 col을 사용 -->
-                                <div class="col-8"> <!-- col-8로 카드의 너비를 설정 (본문과 동일한 너비로 설정) -->
+                            <div class="row justify-content-center">
+                                <div class="col-8">
                                     <h3 class="mb-4">답변</h3>
-                                    <div class="card mb-2"> <!-- 카드의 너비는 기본적으로 100%로 설정됨 -->
+                                    <div class="card mb-2">
                                         <div class="card-body position-relative">
                                             <p class="text-start" style="font-size: 15px; color: black;">${response.comment}</p>
                                         </div>
@@ -257,7 +256,7 @@
 
 
                         $(".roleBtn").each(function () {
-                            let userRole = $(this).data("role"); // 개별 버튼의 role 가져오기
+                            let userRole = $(this).data("role");
                             if (userRole === "USER") {
                                 $(this).hide();
                             } else {
@@ -277,8 +276,8 @@
                     } else {
                         $("#comment-form").show()
                     }
-                    let commentSection = $('#comment-section'); // 댓글 표시 영역
-                    commentSection.empty(); // 기존 댓글 초기화
+                    let commentSection = $('#comment-section');
+                    commentSection.empty();
                     commentSection.html("등록된 답변이 없습니다.");
 
                 }
@@ -351,11 +350,11 @@
 
         function list() {
             $.ajax({
-                url: '/qnaReply/list?qna_num=' + qna_num, // 댓글 목록 API 호출
+                url: '/qnaReply/list?qna_num=' + qna_num,
                 type: 'GET',
                 success: function (response) {
-                    const commentSection = $('#comment-section'); // 댓글 표시 영역
-                    commentSection.empty(); // 기존 댓글 초기화
+                    const commentSection = $('#comment-section');
+                    commentSection.empty();
 
                     response.forEach(comment => {
                         const commentHTML = `
@@ -424,7 +423,7 @@
                                 return res.json();
                             }
                         })
-                        .then(result => { // 재발급이 성공하면 로컬 스토리지값을 새로운 액세스 토큰으로 교체
+                        .then(result => {
                             localStorage.setItem('access_token', result.accessToken);
                             httpRequest(method, url, body, success, fail);
                         })
@@ -434,12 +433,7 @@
                 }
             });
         }
-
-
-
     });
-
-
 
 </script>
 </body>

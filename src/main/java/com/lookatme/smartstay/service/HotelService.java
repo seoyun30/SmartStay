@@ -59,6 +59,7 @@ public class HotelService {
         Pageable pageable = pageRequestDTO.getPageable("hotel_num");
         Member member = memberRepository.findByEmail(email);
         Long brand_num = member.getBrand().getBrand_num();
+        log.info("brand_num:" + brand_num);
         Page<Hotel> hotelPage = null;
 
         if (pageRequestDTO.getType() == null || pageRequestDTO.getKeyword() == null || pageRequestDTO.getKeyword().equals("")) {

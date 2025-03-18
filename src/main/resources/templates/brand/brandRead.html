@@ -11,13 +11,13 @@
 
     <style layout:fragment="css">
         .detail-image {
-            width: 50%; /* 이미지 크기 절반으로 설정 */
+            width: 50%;
             height: auto;
             object-fit: contain;
         }
 
         .row {
-            display: block; /* 기본 블록 레이아웃으로 한 줄에 하나씩 배치 */
+            display: block;
         }
         .mb-4 {
             margin-bottom: 1.5rem;
@@ -36,34 +36,34 @@
                         <div class="col-8 offset-2">
                             <div class="row">
 
-                                    <div class="mb-3 text-center">
-                                        <h1>총판 상세보기</h1>
-                                    </div>
+                                <div class="mb-3 text-center">
+                                    <h1>총판 상세보기</h1>
+                                </div>
 
-                                    <div class="col text-center">
-                                        <div class="card mb-3">
-                                            <div class="card-body">
-                                                <input id="brand_num" type="hidden" th:value="${brandDTO.brand_num}">
+                                <div class="col text-center">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <input id="brand_num" type="hidden" th:value="${brandDTO.brand_num}">
 
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text" style="width: 150px">총판 이름</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.brand_name}" >
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text" style="width: 150px">법인사업자번호</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.business_num}" >
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text" style="width: 150px">대표자</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.owner}" >
-                                                </div>
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text" style="width: 150px">전화번호</span>
-                                                    <input type="text" class="form-control" th:value="${brandDTO.tel}" >
-                                                </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 150px">총판 이름</span>
+                                                <input type="text" class="form-control" th:value="${brandDTO.brand_name}" >
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 150px">법인사업자번호</span>
+                                                <input type="text" class="form-control" th:value="${brandDTO.business_num}" >
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 150px">대표자</span>
+                                                <input type="text" class="form-control" th:value="${brandDTO.owner}" >
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 150px">전화번호</span>
+                                                <input type="text" class="form-control" th:value="${brandDTO.tel}" >
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
                                 <div class="col-12">
                                     <div class="mt-5 mb-3 imgA">
@@ -84,52 +84,45 @@
                                                     <label class="col-12 form-label">상세 이미지</label>
                                                 </th:block>
 
-                                            <th:block th:each="img : ${brandDTO.imageDTOList}">
-                                                <th:block th:unless="${img.repimg_yn == 'Y'}">
-                                                    <div class="col-12 md-4">
-                                                        <img class="detail-image" th:src="${img.thumbnail_url}" alt="상세 이미지" style="width: 50%; height: auto; object-fit: contain;">
-                                                    </div>
+                                                <th:block th:each="img : ${brandDTO.imageDTOList}">
+                                                    <th:block th:unless="${img.repimg_yn == 'Y'}">
+                                                        <div class="col-12 md-4">
+                                                            <img class="detail-image" th:src="${img.thumbnail_url}" alt="상세 이미지" style="width: 50%; height: auto; object-fit: contain;">
+                                                        </div>
+                                                    </th:block>
                                                 </th:block>
-                                            </th:block>
+                                            </div>
                                         </div>
                                     </div>
-                                     </div>
                                 </div>
 
-                               <div class="mt-3 text-center">
-                                        <button type="button" sec:authorize="hasAnyAuthority('CHIEF')" class="btn btn-primary adhBtn">관리자 홈</button>
-                                        <button type="button" sec:authorize="hasAnyAuthority('SUPERADMIN')" class="btn btn-primary lisBtn">목록</button>
-                                        <button type="button" sec:authorize="hasAnyAuthority('CHIEF')" class="btn btn-dark modBtn">수정</button>
-                                       
-                                       <script>                 
-                                       document.addEventListener("DOMContentLoaded", function() {
+                                <div class="mt-3 text-center">
+                                    <button type="button" sec:authorize="hasAnyAuthority('CHIEF')" class="btn btn-primary adhBtn">관리자 홈</button>
+                                    <button type="button" sec:authorize="hasAnyAuthority('SUPERADMIN')" class="btn btn-primary lisBtn">목록</button>
+                                    <button type="button" sec:authorize="hasAnyAuthority('CHIEF')" class="btn btn-dark modBtn">수정</button>
+
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function() {
 
                                             let brand_num = document.getElementById("brand_num").value;
 
                                             if(document.querySelector(".adhBtn")){
-                                                // 관리자홈 페이지 이동
                                                 document.querySelector(".adhBtn").addEventListener("click", function () {
                                                     location.href = "/adMain";
                                                 });
                                             }
 
                                             if(document.querySelector(".lisBtn")){
-                                                // 리스트 페이지 이동
                                                 document.querySelector(".lisBtn").addEventListener("click", function () {
                                                     location.href = "/brand/brandList";
                                                 });
                                             }
 
-                                           if(document.querySelector(".modBtn")){
-
-                                               // 수정 페이지 이동
-                                               document.querySelector(".modBtn").addEventListener("click", function () {
-                                                   location.href = "/brand/brandModify?brand_num=" + brand_num;
-                                               });
-                                           }
-
-
-
+                                            if(document.querySelector(".modBtn")){
+                                                document.querySelector(".modBtn").addEventListener("click", function () {
+                                                    location.href = "/brand/brandModify?brand_num=" + brand_num;
+                                                });
+                                            }
 
                                         });
                                     </script>

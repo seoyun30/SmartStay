@@ -15,26 +15,21 @@ import java.util.List;
 @ToString
 public class HotelDTO {
 
-    private Long hotel_num; //키
+    private Long hotel_num;
 
-    private String business_num; //개인 사업자번호
+    private String business_num;
 
-    private String hotel_name; //호텔 명
+    private String hotel_name;
 
-    private String owner; //대표자 이름
+    private String owner;
 
-    private String address; //호텔 주소
+    private String address;
 
-    private String tel; //연락처
+    private String tel;
 
-    private String score; //별점
+    private String score;
 
-    private BrandDTO brandDTO; //브랜드
-
-    public HotelDTO setBrandDTO(BrandDTO brandDTO) {
-        this.brandDTO = brandDTO;
-        return this;
-    } //추가
+    private BrandDTO brandDTO;
 
     private LocalDateTime reg_date;
 
@@ -50,7 +45,7 @@ public class HotelDTO {
 
     private List<Long> imageIdList = new ArrayList<>();
 
-    private ActiveState active_state; //활성 비활성
+    private ActiveState active_state;
 
     private ImageDTO mainImage;
 
@@ -61,5 +56,10 @@ public class HotelDTO {
     public boolean hasAvailableRooms() {
         return rooms.stream()
                 .anyMatch(roomDTO -> roomDTO.getRoom_state() == RoomState.YES);
+    }
+
+    public HotelDTO setBrandDTO(BrandDTO brandDTO) {
+        this.brandDTO = brandDTO;
+        return this;
     }
 }
