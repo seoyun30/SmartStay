@@ -32,8 +32,6 @@ public class NoticeService {
     private final ModelMapper modelMapper;
     //권한 설정 시 필요
     private final MemberRepository memberRepository;
-    private final BrandRepository brandRepository;
-    private final HotelRepository hotelRepository;
 
     //이미지 구현 시 필요
     private final ImageRepository imageRepository;
@@ -44,19 +42,6 @@ public class NoticeService {
     private String imgUploadLocation;
 
     //공지 사항 등록
-    public void noticeRegister(NoticeDTO noticeDTO , Principal principal){
-
-        log.info("등록서비스 들어온값 " + noticeDTO);
-
-        Notice notice = modelMapper.map(noticeDTO, Notice.class);
-        Member member =
-                memberRepository.findByEmail(principal.getName());
-        notice.setBrand(member.getBrand());
-        notice.setMember(member);
-
-        noticeRepository.save(notice);
-
-    }
     public void noticeRegister(NoticeDTO noticeDTO, List<MultipartFile> multipartFiles , Principal principal) throws Exception {
         log.info("등록 서비스 들어온 값 : " + noticeDTO);
         log.info("등록 서비스 들어온 값 : " + multipartFiles);
@@ -122,14 +107,10 @@ public class NoticeService {
             noticeDTO.setImageIdList(imageIdList);
         }
 
-
-
         log.info("서비스에서 컨트롤러로 나간 값  : " + noticeDTO);
 
         return noticeDTO;
     }
-
-
 
     //공지 사항 목록
     public PageResponseDTO<NoticeDTO> noticeList(PageRequestDTO pageRequestDTO, String email, String type) {
@@ -259,9 +240,6 @@ public class NoticeService {
                     .total((int) noticePage.getTotalElements())
                     .build();
         }
-
-
-
 
     //공지 사항 수정
     public void noticeModify(NoticeDTO noticeDTO, String email, List<MultipartFile> multipartFileList, List<Long> delnumList) throws Exception {

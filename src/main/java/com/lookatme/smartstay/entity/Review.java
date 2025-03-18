@@ -36,10 +36,4 @@ public class Review extends BaseEntity{
     @JoinColumn(name = "room_num")
     private Room room; //호텔
 
-    public String getScore() {
-        return score;
-    }
-    public void setScore(String score) {
-        this.score = score;
-    }
 }

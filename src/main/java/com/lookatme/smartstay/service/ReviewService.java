@@ -32,9 +32,6 @@ public class ReviewService {
 
     //권한 설정 시 필요
     private final MemberRepository memberRepository;
-    private final HotelRepository hotelRepository;
-
-    private final RoomReserveRepository roomReserveRepository; // 호텔예약정보 필요
     private final RoomReserveItemRepository roomReserveItemRepository;
 
     //이미지 사용 시 필요
@@ -411,25 +408,6 @@ public class ReviewService {
         return reviewDTOPageResponseDTO;
     }
 
-    //호텔별 리뷰 평균 별점 계산
-    public double calculateAverageRating(Long hotel_num) {
-        List<Review> reviews = reviewRepository.findByHotel(hotel_num);
-
-        if (reviews.isEmpty()) {
-            return 0.0;
-        }
-
-        double totalScore = 0;
-        for (Review review : reviews) {
-            try {
-                totalScore += Double.parseDouble(review.getScore());
-            } catch (NumberFormatException e) {
-                //score가 올바르지 않은 값인 경우 예외
-            }
-        }
-
-        return totalScore / reviews.size();  //평균 별점 계산
-    }
 
     public List<ReviewDTO> getLimitedReviews (Long hotel_num, int limit) {
         Pageable pageable = PageRequest.of(0, limit);

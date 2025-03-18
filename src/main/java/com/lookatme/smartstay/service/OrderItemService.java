@@ -23,15 +23,10 @@ public class OrderItemService {
     private final OrderItemRepository orderItemRepository;
     private final RoomReserveItemRepository roomReserveItemRepository;
     private final MenuRepository menuRepository;
-    private final MenuItemRepository MenuItemRepository;
     private final CareRepository careRepository;
     private final CareItemRepository careItemRepository;
-    private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
-    private final CareItemService careItemService;
-    private final MenuItemService menuItemService;
     private final MenuItemRepository menuItemRepository;
-
     private final ModelMapper modelMapper;
 
     public OrderItemDTO modifyOrderItem(OrderItemDTO orderItemDTO) {

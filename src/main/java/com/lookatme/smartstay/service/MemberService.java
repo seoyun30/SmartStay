@@ -1,6 +1,5 @@
 package com.lookatme.smartstay.service;
 
-import com.lookatme.smartstay.config.CustomAuthenticationFailureHandler;
 import com.lookatme.smartstay.constant.Power;
 import com.lookatme.smartstay.constant.Role;
 import com.lookatme.smartstay.dto.*;
@@ -14,10 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.catalina.Manager;
-import org.junit.validator.PublicClassValidator;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.autoconfigure.context.LifecycleAutoConfiguration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,9 +28,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -50,8 +46,6 @@ public class MemberService implements UserDetailsService {
     private final BrandRepository brandRepository;
     private final HotelRepository hotelRepository;
     private final EmailService emailService;
-    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException, AuthenticationException {
@@ -219,8 +213,6 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
-
-
     private void validateDuplicateMember(MemberDTO memberDTO){
 
         Member member =
@@ -238,24 +230,6 @@ public class MemberService implements UserDetailsService {
 
 
     }
-
-//    public List<MemberDTO> memberList() { //회웍목록리스트
-//
-//        List<Member> memberList = memberRepository.findAll();
-//        if(memberList.isEmpty()) {
-//            return new ArrayList<>();
-//
-//        }else {
-//            List<MemberDTO> memberDTOList = memberList.stream()
-//                    .map(memberA -> modelMapper.map(memberA, MemberDTO.class))
-//                            .collect(Collectors.toList());
-//
-//            memberDTOList.forEach(dto -> log.info(dto));
-//
-//            return memberDTOList;
-//        }
-//
-//    }
 
     public PageResponseDTO<MemberDTO> memberList(PageRequestDTO pageRequestDTO, String sortOrder, String orderType, String type){
         Pageable pageable = null;
@@ -319,10 +293,6 @@ public class MemberService implements UserDetailsService {
         return memberDTOPageResponseDTO;
     }
 
-
-
-
-
     public MemberDTO readMember(String email){ //회원마이페이지정보
         Member member = memberRepository.findByEmail(email);
 
@@ -354,9 +324,6 @@ public class MemberService implements UserDetailsService {
         return passwordEncoder.matches(password, member.getPassword());
     }
 
-
-
-
     public void updateMember(MemberDTO memberDTO){ //회원마이페이지 수정
 
         //수정하려는 사람찾기
@@ -369,14 +336,6 @@ public class MemberService implements UserDetailsService {
 
         if(!memberDTO.getPassword().isEmpty()){
             log.info("비밀번호가 안비어있다. 비밀번호 변경예정");
-
-//            if(!passwordEncoder.matches(memberDTO.getPassword(), member.getPassword())){
-//                throw new IllegalStateException("현재 비밀번호가 일치하지 않습니다.");
-//            }
-//
-//            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-
             String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
             member.setPassword(encodedPassword);
             log.info("비밀번호 변경했음");
@@ -457,7 +416,7 @@ public class MemberService implements UserDetailsService {
 
 
     public PageResponseDTO<MemberDTO> cmPowerList(PageRequestDTO pageRequestDTO, String email, String type) { //치프가 승인하는 권한리스트
-//로그인한 권한을 승인해줄 치프의 이메일과 페이징처리를 위한 내용을 받아서
+    //로그인한 권한을 승인해줄 치프의 이메일과 페이징처리를 위한 내용을 받아서
         Member member  = memberRepository.findByEmail(email);
 
         if (member == null || member.getBrand() == null) {      //내이메일로 찾아온 정보가 없거나 소속이 없다면
@@ -545,36 +504,6 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
     }
 
-
-   /* public void adPowerMember(String email) {
-
-        Member member = memberRepository.findByEmail(email);
-        log.info("파워승인파워승인" +email);
-        log.info(member);
-        if (member != null) {
-            member.setPower(Power.YES);
-            memberRepository.save(member);
-        }
-    }*/
-
-
-    public void powerMember(String email) { // 권한승인 목록
-
-        log.info("파워승인파워승인" + email);
-        if (email != null && !email.isEmpty()) {
-            Member member = memberRepository.findByEmail(email);
-            if (member != null) {
-                member.setPower(member.getPower() == Power.YES ? Power.NO : Power.YES);
-                memberRepository.save(member);
-                log.info("power 변경: " + email + " -> " + member.getPower());
-            } else {
-                log.info("해당 이메일로 회원을 찾을 수 없음: " + email);
-            }
-        }
-
-    }
-
-
     public Member findID(String name, String tel){ //회원Email찾기
 
         log.info("name: " + name + " tel: " + tel);
@@ -622,8 +551,6 @@ public class MemberService implements UserDetailsService {
             throw new RuntimeException("가입 중 오류가 발생하였습니다.");
         }
     }
-
-
 
     private String generateTempPassword(int length){    //비밀번호생성기
 

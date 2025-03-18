@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-
 @Service
 @Log4j2
 @RequiredArgsConstructor
@@ -34,7 +32,7 @@ public class FileService {
     public String uploadFile(String uploadPath, MultipartFile multipartFile) throws Exception {
 
         String savedFileName = fileUpload.fileUpload(multipartFile, "N");
-
+            //로컬 실행시 해당 주석 해제
 //        log.info(Arrays.toString(multipartFile.getBytes()));
 
 //        UUID uuid = UUID.randomUUID();
@@ -71,26 +69,7 @@ public class FileService {
 //        fos.write(multipartFile.getBytes());
 //        //자원을 해제
 //        fos.close();
-        // uuid+파일명 //DB에 저장할때 사용하려고?
         return savedFileName;
-    }
-
-    public void deleteFile (String filePath) {
-        File deleteFile = new File(filePath);
-        //이 추상 경로명이 나타내는 파일이나 디렉터리가 존재하는지 테스트합니다.
-        // exists() 반환타입 boolean
-        if (deleteFile.exists()){
-            //파일이 있다면
-            deleteFile.delete(); //삭제
-            log.info("파일을 삭제 하였습니다.");
-        }else {
-            log.info("파일이 존재하지 않습니다.");
-            //화면에 띄울까? 아니면 개발자만 그대로 볼까? 사용자는
-            //파일이 없으니까 아무런 메시지도 없다면 아
-            //파일이 있으니 지워졌겠지? 하지않을까?
-
-        }
-
     }
 
 }

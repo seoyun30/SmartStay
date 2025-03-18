@@ -1,6 +1,5 @@
 package com.lookatme.smartstay.repository;
 
-import com.lookatme.smartstay.entity.Brand;
 import com.lookatme.smartstay.entity.Member;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -10,13 +9,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    public Member findByEmail (String email);
-
+    Member findByEmail (String email);
 
     /*----------------슈퍼어드민권한승인페이지 ----------------*/
     @Query("select m from Member m " + "where m.role = 'CHIEF' and m.brand.brand_num is null")
@@ -40,10 +37,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("select m from Member m " + "where m.role = 'CHIEF' and m.brand.brand_num is null " +
             "AND (m.tel LIKE CONCAT('%', :keyword, '%'))")
     Page<Member> searchSelectBySuperAdminByTel(@Param("keyword") String keyword, Pageable pageable);
-
-
-
-
 
 
     /*----------------치프권한승인페이지 ----------------*/
@@ -108,15 +101,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Page<Member> searchSelectByChiefByRole(@Param("brand_num")Long brand_num, @Param("keyword") String keyword, Pageable pageable);
 
 
-
-
-
     /*--------------전체회원리스트-----------------*/
 
     @Query("select m from Member m where m.name = :name and m.tel = :tel")
     Member findID(@Param("name") String name, @Param("tel") String tel);
-
-    List<Member> email(String email);
 
     @Query("SELECT m FROM Member m " +
             "WHERE m.email LIKE CONCAT('%', :keyword, '%') " +
@@ -141,14 +129,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "WHERE (m.role IS NOT NULL AND CAST(m.role AS string) LIKE CONCAT('%', :keyword, '%'))")
     Page<Member> searchMemberByRole(@Param("keyword") String keyword, Pageable pageable);
 
-
     @Query("select m from  Member  m")
     public Page<Member> selectAll(Pageable pageable);
-
-
-
-
-
 
 
     //호텔 지우기 위한 쿼리문
@@ -156,7 +138,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Transactional
     @Query("delete from Member m where m.hotel.hotel_num = :hotel_num")
     void deleteByHotelHotel_num(Long hotel_num);
-
 
     boolean existsByTel(String tel);
 

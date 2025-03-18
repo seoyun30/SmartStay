@@ -6,7 +6,6 @@ import com.lookatme.smartstay.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +25,6 @@ public class ImageService {
     private final ReviewRepository reviewRepository;
     private final QnaRepository qnaRepository;
     private final NoticeRepository noticeRepository;
-    private final ModelMapper modelMapper;
     private final FileUpload fileUpload; //파일업로드 클래스 상속
 
     //이미지 등록
@@ -270,7 +268,6 @@ public class ImageService {
         imageRepository.save(image);
 
     }
-
 
     public List<Image> getBannerImages() {
         List<Image> banners = imageRepository.findByTarget("banner");

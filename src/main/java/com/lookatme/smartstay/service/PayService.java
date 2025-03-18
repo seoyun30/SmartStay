@@ -58,16 +58,10 @@ public class PayService {
     private CareRepository careRepository;
 
     @Autowired
-    private CareItemRepository careItemRepository;
-
-    @Autowired
     private CareReserveItemRepository careReserveItemRepository;
 
     @Autowired
     private MenuRepository menuRepository;
-
-    @Autowired
-    private MenuItemRepository menuItemRepository;
 
     @Autowired
     private MenuReserveItemRepository menuReserveItemRepository;
