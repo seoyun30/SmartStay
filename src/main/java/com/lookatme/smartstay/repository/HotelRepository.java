@@ -35,21 +35,22 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     @Query("select h from Hotel h where h.brand.brand_num = :brand_num")
     Page<Hotel> hotelPage(Long brand_num, Pageable pageable);
 
-    //호텔명 검색 hotel_num
+    //호텔명 검색 hotel_name
     @Query("select h from Hotel h where h.brand.brand_num = :brand_num and h.hotel_name like concat('%', :keyword, '%') ")
     Page<Hotel> findByB_numAndHotel_name(Long brand_num, String keyword, Pageable pageable);
 
     //대표자 이름 검색 owner
-    @Query("select h from Hotel h where h.brand.brand_num = :brand_num and h.owner like concat('%', :keyword, '%') ")
+    @Query("select h from Hotel h where h.brand.brand_num = :brand_num and (h.owner like concat('%', :keyword, '%')) ")
     Page<Hotel> findByB_numAndOwner(Long brand_num, String keyword, Pageable pageable);
 
     //호텔 주소 address
-    @Query("select h from Hotel h where h.brand.brand_num = :brand_num and h.address like concat('%', :keyword, '%') ")
+    @Query("select h from Hotel h where h.brand.brand_num = :brand_num and (h.address like concat('%', :keyword, '%')) ")
     Page<Hotel> findByB_numAndAddress(Long brand_num, String keyword, Pageable pageable);
 
     //전체
-    @Query("select h from Hotel h where h.brand.brand_num = :brand_num and h.hotel_name like concat('%', :str, '%') or h.owner like concat('%', :str, '%') "
-            + "or h.address like concat('%', :str, '%') or h.tel like concat('%', :str, '%') or h.business_num like concat('%', :str, '%') " )
+    @Query("select h from Hotel h where h.brand.brand_num = :brand_num and"
+            + "(h.hotel_name like concat('%', :str, '%') or h.owner like concat('%', :str, '%') "
+            + "or h.address like concat('%', :str, '%') or h.tel like concat('%', :str, '%') or h.business_num like concat('%', :str, '%')) " )
      Page<Hotel> findByAllSearch(Long brand_num, String str, Pageable pageable);
 
 

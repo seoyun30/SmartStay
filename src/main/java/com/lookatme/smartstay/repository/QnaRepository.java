@@ -75,7 +75,7 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
     @Query("select q from Qna q where q.writer like concat('%', :str, '%')or q.title like concat('%', :str1, '%') and q.hotel.hotel_num = :hotel_num ")
     Page<Qna> findByTitleContainingOrWriterContainingAndHotel_numContaining(String str, String str1, Long hotel_num, Pageable pageable);
 
-    @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') or q.writer like concat('%', :str, '%')and q.hotel.hotel_num = :hotel_num ")
+    @Query("select q from Qna q where (q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') or q.writer like concat('%', :str, '%')) and q.hotel.hotel_num = :hotel_num ")
     Page<Qna> titleOrConOrWrAnaHotel_numContaining(String str, Long hotel_num, Pageable pageable);
 
     //브랜드용
@@ -100,7 +100,8 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
     @Query("select q from Qna q where q.writer like concat('%', :str, '%')or q.title like concat('%', :str1, '%') and q.hotel.brand.brand_num = :brand_num ")
     Page<Qna> findByTitleContainingOrWriterContainingAndBrand_numContaining(String str, String str1, Long brand_num, Pageable pageable);
 
-    @Query("select q from Qna q where q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') or q.writer like concat('%', :str, '%') and q.hotel.brand.brand_num = :brand_num ")
+    @Query("select q from Qna q where (q.title like concat('%', :str, '%') or q.content like concat('%', :str, '%') or q.writer like concat('%', :str, '%') or q.hotel.hotel_name like concat('%', :str, '%')) "
+           + "and q.hotel.brand.brand_num = :brand_num ")
     Page<Qna> titleOrConOrWrAnaBrand_numContaining(String str, Long brand_num, Pageable pageable);
 
 }

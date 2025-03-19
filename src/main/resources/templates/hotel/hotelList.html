@@ -57,9 +57,9 @@
           <div class="input-group" id="input-group-search">
             <select class="form-select" name="type">
               <option value="all" th:selected="${type=='all'}">전체</option>
-              <option value="t" th:selected="${type=='n'}">호텔 이름</option>>
-              <option value="c" th:selected="${type=='o'}">대표자</option>>
-              <option value="w" th:selected="${type=='a'}">주소</option>>
+              <option value="n" th:selected="${type=='n'}">호텔 이름</option>>
+              <option value="o" th:selected="${type=='o'}">대표자</option>>
+              <option value="a" th:selected="${type=='a'}">주소</option>>
             </select>
             <input type="text" name="keyword" autocomplete="off" class="form-control" placeholder="Search" th:value="${pageRequestDTO.keyword}" style="width: 250px;">
             <div class="input-group-append">
