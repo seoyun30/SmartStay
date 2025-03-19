@@ -60,7 +60,7 @@ public class HotelService {
         Member member = memberRepository.findByEmail(email);
         Long brand_num = member.getBrand().getBrand_num();
         log.info("brand_num:" + brand_num);
-        Page<Hotel> hotelPage = null;
+        Page<Hotel> hotelPage = Page.empty();
 
         if (pageRequestDTO.getType() == null || pageRequestDTO.getKeyword() == null || pageRequestDTO.getKeyword().equals("")) {
             hotelPage = hotelRepository.hotelPage(brand_num, pageable);
@@ -80,6 +80,7 @@ public class HotelService {
             log.info("전체 검색으로  검색키워드는" + pageRequestDTO.getKeyword());
             hotelPage = hotelRepository.findByAllSearch(brand_num, pageRequestDTO.getKeyword(), pageable);
         }
+
         List<Hotel> hotels = hotelPage.getContent();
         hotels.forEach(hotel -> log.info(hotel));
         List<HotelDTO> hotelDTOS = hotels.stream()
